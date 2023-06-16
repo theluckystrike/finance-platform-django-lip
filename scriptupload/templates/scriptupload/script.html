@@ -1,0 +1,17 @@
+{% extends 'scriptupload/base.html' %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen">
+
+    <div class="w-3/4">
+        {{script.name}}
+        <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
+            {% csrf_token %}
+            <button type="submit">Run</button>
+        </form>
+        {% if script.image %}
+        <img src="{{script.image.url}}">
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
