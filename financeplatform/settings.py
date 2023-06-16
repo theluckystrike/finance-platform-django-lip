@@ -29,7 +29,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ["finance-platform-prototype.herokuapp.com", "127.0.0.1"]
+ALLOWED_HOSTS = ["finance-platform-prototype.herokuapp.com",
+                 "127.0.0.1",
+                 "finance-platform-prototype-4ce168540ea9.herokuapp.com"]
 
 
 # Application definition
