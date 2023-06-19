@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = False if IS_HEROKU else True
 
-# for testing purposes
+# TODO: for testing purposes
 DEBUG = True
 
 
