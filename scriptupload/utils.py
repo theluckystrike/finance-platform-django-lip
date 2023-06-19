@@ -12,6 +12,7 @@ def handle_script_upload(file):
 
 
 def run_script(file):
+    # TODO: run in another thread
     script_dir = os.path.dirname(file.file.name)
     os.chdir(script_dir)
     with open(f"{file.name}.py") as f:
@@ -21,3 +22,4 @@ def run_script(file):
         file.image.name = os.path.join(script_dir, img[-1])
         file.save(update_fields=["image"])
     os.chdir(settings.BASE_DIR)
+    # TODO: return error and handle with message if len(img) == 0

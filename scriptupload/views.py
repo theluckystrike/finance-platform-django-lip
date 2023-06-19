@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import ScriptUploadForm
-from .utils import run_script
+from .utils import run_script, handle_script_upload
 from django.shortcuts import get_object_or_404
 from .models import Script
 from django.contrib import messages
@@ -13,7 +13,7 @@ def index(request):
         }
         form = ScriptUploadForm(script_data, request.FILES)
         if form.is_valid():
-            # handle_script_upload(request.FILES["file"])
+            handle_script_upload(request.FILES["file"])
             # run_script(request.FILES["file"].name)
             form.save()
             messages.success(request, "Script added successfully")

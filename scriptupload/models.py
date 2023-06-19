@@ -18,6 +18,5 @@ class Script(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        
         self.last_updated = datetime.now()
         super().save(*args, **kwargs)
