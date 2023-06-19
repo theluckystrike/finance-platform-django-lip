@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from financeplatform.storage_backends import PrivateMediaStorage
 
 # Create your models here.
 
@@ -9,8 +10,8 @@ def script_file_path(instance, filename):
 
 class Script(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    file = models.FileField(upload_to=script_file_path)
-    image = models.FileField(blank=True, upload_to=script_file_path)
+    file = models.FileField(upload_to=script_file_path, storage=PrivateMediaStorage())
+    image = models.ImageField(blank=True, upload_to=script_file_path, storage=PrivateMediaStorage())
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -20,3 +21,11 @@ class Script(models.Model):
     def save(self, *args, **kwargs):
         self.last_updated = datetime.now()
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        storage = PrivateMediaStorage()
+        if storage.exists(self.file.name):
+            storage.delete(self.file.name)
+        if storage.exists(self.image.name):
+            storage.delete(self.image.name)
+        super().delete(*args, **kwargs)

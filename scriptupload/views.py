@@ -13,7 +13,7 @@ def index(request):
         }
         form = ScriptUploadForm(script_data, request.FILES)
         if form.is_valid():
-            handle_script_upload(request.FILES["file"])
+            # handle_script_upload(request.FILES["file"])
             # run_script(request.FILES["file"].name)
             form.save()
             messages.success(request, "Script added successfully")
