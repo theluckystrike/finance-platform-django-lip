@@ -19,7 +19,12 @@ from dotenv import load_dotenv
 
 IS_HEROKU = "DYNO" in os.environ
 
+if not ("DYNO" in os.environ):
+    load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+USE_S3 = os.environ.get("USE_S3") == "True"
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = False if IS_HEROKU else True
@@ -176,7 +181,6 @@ USE_TZ = True
 #     os.path.join(BASE_DIR, 'static'),
 # )
 
-load_dotenv()
 django_heroku.settings(locals())
 
 
@@ -206,7 +210,6 @@ django_heroku.settings(locals())
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # TODO: update this to work without s3 for development
-USE_S3 = True
 
 if USE_S3:
     # aws settings
