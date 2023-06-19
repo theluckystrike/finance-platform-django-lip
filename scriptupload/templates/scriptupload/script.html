@@ -1,17 +1,36 @@
+
 {% extends 'scriptupload/base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="flex justify-center items-center h-screen">
 
-    <div class="w-3/4">
-        {{script.name}}
-        <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
-            {% csrf_token %}
-            <button type="submit">Run</button>
-        </form>
-        {% if script.image %}
-        <img src="{{script.image.url}}">
-        {% endif %}
+    <div class="flex flex-col w-3/4">
+        <div class="flex-1  text-center p-7 text-xl font-bold">
+            {{script.name}}
+        </div>
+        <div class="flex-1 text-center p-3">
+            Script name: {{script.file.name}}<br>
+            Created: {{script.created}}<br>
+            Last updated: {{script.last_updated}}
+        </div>
+        <div class="flex-1  text-center p-3">
+
+            <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
+                {% csrf_token %}
+                <button type="submit"class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                    Run script
+                </button>
+            </form>
+        </div>
+        <div class="flex-1  text-center">
+
+            {% if script.image %}
+            <img src="{{script.image.url}}">
+            {% else %}
+            Run the script to see the chart load here
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

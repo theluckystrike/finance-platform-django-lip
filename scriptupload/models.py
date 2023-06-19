@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 
 # Create your models here.
 
@@ -16,3 +16,8 @@ class Script(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        
+        self.last_updated = datetime.now()
+        super().save(*args, **kwargs)
