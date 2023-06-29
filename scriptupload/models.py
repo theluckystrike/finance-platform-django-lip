@@ -5,7 +5,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
-# Create your models here.
+
 
 def script_file_path(instance, filename):
     return f"scripts/{instance.name}/{filename}"
@@ -17,6 +17,7 @@ class Script(models.Model):
     image = models.ImageField(blank=True, upload_to=script_file_path, storage=privateStorage)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey('ScriptCategory', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
@@ -32,3 +33,6 @@ class Script(models.Model):
         if storage.exists(self.image.name):
             storage.delete(self.image.name)
         super().delete(*args, **kwargs)
+
+class ScriptCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)

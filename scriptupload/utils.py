@@ -4,6 +4,8 @@ from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
 from django.core.files.storage import default_storage
 
+
+# not used
 def handle_script_upload(file):
     print("file recieved", file.name)
     path = f"scripts/{file.name.replace('.py', '')}/{file.name}"
