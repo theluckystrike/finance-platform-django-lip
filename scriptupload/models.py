@@ -1,7 +1,10 @@
 from django.db import models
 from datetime import datetime
 from financeplatform.storage_backends import PrivateMediaStorage
+from django.core.files.storage import default_storage
+from django.conf import settings
 
+privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 # Create your models here.
 
 def script_file_path(instance, filename):
@@ -10,8 +13,8 @@ def script_file_path(instance, filename):
 
 class Script(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    file = models.FileField(upload_to=script_file_path, storage=PrivateMediaStorage())
-    image = models.ImageField(blank=True, upload_to=script_file_path, storage=PrivateMediaStorage())
+    file = models.FileField(upload_to=script_file_path, storage=privateStorage)
+    image = models.ImageField(blank=True, upload_to=script_file_path, storage=privateStorage)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -23,7 +26,7 @@ class Script(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        storage = PrivateMediaStorage()
+        storage = privateStorage
         if storage.exists(self.file.name):
             storage.delete(self.file.name)
         if storage.exists(self.image.name):
