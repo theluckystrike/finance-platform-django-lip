@@ -49,7 +49,7 @@ def create_category(request):
 def script_search(request):
     if request.method == "POST":
         search_query = request.POST.get("script_name")
-        results = Script.objects.filter(name__contains=search_query)
+        results = Script.objects.filter(name__icontains=search_query)
         if len(results) > 0 and len(search_query) > 0:
             data = []
             for result in results:

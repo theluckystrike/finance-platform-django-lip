@@ -70,9 +70,7 @@
                 success: (res) => {
                     const data = res.results
                     search_results.innerHTML = ""
-                    console.log(res)
                     if(Array.isArray(data)){
-                        console.log("hi2")
                         data.forEach(name => {
                             search_results.innerHTML += `
                             <a href="${name.url}">
@@ -82,7 +80,6 @@
                             `
                         })
                     }
-                    console.log("hie")
                 },
                 error: (error) => {
                     console.log("error");
@@ -103,9 +100,11 @@
             sendSearch(e.target.value);
         });
 
-        search_input.addEventListener('blur', () => {
-            // search_results.innerHTML = "";
-            search_input.value = "";
+        search_input.addEventListener('blur', (event) => {
+            if (!search_results.contains(event.relatedTarget)) {
+                
+                search_results.innerHTML = "";
+            }
         })
 
     </script>
