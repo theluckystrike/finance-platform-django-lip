@@ -10,7 +10,6 @@ from django.http import HttpResponseRedirect, JsonResponse
 def upload_script(request):
     if request.method == "POST":
         form = ScriptUploadForm(request.POST, request.FILES)
-
         if form.is_valid():
             category_name = form.cleaned_data["category_name"]
             category = ScriptCategory.objects.get(name=category_name)

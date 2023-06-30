@@ -13,19 +13,18 @@
 </head>
 
 <body class="flex h-screen">
-    
-
     <!-- Sidebar -->
     <aside class="w-1/4 bg-gray-200 p-4">
         <h1 class="text-2xl font-bold mb-4">Scripts</h1>
+        <!-- search bar -->
         <div class="py-2 relative">
-
             <form autocomplete="off" id="search-bar" method="POST">
                 {% csrf_token %}
                 <input type="text" id="search-input" class="border border-gray-400 p-2 w-full" placeholder="Search for scripts">
             </form>
             <div id="search-results" class="hidden bg-white w-full absolute"></div>
         </div>
+        <!-- sidebar elements -->
         <ul class="space-y-2">
             <li class="flex items-center">
                 <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
@@ -40,7 +39,8 @@
         </ul>
     </aside>
 
-    <!-- Main Content -->
+
+    <!-- messages -->
     <div class="flex-1 p-4">
         {% if messages %}
         <div class="fixed top-0 left-0 w-full h-auto py-4 flex justify-center items-center">
@@ -53,7 +53,7 @@
             {% endfor %}
         </div>
         {% endif %}
-
+        <!-- main content -->
         {% block content %}
         {% endblock content %}
     </div>
@@ -75,8 +75,9 @@
                             search_results.innerHTML += `
                             <a href="${name.url}">
                                 <div class="w-full hover:bg-gray-300 p-2">
-                                   ${name.name} </div>
-                                </a>
+                                   ${name.name}
+                                </div>
+                            </a>
                             `
                         })
                     }
@@ -96,13 +97,11 @@
             if(search_results.classList.contains('hidden')){
                 search_results.classList.remove('hidden');
             }
-
             sendSearch(e.target.value);
         });
 
         search_input.addEventListener('blur', (event) => {
             if (!search_results.contains(event.relatedTarget)) {
-                
                 search_results.innerHTML = "";
             }
         })

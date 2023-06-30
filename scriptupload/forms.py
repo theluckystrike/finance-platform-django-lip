@@ -14,3 +14,4 @@ class NewScriptCategory(forms.ModelForm):
     class Meta:
         model = ScriptCategory
         fields = ("name",)
+        
