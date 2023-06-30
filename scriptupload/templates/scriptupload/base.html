@@ -6,8 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script></head>
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Test</title>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+        crossorigin="anonymous"></script>
+</head>
 
 <body class="flex h-screen">
     
@@ -15,8 +18,15 @@
     <!-- Sidebar -->
     <aside class="w-1/4 bg-gray-200 p-4">
         <h1 class="text-2xl font-bold mb-4">Scripts</h1>
-        <ul class="space-y-2">
+        <div class="py-2 relative">
 
+            <form autocomplete="off" id="search-bar" method="POST">
+                {% csrf_token %}
+                <input type="text" id="search-input" class="border border-gray-400 p-2 w-full" placeholder="Search for scripts">
+            </form>
+            <div id="search-results" class="hidden bg-white w-full absolute"></div>
+        </div>
+        <ul class="space-y-2">
             <li class="flex items-center">
                 <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
                 <a href="{% url 'uploadScript' %}" class="text-blue-500 hover:text-blue-700">+ Add new script</a>
@@ -34,19 +44,71 @@
     <div class="flex-1 p-4">
         {% if messages %}
         <div class="fixed top-0 left-0 w-full h-auto py-4 flex justify-center items-center">
-            <div class="bg-blue-500 text-white rounded-lg py-2 px-4">
+            {% for message in messages %}
+            <div class="{% if message.tags == 'info' %} bg-blue-500 {% endif %} {% if message.tags == 'success' %} bg-green-500 {% endif %} text-white rounded-lg py-2 px-4">
                 <div class="text-center">
-                    {% for message in messages %}
                     <p class="text-md">{{ message }}</p>
-                    {% endfor %}
                 </div>
             </div>
+            {% endfor %}
         </div>
         {% endif %}
 
         {% block content %}
         {% endblock content %}
     </div>
+
+    <script>
+        const sendSearch = (name)=>{
+            $.ajax({
+                type: "POST",
+                url: "{% url 'script_search' %}",
+                data: {
+                    "csrfmiddlewaretoken": csrf,
+                    "script_name": name
+                },
+                success: (res) => {
+                    const data = res.results
+                    search_results.innerHTML = ""
+                    console.log(res)
+                    if(Array.isArray(data)){
+                        console.log("hi2")
+                        data.forEach(name => {
+                            search_results.innerHTML += `
+                            <a href="${name.url}">
+                                <div class="w-full hover:bg-gray-300 p-2">
+                                   ${name.name} </div>
+                                </a>
+                            `
+                        })
+                    }
+                    console.log("hie")
+                },
+                error: (error) => {
+                    console.log("error");
+                }
+            })
+        }
+
+        const search_bar = document.getElementById("search-bar")
+        const search_input = document.getElementById("search-input")
+        const search_results = document.getElementById("search-results")
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+        search_input.addEventListener('keyup', e=>{
+            if(search_results.classList.contains('hidden')){
+                search_results.classList.remove('hidden');
+            }
+
+            sendSearch(e.target.value);
+        });
+
+        search_input.addEventListener('blur', () => {
+            // search_results.innerHTML = "";
+            search_input.value = "";
+        })
+
+    </script>
 
 </body>
 

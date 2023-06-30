@@ -4,7 +4,7 @@ from .utils import run_script
 from django.shortcuts import get_object_or_404
 from .models import Script, ScriptCategory
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 
 
 def upload_script(request):
@@ -43,4 +43,22 @@ def create_category(request):
             # TODO: catch duplicates and create message
             messages.info(request, "Category already exists")
 
+    return HttpResponseRedirect("/")
+
+
+def script_search(request):
+    if request.method == "POST":
+        search_query = request.POST.get("script_name")
+        results = Script.objects.filter(name__contains=search_query)
+        if len(results) > 0 and len(search_query) > 0:
+            data = []
+            for result in results:
+                r = {
+                    'name': result.name,
+                    'url': f"/scripts/{result.name}"
+                }
+                data.append(r)
+        else:
+            data = "No results"
+        return JsonResponse({"results": data})
     return HttpResponseRedirect("/")
