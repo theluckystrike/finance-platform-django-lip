@@ -1,0 +1,72 @@
+
+{% extends 'scriptupload/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="flex justify-center items-center h-screen">
+
+        <div class="w-3/4">
+            <div class="max-w-md mx-auto">
+                <h1 class="text-2xl font-bold mb-4">Script Upload</h1>
+                <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="category_name" class="block text-gray-700 font-bold mb-2">Category:</label>
+                        <select id="category_name" name="category_name" class="border border-gray-400 p-2 w-full" required>
+                            <option value="" disabled selected>Select a category</option>
+                            {% for cat in categories %}
+                            <option>{{cat.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button id="modalBtn" type="button" class="py-2 text-blue-700">Create new category</button>
+  
+                    </div>
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 font-bold mb-2">Script name:</label>
+                        <input type="text" id="name" name="name" class="border border-gray-400 p-2 w-full" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="file" class="block text-gray-700 font-bold mb-2">Select a file:</label>
+                        <input type="file" id="file" name="file" class="border border-gray-400 p-2 w-full" required>
+                    </div>
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload</button>
+                </form>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div id="myModal" class="fixed inset-0 overflow-y-auto hidden">
+            <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <h2 class="text-lg font-bold mb-4">Add new category</h2>
+                        <form action="{% url 'create_category' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-bold mb-2">Category name:</label>
+                                <input type="text" id="name" name="name" class="border border-gray-400 p-2 w-full" autocomplete="on">
+                            </div>
+                            <button type="submit" id="modalCloseBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    <script>
+        document.getElementById('modalBtn').addEventListener('click', function () {
+            document.getElementById('myModal').classList.remove('hidden');
+        });
+
+        document.getElementById('modalCloseBtn').addEventListener('click', function () {
+            document.getElementById('myModal').classList.add('hidden');
+        });
+    </script>
+{% endblock %}

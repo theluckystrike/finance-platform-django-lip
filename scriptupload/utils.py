@@ -18,9 +18,9 @@ def handle_script_upload(file):
 def run_script(file):
     script_dir = os.path.dirname(file.file.name)
     os.makedirs(script_dir, exist_ok=True)
-    os.chdir(script_dir)
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     script = storage.open(file.file.name)
+    os.chdir(script_dir)
     exec(script.read())
     script.close()
     img = [f for f in os.listdir() if f.endswith('.png')]

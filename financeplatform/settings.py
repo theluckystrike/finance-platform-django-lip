@@ -172,7 +172,6 @@ USE_TZ = True
 
 django_heroku.settings(locals())
 
-print(USE_S3)
 # TODO: update this to work without s3 for developmentfr
 if USE_S3:
     # aws settings

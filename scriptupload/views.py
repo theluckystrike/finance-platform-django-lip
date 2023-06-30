@@ -1,27 +1,29 @@
 from django.shortcuts import render
-from .forms import ScriptUploadForm
-from .utils import run_script, handle_script_upload
+from .forms import ScriptUploadForm, NewScriptCategory
+from .utils import run_script
 from django.shortcuts import get_object_or_404
-from .models import Script
+from .models import Script, ScriptCategory
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 
-def index(request):
+def upload_script(request):
     if request.method == "POST":
-        script_data = {
-            "name": request.FILES['file'].name.replace('.py', ''),
-        }
-        form = ScriptUploadForm(script_data, request.FILES)
+        form = ScriptUploadForm(request.POST, request.FILES)
+
         if form.is_valid():
-            # handle_script_upload(request.FILES["file"])
-            # run_script(request.FILES["file"].name)
-            form.save()
+            category_name = form.cleaned_data["category_name"]
+            category = ScriptCategory.objects.get(name=category_name)
+            script = form.save(commit=False)
+            script.category = category
+            script.save()
             messages.success(request, "Script added successfully")
         else:
+            # TODO: catch other possible issues
             messages.info(request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
-    return render(request, "scriptupload/index.html", {"form": form, "scripts": Script.objects.all()})
+    return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
 def script(request, scriptname):
@@ -29,3 +31,16 @@ def script(request, scriptname):
     if request.method == "POST":
         run_script(script)
     return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+
+
+def create_category(request):
+    if request.method == "POST":
+        form = NewScriptCategory(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "New category added successfully")
+        else:
+            # TODO: catch duplicates and create message
+            messages.info(request, "Category already exists")
+
+    return HttpResponseRedirect("/")

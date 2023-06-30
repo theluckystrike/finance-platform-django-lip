@@ -17,7 +17,7 @@ class Script(models.Model):
     image = models.ImageField(blank=True, upload_to=script_file_path, storage=privateStorage)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey('ScriptCategory', on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey('ScriptCategory', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.name
@@ -34,5 +34,9 @@ class Script(models.Model):
             storage.delete(self.image.name)
         super().delete(*args, **kwargs)
 
+
 class ScriptCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
