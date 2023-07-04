@@ -14,7 +14,8 @@ def upload_script(request):
             category_name = form.cleaned_data["category_name"]
             category = ScriptCategory.objects.get(name=category_name)
             script = form.save(commit=False)
-            script.category = category
+            script.save()
+            script.categories.add(category)
             script.save()
             messages.success(request, "Script added successfully")
         else:
