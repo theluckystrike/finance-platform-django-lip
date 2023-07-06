@@ -26,7 +26,7 @@
                 </span>
             </span>
             {% endfor %}
-            <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
+            <span id="modalBtn" class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
         </div>
         <div class="flex-1 text-center p-3">
 
@@ -45,9 +45,47 @@
             Run the script to see the chart load here
             {% endif %}
         </div>
+        <!-- TODO: add delete button for script -->
+    </div>
+    <div id="myModal" class="fixed inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <!-- TODO: exit button to close modal -->
+            <div
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h2 class="text-lg font-bold mb-4">Add script to another category</h2>
+                    <form action="{% url 'script_add_category' scriptid=script.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+    
+                        <div class="mb-4">
+                            <label for="category_name" class="block text-gray-700 font-bold mb-2">Category:</label>
+                            <select id="category_name" name="category_name" class="border border-gray-400 p-2 w-full" required>
+                                <option value="" disabled selected>Select a category</option>
+                                {% for cat in categories %}
+                                {% if cat not in script.categories.all %}
+                                <option value="{{cat.id}}">{{cat.name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" id="modalCloseBtn"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
+    document.getElementById('modalBtn').addEventListener('click', function () {
+            document.getElementById('myModal').classList.remove('hidden');
+        });
+
+        document.getElementById('modalCloseBtn').addEventListener('click', function () {
+            document.getElementById('myModal').classList.add('hidden');
+        });
     function deleteCategory(cat) {
         var url = "{% url 'script_delete_category' scriptid=script.id categoryname='placeholder' %}"
         var full_url = url.replace('placeholder', cat)
@@ -57,25 +95,6 @@
             headers: {
                 "X-CSRFToken": csrf,
                 'Content-Type': 'application/json',
-            },
-
-            success: (res) => {
-                console.log("all good")
-                location.reload()
-            },
-            error: (error) => {
-                console.log("error");
-            }
-        })
-    } 
-    function addCategory(cat) {
-        var url = "{% url 'script_add_category' scriptid=script.id categoryname='placeholder' %}"
-        var full_url = url.replace('placeholder', cat)
-        $.ajax({
-            type: "POST",
-            url: full_url,
-            data: {
-                "csrfmiddlewaretoken": csrf,
             },
 
             success: (res) => {

@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from .forms import ScriptUploadForm, NewScriptCategory
+from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
 from .utils import run_script
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+
+# TODO: always search up using pk
 
 
 def upload_script(request):
@@ -30,7 +33,7 @@ def script_page(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
-    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
 def create_category(request):
@@ -46,17 +49,27 @@ def create_category(request):
     return HttpResponseRedirect("/")
 
 
-def script_edit_category(request, scriptid, categoryname):
+def script_delete_category(request, scriptid, categoryname):
     if request.method == "DELETE":
         script = get_object_or_404(Script, id=scriptid)
-        category = ScriptCategory.objects.get(name=categoryname)
+        category = get_object_or_404(ScriptCategory, name=categoryname)
         script.categories.remove(category)
-        return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+        messages.success(request, "Script removed from category successfully")
+        return redirect(reverse('script', kwargs={"scriptname": script.name}))
+    return HttpResponseRedirect("/")
+
+
+def script_add_category(request, scriptid):
     if request.method == "POST":
-        script = get_object_or_404(Script, id=scriptid)
-        category = ScriptCategory.objects.get(name=categoryname)
-        script.categories.add(category)
-        return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+        form = ScriptAddCategoryForm(request.POST)
+        if form.is_valid():
+            script = get_object_or_404(Script, pk=scriptid)
+            category = get_object_or_404(ScriptCategory, pk=form.cleaned_data["category_name"])
+            script.categories.add(category)
+            messages.success(request, "Script added to category successfully")
+        else:
+            messages.error(request, "Could not add script to category")
+        return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
 
 
