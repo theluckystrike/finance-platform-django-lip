@@ -13,7 +13,19 @@
             <!-- Script location: {{script.file.name}}<br> -->
             Created: {{script.created}}<br>
             Last updated: {{script.last_updated}}<br>
-            Category: {% for category in script.categories.all %}{{category.name}} {% endfor %}
+            Category: 
+            {% for category in script.categories.all %}
+            <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">
+                {{category.name}}
+                <span
+                    class="absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center h-4 w-4 bg-gray-400 text-white rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-3 w-3">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </span>
+            </span>
+            {% endfor %}
+            <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
         </div>
         <div class="flex-1  text-center p-3">
 

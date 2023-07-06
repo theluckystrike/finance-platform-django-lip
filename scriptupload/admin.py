@@ -10,9 +10,11 @@ class ScriptCategoryInline(admin.TabularInline):
     can_delete = True
     extra = 1
 
+
 @admin.register(Script)
 class ScriptAdmin(admin.ModelAdmin):
     inlines = [ScriptCategoryInline]
+
 
 @admin.register(ScriptCategory)
 class ScriptCategoryAdmin(admin.ModelAdmin):
