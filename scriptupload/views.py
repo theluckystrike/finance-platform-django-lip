@@ -26,7 +26,7 @@ def upload_script(request):
     return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
-def script(request, scriptname):
+def script_page(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
@@ -43,6 +43,20 @@ def create_category(request):
             # TODO: catch duplicates and create message
             messages.info(request, "Category already exists")
 
+    return HttpResponseRedirect("/")
+
+
+def script_edit_category(request, scriptid, categoryname):
+    if request.method == "DELETE":
+        script = get_object_or_404(Script, id=scriptid)
+        category = ScriptCategory.objects.get(name=categoryname)
+        script.categories.remove(category)
+        return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+    if request.method == "POST":
+        script = get_object_or_404(Script, id=scriptid)
+        category = ScriptCategory.objects.get(name=categoryname)
+        script.categories.add(category)
+        return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
     return HttpResponseRedirect("/")
 
 

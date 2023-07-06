@@ -1,4 +1,3 @@
-
 {% extends 'scriptupload/base.html' %}
 {% load static %}
 
@@ -13,25 +12,27 @@
             <!-- Script location: {{script.file.name}}<br> -->
             Created: {{script.created}}<br>
             Last updated: {{script.last_updated}}<br>
-            Category: 
+            Category:
             {% for category in script.categories.all %}
             <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">
                 {{category.name}}
-                <span
+                <span onclick="deleteCategory('{{category.name}}')"
                     class="absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center h-4 w-4 bg-gray-400 text-white rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-3 w-3">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        class="h-3 w-3">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </span>
             </span>
             {% endfor %}
             <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
         </div>
-        <div class="flex-1  text-center p-3">
+        <div class="flex-1 text-center p-3">
 
             <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
                 {% csrf_token %}
-                <button type="submit"class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                     Run script
                 </button>
             </form>
@@ -46,4 +47,45 @@
         </div>
     </div>
 </div>
+<script>
+    function deleteCategory(cat) {
+        var url = "{% url 'script_delete_category' scriptid=script.id categoryname='placeholder' %}"
+        var full_url = url.replace('placeholder', cat)
+        $.ajax({
+            type: "DELETE",
+            url: full_url,
+            headers: {
+                "X-CSRFToken": csrf,
+                'Content-Type': 'application/json',
+            },
+
+            success: (res) => {
+                console.log("all good")
+                location.reload()
+            },
+            error: (error) => {
+                console.log("error");
+            }
+        })
+    } 
+    function addCategory(cat) {
+        var url = "{% url 'script_add_category' scriptid=script.id categoryname='placeholder' %}"
+        var full_url = url.replace('placeholder', cat)
+        $.ajax({
+            type: "POST",
+            url: full_url,
+            data: {
+                "csrfmiddlewaretoken": csrf,
+            },
+
+            success: (res) => {
+                console.log("all good")
+                location.reload()
+            },
+            error: (error) => {
+                console.log("error");
+            }
+        })
+    } 
+</script>
 {% endblock %}
