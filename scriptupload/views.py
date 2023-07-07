@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from .forms import ScriptUploadForm, NewScriptCategory
+from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
 from .utils import run_script
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+
+# TODO: always search up using pk
 
 
 def upload_script(request):
@@ -14,7 +17,8 @@ def upload_script(request):
             category_name = form.cleaned_data["category_name"]
             category = ScriptCategory.objects.get(name=category_name)
             script = form.save(commit=False)
-            script.category = category
+            script.save()
+            script.categories.add(category)
             script.save()
             messages.success(request, "Script added successfully")
         else:
@@ -22,14 +26,15 @@ def upload_script(request):
             messages.info(request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
+    # TODO: return only the name of scripts and categories in the context
     return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
-def script(request, scriptname):
+def script_page(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
-    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all()})
+    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
 def create_category(request):
@@ -42,6 +47,32 @@ def create_category(request):
             # TODO: catch duplicates and create message
             messages.info(request, "Category already exists")
 
+    return HttpResponseRedirect("/")
+
+
+def script_delete_category(request, scriptid, categoryid):
+    if request.method == "DELETE":
+        script = get_object_or_404(Script, pk=scriptid)
+        category = get_object_or_404(ScriptCategory, pk=categoryid)
+        script.categories.remove(category)
+        # TODO: figure out why this message does not show and there are is an
+        # additional DELETE request to script/  
+        messages.success(request, "Script successfully removed from category")
+        return redirect(reverse('script', kwargs={"scriptname": script.name}))
+    return HttpResponseRedirect("/")
+
+
+def script_add_category(request, scriptid):
+    if request.method == "POST":
+        form = ScriptAddCategoryForm(request.POST)
+        if form.is_valid():
+            script = get_object_or_404(Script, pk=scriptid)
+            category = get_object_or_404(ScriptCategory, pk=form.cleaned_data["category_name"])
+            script.categories.add(category)
+            messages.success(request, f"Script successfully added to category '{category.name}'")
+        else:
+            messages.error(request, f"Could not add script to category '{category.name}'")
+        return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
 
 

@@ -1,4 +1,3 @@
-
 {% extends 'scriptupload/base.html' %}
 {% load static %}
 
@@ -13,13 +12,27 @@
             <!-- Script location: {{script.file.name}}<br> -->
             Created: {{script.created}}<br>
             Last updated: {{script.last_updated}}<br>
-            Category: {{script.category.name}}
+            Category:
+            {% for category in script.categories.all %}
+            <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">
+                {{category.name}}
+                <span onclick="deleteCategory('{{category.id}}')"
+                    class="absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center h-4 w-4 bg-gray-400 text-white rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        class="h-3 w-3">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </span>
+            </span>
+            {% endfor %}
+            <span id="modalBtn" class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
         </div>
-        <div class="flex-1  text-center p-3">
+        <div class="flex-1 text-center p-3">
 
             <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
                 {% csrf_token %}
-                <button type="submit"class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
                     Run script
                 </button>
             </form>
@@ -32,6 +45,68 @@
             Run the script to see the chart load here
             {% endif %}
         </div>
+        <!-- TODO: add delete button for script -->
+    </div>
+    <div id="myModal" class="fixed inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <!-- TODO: exit button to close modal -->
+            <div
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h2 class="text-lg font-bold mb-4">Add script to another category</h2>
+                    <form action="{% url 'script_add_category' scriptid=script.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+    
+                        <div class="mb-4">
+                            <label for="category_name" class="block text-gray-700 font-bold mb-2">Category:</label>
+                            <select id="category_name" name="category_name" class="border border-gray-400 p-2 w-full" required>
+                                <option value="" disabled selected>Select a category</option>
+                                {% for cat in categories %}
+                                {% if cat not in script.categories.all %}
+                                <option value="{{cat.id}}">{{cat.name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" id="modalCloseBtn"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    // TODO: add all JS to a single file
+    document.getElementById('modalBtn').addEventListener('click', function () {
+        document.getElementById('myModal').classList.remove('hidden');
+    });
+    
+    document.getElementById('modalCloseBtn').addEventListener('click', function () {
+        document.getElementById('myModal').classList.add('hidden');
+    });
+    // TODO: maybe make this into a DELETE form
+    function deleteCategory(cat) {
+        var url = "{% url 'script_delete_category' scriptid=script.id categoryid='placeholder' %}"
+        var full_url = url.replace('placeholder', cat)
+        $.ajax({
+            type: "DELETE",
+            url: full_url,
+            headers: {
+                "X-CSRFToken": csrf,
+                'Content-Type': 'application/json',
+            },
+
+            success: (res) => {
+                console.log("all good")
+                location.reload()
+            },
+            error: (error) => {
+                console.log("error");
+            }
+        })
+    } 
+</script>
 {% endblock %}

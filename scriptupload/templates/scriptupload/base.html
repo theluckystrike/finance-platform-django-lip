@@ -8,44 +8,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Test</title>
-    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
 </head>
 
 <body class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-gray-200 p-4">
+    <aside class="w-1/4 bg-gray-200 p-4 pr-0">
         <h1 class="text-2xl font-bold mb-4">Scripts</h1>
         <!-- search bar -->
-        <div class="py-2 relative">
+        <div class="py-2 relative mr-4 z-10">
             <form autocomplete="off" id="search-bar" method="POST">
                 {% csrf_token %}
-                <input type="text" id="search-input" class="border border-gray-400 p-2 w-full" placeholder="Search for scripts">
+                <input type="text" id="search-input" class="border border-gray-400 p-2 w-full"
+                    placeholder="Search for scripts">
             </form>
             <div id="search-results" class="hidden bg-white w-full absolute"></div>
         </div>
         <!-- sidebar elements -->
-        <ul class="space-y-2">
-            <li class="flex items-center">
+        <ul class="space-y-2 z-0">
+            <li class="flex items-center p-2">
                 <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
                 <a href="{% url 'uploadScript' %}" class="text-blue-500 hover:text-blue-700">+ Add new script</a>
             </li>
-            {% for script in scripts %}
-            <li class="flex items-center">
+            <li class="relative group flex items-center hover:bg-gray-300 p-2">
                 <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
-                <a href="{% url 'script' scriptname=script.name %}" class="text-blue-500 hover:text-blue-700">{{ script.name }}</a>
+                <span class="text-blue-500 hover:text-blue-700">All scripts</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-auto text-gray-500" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M6.293 15.707a1 1 0 01-1.414-1.414L8.586 10 4.879 6.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <ul
+                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover:block min-w-full">
+                    <!-- Dropdown menu content -->
+                    {% for script in scripts %}
+                    <a href="{% url 'script' scriptname=script.name %}">
+                        <li class="hover:bg-gray-400 p-2">{{script.name}}</li>
+                    </a>
+                    {% endfor %}
+
+                </ul>
+            </li>
+            {% for category in categories %}
+            <li class="relative group flex items-center hover:bg-gray-300 p-2">
+                <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
+                <span class="text-blue-500 hover:text-blue-700">{{ category.name }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-auto text-gray-500" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M6.293 15.707a1 1 0 01-1.414-1.414L8.586 10 4.879 6.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <ul
+                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover:block min-w-full">
+                    <!-- Dropdown menu content -->
+                    {% for script in category.script_set.all %}
+                    <a href="{% url 'script' scriptname=script.name %}">
+                        <li class="hover:bg-gray-400 p-2">{{script.name}}</li>
+                    </a>
+                    {% endfor %}
+
+                </ul>
             </li>
             {% endfor %}
         </ul>
     </aside>
 
 
-    <!-- messages -->
     <div class="flex-1 p-4">
+        <!-- messages -->
+        <!-- TODO: fade out messages -->
         {% if messages %}
         <div class="fixed top-0 left-0 w-full h-auto py-4 flex justify-center items-center">
             {% for message in messages %}
-            <div class="{% if message.tags == 'info' %} bg-blue-500 {% endif %} {% if message.tags == 'success' %} bg-green-500 {% endif %} text-white rounded-lg py-2 px-4">
+            <div
+                class="{% if message.tags == 'info' %} bg-blue-500 {% endif %} {% if message.tags == 'success' %} bg-green-500 {% endif %} text-white rounded-lg py-2 px-4">
                 <div class="text-center">
                     <p class="text-md">{{ message }}</p>
                 </div>
@@ -59,7 +98,7 @@
     </div>
 
     <script>
-        const sendSearch = (name)=>{
+        const sendSearch = (name) => {
             $.ajax({
                 type: "POST",
                 url: "{% url 'script_search' %}",
@@ -70,7 +109,7 @@
                 success: (res) => {
                     const data = res.results
                     search_results.innerHTML = ""
-                    if(Array.isArray(data)){
+                    if (Array.isArray(data)) {
                         data.forEach(name => {
                             search_results.innerHTML += `
                             <a href="${name.url}">
@@ -93,8 +132,8 @@
         const search_results = document.getElementById("search-results")
         const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
-        search_input.addEventListener('keyup', e=>{
-            if(search_results.classList.contains('hidden')){
+        search_input.addEventListener('keyup', e => {
+            if (search_results.classList.contains('hidden')) {
                 search_results.classList.remove('hidden');
             }
             sendSearch(e.target.value);
