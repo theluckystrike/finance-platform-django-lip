@@ -26,6 +26,7 @@ def upload_script(request):
             messages.info(request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
+    # TODO: return only the name of scripts and categories in the context
     return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
 
 
@@ -49,12 +50,14 @@ def create_category(request):
     return HttpResponseRedirect("/")
 
 
-def script_delete_category(request, scriptid, categoryname):
+def script_delete_category(request, scriptid, categoryid):
     if request.method == "DELETE":
-        script = get_object_or_404(Script, id=scriptid)
-        category = get_object_or_404(ScriptCategory, name=categoryname)
+        script = get_object_or_404(Script, pk=scriptid)
+        category = get_object_or_404(ScriptCategory, pk=categoryid)
         script.categories.remove(category)
-        messages.success(request, "Script removed from category successfully")
+        # TODO: figure out why this message does not show and there are is an
+        # additional DELETE request to script/  
+        messages.success(request, "Script successfully removed from category")
         return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
 
@@ -66,9 +69,9 @@ def script_add_category(request, scriptid):
             script = get_object_or_404(Script, pk=scriptid)
             category = get_object_or_404(ScriptCategory, pk=form.cleaned_data["category_name"])
             script.categories.add(category)
-            messages.success(request, "Script added to category successfully")
+            messages.success(request, f"Script successfully added to category '{category.name}'")
         else:
-            messages.error(request, "Could not add script to category")
+            messages.error(request, f"Could not add script to category '{category.name}'")
         return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
 

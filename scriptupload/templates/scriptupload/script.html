@@ -16,7 +16,7 @@
             {% for category in script.categories.all %}
             <span class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">
                 {{category.name}}
-                <span onclick="deleteCategory('{{category.name}}')"
+                <span onclick="deleteCategory('{{category.id}}')"
                     class="absolute top-0 right-0 -mt-1 -mr-1 flex items-center justify-center h-4 w-4 bg-gray-400 text-white rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         class="h-3 w-3">
@@ -79,15 +79,17 @@
     </div>
 </div>
 <script>
+    // TODO: add all JS to a single file
     document.getElementById('modalBtn').addEventListener('click', function () {
-            document.getElementById('myModal').classList.remove('hidden');
-        });
-
-        document.getElementById('modalCloseBtn').addEventListener('click', function () {
-            document.getElementById('myModal').classList.add('hidden');
-        });
+        document.getElementById('myModal').classList.remove('hidden');
+    });
+    
+    document.getElementById('modalCloseBtn').addEventListener('click', function () {
+        document.getElementById('myModal').classList.add('hidden');
+    });
+    // TODO: maybe make this into a DELETE form
     function deleteCategory(cat) {
-        var url = "{% url 'script_delete_category' scriptid=script.id categoryname='placeholder' %}"
+        var url = "{% url 'script_delete_category' scriptid=script.id categoryid='placeholder' %}"
         var full_url = url.replace('placeholder', cat)
         $.ajax({
             type: "DELETE",
