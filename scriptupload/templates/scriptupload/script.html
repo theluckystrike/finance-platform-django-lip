@@ -28,14 +28,17 @@
             {% endfor %}
             <span id="modalBtn" class="inline-block relative px-2 py-1 border border-gray-600 rounded-full">+</span>
         </div>
-        <div class="flex-1 text-center p-3">
+        <div class="flex text-center p-3 justify-center">
 
             <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
                 {% csrf_token %}
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                <button type="submit" class="flex-none bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded-full">
                     Run script
                 </button>
             </form>
+            <button type="submit" class="flex-none bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded-full">
+                    <a href="{{script.file.url}}">View script</a>
+                </button>
         </div>
         <div class="flex-1  text-center">
 
