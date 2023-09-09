@@ -1,4 +1,3 @@
-
 {% extends 'scriptupload/base.html' %}
 {% load static %}
 
@@ -16,6 +15,9 @@
                             <option value="" disabled selected>Select a category</option>
                             {% for cat in categories %}
                             <option>{{cat.name}}</option>
+                            {% for subcat in cat.scriptcategory_set.all %}
+                            <option>{{cat.name}}->{{subcat.name}}</option>
+                            {% endfor %}
                             {% endfor %}
                         </select>
                         <br>

@@ -1,0 +1,61 @@
+{% extends 'scriptupload/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="flex justify-center items-top h-screen">
+    <div class="flex flex-col w-3/4">
+        <div class="flex-none text-left p-6 text-xl font-bold">
+            {{ category.name }}
+        </div>
+        <div class="flex-1 text-left p-3">
+            <div class="relative overflow-x-auto">
+                <table class="table-fixed w-full text-sm text-left text-gray-500 border">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Script name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Created
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Script contents
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if category.script_set.all %}
+                        {% for script in category.script_set.all %}
+                        <tr class="bg-white border-b hover:bg-gray-100">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ script.name }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ script.last_updated }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{% url 'script' scriptname=script.name %}" class="text-blue-500">View
+                                    script</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr class="bg-white border-b hover:bg-gray-100">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                Nothing to see here
+                            </th>
+                        </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

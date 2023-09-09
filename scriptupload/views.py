@@ -27,14 +27,19 @@ def upload_script(request):
     else:
         form = ScriptUploadForm()
     # TODO: return only the name of scripts and categories in the context
-    return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
+    return render(request, "scriptupload/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+
+
+def category_page(request, categoryname):
+    category = get_object_or_404(ScriptCategory, name=categoryname)
+    return render(request, "scriptupload/category.html", {"category": category, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
 
 
 def script_page(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
-    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.all()})
+    return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
 
 
 def create_category(request):

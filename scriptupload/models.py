@@ -13,7 +13,7 @@ def script_file_path(instance, filename):
 
 class ScriptCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
-
+    parent_category = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):
         return self.name
 

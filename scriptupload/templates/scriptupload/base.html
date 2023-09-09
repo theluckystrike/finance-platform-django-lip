@@ -26,7 +26,7 @@
             <div id="search-results" class="hidden bg-white w-full absolute"></div>
         </div>
         <!-- sidebar elements -->
-        <ul class="space-y-2 z-0">
+        <ul class="space-y-2 z-5">
             <li class="flex items-center p-2">
                 <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
                 <a href="{% url 'uploadScript' %}" class="text-blue-500 hover:text-blue-700">+ Add new script</a>
@@ -64,9 +64,12 @@
                 <ul
                     class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover:block min-w-full">
                     <!-- Dropdown menu content -->
-                    {% for script in category.script_set.all %}
-                    <a href="{% url 'script' scriptname=script.name %}">
-                        <li class="hover:bg-gray-400 p-2">{{script.name}}</li>
+                    <a href="{% url 'category' categoryname=category.name %}">
+                        <li class="hover:bg-gray-400 p-2">{{category.name}} scripts</li>
+                    </a>
+                    {% for subcat in category.scriptcategory_set.all %}
+                    <a href="{% url 'category' categoryname=subcat.name %}">
+                        <li class="hover:bg-gray-400 p-2">{{subcat.name}}</li>
                     </a>
                     {% endfor %}
 

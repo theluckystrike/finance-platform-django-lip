@@ -9,7 +9,6 @@
             {{script.name}}
         </div>
         <div class="flex-1 text-center p-3">
-            <!-- Script location: {{script.file.name}}<br> -->
             Created: {{script.created}}<br>
             Last updated: {{script.last_updated}}<br>
             Category:
@@ -70,6 +69,11 @@
                                 {% if cat not in script.categories.all %}
                                 <option value="{{cat.id}}">{{cat.name}}</option>
                                 {% endif %}
+                                {% for subcat in cat.scriptcategory_set.all %}
+                                {% if subcat not in script.categories.all %}
+                                <option value="{{subcat.id}}">{{cat.name}}->{{subcat.name}}</option>
+                                {% endif %}
+                                {% endfor %}
                                 {% endfor %}
                             </select>
                         </div>
