@@ -45,7 +45,7 @@ multitasking==0.0.11
 nest-asyncio==1.5.6
 numpy==1.25.2
 packaging==23.1
-pandas==2.0.3
+pandas==1.5.3
 parso==0.8.3
 pexpect==4.8.0
 pickleshare==0.7.5
@@ -66,7 +66,7 @@ python-dotenv==1.0.0
 pytz==2023.3
 pyzmq==25.1.0
 requests==2.28.1
-rich==12.5.1
+rich==13.5.2
 s3transfer==0.6.1
 six==1.16.0
 soupsieve==2.4.1
