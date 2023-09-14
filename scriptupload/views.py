@@ -6,6 +6,10 @@ from .models import Script, ScriptCategory
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+import nbformat
+from nbconvert import PythonExporter
+import os
+from django.core.files import File
 
 # TODO: always search up using pk
 
@@ -16,10 +20,31 @@ def upload_script(request):
         if form.is_valid():
             category_name = form.cleaned_data["category_name"]
             category = ScriptCategory.objects.get(name=category_name)
-            script = form.save(commit=False)
-            script.save()
-            script.categories.add(category)
-            script.save()
+            file = form.cleaned_data['file']
+            if file.name.endswith('.ipynb'):
+                # if the file is a jupyter notebook, we need to convert it
+                nb_content = nbformat.read(file, as_version=4)
+                exporter = PythonExporter()
+                (python_code, resources) = exporter.from_notebook_node(nb_content)
+                python_file_name = file.name.replace('.ipynb', '.py')
+                with open(python_file_name, 'w') as output_file:
+                    output_file.write(python_code)
+                # create the new file object 
+                new_file = File(open(python_file_name, 'rb'))
+                script = form.save(commit=False)
+                # create the script instance and update file field
+                script.file = new_file
+                script.save()
+                script.categories.add(category)
+                script.save()
+                # remove the temporary file
+                if os.path.exists(python_file_name):
+                    os.remove(python_file_name)
+            else:
+                script = form.save(commit=False)
+                script.save()
+                script.categories.add(category)
+                script.save()
             messages.success(request, "Script added successfully")
         else:
             # TODO: catch other possible issues

@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from nbconvert import PythonExporter
+import nbformat
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
@@ -18,28 +20,56 @@ def handle_script_upload(file):
 
 
 # run the script assuming that it saves the chart image as output
-def run_script_no_processing(file):
+def run_script(file):
+    # find the script
     script_dir = os.path.dirname(file.file.name)
     os.makedirs(script_dir, exist_ok=True)
+    # chose appropriate storage and open file
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     script = storage.open(file.file.name)
+    # move to script directory and execute
     os.chdir(script_dir)
     exec(script.read())
-    script.close()
     img = [f for f in os.listdir() if f.endswith('.png')]
     if len(img) > 0:
+        # if the script has already saved an image
         i = open(img[-1], 'rb')
         if not storage.exists(os.path.join(script_dir, img[-1])):
             storage.save(os.path.join(script_dir, img[-1]), File(i))
         file.image = os.path.join(script_dir, img[-1])
         file.save(update_fields=["image"])
         i.close()
+    script.close()
     os.chdir(settings.BASE_DIR)
+
+
+def new_run_script(file):
+    # maybe do this in another thread?
+    # find file
+    script_dir = os.path.dirname(file.file.name)
+    os.makedirs(script_dir, exist_ok=True)
+    # chose appropriate storage and open file
+    storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
+    script = storage.open(file.file.name)
+    # move to script directory and execute
+    os.chdir(script_dir)
+    # open and execute file
+    exec(script.read())
+    # find dataframe with data
+    df = locals().get("df")
+    if df is not None:
+        # plot chart
+        pass
+    else:
+        # report issue
+        pass
+    # save chart to storage and script model
+    # close all files
 
 
 # run the script assuming that the data to be plotted has been saved by
 # the script as a csv with any name
-def run_script(file):
+def run_script_with_data(file):
     # get the script directory
     script_dir = os.path.dirname(file.file.name)
     # create it if it does not exist
@@ -76,6 +106,7 @@ def run_script(file):
         file.save(update_fields=["image"])
         data_file.close()
         # TODO: support for two y axes, standardise column names
+        # TODO: add csv to script model for quicker access?
 
     os.chdir(settings.BASE_DIR)
 
