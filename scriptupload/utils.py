@@ -1,8 +1,6 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from nbconvert import PythonExporter
-import nbformat
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File

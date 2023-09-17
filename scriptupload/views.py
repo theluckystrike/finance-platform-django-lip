@@ -21,6 +21,7 @@ def upload_script(request):
             category_name = form.cleaned_data["category_name"]
             category = ScriptCategory.objects.get(name=category_name)
             file = form.cleaned_data['file']
+            script = form.save(commit=False)
             if file.name.endswith('.ipynb'):
                 # if the file is a jupyter notebook, we need to convert it
                 nb_content = nbformat.read(file, as_version=4)
@@ -31,20 +32,14 @@ def upload_script(request):
                     output_file.write(python_code)
                 # create the new file object 
                 new_file = File(open(python_file_name, 'rb'))
-                script = form.save(commit=False)
                 # create the script instance and update file field
                 script.file = new_file
-                script.save()
-                script.categories.add(category)
-                script.save()
                 # remove the temporary file
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
-            else:
-                script = form.save(commit=False)
-                script.save()
-                script.categories.add(category)
-                script.save()
+            script.save()
+            script.categories.add(category)
+            script.save()
             messages.success(request, "Script added successfully")
         else:
             # TODO: catch other possible issues
