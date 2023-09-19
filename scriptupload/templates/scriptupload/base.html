@@ -65,15 +65,19 @@
                 <ul
                     class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover/one:block min-w-full">
                     <!-- Dropdown menu content -->
-                    <a href="{% url 'category' categoryname=category.name %}">
-                        <li class="hover:bg-gray-400 p-2">{{category.name}} general scripts</li>
-                    </a>
+                    <!-- <a href="{% url 'category' categoryname=category.name %}"> -->
+                        <!-- <li class="hover:bg-gray-400 p-2">{{category.name}} general scripts</li> -->
+                    <!-- </a> -->
                     {% for subcat in category.scriptcategory_set.all %}
-                    <a href="{% url 'category' categoryname=subcat.name %}">
+                    <!-- <a href="{% url 'category' categoryname=subcat.name %}"> -->
                         <li class="relative group/two flex items-center hover:bg-gray-400 p-2">
                             {{subcat.name}}
                             <ul
                                 class="absolute hidden group-hover/two:block left-full top-0 bg-gray-300 text-gray-700 p-0 shadow-md min-w-full">
+                                <a href="{% url 'category' categoryname=subcat.name %}">
+
+                                    <li class="hover:bg-gray-400 p-2">{{subcat.name}} general scripts</li>
+                                </a>
                                 {% for subsubcat in subcat.scriptcategory_set.all %}
                                 <a href="{% url 'category' categoryname=subsubcat.name %}">
 
@@ -83,7 +87,7 @@
                             </ul>
 
                         </li>
-                    </a>
+                    <!-- </a> -->
                     {% endfor %}
 
                 </ul>

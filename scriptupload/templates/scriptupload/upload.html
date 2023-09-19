@@ -14,10 +14,16 @@
                         <select id="category_name" name="category_name" class="border border-gray-400 p-2 w-full" required>
                             <option value="" disabled selected>Select a category</option>
                             {% for cat in categories %}
-                            <option>{{cat.name}}</option>
-                            {% for subcat in cat.scriptcategory_set.all %}
-                            <option value="{{subcat.name}}">{{cat.name}}->{{subcat.name}}</option>
-                            {% endfor %}
+                            <optgroup label="{{cat.name}}">
+                                {% for subcat in cat.scriptcategory_set.all %}
+                                <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                                    <option value="{{subcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}} general</option>
+                                    {% for subsubcat in subcat.scriptcategory_set.all %}
+                                    <option value="{{subsubcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            </optgroup>
                             {% endfor %}
                         </select>
                         <br>
