@@ -42,7 +42,7 @@
                         clip-rule="evenodd" />
                 </svg>
                 <ul
-                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover:block min-w-full">
+                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover:block min-w-[50%]">
                     <!-- Dropdown menu content -->
                     {% for script in scripts %}
                     <a href="{% url 'script' scriptname=script.name %}">
@@ -63,7 +63,7 @@
                         clip-rule="evenodd" />
                 </svg>
                 <ul
-                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover/one:block min-w-full">
+                    class="absolute left-full top-0 hidden bg-gray-300 text-gray-700 p-0 shadow-md group-hover/one:block min-w-[50%]">
                     <!-- Dropdown menu content -->
                     <!-- <a href="{% url 'category' categoryname=category.name %}"> -->
                         <!-- <li class="hover:bg-gray-400 p-2">{{category.name}} general scripts</li> -->
