@@ -11,9 +11,11 @@ class ScriptUploadForm(forms.ModelForm):
 
 
 class NewScriptCategory(forms.ModelForm):
+    parent = forms.IntegerField()
     class Meta:
         model = ScriptCategory
         fields = ("name",)
+
 
 
 class ScriptAddCategoryForm(forms.Form):

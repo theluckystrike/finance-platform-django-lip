@@ -52,14 +52,26 @@
                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <h2 class="text-lg font-bold mb-4">Add new category</h2>
-                    <!-- TODO: chose parent category or have none -->
                     <form action="{% url 'create_category' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         <div class="mb-4">
                             <label for="name" class="block text-gray-700 font-bold mb-2">Category name:</label>
                             <input type="text" id="name" name="name" class="border border-gray-400 p-2 w-full"
-                                autocomplete="on">
+                                autocomplete="on" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="parent" class="block text-gray-700 font-bold mb-2">Parent category:</label>
+                            <select id="parent" name="parent" class="border border-gray-400 p-2 w-full" required>
+                                <option value="" selected>Select a category</option>
+                                <option value="-1">None</option>
+                                {% for cat in categories %}
+                                <option value="{{cat.id}}">{{cat.name}}</option>
+                                {% for subcat in cat.scriptcategory_set.all %}
+                                <option value="{{subcat.id}}">{{cat.name}}->{{subcat.name}}</option>
+                                {% endfor %}
+                                {% endfor %}
+                            </select>
                         </div>
                         <button type="submit" id="modalCloseBtn"
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>

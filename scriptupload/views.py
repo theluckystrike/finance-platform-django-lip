@@ -66,7 +66,15 @@ def create_category(request):
     if request.method == "POST":
         form = NewScriptCategory(request.POST)
         if form.is_valid():
-            form.save()
+            print(form.cleaned_data)
+            parent_id = form.cleaned_data['parent']
+            if parent_id < 0:
+                form.save()
+            else:
+                parent = get_object_or_404(ScriptCategory, pk=parent_id)
+                category = form.save()
+                category.parent_category = parent
+                category.save()
             messages.success(request, "New category added successfully")
         else:
             # TODO: catch duplicates and create message
