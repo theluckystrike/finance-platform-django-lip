@@ -17,6 +17,11 @@ class NewScriptCategory(forms.ModelForm):
         fields = ("name",)
 
 
+# class EditScriptForm(forms.ModelForm):
+#     class Meta:
+#         model = Script
+#         fields = ['name', '']
+
 
 class ScriptAddCategoryForm(forms.Form):
     category_name = forms.IntegerField()

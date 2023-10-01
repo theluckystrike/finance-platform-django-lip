@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from django.core.files.base import ContentFile
 from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
 from .utils import run_script
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, FileResponse
 from django.urls import reverse
 import nbformat
 from nbconvert import PythonExporter
@@ -56,10 +57,26 @@ def category_page(request, categoryname):
 
 
 def script_page(request, scriptname):
+    # TODO: change these to use pk
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
     return render(request, "scriptupload/script.html", {"script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+
+
+def script_edit_page(request, scriptname):
+    if request.method == "GET":
+        script = get_object_or_404(Script, name=scriptname)
+        file_contents = script.file.read().decode("utf-8")
+        return render(request, "scriptupload/script_edit.html", {'file_contents': file_contents, "script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    elif request.method == "POST":
+        script = get_object_or_404(Script, name=scriptname)
+        # Get the edited script content from request
+        edited_content = request.POST.get('edited_content', '')
+        # encode and save to file
+        script.file.save(script.file.name, ContentFile(edited_content.encode("utf-8")))
+        messages.success(request, "Script updated successfully")
+        return HttpResponseRedirect(f"/scripts/{scriptname}")
 
 
 def create_category(request):

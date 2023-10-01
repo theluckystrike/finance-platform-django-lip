@@ -38,7 +38,7 @@
             </form>
             <button type="submit"
                 class="flex-none bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded-full">
-                <a href="{{script.file.url}}">View script</a>
+                <a href="{% url 'script_edit' scriptname=script.name %}">View script</a>
             </button>
         </div>
         <div class="flex-1  text-center">
