@@ -21,6 +21,7 @@ def handle_script_upload(file):
 def run_script(file):
     # find the script
     script_dir = os.path.dirname(file.file.name)
+    print(file.file.name)
     os.makedirs(script_dir, exist_ok=True)
     # chose appropriate storage and open file
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -32,8 +33,11 @@ def run_script(file):
     if len(img) > 0:
         # if the script has already saved an image
         i = open(img[-1], 'rb')
-        if not storage.exists(os.path.join(script_dir, img[-1])):
-            storage.save(os.path.join(script_dir, img[-1]), File(i))
+        # delete last image if it exists
+        if storage.exists(os.path.join(script_dir, img[-1])):
+            storage.delete(os.path.join(script_dir, img[-1]))
+            # save new image to 
+        storage.save(os.path.join(script_dir, img[-1]), File(i))
         file.image = os.path.join(script_dir, img[-1])
         file.save(update_fields=["image"])
         i.close()
@@ -45,6 +49,7 @@ def new_run_script(file):
     # maybe do this in another thread?
     # find file
     script_dir = os.path.dirname(file.file.name)
+    print(file.file.name)
     os.makedirs(script_dir, exist_ok=True)
     # chose appropriate storage and open file
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage

@@ -5,7 +5,7 @@ from .utils import run_script
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
-from django.http import HttpResponseRedirect, JsonResponse, FileResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 import nbformat
 from nbconvert import PythonExporter
@@ -74,7 +74,7 @@ def script_edit_page(request, scriptname):
         # Get the edited script content from request
         edited_content = request.POST.get('edited_content', '')
         # encode and save to file
-        script.file.save(script.file.name, ContentFile(edited_content.encode("utf-8")))
+        script.file.save(os.path.basename(script.file.name), ContentFile(edited_content.encode("utf-8")))
         messages.success(request, "Script updated successfully")
         return HttpResponseRedirect(f"/scripts/{scriptname}")
 
