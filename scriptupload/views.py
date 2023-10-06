@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.core.files.base import ContentFile
-from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
-from .utils import run_script
+from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm, GenerateReportForm
+from .utils import run_script, category_to_pdf
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 import nbformat
 from nbconvert import PythonExporter
@@ -142,3 +142,20 @@ def script_search(request):
             data = "No results"
         return JsonResponse({"results": data})
     return HttpResponseRedirect("/")
+
+
+def generate_report(request):
+    if request.method == "POST":
+        form = GenerateReportForm(request.POST)
+        if form.is_valid():
+            category = get_object_or_404(ScriptCategory, pk=form.cleaned_data['category_id'])
+            pdf_response = category_to_pdf(category)
+            if pdf_response:
+                return pdf_response
+            else:
+                messages.info(request, "There are no scripts in this category")
+        else:
+            messages.error(request, "There was an error creating the report")
+    elif request.method == "GET":
+        form = GenerateReportForm()
+    return render(request, "scriptupload/generate_report.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
