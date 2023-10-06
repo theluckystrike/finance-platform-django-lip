@@ -17,8 +17,12 @@ def category_to_pdf(category):
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
+    scripts = category.script_set.all()
+    for script in scripts:
+        if not script.image:
+            run_script(script)
     image_paths = [
-        storage.url(script.image.name) for script in category.script_set.all()
+        storage.url(script.image.name) for script in scripts
         if script.image.name != "" and script.image is not None
         ]
     if len(image_paths) == 0:

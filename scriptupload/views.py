@@ -151,6 +151,7 @@ def generate_report(request):
             category = get_object_or_404(ScriptCategory, pk=form.cleaned_data['category_id'])
             pdf_response = category_to_pdf(category)
             if pdf_response:
+                messages.success(request, "Successfully generated report")
                 return pdf_response
             else:
                 messages.info(request, "There are no scripts in this category")
