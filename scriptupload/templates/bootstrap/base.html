@@ -116,21 +116,21 @@
           {% for category in categories %}
           <li class="nav-item">
               <button class="nav-link btn d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
-                data-bs-target="#{{category.name}}-collapse" aria-expanded="false">
+                data-bs-target="#{{category.name|cut:' '}}-collapse" aria-expanded="false">
                 <span data-feather="chevron-right" class="align-text-bottom"></span>
                 {{ category.name }}
               </button>
-            <div class="collapse" id="{{category.name}}-collapse">
+            <div class="collapse" id="{{category.name|cut:' '}}-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 medium">
                 {% for subcat in category.scriptcategory_set.all %}
                 <li>
                   <button class="nav-link btn d-inline-flex align-items-center rounded border-0 collapsed"
-                    data-bs-toggle="collapse" data-bs-target="#{{subcat.name}}-collapse" aria-expanded="true">
+                    data-bs-toggle="collapse" data-bs-target="#{{subcat.name|cut:' '}}-collapse" aria-expanded="true">
                     &nbsp;&nbsp;
                     <span data-feather="corner-down-right" class="align-text-bottom"></span>
                     {{ subcat.name }}
                   </button>
-                  <div class="collapse" id="{{subcat.name}}-collapse">
+                  <div class="collapse" id="{{subcat.name|cut:' '}}-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 medium list-group">
                       {% for subsubcat in subcat.scriptcategory_set.all %}
                       <li>
