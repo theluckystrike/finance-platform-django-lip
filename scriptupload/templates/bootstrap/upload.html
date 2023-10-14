@@ -1,0 +1,84 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Upload a Script</h1>
+</div>
+
+<div class="d-flex justify-content-center">
+    <form class="w-50" method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="category_name" class="form-label">Category</label>
+            <select id="category_name" name="category_name" class="form-control" required>
+                <option value="" disabled selected>Select a category</option>
+                {% for cat in categories %}
+                <optgroup label="{{cat.name}}">
+                    {% for subcat in cat.scriptcategory_set.all %}
+                <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                    <option value="{{subcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}} general</option>
+                    {% for subsubcat in subcat.scriptcategory_set.all %}
+                    <option value="{{subsubcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+                </optgroup>
+                {% endfor %}
+            </select>
+
+            <button class="btn p-0" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <span class="form-text">Create a new category</span>
+            </button>
+            
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Script name</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">Select a file</label>
+            <input type="file" id="file" name="file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'create_category' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create a category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="name" class="form-label">Category name</label>
+                        <input type="text" id="name" name="name" class="form-control" autocomplete="on" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="parent" class="form-label">Parent category</label>
+                        <select id="parent" name="parent" class="form-control" required>
+                            <option value="" selected>Select a category</option>
+                            <option value="-1">None</option>
+                            {% for cat in categories %}
+                            <option value="{{cat.id}}">{{cat.name}}</option>
+                            {% for subcat in cat.scriptcategory_set.all %}
+                            <option value="{{subcat.id}}">{{cat.name}}->{{subcat.name}}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

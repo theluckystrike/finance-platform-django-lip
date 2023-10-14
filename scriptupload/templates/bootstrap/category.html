@@ -1,0 +1,42 @@
+{% extends 'bootstrap/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{{category.name}}</h1>
+    {% if category.script_set.all %}
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'generate_report' categoryid=category.id %}">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Generate report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
+        </a>
+    </div>
+    {% endif %}
+</div>
+<div class="table-responsive">
+    {% if category.script_set.all %}
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Script name</th>
+                <th scope="col">Created</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for script in category.script_set.all %}
+            <tr>
+                <th scope="row">{{script.name}}</th>
+                <td>{{script.last_updated}}</td>
+                <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <span class="text-large">
+        Nothing to see here
+    </span>
+    {% endif %}
+</div>
+
+{% endblock %}
