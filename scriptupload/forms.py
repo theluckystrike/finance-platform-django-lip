@@ -16,9 +16,10 @@ class NewScriptCategory(forms.ModelForm):
         model = ScriptCategory
         fields = ("name",)
 
+# class UpdateCategoryForm(forms.ModelForm):
+#     categoryid = forms.IntegerField()
+#     new_name = forms.CharField(max_length=64)
 
-class GenerateReportForm(forms.Form):
-    category_id = forms.IntegerField()
 
 
 class ScriptAddCategoryForm(forms.Form):
