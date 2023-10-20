@@ -78,6 +78,7 @@ def script_page(request, scriptname):
         nameform = ScriptUploadForm(request.POST, instance=script)
         if nameform.is_valid():
             nameform.save()
+        return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
         if len(script.categories.all()) > 0:
