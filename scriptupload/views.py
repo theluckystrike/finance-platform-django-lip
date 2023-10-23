@@ -97,7 +97,7 @@ def delete_script(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         script.delete()
-    return redirect(upload_script)
+    return redirect(all_script_page)
 
 
 def script_edit_page(request, scriptname):
