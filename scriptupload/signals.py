@@ -10,7 +10,7 @@ privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 
 
 def delete_script_files(Script):
-    @receiver(pre_delete, sender=Script)
+    @receiver(pre_delete, sender=Script, weak=False)
     def delete_files(sender, instance, **kwargs):
         storage = privateStorage
         # check if script file exists and delete it
@@ -27,6 +27,6 @@ def delete_script_files(Script):
 
 
 def save_script(Script):
-    @receiver(pre_save, sender=Script)
+    @receiver(pre_save, sender=Script, weak=False)
     def update_last_updated(sender, instance, **kwargs):
         instance.last_updated = datetime.now()
