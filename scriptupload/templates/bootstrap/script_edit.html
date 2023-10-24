@@ -2,6 +2,38 @@
 {% load static %}
 
 {% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><a href="{% url 'script' scriptname=script.name %}"><span class="back-button"
+        data-feather="arrow-left"></span></a>&nbsp;{{script.name}} - edit code</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <!-- <a href="{% url 'script_edit' scriptname=script.name %}"> -->
+            <button type="submit" form="codeForm" class="btn btn-sm btn-outline-success">Save changes&nbsp;<span
+                class="align-text-bottom" data-feather="save"></span></button>
+        <!-- </a> -->
+    </div>
+</div>
+<!-- <div class="row p-2" id="something"> -->
+    <form method="POST" class="" id="codeForm">
+        {% csrf_token %}
+        <!-- <div class="border border-gray-400 p-2 h-[100%] text-left"> -->
+            <textarea id="codeEditorArea" style="display: none;" name="edited_content">{{ file_contents }}</textarea>
+        <!-- </div> -->
+    </form>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
+<!-- </div> -->
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("codeEditorArea"), {
+        mode: "python",  // Set the language mode
+        theme: "default",  // Choose a theme
+        lineNumbers: true,  // Show line numbers
+        lineWrapping: true,  // Wrap long lines
+        matchBrackets: true,
+        autoRefresh: true,
+    });
+</script>
 <style>
     .back-button {
         height: 24px;
@@ -9,36 +41,12 @@
         stroke-width: 3px;
         color: black;
     }
-</style>
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><a href="{% url 'script' scriptname=script.name %}"><span class="back-button"
-                data-feather="arrow-left"></span></a>&nbsp;{{script.name}} - edit code</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <!-- <a href="{% url 'script_edit' scriptname=script.name %}"> -->
-            <button type="submit" form="codeForm" class="btn btn-sm btn-outline-success">Save changes&nbsp;<span
-                    class="align-text-bottom" data-feather="save"></span></button>
-        <!-- </a> -->
-    </div>
-</div>
-<div>
-    <form method="POST" class="" id="codeForm">
-        {% csrf_token %}
-        <div class="border border-gray-400 p-2 h-[80%] rounded-md text-left">
-            <textarea id="code-editor" name="edited_content">{{ file_contents }}</textarea>
-        </div>
-    </form>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
-</div>
-<script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
-        mode: "python",  // Set the language mode
-        theme: "default",  // Choose a theme
-        lineNumbers: true,  // Show line numbers
-        lineWrapping: true,  // Wrap long lines
-    });
-    editor.setSize("100%", "100%")
-</script>
+    
+    .CodeMirror {
+        border: 1px solid #eee;
+        height: 70vh;
+    }
+    
+    </style>
+<script>editor.refresh()</script>
 {% endblock %}

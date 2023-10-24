@@ -17,6 +17,7 @@ from django.core.files import File
 
 def upload_script(request):
     if request.method == "POST":
+        # TODO: check for same name script
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
             category_name = form.cleaned_data["category_name"]
@@ -43,7 +44,6 @@ def upload_script(request):
             script.save()
             messages.success(request, "Script added successfully")
         else:
-            # TODO: catch other possible issues
             messages.info(request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
