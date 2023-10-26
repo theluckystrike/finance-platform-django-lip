@@ -1,3 +1,9 @@
+"""
+Configures admin privileges that allows an admin to manage the site.
+
+See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
+"""
+
 from django.contrib import admin
 from .models import Script, ScriptCategory
 

@@ -1,3 +1,10 @@
+/**
+This file contains styles for the page, and is what makes it look good.
+
+each blob beginning with a period represents a class, and those without a period represent an ID. These are how the
+project knows where these styles should be applied.
+ */
+
 body {
   font-size: .875rem;
 }

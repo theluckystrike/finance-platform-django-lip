@@ -1,3 +1,10 @@
+"""
+Configuration for the views on the site.
+
+These configure what the user will interact with and see when they visit each page.
+Each function configures a different view and defines which one in its name.
+"""
+
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
@@ -16,6 +23,9 @@ from django.core.files import File
 
 
 def upload_script(request):
+    """
+    Configures the page that shows when "Upload a script" is clicked in the sidebar.
+    """
     if request.method == "POST":
         # TODO: check for same name script
         form = ScriptUploadForm(request.POST, request.FILES)
@@ -52,6 +62,9 @@ def upload_script(request):
 
 
 def category_page(request, categoryname):
+    """
+    Configures the page that shows all scripts that are in a certain category, given the category name.
+    """
     category = get_object_or_404(ScriptCategory, name=categoryname)
     if request.method == "POST":
         form = NewScriptCategory(request.POST, instance=category)
@@ -66,11 +79,17 @@ def category_page(request, categoryname):
 
 
 def all_script_page(request):
+    """
+    Configures the page that is shown when "All scripts" is clicked in the sidebar.
+    """
     # category = get_object_or_404(ScriptCategory, name=categoryname)
     return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
 
 
 def script_page(request, scriptname):
+    """
+    Configures the page that shows an individual script when it is clicked on.
+    """
     # TODO: change these to use pk
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
@@ -87,6 +106,9 @@ def script_page(request, scriptname):
 
 
 def run_script_code(request, scriptname):
+    """
+    Configures the "Run" button that shows when looking at a script and the page that is shown when clicked.
+    """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         run_script(script)
@@ -94,6 +116,9 @@ def run_script_code(request, scriptname):
 
 
 def delete_script(request, scriptname):
+    """
+    Configures the "Delete" button that shows when looking at a script and the page that is shown when clicked.
+    """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         script.delete()
@@ -101,6 +126,9 @@ def delete_script(request, scriptname):
 
 
 def script_edit_page(request, scriptname):
+    """
+    Configures the "Edit" button that shows when looking at a script and the page that is shown when clicked.
+    """
     if request.method == "GET":
         script = get_object_or_404(Script, name=scriptname)
         file_contents = script.file.read().decode("utf-8")
@@ -116,6 +144,9 @@ def script_edit_page(request, scriptname):
 
 
 def create_category(request):
+    """
+    Configures that page that creates a new category of scripts.
+    """
     if request.method == "POST":
         form = NewScriptCategory(request.POST)
         if form.is_valid():
@@ -137,6 +168,9 @@ def create_category(request):
 
 
 def script_delete_category(request, scriptid, categoryid):
+    """
+    Configures the page that allows a user to delete a script, given its ID and category.
+    """
     if request.method == "GET":
         script = get_object_or_404(Script, pk=scriptid)
         category = get_object_or_404(ScriptCategory, pk=categoryid)
@@ -149,6 +183,9 @@ def script_delete_category(request, scriptid, categoryid):
 
 
 def script_add_category(request, scriptid):
+    """
+    Configures the page that shows when a script is added to a new category given its ID.
+    """
     if request.method == "POST":
         form = ScriptAddCategoryForm(request.POST)
         if form.is_valid():
@@ -163,6 +200,9 @@ def script_add_category(request, scriptid):
 
 
 def script_search(request):
+    """
+    Configures the functionality to search for a specific script.
+    """
     if request.method == "POST":
         search_query = request.POST.get("script_name")
         results = Script.objects.filter(name__icontains=search_query)
@@ -181,6 +221,9 @@ def script_search(request):
 
 
 def generate_report(request, categoryid):
+    """
+    Configures the page that shows when the "Generate a report" button is clicked in the sidebar given the category ID.
+    """
     if request.method == "GET":
         category = get_object_or_404(ScriptCategory, pk=categoryid)
         pdf_response = category_to_pdf(category)
