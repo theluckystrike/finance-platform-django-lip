@@ -94,7 +94,7 @@
         <ul class="nav flex-column">
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="/">
-              <span data-feather="plus" class="align-text-bottom"></span>
+              <span data-feather="upload-cloud" class="align-text-bottom"></span>
               Upload a script
             </a>
           </li>
@@ -108,11 +108,17 @@
 
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
           <span>Categories</span>
-          <!-- <a class="link-secondary" href="#" aria-label="Add a new report">
-            <span data-feather="plus-circle" class="align-text-bottom"></span>
-          </a> -->
+          <a class="link-secondary" href="#" aria-label="Add a new report">
+            
+          </a>
         </h6>
         <ul class="nav flex-column mb-2">
+          <li class="nav-item">
+              <a class="nav-link d-inline-flex align-items-center rounded border-0" href="{% url 'all_scripts' %}">
+                <span data-feather="chevron-right" class="align-text-bottom"></span>
+                All scripts
+              </a>
+          </li>
           {% for category in categories %}
           <li class="nav-item">
               <button class="nav-link btn d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
@@ -149,6 +155,14 @@
                   </div>
                 </li>
                 {% endfor %}
+                <!-- <hr class="mx-auto w-75 my-0">
+                <li>
+                  <a href="{% url 'category' categoryname=category.name %}"
+                    class="nav-link link-dark d-inline-flex text-decoration-none rounded">
+                    <span data-feather="corner-down-right" class="align-text-bottom"></span>
+                    {{ category.name }} scripts
+                  </a>
+                </li> -->
               </ul>
             </div>
           </li>

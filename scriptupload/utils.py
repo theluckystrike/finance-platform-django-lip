@@ -1,3 +1,7 @@
+"""
+Configures utility (helper) functions to be used in other places in the project.
+"""
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,6 +18,12 @@ from io import BytesIO
 
 
 def category_to_pdf(category):
+    """
+    Converts a report that was generated to a PDF file.
+
+    :param category: The category that the report was generated for.
+    :return: The PDF file.
+    """
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
@@ -73,6 +83,12 @@ def handle_script_upload(file):
 
 # run the script assuming that it saves the chart image as output
 def run_script(file):
+    """
+    Runs a script and saves the result back to storage, deleting the previous version.
+
+    :param file: The file that contains the script to be run.
+    :return: None.
+    """
     # find the script
     script_dir = os.path.dirname(file.file.name)
     # unique local temporary directory
@@ -104,6 +120,12 @@ def run_script(file):
 
 
 def new_run_script(file):
+    """
+    Runns a new script and saves it to storage.
+
+    :param file: The file that contains the script to be run.
+    :return: None.
+    """
     # maybe do this in another thread?
     # find file
     script_dir = os.path.dirname(file.file.name)
@@ -131,6 +153,12 @@ def new_run_script(file):
 # run the script assuming that the data to be plotted has been saved by
 # the script as a csv with any name
 def run_script_with_data(file):
+    """
+    Runs a script that contains data to be plotted, assuming the data is saved as a .csv file.
+
+    :param file: The file that contains the script to be run.
+    :return: None.
+    """
     # get the script directory
     script_dir = os.path.dirname(file.file.name)
     # create it if it does not exist

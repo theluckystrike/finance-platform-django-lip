@@ -26,10 +26,6 @@ class NewScriptCategory(forms.ModelForm):
         fields = ("name",)
 
 
-class GenerateReportForm(forms.Form):
-    category_id = forms.IntegerField()
-
-
 class ScriptAddCategoryForm(forms.Form):
     category_name = forms.IntegerField()
         

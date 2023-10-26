@@ -4,50 +4,68 @@
 <style>
     #placeholder {
         border: 3px dashed #a4a4a4;
-        height: 50vw;
+        min-height: 50vh;
+        max-width: 1200px;
+    }
+
+    #script-chart {
+        max-width: 1200px;
     }
 </style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">{{script.name}}</h1>
+    <h1 class="h2">{{script.name}}&ensp;
+    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
+        <span data-feather="edit" class="align-text-middle"></span>
+    </button></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <form method="post" enctype="multipart/form-data" action="{% url 'script' scriptname=script.name %}">
+        <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success mx-2">Run script&nbsp;<span
+            <button type="submit" class="btn btn-sm btn-outline-danger">Delete&nbsp;<span
+                    class="align-text-bottom" data-feather="play"></span></button>
+        </form>
+        <form method="post" action="{% url 'run_script' script.name %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-success mx-2">Run&nbsp;<span
                     class="align-text-bottom" data-feather="play"></span></button>
         </form>
 
         <a href="{% url 'script_edit' scriptname=script.name %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Edit/View code&nbsp;<span
+            <button type="button" class="btn btn-sm btn-outline-secondary">Edit&nbsp;<span
                     class="align-text-bottom" data-feather="external-link"></span></button>
         </a>
     </div>
 </div>
-<div class="w-100">
-    {% if script.image %}
-    <img class="w-100" src="{{script.image.url}}">
-    {% else %}
-    <div class="w-full rounded d-flex align-item-center" id="placeholder">
-        <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
+<div class="row">
+
+    <div class="col-12 col-md-9 col-lg-9" id="script-frame">
+        {% if script.image %}
+        <div class="d-flex align-item-center m-2">
+            <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
+        </div>
+        {% else %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
-<div>
-    <h4>Categories</h4>
-    {% for category in script.categories.all %}
-    <div class="shadow-sm bg-body p-2 m-2 rounded d-inline-block position-relative">
-        <a href="{% url 'script_delete_category' scriptid=script.id categoryid=category.id %}">
-            <span class="position-absolute p-0 top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-                <span data-feather="minus"></span>
-            </span>
-        </a>
-        {{category.name}}
+    <div class="col-12 col-md-3 col-lg-3">
+        <h4>Categories</h4>
+        {% for category in script.categories.all %}
+        <div class="shadow-sm bg-body p-2 m-2 rounded d-inline-block position-relative">
+            <a href="{% url 'script_delete_category' scriptid=script.id categoryid=category.id %}">
+                <span class="position-absolute p-0 top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                    <span data-feather="minus"></span>
+                </span>
+            </a>
+            <a class="text-decoration-none text-black" href="{% url 'category' categoryname=category.name %}">{{category.name}}</a>
+        </div>
+        {% endfor %}
+        <!-- <div class="shadow-sm bg-body p-2 m-1 rounded d-inline-block"> -->
+            <button type="button" class="btn shadow-sm bg-body p-1 m-2 rounded d-inline-block" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                <span data-feather="plus"></span>
+            </button>
+        <!-- </div> -->
     </div>
-    {% endfor %}
-    <!-- <div class="shadow-sm bg-body p-2 m-1 rounded d-inline-block"> -->
-        <button type="button" class="btn shadow-sm bg-body p-1 m-2 rounded d-inline-block" data-bs-toggle="modal" data-bs-target="#categoryModal">
-            <span data-feather="plus"></span>
-        </button>
-    <!-- </div> -->
 </div>
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -95,4 +113,31 @@
         window.history.replaceState(null, null, window.location.href);
     }
 </script>
+<div class="modal fade" id="changeNameModal" tabindex="-1" aria-labelledby="changeNameModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change script name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="name" class="form-label">Script name</label>
+                        <input type="text" id="name" name="name" placeholder="{{ nameform.instance.name }}"
+                            class="form-control" autocomplete="on" required>
+                    </div>
+                    <div class="mb-4">
+                        {{ nameform.category_name.as_hidden }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

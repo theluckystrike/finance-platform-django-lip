@@ -22,7 +22,7 @@ def delete_script_files(Script):
     :param Script: The script that is to be deleted.
     :return: None.
     """
-    @receiver(pre_delete, sender=Script)
+    @receiver(pre_delete, sender=Script, weak=False)
     def delete_files(sender, instance, **kwargs):
         storage = privateStorage
         # check if script file exists and delete it
@@ -45,6 +45,6 @@ def save_script(Script):
     :param Script: The script that is to be added.
     :return: None.
     """
-    @receiver(pre_save, sender=Script)
+    @receiver(pre_save, sender=Script, weak=False)
     def update_last_updated(sender, instance, **kwargs):
         instance.last_updated = datetime.now()
