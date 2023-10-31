@@ -20,7 +20,14 @@ import os
 from django.core.files import File
 
 # TODO: always search up using pk
+# TODO: custom 404 and internal error page
 
+
+# def handler404(request, *args, **argv):
+#     HttpResponseRedirect("/")
+
+# def handler500(request, *args, **argv):
+#     HttpResponseRedirect("/")
 
 def upload_script(request):
     """
@@ -42,7 +49,7 @@ def upload_script(request):
                 python_file_name = file.name.replace('.ipynb', '.py')
                 with open(python_file_name, 'w') as output_file:
                     output_file.write(python_code)
-                # create the new file object 
+                # create the new file object
                 new_file = File(open(python_file_name, 'rb'))
                 # create the script instance and update file field
                 script.file = new_file
@@ -54,7 +61,8 @@ def upload_script(request):
             script.save()
             messages.success(request, "Script added successfully")
         else:
-            messages.info(request, "A script with this name has already been added")
+            messages.info(
+                request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
     # TODO: return only the name of scripts and categories in the context
@@ -101,7 +109,8 @@ def script_page(request, scriptname):
     else:
         nameform = ScriptUploadForm(instance=script)
         if len(script.categories.all()) > 0:
-            nameform.fields['category_name'].initial = script.categories.all()[0].name
+            nameform.fields['category_name'].initial = script.categories.all()[
+                0].name
     return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
 
 
@@ -138,7 +147,8 @@ def script_edit_page(request, scriptname):
         # Get the edited script content from request
         edited_content = request.POST.get('edited_content', '')
         # encode and save to file
-        script.file.save(os.path.basename(script.file.name), ContentFile(edited_content.encode("utf-8")))
+        script.file.save(os.path.basename(script.file.name),
+                         ContentFile(edited_content.encode("utf-8")))
         messages.success(request, "Script updated successfully")
         return HttpResponseRedirect(f"/scripts/{scriptname}")
 
@@ -176,7 +186,7 @@ def script_delete_category(request, scriptid, categoryid):
         category = get_object_or_404(ScriptCategory, pk=categoryid)
         script.categories.remove(category)
         # TODO: figure out why this message does not show and there are is an
-        # additional DELETE request to script/  
+        # additional DELETE request to script/
         messages.success(request, "Script successfully removed from category")
         return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
@@ -190,11 +200,14 @@ def script_add_category(request, scriptid):
         form = ScriptAddCategoryForm(request.POST)
         if form.is_valid():
             script = get_object_or_404(Script, pk=scriptid)
-            category = get_object_or_404(ScriptCategory, pk=form.cleaned_data["category_name"])
+            category = get_object_or_404(
+                ScriptCategory, pk=form.cleaned_data["category_name"])
             script.categories.add(category)
-            messages.success(request, f"Script successfully added to category '{category.name}'")
+            messages.success(
+                request, f"Script successfully added to category '{category.name}'")
         else:
-            messages.error(request, f"Could not add script to category '{category.name}'")
+            messages.error(
+                request, f"Could not add script to category '{category.name}'")
         return redirect(reverse('script', kwargs={"scriptname": script.name}))
     return HttpResponseRedirect("/")
 

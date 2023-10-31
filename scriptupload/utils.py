@@ -3,8 +3,6 @@ Configures utility (helper) functions to be used in other places in the project.
 """
 
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
@@ -15,6 +13,9 @@ from reportlab.pdfgen import canvas
 import shutil
 from datetime import datetime
 from io import BytesIO
+import ast
+import pkgutil
+import subprocess
 
 
 def scripts_to_pdf(scripts, categoryname=None):
@@ -33,14 +34,14 @@ def scripts_to_pdf(scripts, categoryname=None):
     image_paths = [
         storage.url(script.image.name) for script in scripts
         if script.image.name != "" and script.image is not None
-        ]
+    ]
     if len(image_paths) == 0:
         return None
     # open a buffer so that files are saves to temporary memory
     buffer = BytesIO()
     # set the title of the pdf
     if categoryname:
-        title_text = f"{category.name} report"
+        title_text = f"{categoryname} report"
     else:
         title_text = "Custom report"
     c = canvas.Canvas(buffer, pagesize=A4)
@@ -50,7 +51,7 @@ def scripts_to_pdf(scripts, categoryname=None):
     x = (page_width - title_width) / 2
     y = page_height - 50
     c.drawString(x, y, title_text)
-    
+
     # add the images to the pdf
     x, y = 50, 500
     for i in range(len(image_paths)):
@@ -67,7 +68,7 @@ def scripts_to_pdf(scripts, categoryname=None):
     response = HttpResponse(buffer.read(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="{}_report_{}.pdf"'.format(
         categoryname if categoryname else "CustomReport", datetime.now().strftime("%d_%m_%Y_%H_%M")
-        )
+    )
     # close buffer and return http response
     buffer.close()
     return response
@@ -120,85 +121,35 @@ def run_script(file):
     if os.path.exists(local_dir):
         shutil.rmtree(local_dir)
 
-
-def new_run_script(file):
-    """
-    Runns a new script and saves it to storage.
-
-    :param file: The file that contains the script to be run.
-    :return: None.
-    """
-    # maybe do this in another thread?
-    # find file
-    script_dir = os.path.dirname(file.file.name)
-    print(file.file.name)
-    os.makedirs(script_dir, exist_ok=True)
-    # chose appropriate storage and open file
-    storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
-    script = storage.open(file.file.name)
-    # move to script directory and execute
-    os.chdir(script_dir)
-    # open and execute file
-    exec(script.read())
-    # find dataframe with data
-    df = locals().get("df")
-    if df is not None:
-        # plot chart
-        pass
-    else:
-        # report issue
-        pass
-    # save chart to storage and script model
-    # close all files
+ 
+# utililty methods for finding dependencies on scripts that are not
+# not installed on the server
+def extract_imports(script_text):
+    tree = ast.parse(script_text)
+    imports = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for name in node.names:
+                imports.append(name.name)
+        elif isinstance(node, ast.ImportFrom):
+            module = node.module
+            for name in node.names:
+                imports.append(f"{module}.{name.name}")
+    return imports
 
 
-# run the script assuming that the data to be plotted has been saved by
-# the script as a csv with any name
-def run_script_with_data(file):
-    """
-    Runs a script that contains data to be plotted, assuming the data is saved as a .csv file.
+def check_installed_libraries(imports):
+    missing_libraries = []
+    for library in imports:
+        if not pkgutil.find_loader(library):
+            missing_libraries.append(library)
+    return missing_libraries
 
-    :param file: The file that contains the script to be run.
-    :return: None.
-    """
-    # get the script directory
-    script_dir = os.path.dirname(file.file.name)
-    # create it if it does not exist
-    os.makedirs(script_dir, exist_ok=True)
-    # select appropriate storage and open file
-    storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
-    script = storage.open(file.file.name)
-    # move to script's directory and execute script
-    os.chdir(script_dir)
-    exec(script.read())
-    script.close()
-    # locate csv file that was saved by the script
-    data_to_plot = [f for f in os.listdir() if f.endswith('.csv')]
-    # if a csv file is found
-    if len(data_to_plot) > 0:
-        data = pd.read_csv(data_to_plot[-1])
-        data_file = open(data_to_plot[-1], 'rb')
-        # save to storage if it is not there already
-        if not storage.exists(os.path.join(script_dir, data_to_plot[-1])):
-            storage.save(os.path.join(
-                script_dir, data_to_plot[-1]), File(data_file))
-        print(data.columns)
 
-        plt.figure(figsize=(12, 6))
-        data.columns = [c.capitalize() for c in data.columns]
-        # convert date string to datetime
-        data['Date'] = pd.to_datetime(data['Date'])
-        # plot
-        plt.xlabel("Date")
-        plt.ylabel(data.columns[1])
-        plt.title("test")
-        plt.plot(data['Date'], data['Close'])
-        plt.savefig(data_to_plot[-1].replace('.csv', '.png'))
-        file.image = os.path.join(
-            script_dir, data_to_plot[-1].replace('.csv', '.png'))
-        file.save(update_fields=["image"])
-        data_file.close()
-        # TODO: support for two y axes, standardise column names
-        # TODO: add csv to script model for quicker access?
-
-    os.chdir(settings.BASE_DIR)
+def install_missing_libraries(missing_libraries):
+    for library in missing_libraries:
+        try:
+            subprocess.check_call(['pip', 'install', library])
+            # TODO: add to requirements.txt
+        except subprocess.CalledProcessError:
+            print(f"Failed to install package - {library}")
