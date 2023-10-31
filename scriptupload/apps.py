@@ -1,3 +1,7 @@
+"""
+Configuration for uploading new scripts to the project.
+"""
+
 from django.apps import AppConfig
 
 

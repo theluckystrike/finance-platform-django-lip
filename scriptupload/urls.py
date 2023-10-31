@@ -1,3 +1,9 @@
+"""
+Configuration for different URLs that are used by the application.
+
+Each URL is connected to a view (like a page) in the views file.
+"""
+
 from django.urls import path
 from . import views
 

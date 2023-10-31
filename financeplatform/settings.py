@@ -16,17 +16,23 @@ import os
 from dotenv import load_dotenv
 
 
-
+# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
 IS_HEROKU = "DYNO" in os.environ
 
+# If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
+# environment variables from a .env file.
 if not ("DYNO" in os.environ):
     load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+# Determing if AWS S3 is being used based on the environment variable "USE_S3"
 USE_S3 = os.environ.get("USE_S3") == "True"
 
+# Get the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Determine if the project should be run in debug mode. If the project is running in Heroku, it should not be in debug
+# mode. If it is running anywhere else, debug mode should be enabled.
 DEBUG = False if IS_HEROKU else True
 
 
