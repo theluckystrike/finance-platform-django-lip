@@ -20,17 +20,17 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-danger">Delete&nbsp;<span
+            <button type="submit" class="btn btn-sm btn-outline-danger my-1">Delete&nbsp;<span
                     class="align-text-bottom" data-feather="play"></span></button>
         </form>
         <form method="post" action="{% url 'run_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success mx-2">Run&nbsp;<span
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Run&nbsp;<span
                     class="align-text-bottom" data-feather="play"></span></button>
         </form>
 
         <a href="{% url 'script_edit' scriptname=script.name %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Edit&nbsp;<span
+            <button type="button" class="btn btn-sm btn-outline-secondary my-1">Edit&nbsp;<span
                     class="align-text-bottom" data-feather="external-link"></span></button>
         </a>
     </div>
