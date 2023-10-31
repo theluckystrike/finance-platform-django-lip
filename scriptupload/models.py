@@ -10,6 +10,7 @@ from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import delete_script_files, save_script
+from datetime import datetime
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -68,26 +69,32 @@ class OHLCData(models.Model):
     Open, high, low, close data
     """
     ticker = models.CharField(max_length=5)
-    timestamp = models.DateTimeField()
-    open_price = models.DecimalField(max_digits=19, decimal_places=4)
-    high_price = models.DecimalField(max_digits=19, decimal_places=4)
-    low_price = models.DecimalField(max_digits=19, decimal_places=4)
-    close_price = models.DecimalField(max_digits=19, decimal_places=4)
+    date = models.DateTimeField()
+    open = models.DecimalField(max_digits=19, decimal_places=4)
+    high = models.DecimalField(max_digits=19, decimal_places=4)
+    low = models.DecimalField(max_digits=19, decimal_places=4)
+    close = models.DecimalField(max_digits=19, decimal_places=4)
     volume = models.BigIntegerField()
 
     class Meta:
         verbose_name = "OHLC Data"
         verbose_name_plural = "OHLC Data"
 
+    def __str__(self):
+        return f"{self.ticker}-{datetime.strftime(self.date, r'%Y-%m-%d')}"
+
 
 class IndexConstituents(models.Model):
     index = models.CharField(max_length=5)
     ticker = models.CharField(max_length=5)
-    date_added = models.DateTimeField()
+    date_added = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Index Constituent"
         verbose_name_plural = "Index Constituents"
+
+    def __str__(self):
+        return f"{self.ticker}-{self.index}"
 
 
 class IndexActions(models.Model):
@@ -99,6 +106,9 @@ class IndexActions(models.Model):
     class Meta:
         verbose_name = "Index Action"
         verbose_name_plural = "Index Actions"
+
+    def __str__(self):
+        return f"{self.ticker}-{self.index}"
 
 
 # set signals
