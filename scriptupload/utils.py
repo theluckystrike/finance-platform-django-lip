@@ -17,7 +17,7 @@ from datetime import datetime
 from io import BytesIO
 
 
-def category_to_pdf(category):
+def scripts_to_pdf(scripts, categoryname=None):
     """
     Converts a report that was generated to a PDF file.
 
@@ -27,7 +27,6 @@ def category_to_pdf(category):
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
-    scripts = category.script_set.all()
     for script in scripts:
         if not script.image:
             run_script(script)
@@ -40,7 +39,10 @@ def category_to_pdf(category):
     # open a buffer so that files are saves to temporary memory
     buffer = BytesIO()
     # set the title of the pdf
-    title_text = f"{category.name} report"
+    if categoryname:
+        title_text = f"{category.name} report"
+    else:
+        title_text = "Custom report"
     c = canvas.Canvas(buffer, pagesize=A4)
     c.setFont("Helvetica-Bold", 18)
     title_width = c.stringWidth(title_text, "Helvetica-Bold", 18)
@@ -64,7 +66,7 @@ def category_to_pdf(category):
     # create response for downloading file
     response = HttpResponse(buffer.read(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="{}_report_{}.pdf"'.format(
-        category.name, datetime.now().strftime("%d_%m_%Y_%H_%M")
+        categoryname if categoryname else "CustomReport", datetime.now().strftime("%d_%m_%Y_%H_%M")
         )
     # close buffer and return http response
     buffer.close()

@@ -1,0 +1,47 @@
+{% extends 'bootstrap/base.html' %}
+{% load static %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Generate custom report</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="submit" form="reportForm" class="btn btn-sm btn-outline-success">Generate report&nbsp;<span
+                class="align-text-bottom" data-feather="download"></span></button>
+    </div>
+</div>
+<div class="table-responsive">
+    {% if scripts %}
+    <form method="post" id="reportForm">
+        {% csrf_token %}
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Select</th>
+                <th scope="col">Script name</th>
+                <th scope="col">Last run</th>
+                <!-- <th scope="col"></th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for script in scripts %}
+            <tr>
+                <td style="width: 10%;">
+                    <label for="">
+                        <input type="checkbox" name="scripts" value="{{ script.id }}">
+                    </label>
+                </td>
+                <th scope="row">{{script.name}}</th>
+                <td>{{script.last_updated}}</td>
+                <!-- <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a> -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </form>
+    {% else %}
+    <span class="text-large">
+        Upload scripts to generate reports with them
+    </span>
+    {% endif %}
+</div>
+{% endblock %}

@@ -21,11 +21,18 @@ class ScriptUploadForm(forms.ModelForm):
 
 class NewScriptCategory(forms.ModelForm):
     parent = forms.IntegerField()
+
     class Meta:
         model = ScriptCategory
         fields = ("name",)
 
 
+class ScriptSelectForm(forms.Form):
+    scripts = forms.ModelMultipleChoiceField(
+        queryset=Script.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+
+
 class ScriptAddCategoryForm(forms.Form):
     category_name = forms.IntegerField()
-        

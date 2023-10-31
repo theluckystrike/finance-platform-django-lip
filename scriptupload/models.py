@@ -30,10 +30,15 @@ class ScriptCategory(models.Model):
     The result of this is used to set the script category in the database.
     """
     name = models.CharField(max_length=100, unique=True)
-    parent_category = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
-    
+    parent_category = models.ForeignKey(
+        'self', on_delete=models.CASCADE, blank=True, null=True)
+
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
 
 
 class Script(models.Model):
@@ -44,7 +49,8 @@ class Script(models.Model):
     """
     name = models.CharField(max_length=100, unique=True)
     file = models.FileField(upload_to=script_file_path, storage=privateStorage)
-    image = models.ImageField(blank=True, upload_to=script_file_path, storage=privateStorage)
+    image = models.ImageField(
+        blank=True, upload_to=script_file_path, storage=privateStorage)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(ScriptCategory)
@@ -52,11 +58,49 @@ class Script(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Script"
+        verbose_name_plural = "Scripts"
+
+
+class OHLCData(models.Model):
+    """
+    Open, high, low, close data
+    """
+    ticker = models.CharField(max_length=5)
+    timestamp = models.DateTimeField()
+    open_price = models.DecimalField(max_digits=19, decimal_places=4)
+    high_price = models.DecimalField(max_digits=19, decimal_places=4)
+    low_price = models.DecimalField(max_digits=19, decimal_places=4)
+    close_price = models.DecimalField(max_digits=19, decimal_places=4)
+    volume = models.BigIntegerField()
+
+    class Meta:
+        verbose_name = "OHLC Data"
+        verbose_name_plural = "OHLC Data"
+
+
+class IndexConstituents(models.Model):
+    index = models.CharField(max_length=5)
+    ticker = models.CharField(max_length=5)
+    date_added = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "Index Constituent"
+        verbose_name_plural = "Index Constituents"
+
+
+class IndexActions(models.Model):
+    index = models.CharField(max_length=5)
+    ticker = models.CharField(max_length=5)
+    date = models.DateTimeField()
+    name = models.CharField(max_length=7)  # (added, removed)
+
+    class Meta:
+        verbose_name = "Index Action"
+        verbose_name_plural = "Index Actions"
+
 
 # set signals
 delete_script_files(Script)
 save_script(Script)
-
-
-
-

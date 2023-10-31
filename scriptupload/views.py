@@ -7,8 +7,8 @@ Each function configures a different view and defines which one in its name.
 
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
-from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm
-from .utils import run_script, category_to_pdf
+from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm, ScriptSelectForm
+from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, ScriptCategory
 from django.contrib import messages
@@ -220,16 +220,38 @@ def script_search(request):
     return HttpResponseRedirect("/")
 
 
-def generate_report(request, categoryid):
+def generate_category_report(request, categoryid):
     """
     Configures the page that shows when the "Generate a report" button is clicked in the sidebar given the category ID.
     """
     if request.method == "GET":
         category = get_object_or_404(ScriptCategory, pk=categoryid)
-        pdf_response = category_to_pdf(category)
-        if pdf_response:
-            messages.success(request, "Successfully generated report")
-            return pdf_response
+        category_scripts = category.script_set.all()
+        if len(category_scripts) > 0:
+            pdf_response = scripts_to_pdf(category_scripts)
+            if pdf_response:
+                messages.success(request, "Successfully generated report")
+                return pdf_response
+            else:
+                messages.error(request, "Failed to create report")
         else:
-            messages.info(request, "There are no scripts in this category")
+            messages.info(request, "The selected category contains no scripts")
     return redirect(category_page, get_object_or_404(ScriptCategory, pk=categoryid).name)
+
+
+def custom_report_page(request):
+    if request.method == "POST":
+        form = ScriptSelectForm(request.POST)
+        if form.is_valid():
+            scripts = form.cleaned_data['scripts']
+            if len(scripts) > 0:
+                pdf_response = scripts_to_pdf(scripts)
+                if pdf_response:
+                    messages.success(request, "Successfully generated report")
+                    return pdf_response
+                else:
+                    messages.error(request, "Failed to create report")
+            else:
+                messages.info(request, "Select scripts from the table below")
+    form = ScriptSelectForm()
+    return render(request, "bootstrap/custom_report.html", {"form": form, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
