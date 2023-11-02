@@ -143,4 +143,4 @@ whitenoise==6.4.0
 widgetsnbextension==4.0.9
 yfinance==0.2.20
 zipp==3.15.0
--e git+https://ndaskalovic@github.com/ndaskalovic/finance-toolbox.git#egg=toolbox
+-e git+https://github.com/ndaskalovic/finance-toolbox.git#egg=toolbox
