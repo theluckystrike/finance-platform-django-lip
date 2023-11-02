@@ -91,7 +91,8 @@ def run_script(file):
     Runs a script and saves the result back to storage, deleting the previous version.
 
     :param file: The file that contains the script to be run.
-    :return: None.
+    :return: True if ran script with no errors, stacktrace as string
+    otherwise.
     """
     # find the script
     script_dir = os.path.dirname(file.file.name)
@@ -104,7 +105,8 @@ def run_script(file):
     # move to script directory and execute
     os.chdir(local_dir)
     try:
-        subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, text=True, check=True)
     except subprocess.CalledProcessError as e:
         return e.stderr
     img = [f for f in os.listdir() if f.endswith('.png')]
@@ -126,7 +128,7 @@ def run_script(file):
         shutil.rmtree(local_dir)
     return True
 
- 
+
 # utililty methods for finding dependencies on scripts that are not
 # not installed on the server
 def extract_imports(script_text):
