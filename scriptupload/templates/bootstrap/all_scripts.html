@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th scope="col">Script name</th>
+                <th scope="col">Category</th>
                 <th scope="col">Last run</th>
                 <th scope="col"></th>
             </tr>
@@ -19,7 +20,12 @@
             {% for script in scripts %}
             <tr>
                 <th scope="row">{{script.name}}</th>
-                <td>{{script.last_updated}}</td>
+                <td>
+                    {% for category in script.categories.all %}
+                        {{category.name}},
+                    {% endfor %}
+                </td>
+                <td>{{ script.last_updated }}</td>
                 <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a>
                 </td>
             </tr>

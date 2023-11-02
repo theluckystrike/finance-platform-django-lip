@@ -16,6 +16,7 @@ from io import BytesIO
 import ast
 import pkgutil
 import subprocess
+import traceback
 
 
 def scripts_to_pdf(scripts, categoryname=None):
@@ -102,7 +103,10 @@ def run_script(file):
     script = storage.open(file.file.name)
     # move to script directory and execute
     os.chdir(local_dir)
-    exec(script.read())
+    try:
+        subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        return e.stderr
     img = [f for f in os.listdir() if f.endswith('.png')]
     if len(img) > 0:
         # if the script has already saved an image
@@ -120,6 +124,7 @@ def run_script(file):
     # delete local directory that was made
     if os.path.exists(local_dir):
         shutil.rmtree(local_dir)
+    return True
 
  
 # utililty methods for finding dependencies on scripts that are not

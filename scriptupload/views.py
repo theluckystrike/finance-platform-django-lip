@@ -7,6 +7,7 @@ Each function configures a different view and defines which one in its name.
 
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
+from django.utils.safestring import mark_safe
 from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm, ScriptSelectForm
 from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
@@ -101,7 +102,6 @@ def script_page(request, scriptname):
     # TODO: change these to use pk
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        # run_script(script)
         nameform = ScriptUploadForm(request.POST, instance=script)
         if nameform.is_valid():
             nameform.save()
@@ -120,7 +120,9 @@ def run_script_code(request, scriptname):
     """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        run_script(script)
+        execution = run_script(script)
+        if execution is not True:
+            messages.error(request, mark_safe(f"<u>Error when running script:</u><br/>{execution}"))
     return redirect(script_page, scriptname)
 
 
@@ -259,12 +261,11 @@ def custom_report_page(request):
             scripts = form.cleaned_data['scripts']
             if len(scripts) > 0:
                 pdf_response = scripts_to_pdf(scripts)
-                if pdf_response:
+                if pdf_response is not None:
                     messages.success(request, "Successfully generated report")
                     return pdf_response
-                else:
-                    messages.error(request, "Failed to create report")
-            else:
-                messages.info(request, "Select scripts from the table below")
+                
+        else:
+            messages.info(request, "Select scripts from the table below")
     form = ScriptSelectForm()
     return render(request, "bootstrap/custom_report.html", {"form": form, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})

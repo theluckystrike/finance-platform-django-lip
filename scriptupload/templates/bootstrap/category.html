@@ -12,7 +12,7 @@
     {% if category.script_set.all %}
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="{% url 'generate_category_report' categoryid=category.id %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Generate report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success">Generate report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
         </a>
     </div>
     {% endif %}

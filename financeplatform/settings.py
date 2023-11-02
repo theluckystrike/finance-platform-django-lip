@@ -14,6 +14,16 @@ from pathlib import Path
 import django_heroku
 import os
 from dotenv import load_dotenv
+from django.contrib.messages import constants as messages
+
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-secondary',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+ }
 
 
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
