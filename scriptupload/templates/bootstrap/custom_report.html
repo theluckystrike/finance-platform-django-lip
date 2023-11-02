@@ -17,12 +17,14 @@
             <tr>
                 <th scope="col">Select</th>
                 <th scope="col">Script name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Added</th>
                 <th scope="col">Last run</th>
                 <!-- <th scope="col"></th> -->
             </tr>
         </thead>
         <tbody>
-            {% for script in scripts %}
+            {% for script in scripts|dictsortreversed:"created" %}
             <tr>
                 <td style="width: 10%;">
                     <label for="">
@@ -30,6 +32,12 @@
                     </label>
                 </td>
                 <th scope="row">{{script.name}}</th>
+                <td>
+                    {% for category in script.categories.all %}
+                    {{category.name}},
+                    {% endfor %}
+                </td>
+                <td>{{ script.created }}</td>
                 <td>{{script.last_updated}}</td>
                 <!-- <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a> -->
                 </td>

@@ -3,6 +3,8 @@ Configuration for storing scripts in a database.
 
 The text inside the brackets on each line (for example, (max_length=100, unique=True)) are setting defaults for those values.
 If they are not passed when the code is called, whatever value comes after the equals symbol will be used.
+
+Reference: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 """
 
 from django.db import models
@@ -64,6 +66,20 @@ class Script(models.Model):
         verbose_name_plural = "Scripts"
 
 
+class Report(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    scripts = models.ManyToManyField(Script)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Report"
+        verbose_name_plural = "Reports"
+
+
 class OHLCData(models.Model):
     """
     Open, high, low, close data
@@ -84,7 +100,7 @@ class OHLCData(models.Model):
         return f"{self.ticker}-{datetime.strftime(self.date, r'%Y-%m-%d')}"
 
 
-class IndexConstituents(models.Model):
+class IndexConstituent(models.Model):
     index = models.CharField(max_length=5)
     ticker = models.CharField(max_length=5)
     date_added = models.DateTimeField(blank=True, null=True)
@@ -97,7 +113,7 @@ class IndexConstituents(models.Model):
         return f"{self.ticker}-{self.index}"
 
 
-class IndexActions(models.Model):
+class IndexAction(models.Model):
     index = models.CharField(max_length=5)
     ticker = models.CharField(max_length=5)
     date = models.DateTimeField()
