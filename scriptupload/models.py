@@ -26,7 +26,7 @@ def script_file_path(instance, filename):
     return f"scripts/{instance.name}/{filename}"
 
 
-class ScriptCategory(models.Model):
+class Category(models.Model):
     """
     Config for the category of a new script.
 
@@ -59,7 +59,7 @@ class Script(models.Model):
         max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(ScriptCategory)
+    categories = models.ManyToManyField(Category)
 
     def __str__(self):
         return self.name

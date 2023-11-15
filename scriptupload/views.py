@@ -8,10 +8,10 @@ Each function configures a different view and defines which one in its name.
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
-from .forms import ScriptUploadForm, NewScriptCategory, ScriptAddCategoryForm, ScriptSelectForm
+from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm
 from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
-from .models import Script, ScriptCategory
+from .models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -39,7 +39,7 @@ def upload_script(request):
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
             category_name = form.cleaned_data["category_name"]
-            category = ScriptCategory.objects.get(name=category_name)
+            category = Category.objects.get(name=category_name)
             file = form.cleaned_data['file']
             script = form.save(commit=False)
             if file.name.endswith('.ipynb'):
@@ -67,32 +67,32 @@ def upload_script(request):
     else:
         form = ScriptUploadForm()
     # TODO: return only the name of scripts and categories in the context
-    return render(request, "bootstrap/upload.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 def category_page(request, categoryname):
     """
     Configures the page that shows all scripts that are in a certain category, given the category name.
     """
-    category = get_object_or_404(ScriptCategory, name=categoryname)
+    category = get_object_or_404(Category, name=categoryname)
     if request.method == "POST":
-        form = NewScriptCategory(request.POST, instance=category)
+        form = NewCategoryForm(request.POST, instance=category)
         if form.is_valid():
             form.save()
             return redirect(category_page, form.cleaned_data['name'])
     else:
-        form = NewScriptCategory(instance=category)
+        form = NewCategoryForm(instance=category)
         if category.parent_category:
             form.fields['parent'].initial = category.parent_category.id
-    return render(request, "bootstrap/category.html", {"form": form, "category": category, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/category.html", {"form": form, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 def all_script_page(request):
     """
     Configures the page that is shown when "All scripts" is clicked in the sidebar.
     """
-    # category = get_object_or_404(ScriptCategory, name=categoryname)
-    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    # category = get_object_or_404(Category, name=categoryname)
+    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 def script_page(request, scriptname):
@@ -111,7 +111,7 @@ def script_page(request, scriptname):
         if len(script.categories.all()) > 0:
             nameform.fields['category_name'].initial = script.categories.all()[
                 0].name
-    return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 def run_script_code(request, scriptname):
@@ -122,7 +122,8 @@ def run_script_code(request, scriptname):
     if request.method == "POST":
         execution = run_script(script)
         if execution is not True:
-            messages.error(request, mark_safe(f"<u>Error when running script:</u><br/>{execution}"))
+            messages.error(request, mark_safe(
+                f"<u>Error when running script:</u><br/>{execution}"))
     return redirect(script_page, scriptname)
 
 
@@ -143,7 +144,7 @@ def script_edit_page(request, scriptname):
     if request.method == "GET":
         script = get_object_or_404(Script, name=scriptname)
         file_contents = script.file.read().decode("utf-8")
-        return render(request, "bootstrap/script_edit.html", {'file_contents': file_contents, "script": script, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+        return render(request, "bootstrap/script_edit.html", {'file_contents': file_contents, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
     elif request.method == "POST":
         script = get_object_or_404(Script, name=scriptname)
         # Get the edited script content from request
@@ -160,14 +161,14 @@ def create_category(request):
     Configures that page that creates a new category of scripts.
     """
     if request.method == "POST":
-        form = NewScriptCategory(request.POST)
+        form = NewCategoryForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
             parent_id = form.cleaned_data['parent']
             if parent_id < 0:
                 form.save()
             else:
-                parent = get_object_or_404(ScriptCategory, pk=parent_id)
+                parent = get_object_or_404(Category, pk=parent_id)
                 category = form.save()
                 category.parent_category = parent
                 category.save()
@@ -185,7 +186,7 @@ def script_delete_category(request, scriptid, categoryid):
     """
     if request.method == "GET":
         script = get_object_or_404(Script, pk=scriptid)
-        category = get_object_or_404(ScriptCategory, pk=categoryid)
+        category = get_object_or_404(Category, pk=categoryid)
         script.categories.remove(category)
         # TODO: figure out why this message does not show and there are is an
         # additional DELETE request to script/
@@ -203,7 +204,7 @@ def script_add_category(request, scriptid):
         if form.is_valid():
             script = get_object_or_404(Script, pk=scriptid)
             category = get_object_or_404(
-                ScriptCategory, pk=form.cleaned_data["category_name"])
+                Category, pk=form.cleaned_data["category_name"])
             script.categories.add(category)
             messages.success(
                 request, f"Script successfully added to category '{category.name}'")
@@ -240,7 +241,7 @@ def generate_category_report(request, categoryid):
     Configures the page that shows when the "Generate a report" button is clicked in the sidebar given the category ID.
     """
     if request.method == "GET":
-        category = get_object_or_404(ScriptCategory, pk=categoryid)
+        category = get_object_or_404(Category, pk=categoryid)
         category_scripts = category.script_set.all()
         if len(category_scripts) > 0:
             pdf_response = scripts_to_pdf(category_scripts)
@@ -251,7 +252,7 @@ def generate_category_report(request, categoryid):
                 messages.error(request, "Failed to create report")
         else:
             messages.info(request, "The selected category contains no scripts")
-    return redirect(category_page, get_object_or_404(ScriptCategory, pk=categoryid).name)
+    return redirect(category_page, get_object_or_404(Category, pk=categoryid).name)
 
 
 def custom_report_page(request):
@@ -264,8 +265,8 @@ def custom_report_page(request):
                 if pdf_response is not None:
                     messages.success(request, "Successfully generated report")
                     return pdf_response
-                
+
         else:
             messages.info(request, "Select scripts from the table below")
     form = ScriptSelectForm()
-    return render(request, "bootstrap/custom_report.html", {"form": form, "scripts": Script.objects.all(), "categories": ScriptCategory.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/custom_report.html", {"form": form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})

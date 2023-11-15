@@ -5,13 +5,13 @@ See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
 """
 
 from django.contrib import admin
-from .models import Script, ScriptCategory, OHLCData, IndexAction, IndexConstituent, Report
+from .models import Script, Category, OHLCData, IndexAction, IndexConstituent, Report
 
 
 # admin.site.register(Script)
-# admin.site.register(ScriptCategory)
+# admin.site.register(Category)
 
-class ScriptCategoryInline(admin.TabularInline):
+class CategoryInline(admin.TabularInline):
     model = Script.categories.through
     can_delete = True
     extra = 1
@@ -19,11 +19,11 @@ class ScriptCategoryInline(admin.TabularInline):
 
 @admin.register(Script)
 class ScriptAdmin(admin.ModelAdmin):
-    inlines = [ScriptCategoryInline]
+    inlines = [CategoryInline]
 
 
-@admin.register(ScriptCategory)
-class ScriptCategoryAdmin(admin.ModelAdmin):
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
