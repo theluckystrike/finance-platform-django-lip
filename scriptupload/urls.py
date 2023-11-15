@@ -12,6 +12,7 @@ urlpatterns = [
     path('scripts/<str:scriptname>/', views.script_page, name="script"),
     path('generate-report/<int:categoryid>/', views.generate_category_report, name="generate_category_report"),
     path('custom-report/', views.custom_report_page, name="custom_report"),
+    path('save-custom-report/', views.save_custom_report, name="save_custom_report"),
     path('scripts/<str:scriptname>/edit/', views.script_edit_page, name="script_edit"),
     path('scripts/<str:scriptname>/run/', views.run_script_code, name="run_script"),
     path('scripts/<str:scriptname>/delete/', views.delete_script, name="delete_script"),

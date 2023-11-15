@@ -8,7 +8,7 @@ Each class controls a different form and has different config for what to do whe
 """
 
 from django import forms
-from .models import Script, Category
+from .models import Script, Category, Report
 
 
 class ScriptUploadForm(forms.ModelForm):
@@ -25,6 +25,12 @@ class NewCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ("name",)
+
+
+class NewReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ("name", "scripts",)
 
 
 class ScriptSelectForm(forms.Form):

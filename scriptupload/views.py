@@ -8,7 +8,7 @@ Each function configures a different view and defines which one in its name.
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
-from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm
+from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm
 from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, Category
@@ -255,9 +255,21 @@ def generate_category_report(request, categoryid):
     return redirect(category_page, get_object_or_404(Category, pk=categoryid).name)
 
 
+def save_custom_report(request):
+    if request.method == "POST":
+        form = NewReportForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Report successfully created")
+        else:
+            messages.info(request, "A report with this name already exists")
+    return redirect(custom_report_page)
+
+
 def custom_report_page(request):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
+        
         if form.is_valid():
             scripts = form.cleaned_data['scripts']
             if len(scripts) > 0:
@@ -274,8 +286,8 @@ def custom_report_page(request):
                     pdf_response = scripts_to_pdf(scripts)
                     if pdf_response is not None:
                         return pdf_response
-
         else:
             messages.info(request, "Select scripts from the table below")
-    form = ScriptSelectForm()
-    return render(request, "bootstrap/custom_report.html", {"form": form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    script_form = ScriptSelectForm()
+    report_form = NewReportForm()
+    return render(request, "bootstrap/custom_report.html", {"report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
