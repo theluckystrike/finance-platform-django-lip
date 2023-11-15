@@ -16,7 +16,6 @@ from io import BytesIO
 import ast
 import pkgutil
 import subprocess
-import traceback
 
 
 def scripts_to_pdf(scripts, categoryname=None):
@@ -86,7 +85,7 @@ def handle_script_upload(file):
 
 
 # run the script assuming that it saves the chart image as output
-def run_script(file):
+def run_script(script_instance):
     """
     Runs a script and saves the result back to storage, deleting the previous version.
 
@@ -95,13 +94,13 @@ def run_script(file):
     otherwise.
     """
     # find the script
-    script_dir = os.path.dirname(file.file.name)
+    script_dir = os.path.dirname(script_instance.file.name)
     # unique local temporary directory
     local_dir = script_dir + str(datetime.now()).replace(" ", "")
     os.makedirs(local_dir, exist_ok=True)
     # chose appropriate storage and open file
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
-    script = storage.open(file.file.name)
+    script = storage.open(script_instance.file.name)
     # move to script directory and execute
     os.chdir(local_dir)
     try:
@@ -118,8 +117,8 @@ def run_script(file):
             storage.delete(os.path.join(script_dir, img[-1]))
         # save new image
         storage.save(os.path.join(script_dir, img[-1]), File(i))
-        file.image = os.path.join(script_dir, img[-1])
-        file.save(update_fields=["image"])
+        script_instance.image = os.path.join(script_dir, img[-1])
+        script_instance.save(update_fields=["image", "last_updated"])
         i.close()
     script.close()
     os.chdir(settings.BASE_DIR)

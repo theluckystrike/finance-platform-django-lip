@@ -51,9 +51,12 @@ class Script(models.Model):
     Values that are used here are what will be stored in the database.
     """
     name = models.CharField(max_length=100, unique=True)
-    file = models.FileField(upload_to=script_file_path, storage=privateStorage)
+    # TODO rename and refactor "file"
+    file = models.FileField(upload_to=script_file_path,
+                            storage=privateStorage, max_length=200)
     image = models.ImageField(
-        blank=True, upload_to=script_file_path, storage=privateStorage)
+        blank=True, upload_to=script_file_path, storage=privateStorage,
+        max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(ScriptCategory)
@@ -119,6 +122,8 @@ class IndexConstituent(models.Model):
 # TODO: could create many to many field of tickers
 # to store the stocks in each index
 # would mean renaming IndexConstituents to just stock
+
+
 class IndexAction(models.Model):
     index = models.CharField(max_length=5)
     ticker = models.CharField(max_length=5)
@@ -131,6 +136,7 @@ class IndexAction(models.Model):
 
     def __str__(self):
         return f"{self.ticker}-{self.index}"
+
 
 # set signals
 delete_script_files(Script)
