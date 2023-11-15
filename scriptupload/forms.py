@@ -32,6 +32,7 @@ class ScriptSelectForm(forms.Form):
         queryset=Script.objects.all(),
         widget=forms.CheckboxSelectMultiple
     )
+    run_scripts = forms.BooleanField(required=False, widget=forms.CheckboxInput)
 
 
 class ScriptAddCategoryForm(forms.Form):

@@ -107,7 +107,7 @@ def run_script(script_instance):
         subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE, text=True, check=True)
     except subprocess.CalledProcessError as e:
-        return e.stderr
+        return False, e.stderr
     img = [f for f in os.listdir() if f.endswith('.png')]
     if len(img) > 0:
         # if the script has already saved an image
@@ -125,7 +125,7 @@ def run_script(script_instance):
     # delete local directory that was made
     if os.path.exists(local_dir):
         shutil.rmtree(local_dir)
-    return True
+    return True, None
 
 
 # utililty methods for finding dependencies on scripts that are not

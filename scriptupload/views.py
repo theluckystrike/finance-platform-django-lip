@@ -120,10 +120,10 @@ def run_script_code(request, scriptname):
     """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        execution = run_script(script)
-        if execution is not True:
+        success, message = run_script(script)
+        if not success:
             messages.error(request, mark_safe(
-                f"<u>Error when running script:</u><br/>{execution}"))
+                f"<u>Error when running script:</u><br/>{message}"))
     return redirect(script_page, scriptname)
 
 
@@ -261,10 +261,19 @@ def custom_report_page(request):
         if form.is_valid():
             scripts = form.cleaned_data['scripts']
             if len(scripts) > 0:
-                pdf_response = scripts_to_pdf(scripts)
-                if pdf_response is not None:
-                    messages.success(request, "Successfully generated report")
-                    return pdf_response
+                ran_all_scripts = True
+                if form.cleaned_data['run_scripts']:
+                    for script in scripts:
+                        success, message = run_script(script)
+                        if not success:
+                            messages.error(request, mark_safe(
+                                f"<u>Error when running script {script.name}:</u><br/>{message}"))
+                            ran_all_scripts = False
+                            break
+                if ran_all_scripts:
+                    pdf_response = scripts_to_pdf(scripts)
+                    if pdf_response is not None:
+                        return pdf_response
 
         else:
             messages.info(request, "Select scripts from the table below")
