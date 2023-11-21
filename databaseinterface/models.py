@@ -59,7 +59,7 @@ class Rate(models.Model):
     date = models.DateField()
     rate = models.DecimalField(max_digits=19, decimal_places=6)
     country = models.CharField(max_length=2)
-    term = models.IntegerField()
+    term = models.CharField(max_length=6)
 
     class Meta:
         verbose_name = "Rate"
