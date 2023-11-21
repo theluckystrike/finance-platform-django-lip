@@ -5,7 +5,7 @@ See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
 """
 
 from django.contrib import admin
-from .models import Script, Category, OHLCData, IndexAction, IndexConstituent, Report
+from .models import Script, Category, Report
 
 
 # admin.site.register(Script)
@@ -29,19 +29,4 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(OHLCData)
-class OHLCDataAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(IndexAction)
-class IndexActionsAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(IndexConstituent)
-class IndexConstituentsAdmin(admin.ModelAdmin):
     pass

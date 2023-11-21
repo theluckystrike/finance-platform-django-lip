@@ -21,6 +21,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("scriptupload.urls")),
+    path('', include("databaseinterface.urls")),
 ]
 
 if True:

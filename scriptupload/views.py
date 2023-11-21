@@ -163,7 +163,6 @@ def create_category(request):
     if request.method == "POST":
         form = NewCategoryForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             parent_id = form.cleaned_data['parent']
             if parent_id < 0:
                 form.save()
