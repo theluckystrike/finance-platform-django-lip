@@ -10,10 +10,10 @@ class OHLCData(models.Model):
     """
     ticker = models.CharField(max_length=5)
     date = models.DateField()
-    open = models.DecimalField(max_digits=19, decimal_places=6)
-    high = models.DecimalField(max_digits=19, decimal_places=6)
-    low = models.DecimalField(max_digits=19, decimal_places=6)
-    close = models.DecimalField(max_digits=19, decimal_places=6)
+    open = models.DecimalField(max_digits=19, decimal_places=3)
+    high = models.DecimalField(max_digits=19, decimal_places=3)
+    low = models.DecimalField(max_digits=19, decimal_places=3)
+    close = models.DecimalField(max_digits=19, decimal_places=3)
     volume = models.BigIntegerField()
 
     class Meta:
