@@ -18,9 +18,19 @@ class OHLCViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    queryset = OHLCData.objects.all().order_by("date")
     serializer_class = OHLCSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = OHLCData.objects.all().order_by("date")
+        ticker = self.request.query_params.get("ticker", None)
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
+        if ticker:
+            queryset = queryset.filter(ticker=ticker)
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+        return queryset
 
 
 class IndexActionViewSet(viewsets.ModelViewSet):

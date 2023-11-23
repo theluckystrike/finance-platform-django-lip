@@ -3,7 +3,7 @@ from rest_framework import routers
 from .views import OHLCViewSet, UserViewSet, IndexActionViewSet, IndexConstituentViewSet, RateViewSet
 
 router = routers.DefaultRouter()
-router.register(r'ohlcdata', OHLCViewSet)
+router.register(r'ohlcdata', OHLCViewSet, basename="ohlcdata")
 router.register(r'indexconstituents', IndexConstituentViewSet)
 router.register(r'indexactions', IndexActionViewSet)
 router.register(r'rates', RateViewSet)

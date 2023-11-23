@@ -57,7 +57,7 @@ class IndexAction(models.Model):
 
 class Rate(models.Model):
     date = models.DateField()
-    rate = models.DecimalField(max_digits=19, decimal_places=6)
+    rate = models.DecimalField(max_digits=6, decimal_places=2)
     country = models.CharField(max_length=2)
     term = models.CharField(max_length=6)
 
