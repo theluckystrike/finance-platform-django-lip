@@ -8,7 +8,7 @@ Each function configures a different view and defines which one in its name.
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
-from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm
+from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm, NewReportTaskForm
 from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, Category, Report, ReportEmailTask
@@ -19,6 +19,7 @@ import nbformat
 from nbconvert import PythonExporter
 import os
 from django.core.files import File
+from django.template.defaulttags import register
 
 # TODO: always search up using pk
 # TODO: custom 404 and internal error page
@@ -304,8 +305,46 @@ def reports_page(request):
     )
 
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+
+def delete_task(request, taskid):
+    task = get_object_or_404(ReportEmailTask, pk=taskid)
+    if request.method == "POST":
+        task.delete()
+    return redirect(report_page, task.report.name)
+
+
+def delete_report(request, reportid):
+    report = get_object_or_404(Report, pk=reportid)
+    if request.method == "POST":
+        report.delete()
+    return redirect(reports_page)
+
+
 def report_page(request, reportname):
     report = get_object_or_404(Report, name=reportname)
+    if request.method == "POST":
+        form = NewReportTaskForm(request.POST)
+        if form.is_valid():
+            newtask = form.save(commit=False)
+            newtask.report = report
+            newtask.save()
+            messages.success(request, "New schedule created")
+        else:
+            messages.error(request, "Unable to make new schedule")
+    days_of_week = {
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "7": "Sunday",
+        "*": "day"
+    }
     return render(
         request,
         "bootstrap/report.html",
@@ -313,7 +352,7 @@ def report_page(request, reportname):
             "scripts": Script.objects.all(),
             "categories": Category.objects.filter(parent_category=None),
             "report": report,
-            "tasks": ReportEmailTask.objects.filter(report=report)
+            "tasks": ReportEmailTask.objects.filter(report=report),
+            "days_of_week": days_of_week
         }
     )
-

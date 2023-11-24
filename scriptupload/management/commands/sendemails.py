@@ -60,9 +60,10 @@ def send_pdf(task):
     c.save()
     # reset the buffer position
     buffer.seek(0)
+    today_str = datetime.today().strftime("%A")
     mail = EmailMessage(
-        f"{task.report.name} Report {datetime.now().strftime('%Y/%m/%d')}",
-        "Please find todays's report from - {task.report.name} - attached.\n",
+        f"{task.report.name} Scheduled Report {datetime.now().strftime('%Y/%m/%d')}",
+        f"Report: {task.report.name}\nSchedule: {'Daily' if task.day == '*' else f'Every {today_str}'}\n\nPlease find your report attached.\n\n",
         f"Finacnce-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
         [task.email]
     )
@@ -70,6 +71,7 @@ def send_pdf(task):
                 buffer.read(), "application/pdf")
     mail.send(fail_silently=False)
     buffer.close()
+    task.report.save(update_fields=["last_updated"])
 
 
 class Command(BaseCommand):
