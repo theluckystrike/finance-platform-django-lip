@@ -50,10 +50,14 @@ class IndexActionViewSet(viewsets.ModelViewSet):
         queryset = IndexAction.objects.all().order_by("date")
         ticker = self.request.query_params.get("ticker", None)
         index = self.request.query_params.get("index", None)
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
         if ticker:
             queryset = queryset.filter(ticker=ticker)
         if index:
             queryset = queryset.filter(index=index)
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
         return queryset
 
 
@@ -74,10 +78,14 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
         queryset = IndexConstituent.objects.all().order_by("date_added")
         ticker = self.request.query_params.get("ticker", None)
         index = self.request.query_params.get("index", None)
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
         if ticker:
             queryset = queryset.filter(ticker=ticker)
         if index:
             queryset = queryset.filter(index=index)
+        if start_date and end_date:
+            queryset = queryset.filter(date_added__range=[start_date, end_date])
         return queryset
 
 
@@ -98,13 +106,14 @@ class RateViewSet(viewsets.ModelViewSet):
         queryset = Rate.objects.all().order_by("date")
         country = self.request.query_params.get("country", None)
         term = self.request.query_params.get("term", None)
-        date = self.request.query_params.get("date", None)
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
         if country:
             queryset = queryset.filter(country=country)
         if term:
             queryset = queryset.filter(term=term)
-        if date:
-            queryset = queryset.filter(date=date)
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
         return queryset
 
 
