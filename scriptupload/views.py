@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm
 from .utils import run_script, scripts_to_pdf
 from django.shortcuts import get_object_or_404, redirect
-from .models import Script, Category
+from .models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -268,7 +268,7 @@ def save_custom_report(request):
 def custom_report_page(request):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
-        
+
         if form.is_valid():
             scripts = form.cleaned_data['scripts']
             if len(scripts) > 0:
@@ -290,3 +290,30 @@ def custom_report_page(request):
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
     return render(request, "bootstrap/custom_report.html", {"report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+
+
+def reports_page(request):
+    return render(
+        request,
+        "bootstrap/reports.html",
+        {
+            "scripts": Script.objects.all(),
+            "categories": Category.objects.filter(parent_category=None),
+            "reports": Report.objects.all()
+        }
+    )
+
+
+def report_page(request, reportname):
+    report = get_object_or_404(Report, name=reportname)
+    return render(
+        request,
+        "bootstrap/report.html",
+        {
+            "scripts": Script.objects.all(),
+            "categories": Category.objects.filter(parent_category=None),
+            "report": report,
+            "tasks": ReportEmailTask.objects.filter(report=report)
+        }
+    )
+

@@ -5,7 +5,7 @@ See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
 """
 
 from django.contrib import admin
-from .models import Script, Category, Report
+from .models import Script, Category, Report, ReportEmailTask
 
 
 # admin.site.register(Script)
@@ -29,4 +29,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ReportEmailTask)
+class ReportEmailTaskAdmin(admin.ModelAdmin):
     pass

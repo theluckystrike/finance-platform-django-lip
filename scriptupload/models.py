@@ -87,5 +87,14 @@ class Report(models.Model):
         verbose_name_plural = "Reports"
 
 
+class ReportEmailTask(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=254)
+    day = models.CharField(max_length=1)
+
+    def __str__(self):
+        return f"{self.report.name}-{self.day}"
+
+
 delete_script_files(Script)
 save_script(Script)

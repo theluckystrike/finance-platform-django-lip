@@ -1,0 +1,43 @@
+{% extends 'bootstrap/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Reports</h1>
+</div>
+<div class="table-responsive">
+    {% if reports %}
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Report name</th>
+                <!-- <th scope="col">Scripts</th> -->
+                <th scope="col">Created</th>
+                <th scope="col">Last updated</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports|dictsortreversed:"created" %}
+            <tr>
+                <th scope="row">{{report.name}}</th>
+                <!-- <td>
+                    {% for script in report.scripts.all %}
+                    {{script.name}},
+                    {% endfor %}
+                </td> -->
+                <td>{{report.created}}</td>
+                <td>{{report.last_updated}}</td>
+                <td><a href="{% url 'report' report.name %}" class="text-decoration-none">View report</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <span class="text-large">
+        Nothing to see here
+    </span>
+    {% endif %}
+</div>
+
+{% endblock %}
