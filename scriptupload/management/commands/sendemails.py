@@ -1,6 +1,6 @@
 from io import BytesIO
 from django.core.management.base import BaseCommand
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from scriptupload.models import ReportEmailTask
 from scriptupload.utils import run_script
 from datetime import datetime
@@ -27,8 +27,8 @@ def send_pdf(task):
     # get urls of each script image
     scripts = task.report.scripts.all()
     for script in scripts:
-        if not script.image:
-            run_script(script)
+        # if not script.image:
+        run_script(script)
     image_paths = [
         storage.url(script.image.name) for script in scripts
         if script.image.name != "" and script.image is not None
@@ -38,7 +38,7 @@ def send_pdf(task):
     # open a buffer so that files are saves to temporary memory
     buffer = BytesIO()
     # set the title of the pdf
-    title_text = f"{task.report.name} report"
+    title_text = f"{task.report.name}"
 
     c = canvas.Canvas(buffer, pagesize=A4)
     c.setFont("Helvetica-Bold", 18)
@@ -61,9 +61,9 @@ def send_pdf(task):
     # reset the buffer position
     buffer.seek(0)
     mail = EmailMessage(
-        f"{task.report.name} Report",
-        "Please open the attachments of this email to find your report for today",
-        settings.EMAIL_HOST_USER,
+        f"{task.report.name} Report {datetime.now().strftime('%Y/%m/%d')}",
+        "Please find todays's report from - {task.report.name} - attached.\n",
+        f"Finacnce-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
         [task.email]
     )
     mail.attach(f"{task.report.name}_{datetime.now().strftime('%Y_%m_%d')}.pdf",

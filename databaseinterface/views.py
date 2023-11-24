@@ -43,12 +43,22 @@ class IndexActionViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    queryset = IndexAction.objects.all().order_by("date")
     serializer_class = IndexActionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = IndexAction.objects.all().order_by("date")
+        ticker = self.request.query_params.get("ticker", None)
+        index = self.request.query_params.get("index", None)
+        if ticker:
+            queryset = queryset.filter(ticker=ticker)
+        if index:
+            queryset = queryset.filter(index=index)
+        return queryset
+
 
 class IndexConstituentViewSet(viewsets.ModelViewSet):
+
     def create(self, request, *args, **kwargs):
         is_many = isinstance(request.data, list)
         serializer = self.get_serializer(data=request.data, many=is_many)
@@ -56,12 +66,23 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    queryset = IndexConstituent.objects.all().order_by("date_added")
+
     serializer_class = IndexConstituentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = IndexConstituent.objects.all().order_by("date_added")
+        ticker = self.request.query_params.get("ticker", None)
+        index = self.request.query_params.get("index", None)
+        if ticker:
+            queryset = queryset.filter(ticker=ticker)
+        if index:
+            queryset = queryset.filter(index=index)
+        return queryset
+
 
 class RateViewSet(viewsets.ModelViewSet):
+
     def create(self, request, *args, **kwargs):
         is_many = isinstance(request.data, list)
         serializer = self.get_serializer(data=request.data, many=is_many)
@@ -72,6 +93,19 @@ class RateViewSet(viewsets.ModelViewSet):
     queryset = Rate.objects.all().order_by("date")
     serializer_class = RateSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Rate.objects.all().order_by("date")
+        country = self.request.query_params.get("country", None)
+        term = self.request.query_params.get("term", None)
+        date = self.request.query_params.get("date", None)
+        if country:
+            queryset = queryset.filter(country=country)
+        if term:
+            queryset = queryset.filter(term=term)
+        if date:
+            queryset = queryset.filter(date=date)
+        return queryset
 
 
 class UserViewSet(viewsets.ModelViewSet):

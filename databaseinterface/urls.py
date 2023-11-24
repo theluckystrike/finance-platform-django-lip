@@ -4,9 +4,10 @@ from .views import OHLCViewSet, UserViewSet, IndexActionViewSet, IndexConstituen
 
 router = routers.DefaultRouter()
 router.register(r'ohlcdata', OHLCViewSet, basename="ohlcdata")
-router.register(r'indexconstituents', IndexConstituentViewSet)
-router.register(r'indexactions', IndexActionViewSet)
-router.register(r'rates', RateViewSet)
+router.register(r'indexconstituents', IndexConstituentViewSet,
+                basename="indexconstituents")
+router.register(r'indexactions', IndexActionViewSet, basename="indexactions")
+router.register(r'rates', RateViewSet, basename="rates")
 router.register(r'users', UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
 
