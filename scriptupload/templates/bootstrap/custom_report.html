@@ -38,7 +38,7 @@
                             <input type="checkbox" name="scripts" value="{{ script.id }}">
                         </label>
                     </td>
-                    <th scope="row">{{script.name}}</th>
+                    <th scope="row"><a class="text-decoration-none text-black" href="{% url 'script' script.name %}">{{script.name}}</a></th>
                     <td>
                         {% for category in script.categories.all %}
                         {{category.name}},

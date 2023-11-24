@@ -11,6 +11,10 @@ AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_STORAGE_BUCKET_NAME = ""
 USE_S3 = True (production) | False (development)
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_PORT = ""
+EMAIL_HOST = ""
 ```
 
 ## Run the app locally
