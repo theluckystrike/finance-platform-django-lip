@@ -23,11 +23,11 @@ class OHLCViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = OHLCData.objects.all().order_by("date")
-        ticker = self.request.query_params.get("ticker", None)
+        tickers = self.request.query_params.getlist("ticker", None)
         start_date = self.request.query_params.get("start_date", None)
         end_date = self.request.query_params.get("end_date", None)
-        if ticker:
-            queryset = queryset.filter(ticker=ticker)
+        if tickers:
+            queryset = queryset.filter(ticker__in=tickers)
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
         return queryset
@@ -48,14 +48,14 @@ class IndexActionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = IndexAction.objects.all().order_by("date")
-        ticker = self.request.query_params.get("ticker", None)
-        index = self.request.query_params.get("index", None)
+        tickers = self.request.query_params.getlist("ticker", None)
+        index = self.request.query_params.getlist("index", None)
         start_date = self.request.query_params.get("start_date", None)
         end_date = self.request.query_params.get("end_date", None)
-        if ticker:
-            queryset = queryset.filter(ticker=ticker)
+        if tickers:
+            queryset = queryset.filter(ticker__in=tickers)
         if index:
-            queryset = queryset.filter(index=index)
+            queryset = queryset.filter(index__in=index)
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
         return queryset
@@ -76,14 +76,14 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = IndexConstituent.objects.all().order_by("date_added")
-        ticker = self.request.query_params.get("ticker", None)
-        index = self.request.query_params.get("index", None)
+        tickers = self.request.query_params.getlist("ticker", None)
+        index = self.request.query_params.getlist("index", None)
         start_date = self.request.query_params.get("start_date", None)
         end_date = self.request.query_params.get("end_date", None)
-        if ticker:
-            queryset = queryset.filter(ticker=ticker)
+        if tickers:
+            queryset = queryset.filter(ticker__in=tickers)
         if index:
-            queryset = queryset.filter(index=index)
+            queryset = queryset.filter(index__in=index)
         if start_date and end_date:
             queryset = queryset.filter(date_added__range=[start_date, end_date])
         return queryset
@@ -104,14 +104,14 @@ class RateViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Rate.objects.all().order_by("date")
-        country = self.request.query_params.get("country", None)
-        term = self.request.query_params.get("term", None)
+        countries = self.request.query_params.getlist("country", None)
+        terms = self.request.query_params.getlist("term", None)
         start_date = self.request.query_params.get("start_date", None)
         end_date = self.request.query_params.get("end_date", None)
-        if country:
-            queryset = queryset.filter(country=country)
-        if term:
-            queryset = queryset.filter(term=term)
+        if countries:
+            queryset = queryset.filter(country__in=countries)
+        if terms:
+            queryset = queryset.filter(term__in=terms)
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
         return queryset
