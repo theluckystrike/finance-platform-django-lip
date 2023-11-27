@@ -64,7 +64,7 @@ def send_pdf(task):
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {datetime.now().strftime('%Y/%m/%d')}",
         f"Report: {task.report.name}\nSchedule: {'Daily' if task.day == '*' else f'Every {today_str}'}\n\nPlease find your report attached.\n\n",
-        f"Finacnce-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
+        f"Financial-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
         [task.email]
     )
     mail.attach(f"{task.report.name}_{datetime.now().strftime('%Y_%m_%d')}.pdf",
@@ -89,11 +89,12 @@ class Command(BaseCommand):
         """
         today = datetime.weekday(datetime.today()) + 1
         tasks = ReportEmailTask.objects.all()
-        for task in tasks:
+        num_tasks = len(tasks)
+        for i, task in enumerate(tasks):
             # print(today, task.day)
             if task.day == "*" or int(task.day) == today:
                 send_pdf(task)
                 logger.info(
-                    f"Sent email to {task.email} for day {task.day} on day {today}")
+                    f"{i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
                 print(
-                    f"Sent email to {task.email} for day {task.day} on day {today}")
+                    f"{i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
