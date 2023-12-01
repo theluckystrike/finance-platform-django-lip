@@ -88,13 +88,14 @@ class Command(BaseCommand):
         in this function only
         """
         today = datetime.weekday(datetime.today()) + 1
+        today_full = datetime.today().strftime('%d-%m-%Y')
         tasks = ReportEmailTask.objects.all()
         num_tasks = len(tasks)
+        logger.info(
+            f"[email sender] Sending all emails for today {today_full}")
         for i, task in enumerate(tasks):
-            # print(today, task.day)
             if task.day == "*" or int(task.day) == today:
                 send_pdf(task)
                 logger.info(
-                    f"{i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
-                print(
-                    f"{i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
+                    f"[email sender] {i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
+        logger.info(f"[email sender] Finished sending all emails for {today_full}")

@@ -107,6 +107,10 @@ def run_script(script_instance):
         subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE,
                        stderr=subprocess.PIPE, text=True, check=True)
     except subprocess.CalledProcessError as e:
+        os.chdir(settings.BASE_DIR)
+        if os.path.exists(local_dir):
+            shutil.rmtree(local_dir)
+        script.close()
         return False, e.stderr
     img = [f for f in os.listdir() if f.endswith('.png')]
     if len(img) > 0:
