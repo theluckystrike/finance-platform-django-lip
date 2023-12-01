@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("scriptupload.urls")),
     path('', include("databaseinterface.urls")),
+    path('accounts/', include("django.contrib.auth.urls")),
 ]
 
 if True:

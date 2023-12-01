@@ -58,6 +58,8 @@ ALLOWED_HOSTS = ["finance-platform-prototype.herokuapp.com",
                  "127.0.0.1",
                  "finance-platform-prototype-4ce168540ea9.herokuapp.com"]
 
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "login"
 
 # Application definition
 

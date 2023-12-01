@@ -20,6 +20,7 @@ from nbconvert import PythonExporter
 import os
 from django.core.files import File
 from django.template.defaulttags import register
+from django.contrib.auth.decorators import login_required
 
 # TODO: always search up using pk
 # TODO: custom 404 and internal error page
@@ -30,7 +31,7 @@ from django.template.defaulttags import register
 
 # def handler500(request, *args, **argv):
 #     HttpResponseRedirect("/")
-
+@login_required
 def upload_script(request):
     """
     Configures the page that shows when "Upload a script" is clicked in the sidebar.
@@ -71,6 +72,7 @@ def upload_script(request):
     return render(request, "bootstrap/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def category_page(request, categoryname):
     """
     Configures the page that shows all scripts that are in a certain category, given the category name.
@@ -88,6 +90,7 @@ def category_page(request, categoryname):
     return render(request, "bootstrap/category.html", {"form": form, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def all_script_page(request):
     """
     Configures the page that is shown when "All scripts" is clicked in the sidebar.
@@ -96,6 +99,7 @@ def all_script_page(request):
     return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def script_page(request, scriptname):
     """
     Configures the page that shows an individual script when it is clicked on.
@@ -115,6 +119,7 @@ def script_page(request, scriptname):
     return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def run_script_code(request, scriptname):
     """
     Configures the "Run" button that shows when looking at a script and the page that is shown when clicked.
@@ -128,6 +133,7 @@ def run_script_code(request, scriptname):
     return redirect(script_page, scriptname)
 
 
+@login_required
 def delete_script(request, scriptname):
     """
     Configures the "Delete" button that shows when looking at a script and the page that is shown when clicked.
@@ -138,6 +144,7 @@ def delete_script(request, scriptname):
     return redirect(all_script_page)
 
 
+@login_required
 def script_edit_page(request, scriptname):
     """
     Configures the "Edit" button that shows when looking at a script and the page that is shown when clicked.
@@ -157,6 +164,7 @@ def script_edit_page(request, scriptname):
         return HttpResponseRedirect(f"/scripts/{scriptname}")
 
 
+@login_required
 def create_category(request):
     """
     Configures that page that creates a new category of scripts.
@@ -180,6 +188,7 @@ def create_category(request):
     return HttpResponseRedirect("/")
 
 
+@login_required
 def script_delete_category(request, scriptid, categoryid):
     """
     Configures the page that allows a user to delete a script, given its ID and category.
@@ -195,6 +204,7 @@ def script_delete_category(request, scriptid, categoryid):
     return HttpResponseRedirect("/")
 
 
+@login_required
 def script_add_category(request, scriptid):
     """
     Configures the page that shows when a script is added to a new category given its ID.
@@ -215,6 +225,7 @@ def script_add_category(request, scriptid):
     return HttpResponseRedirect("/")
 
 
+@login_required
 def script_search(request):
     """
     Configures the functionality to search for a specific script.
@@ -236,6 +247,7 @@ def script_search(request):
     return HttpResponseRedirect("/")
 
 
+@login_required
 def generate_category_report(request, categoryid):
     """
     Configures the page that shows when the "Generate a report" button is clicked in the sidebar given the category ID.
@@ -255,6 +267,7 @@ def generate_category_report(request, categoryid):
     return redirect(category_page, get_object_or_404(Category, pk=categoryid).name)
 
 
+@login_required
 def save_custom_report(request):
     if request.method == "POST":
         form = NewReportForm(request.POST)
@@ -266,6 +279,7 @@ def save_custom_report(request):
     return redirect(custom_report_page)
 
 
+@login_required
 def custom_report_page(request):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
@@ -293,6 +307,7 @@ def custom_report_page(request):
     return render(request, "bootstrap/custom_report.html", {"report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def reports_page(request):
     return render(
         request,
@@ -310,6 +325,7 @@ def get_item(dictionary, key):
     return dictionary.get(key)
 
 
+@login_required
 def delete_task(request, taskid):
     task = get_object_or_404(ReportEmailTask, pk=taskid)
     if request.method == "POST":
@@ -317,6 +333,7 @@ def delete_task(request, taskid):
     return redirect(report_page, task.report.name)
 
 
+@login_required
 def delete_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
@@ -324,6 +341,7 @@ def delete_report(request, reportid):
     return redirect(reports_page)
 
 
+@login_required
 def report_page(request, reportname):
     report = get_object_or_404(Report, name=reportname)
     if request.method == "POST":
