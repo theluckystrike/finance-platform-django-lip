@@ -82,7 +82,7 @@ class Report(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     latest_pdf = models.FileField(
-        upload_to=report_file_path, storage=privateStorage)
+        upload_to=report_file_path, storage=privateStorage, blank=True)
 
     def __str__(self):
         return self.name

@@ -9,9 +9,12 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 import os
 from datetime import datetime
-from .utils import scripts_to_pdfbuffer, update_report_pdf
-from django.core.files import File
+from .utils import update_report_pdf
 from datetime import datetime
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -32,10 +35,12 @@ def delete_script_files(Script):
         if instance.file.name:
             if storage.exists(instance.file.name):
                 storage.delete(instance.file.name)
+                logger.info(f"[pre delete signal handler] Deleted chart file for {instance.name}")
         # check if image file exists and delete it
         if instance.image.name:
             if storage.exists(instance.image.name):
                 storage.delete(instance.image.name)
+                logger.info(f"[pre delete signal handler] Deleted image file for {instance.name}")
         # delete empty directory
         dir_to_remove = os.path.dirname(instance.file.name)
         storage.delete(dir_to_remove)
@@ -59,9 +64,9 @@ def save_report(Report):
     def update_scripts_report(sender, instance, **kwargs):
         scripts = instance.scripts.all()
         if len(scripts) > 0:
-            print("updated from m2m change")
             update_report_pdf(instance)
-        print("Hmmm...m2m updated", len(instance.scripts.all()))
+            logger.info(
+                f"[report m2m signal] Updated pdf for report * {instance.name} *")
 
     @receiver(post_save, sender=Report, weak=False)
     def update_last_updated(sender, instance, **kwargs):
