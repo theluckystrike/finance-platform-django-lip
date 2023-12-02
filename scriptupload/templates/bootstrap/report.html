@@ -6,10 +6,15 @@
     <h1 class="h2">{{report.name}}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         {% if report.latest_pdf %}
-            <a href="{{ report.latest_pdf.url }}" class="btn btn-sm btn-outline-secondary my-1 mx-2">View latest&nbsp;<span class="align-text-bottom"
-                    data-feather="eye"></span></a>
+        <a href="{{ report.latest_pdf.url }}" class="btn btn-sm btn-outline-secondary my-1">View latest&nbsp;<span
+                class="align-text-bottom" data-feather="eye"></span></a>
         {% endif %}
-                    <form method="post" action="{% url 'delete_report' report.id %}">
+        <form method="post" action="{% url 'update_report' report.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Update&nbsp;<span class="align-text-bottom"
+                    data-feather="play"></span></button>
+        </form>
+        <form method="post" action="{% url 'delete_report' report.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-danger my-1">Delete&nbsp;<span class="align-text-bottom"
                     data-feather="file-minus"></span></button>

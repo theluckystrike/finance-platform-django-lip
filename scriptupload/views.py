@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm, NewReportTaskForm
-from .utils import run_script, scripts_to_httpresponse
+from .utils import run_script, scripts_to_httpresponse, update_report_pdf
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
@@ -339,6 +339,14 @@ def delete_report(request, reportid):
     if request.method == "POST":
         report.delete()
     return redirect(reports_page)
+
+
+@login_required
+def update_report(request, reportid):
+    report = get_object_or_404(Report, pk=reportid)
+    if request.method == "POST":
+        update_report_pdf(report, True)
+    return redirect(report_page, report.name)
 
 
 @login_required
