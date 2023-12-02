@@ -79,6 +79,9 @@ INSTALLED_APPS = [
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 4 days
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
