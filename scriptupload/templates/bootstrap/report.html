@@ -4,8 +4,12 @@
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">{{report.name}}</h1>
-    <div class="btn-toolbar">
-        <form method="post" action="{% url 'delete_report' report.id %}">
+    <div class="btn-toolbar mb-2 mb-md-0">
+        {% if report.latest_pdf %}
+            <a href="{{ report.latest_pdf.url }}" class="btn btn-sm btn-outline-secondary my-1 mx-2">View latest&nbsp;<span class="align-text-bottom"
+                    data-feather="eye"></span></a>
+        {% endif %}
+                    <form method="post" action="{% url 'delete_report' report.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-danger my-1">Delete&nbsp;<span class="align-text-bottom"
                     data-feather="file-minus"></span></button>

@@ -11,7 +11,7 @@ from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
-from .signals import delete_script_files, save_script
+from .signals import delete_script_files, save_script, save_report
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -23,6 +23,10 @@ def script_file_path(instance, filename):
     A getter method for the path to the scripts.
     """
     return f"scripts/{instance.name}/{filename}"
+
+
+def report_file_path(instance, filename):
+    return f"reports/{instance.name}/{filename}"
 
 
 class Category(models.Model):
@@ -77,6 +81,8 @@ class Report(models.Model):
     scripts = models.ManyToManyField(Script)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    latest_pdf = models.FileField(
+        upload_to=report_file_path, storage=privateStorage)
 
     def __str__(self):
         return self.name
@@ -97,3 +103,4 @@ class ReportEmailTask(models.Model):
 
 delete_script_files(Script)
 save_script(Script)
+save_report(Report)

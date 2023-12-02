@@ -18,7 +18,7 @@ import pkgutil
 import subprocess
 
 
-def scripts_to_pdf(scripts, categoryname=None):
+def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     """
     Converts a report that was generated to a PDF file.
 
@@ -28,8 +28,8 @@ def scripts_to_pdf(scripts, categoryname=None):
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
-    for script in scripts:
-        if not script.image:
+    if runscripts:
+        for script in scripts:
             run_script(script)
     image_paths = [
         storage.url(script.image.name) for script in scripts
@@ -64,6 +64,11 @@ def scripts_to_pdf(scripts, categoryname=None):
     c.save()
     # reset the buffer position
     buffer.seek(0)
+    return buffer
+
+
+def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
+    buffer = scripts_to_pdfbuffer(scripts, categoryname, runscripts)
     # create response for downloading file
     response = HttpResponse(buffer.read(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="{}_report_{}.pdf"'.format(
@@ -84,7 +89,16 @@ def handle_script_upload(file):
             destination.write(chunk)
 
 
+def update_report_pdf(report, runscripts=False):
+    scripts = report.scripts.all()
+    buffer = scripts_to_pdfbuffer(scripts, report.name, runscripts)
+    report.latest_pdf.save(
+        f"{report.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+    buffer.close()
+
 # run the script assuming that it saves the chart image as output
+
+
 def run_script(script_instance):
     """
     Runs a script and saves the result back to storage, deleting the previous version.

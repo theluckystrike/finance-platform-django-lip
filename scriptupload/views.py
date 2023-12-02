@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from .forms import ScriptUploadForm, NewCategoryForm, ScriptAddCategoryForm, ScriptSelectForm, NewReportForm, NewReportTaskForm
-from .utils import run_script, scripts_to_pdf
+from .utils import run_script, scripts_to_httpresponse
 from django.shortcuts import get_object_or_404, redirect
 from .models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
@@ -283,7 +283,6 @@ def save_custom_report(request):
 def custom_report_page(request):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
-
         if form.is_valid():
             scripts = form.cleaned_data['scripts']
             if len(scripts) > 0:
@@ -297,7 +296,8 @@ def custom_report_page(request):
                             ran_all_scripts = False
                             break
                 if ran_all_scripts:
-                    pdf_response = scripts_to_pdf(scripts)
+                    pdf_response = scripts_to_httpresponse(
+                        scripts, runscripts=form.cleaned_data['run_scripts'])
                     if pdf_response is not None:
                         return pdf_response
         else:
