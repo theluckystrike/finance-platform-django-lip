@@ -1,54 +1,19 @@
 {% extends 'bootstrap/base.html' %}
 {% load static %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">All scripts <span class="h5">({{scripts|length}})</span></h1>
 </div>
-<div class="table-responsive">
+
     {% if scripts %}
-    <table class="table table-striped table-sm">
-        <thead>
-            <tr>
-                <th scope="col">Script name</th>
-                <th scope="col">Category</th>
-                <th scope="col">Subcategory 1</th>
-                <th scope="col">Subcategory 2</th>
-                <th scope="col">Added</th>
-                <th scope="col">Last run</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for script in scripts|dictsortreversed:"created" %}
-            <tr>
-                <th scope="row">{{script.name}}</th>
-                <td>
-                    {% for category in script|script_categories %}
-                    {{category.name}},
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for category in script|script_sub_categories %}
-                    {{category.name}},
-                    {% endfor %}
-                </td>
-                <td>
-                    {{script.category.category.name}}
-                </td>
-                <td>{{ script.created }}</td>
-                <td>{{ script.last_updated }}</td>
-                <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% render_table script_table %}
     {% else %}
     <span class="text-large">
         Nothing to see here
     </span>
     {% endif %}
-</div>
+
 
 {% endblock %}

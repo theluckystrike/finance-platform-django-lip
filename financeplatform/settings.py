@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'databaseinterface',
     'storages',
     'django_tables2',
+    'django_filters',
 ]
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000

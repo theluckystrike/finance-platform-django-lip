@@ -51,30 +51,14 @@
     </div>
     <div class="col-12 col-md-3 col-lg-3">
         <div class="row">
-            <div class="col-12 mb-5">
-                <h4>Categories</h4>
-                <div class="shadow-sm bg-body p-2 m-2 rounded d-inline-block position-relative">
-                    <a href="{% url 'script_delete_category' scriptid=script.id categoryid=category.id %}">
-                        <span
-                            class="position-absolute p-0 top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-                            <span data-feather="minus"></span>
-                        </span>
-                    </a>
-                    <a class="text-decoration-none text-black"
-                        href="{% url 'category' categoryname=category.name %}">{{sript.category.name}}</a>
-                </div>
-                <button type="button" class="btn shadow-sm bg-body p-1 m-2 rounded d-inline-block"
-                    data-bs-toggle="modal" data-bs-target="#categoryModal">
-                    <span data-feather="plus"></span>
-                </button>
-            </div>
             <div class="col-12">
                 <h4>Info</h4>
                 <div class="my-2">
-                    <p>Uploaded: {{ script.created }}
-                    <p>
-                    <p>Last updated: {{ script.last_updated }}
-                    <p>
+                    <p>Category: {{script.category.parent_category.parent_category.name}} &rarr; {{script.category.parent_category.name}} &rarr; {{script.category.name}} </p>
+                    <p></p>
+                    <p>Uploaded: {{ script.created }}</p>
+                    <p></p>
+                    <p>Last updated: {{ script.last_updated }}</p>
                 </div>
             </div>
         </div>
@@ -83,7 +67,7 @@
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{% url 'script_add_category' scriptid=script.id %}" method="post"
+            <form action="" method="post"
                 enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-header">

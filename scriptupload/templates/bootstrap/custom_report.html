@@ -3,7 +3,7 @@
 {% load render_table from django_tables2 %}
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Generate custom report</h1>
+    <h1 class="h2">All scripts</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         
         <button type="submit" class="btn btn-sm btn-outline-secondary my-1 me-2" data-bs-toggle="modal" data-bs-target="#saveReportModal">Save report&nbsp;<span
@@ -13,57 +13,27 @@
     </div>
 </div>
 <div class="table-responsive">
-{% render_table script_table %}
     {% if scripts %}
+    Category: <select id="categoryselect">
+        <option value="-1">--</option>
+        {% for category in categories %}
+        <option value="{{category.id}}">{{category.name}}</option>
+        {% endfor %}
+    </select>
+    Sub category 1: <select id="subcategoryselect">
+        <option value="-1">--</option>
+    </select>
+    Sub category 2: <select id="subsubcategoryselect">
+        <option value="-1">--</option>
+    </select>
+    <button onclick="filter()">Filter</button>
     <form method="post" id="customReportForm">
         {% csrf_token %}
         <label class="mb-4 just-content-end" for="">
             Run selected scripts when generating report? &emsp;{{form.run_scripts}}
         </label>
-        <table class="table table-striped table-sm">
-            <thead>
-                <tr>
-                    <th scope="col"><input type="checkbox" id="selectAllCheckbox"
-                            onclick="toggleCheckboxes()">&ensp;Select</th>
-                    <th scope="col">Script name</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Subcategory 1</th>
-                    <th scope="col">Subcategory 2</th>
-                    <th scope="col">Added</th>
-                    <th scope="col">Last run</th>
-                    <!-- <th scope="col"></th> -->
-                </tr>
-            </thead>
-            <tbody  id="scriptsCheckboxes">
-                {% for script in scripts|dictsortreversed:"created" %}
-                <tr>
-                    <td style="width: 10%;">
-                        <label for="">
-                            <input type="checkbox" name="scripts" value="{{ script.id }}">
-                        </label>
-                    </td>
-                    <th scope="row"><a class="text-decoration-none text-black" href="{% url 'script' script.name %}">{{script.name}}</a></th>
-                    <td>
-                        {% for category in script|script_categories %}
-                        {{category.name}},
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for category in script|script_sub_categories %}
-                        {{category.name}},
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {{script.category.name}}
-                    </td>
-                    <td>{{ script.created }}</td>
-                    <td>{{script.last_updated}}</td>
-                    <!-- <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a> -->
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% render_table script_table %}
+        
     </form>
     {% else %}
     <span class="text-large">
@@ -96,7 +66,94 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+    function filter() {
+        category = $("#categoryselect").val()
+        subcategory = $("#subcategoryselect").val()
+        subsubategory = $("#subsubcategoryselect").val()
+        // location.replace('/reports/custom-report/?' + 'category=' + category + '&subcategory1=' + subcategory + "&subcategory2=" + subsubategory)
+        url = '/reports/custom-report/?'
+        if (category != "-1") {
+            url += 'category=' + category
+        }
+        if (subcategory != "-1") {
+            url += '&subcategory1=' + subcategory
+        }
+        if (subsubategory != "-1") {
+            url += '&subcategory2=' + subsubategory
+        }
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function(data){
+                $("#customReportForm").html($(data).find("#customReportForm"))
+            }
+        })
+    }
+    $("#categoryselect").change(
+        function() {
+            id = $("#categoryselect").val()
+            $.ajax({
+                type: 'GET',
+                url: '/categories/get-subcategories/'+id + '/',
+                // data: $('#filterForm').serialize(),
+                success: function(response){
+                    select = $("#subcategoryselect")
+                    select.find('option')
+                        .remove()
+                        .end()
+                        .append($('<option>', {
+                            value: "-1",
+                            text: "--"
+                        }))
+                    $("#subsubcategoryselect").find('option')
+                        .remove()
+                        .end()
+                        .append($('<option>', {
+                            value: "-1",
+                            text: "--"
+                        }))
+                    $.each(response.subcategories, function (index, subcategory) {
+                        select.append($('<option>', {
+                            value: subcategory.id,
+                            text: subcategory.name
+                        }))
+                    })
+
+                }
+            })
+        }
+    )
+    $("#subcategoryselect").change(
+        function() {
+            id = $("#subcategoryselect").val()
+            $.ajax({
+                type: 'GET',
+                url: '/categories/get-subcategories/'+id + '/',
+                // data: $('#filterForm').serialize(),
+                success: function(response){
+                    select = $("#subsubcategoryselect")
+                    select.find('option')
+                        .remove()
+                        .end()
+                        .append($('<option>', {
+                        value: "-1",
+                        text: "--"
+                    }))
+                    $.each(response.subcategories, function (index, subcategory) {
+                        select.append($('<option>', {
+                            value: subcategory.id,
+                            text: subcategory.name
+                        }))
+                    })
+
+                }
+            })
+        }
+    )
     function toggleCheckboxes() {
         var selectAllCheckbox = document.getElementById('selectAllCheckbox');
         var checkboxes = document.querySelectorAll('#scriptsCheckboxes input[type="checkbox"]');

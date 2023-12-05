@@ -97,8 +97,10 @@ def all_script_page(request):
     """
     Configures the page that is shown when "All scripts" is clicked in the sidebar.
     """
+    scripttable = ScriptTable(Script.objects.all())
+    RequestConfig(request).configure(scripttable)
     # category = get_object_or_404(Category, name=categoryname)
-    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all()})
+    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "script_table": scripttable, "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -281,7 +283,7 @@ def save_custom_report(request):
 
 
 @login_required
-def custom_report_page(request, categoryid=None):
+def custom_report_page(request):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
         if form.is_valid():
@@ -303,17 +305,33 @@ def custom_report_page(request, categoryid=None):
                         return pdf_response
         else:
             messages.info(request, "Select scripts from the table below")
-    if request.method == "GET":
-        if categoryid is not None:
-            filter_category = get_object_or_404(Category, pk=categoryid)
-            print(filter_category.name)
-        table = ScriptTable(Script.objects.all())
-        RequestConfig(request).configure(table)
-        # table.order_by = "name"
+
+    scripts = Script.objects.all()
+    category = request.GET.get("category", None)
+    subcategory1 = request.GET.get("subcategory1", None)
+    subcategory2 = request.GET.get("subcategory2", None)
+    if category:
+        scripts = Script.objects.filter(
+            category__parent_category__parent_category_id=category)
+    if subcategory1:
+        scripts = Script.objects.filter(
+            category__parent_category_id=subcategory1)
+    if subcategory2:
+        scripts = Script.objects.filter(category_id=subcategory2)
+
+    table = ScriptTable(scripts)
+    RequestConfig(request).configure(table)
 
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
     return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+
+
+@login_required
+def get_subcategories(request, categoryid):
+    subcats = Category.objects.filter(
+        parent_category=get_object_or_404(Category, pk=categoryid))
+    return JsonResponse({"subcategories": [{'name': cat.name, 'id': cat.id} for cat in subcats]}, safe=False)
 
 
 @login_required
