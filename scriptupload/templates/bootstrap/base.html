@@ -115,6 +115,12 @@
                 Reports
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'all_scripts' %}">
+                <span data-feather="code" class="align-text-bottom"></span>
+                All scripts
+              </a>
+            </li>
           </ul>
 
           <h6
@@ -125,12 +131,6 @@
             </a>
           </h6>
           <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link d-inline-flex align-items-center rounded border-0" href="{% url 'all_scripts' %}">
-                <span data-feather="chevron-right" class="align-text-bottom"></span>
-                All scripts
-              </a>
-            </li>
             {% for category in categories %}
             <li class="nav-item">
               <button class="nav-link btn d-inline-flex align-items-center rounded border-0 collapsed"
@@ -158,13 +158,13 @@
                           </a>
                         </li>
                         {% endfor %}
-                        <hr class="mx-auto w-75 my-0">
-                        <li>
+                        <!-- <hr class="mx-auto w-75 my-0"> -->
+                        <!-- <li>
                           <a href="{% url 'category' categoryname=subcat.name %}"
                             class="nav-link link-dark d-inline-flex text-decoration-none rounded">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ subcat.name }} scripts
                           </a>
-                        </li>
+                        </li> -->
                       </ul>
                     </div>
                   </li>

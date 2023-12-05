@@ -17,7 +17,6 @@
                 <optgroup label="{{cat.name}}">
                     {% for subcat in cat.category_set.all %}
                 <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
-                    <option value="{{subcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}} general</option>
                     {% for subsubcat in subcat.category_set.all %}
                     <option value="{{subsubcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
                     {% endfor %}
@@ -28,7 +27,7 @@
             </select>
 
             <button class="btn p-0" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <span class="form-text">Create a new category</span>
+                <span class="form-text text-primary">Create a new category</span>
             </button>
 
         </div>

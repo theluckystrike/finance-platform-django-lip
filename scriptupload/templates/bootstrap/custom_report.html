@@ -25,6 +25,8 @@
                             onclick="toggleCheckboxes()">&ensp;Select</th>
                     <th scope="col">Script name</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Subcategory 1</th>
+                    <th scope="col">Subcategory 2</th>
                     <th scope="col">Added</th>
                     <th scope="col">Last run</th>
                     <!-- <th scope="col"></th> -->
@@ -39,6 +41,16 @@
                         </label>
                     </td>
                     <th scope="row"><a class="text-decoration-none text-black" href="{% url 'script' script.name %}">{{script.name}}</a></th>
+                    <td>
+                        {% for category in script|script_categories %}
+                        {{category.name}},
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for category in script|script_sub_categories %}
+                        {{category.name}},
+                        {% endfor %}
+                    </td>
                     <td>
                         {% for category in script.categories.all %}
                         {{category.name}},

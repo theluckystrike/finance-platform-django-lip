@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">All scripts</h1>
+    <h1 class="h2">All scripts <span class="h5">({{scripts|length}})</span></h1>
 </div>
 <div class="table-responsive">
     {% if scripts %}
@@ -12,6 +12,8 @@
             <tr>
                 <th scope="col">Script name</th>
                 <th scope="col">Category</th>
+                <th scope="col">Subcategory 1</th>
+                <th scope="col">Subcategory 2</th>
                 <th scope="col">Added</th>
                 <th scope="col">Last run</th>
                 <th scope="col"></th>
@@ -22,8 +24,18 @@
             <tr>
                 <th scope="row">{{script.name}}</th>
                 <td>
+                    {% for category in script|script_categories %}
+                    {{category.name}},
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for category in script|script_sub_categories %}
+                    {{category.name}},
+                    {% endfor %}
+                </td>
+                <td>
                     {% for category in script.categories.all %}
-                        {{category.name}},
+                    {{category.name}},
                     {% endfor %}
                 </td>
                 <td>{{ script.created }}</td>

@@ -256,7 +256,8 @@ def generate_category_report(request, categoryid):
         category = get_object_or_404(Category, pk=categoryid)
         category_scripts = category.script_set.all()
         if len(category_scripts) > 0:
-            pdf_response = scripts_to_pdf(category_scripts)
+            pdf_response = scripts_to_httpresponse(
+                category_scripts, categoryname=category.name)
             if pdf_response:
                 messages.success(request, "Successfully generated report")
                 return pdf_response
@@ -325,6 +326,18 @@ def get_item(dictionary, key):
     return dictionary.get(key)
 
 
+@register.filter
+def script_sub_categories(script):
+    subsubcats = script.categories.all()
+    return set([subsubcat.parent_category for subsubcat in subsubcats])
+
+
+@register.filter
+def script_categories(script):
+    subsubcats = script.categories.all()
+    return set([subsubcat.parent_category.parent_category for subsubcat in subsubcats])
+
+
 @login_required
 def delete_task(request, taskid):
     task = get_object_or_404(ReportEmailTask, pk=taskid)
@@ -361,6 +374,14 @@ def report_page(request, reportname):
             messages.success(request, "New schedule created")
         else:
             messages.error(request, "Unable to make new schedule")
+
+    report_categories = {}
+    for script in report.scripts.all():
+        for category in script.categories.all():
+            if category not in report_categories.keys():
+                report_categories[category] = [script]
+            else:
+                report_categories[category].append(script)
     days_of_week = {
         "1": "Monday",
         "2": "Tuesday",
@@ -379,6 +400,7 @@ def report_page(request, reportname):
             "categories": Category.objects.filter(parent_category=None),
             "report": report,
             "tasks": ReportEmailTask.objects.filter(report=report),
-            "days_of_week": days_of_week
+            "days_of_week": days_of_week,
+            "report_categories": report_categories
         }
     )

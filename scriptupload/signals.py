@@ -35,12 +35,12 @@ def delete_script_files(Script):
         if instance.file.name:
             if storage.exists(instance.file.name):
                 storage.delete(instance.file.name)
-                logger.info(f"[pre delete signal handler] Deleted chart file for {instance.name}")
+                logger.info(f"[script pre delete signal] Deleted chart file for {instance.name}")
         # check if image file exists and delete it
         if instance.image.name:
             if storage.exists(instance.image.name):
                 storage.delete(instance.image.name)
-                logger.info(f"[pre delete signal handler] Deleted image file for {instance.name}")
+                logger.info(f"[script pre delete signal] Deleted image file for {instance.name}")
         # delete empty directory
         dir_to_remove = os.path.dirname(instance.file.name)
         storage.delete(dir_to_remove)

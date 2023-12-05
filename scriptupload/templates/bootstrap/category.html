@@ -4,6 +4,8 @@
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">
+        {% if category.parent_category.parent_category %}{{category.parent_category.parent_category.name}} &rarr; {% endif %}
+        {% if category.parent_category %}{{category.parent_category.name}} &rarr; {% endif %}
         {{category.name}}&ensp;
         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
             <span data-feather="edit" class="align-text-middle"></span>
@@ -12,7 +14,7 @@
     {% if category.script_set.all %}
     <div class="btn-toolbar mb-2 mb-md-0">
         <a href="{% url 'generate_category_report' categoryid=category.id %}">
-            <button type="button" class="btn btn-sm btn-outline-success">Generate report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
+            <button type="button" class="btn btn-sm btn-outline-success">Download report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
         </a>
     </div>
     {% endif %}
