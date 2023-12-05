@@ -35,27 +35,29 @@ def delete_script_files(Script):
         if instance.file.name:
             if storage.exists(instance.file.name):
                 storage.delete(instance.file.name)
-                logger.info(f"[script pre delete signal] Deleted chart file for {instance.name}")
+                logger.info(
+                    f"[script pre delete signal] Deleted chart file for {instance.name}")
         # check if image file exists and delete it
         if instance.image.name:
             if storage.exists(instance.image.name):
                 storage.delete(instance.image.name)
-                logger.info(f"[script pre delete signal] Deleted image file for {instance.name}")
+                logger.info(
+                    f"[script pre delete signal] Deleted image file for {instance.name}")
         # delete empty directory
         dir_to_remove = os.path.dirname(instance.file.name)
         storage.delete(dir_to_remove)
 
 
-def save_script(Script):
-    """
-    Saves a new script to the database.
+# def save_script(Script):
+#     """
+#     Saves a new script to the database.
 
-    :param Script: The script that is to be added.
-    :return: None.
-    """
-    @receiver(pre_save, sender=Script, weak=False)
-    def update_last_updated(sender, instance, **kwargs):
-        instance.last_updated = datetime.now()
+#     :param Script: The script that is to be added.
+#     :return: None.
+#     """
+#     @receiver(pre_save, sender=Script, weak=False)
+#     def update_last_updated(sender, instance, **kwargs):
+#         instance.last_updated = datetime.now()
 
 
 def save_report(Report):
