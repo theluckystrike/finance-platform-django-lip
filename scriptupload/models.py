@@ -62,10 +62,11 @@ class Script(models.Model):
         max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(Category)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, blank=True, null=True)
 
     def __str__(self):
         return self.name
+    
 
     class Meta:
         verbose_name = "Script"

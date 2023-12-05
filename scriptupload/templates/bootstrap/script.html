@@ -53,7 +53,6 @@
         <div class="row">
             <div class="col-12 mb-5">
                 <h4>Categories</h4>
-                {% for category in script.categories.all %}
                 <div class="shadow-sm bg-body p-2 m-2 rounded d-inline-block position-relative">
                     <a href="{% url 'script_delete_category' scriptid=script.id categoryid=category.id %}">
                         <span
@@ -62,9 +61,8 @@
                         </span>
                     </a>
                     <a class="text-decoration-none text-black"
-                        href="{% url 'category' categoryname=category.name %}">{{category.name}}</a>
+                        href="{% url 'category' categoryname=category.name %}">{{sript.category.name}}</a>
                 </div>
-                {% endfor %}
                 <button type="button" class="btn shadow-sm bg-body p-1 m-2 rounded d-inline-block"
                     data-bs-toggle="modal" data-bs-target="#categoryModal">
                     <span data-feather="plus"></span>
@@ -100,12 +98,12 @@
                         <optgroup label="{{cat.name}}">
                             {% for subcat in cat.category_set.all %}
                         <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
-                            {% if subcat not in script.categories.all %}
+                            {% if subcat != script.category %}
                             <option value="{{subcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}} general
                             </option>
                             {% endif %}
                             {% for subsubcat in subcat.category_set.all %}
-                            {% if subsubcat not in script.categories.all %}
+                            {% if subsubcat != script.category %}
                             <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}
                             </option>
                             {% endif %}

@@ -21,6 +21,8 @@ import os
 from django.core.files import File
 from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
+from .tables import ScriptTable
+from django_tables2 import RequestConfig
 
 # TODO: always search up using pk
 # TODO: custom 404 and internal error page
@@ -60,7 +62,7 @@ def upload_script(request):
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
             script.save()
-            script.categories.add(category)
+            script.category = category
             script.save()
             messages.success(request, "Script added successfully")
         else:
@@ -86,7 +88,7 @@ def category_page(request, categoryname):
     else:
         form = NewCategoryForm(instance=category)
         if category.parent_category:
-            form.fields['parent'].initial = category.parent_category.id
+            form.fields['parent'].initial = 0
     return render(request, "bootstrap/category.html", {"form": form, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
@@ -96,7 +98,7 @@ def all_script_page(request):
     Configures the page that is shown when "All scripts" is clicked in the sidebar.
     """
     # category = get_object_or_404(Category, name=categoryname)
-    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/all_scripts.html", {"scripts": Script.objects.all()})
 
 
 @login_required
@@ -113,9 +115,7 @@ def script_page(request, scriptname):
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
-        if len(script.categories.all()) > 0:
-            nameform.fields['category_name'].initial = script.categories.all()[
-                0].name
+        nameform.fields['category_name'].initial = script.category.name
     return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
@@ -196,7 +196,7 @@ def script_delete_category(request, scriptid, categoryid):
     if request.method == "GET":
         script = get_object_or_404(Script, pk=scriptid)
         category = get_object_or_404(Category, pk=categoryid)
-        script.categories.remove(category)
+        # script.categories.remove(category)
         # TODO: figure out why this message does not show and there are is an
         # additional DELETE request to script/
         messages.success(request, "Script successfully removed from category")
@@ -215,7 +215,7 @@ def script_add_category(request, scriptid):
             script = get_object_or_404(Script, pk=scriptid)
             category = get_object_or_404(
                 Category, pk=form.cleaned_data["category_name"])
-            script.categories.add(category)
+            # script.categories.add(category)
             messages.success(
                 request, f"Script successfully added to category '{category.name}'")
         else:
@@ -281,7 +281,7 @@ def save_custom_report(request):
 
 
 @login_required
-def custom_report_page(request):
+def custom_report_page(request, categoryid=None):
     if request.method == "POST":
         form = ScriptSelectForm(request.POST)
         if form.is_valid():
@@ -303,9 +303,17 @@ def custom_report_page(request):
                         return pdf_response
         else:
             messages.info(request, "Select scripts from the table below")
+    if request.method == "GET":
+        if categoryid is not None:
+            filter_category = get_object_or_404(Category, pk=categoryid)
+            print(filter_category.name)
+        table = ScriptTable(Script.objects.all())
+        RequestConfig(request).configure(table)
+        # table.order_by = "name"
+
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
-    return render(request, "bootstrap/custom_report.html", {"report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -328,14 +336,12 @@ def get_item(dictionary, key):
 
 @register.filter
 def script_sub_categories(script):
-    subsubcats = script.categories.all()
-    return set([subsubcat.parent_category for subsubcat in subsubcats])
+    return "foo"
 
 
 @register.filter
 def script_categories(script):
-    subsubcats = script.categories.all()
-    return set([subsubcat.parent_category.parent_category for subsubcat in subsubcats])
+    return "bar"
 
 
 @login_required
@@ -377,11 +383,11 @@ def report_page(request, reportname):
 
     report_categories = {}
     for script in report.scripts.all():
-        for category in script.categories.all():
-            if category not in report_categories.keys():
-                report_categories[category] = [script]
-            else:
-                report_categories[category].append(script)
+
+        if script.category not in report_categories.keys():
+            report_categories[script.category] = [script]
+        else:
+            report_categories[script.category].append(script)
     days_of_week = {
         "1": "Monday",
         "2": "Tuesday",

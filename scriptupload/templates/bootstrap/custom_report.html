@@ -1,5 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 {% load static %}
+{% load render_table from django_tables2 %}
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Generate custom report</h1>
@@ -12,6 +13,7 @@
     </div>
 </div>
 <div class="table-responsive">
+{% render_table script_table %}
     {% if scripts %}
     <form method="post" id="customReportForm">
         {% csrf_token %}
@@ -52,9 +54,7 @@
                         {% endfor %}
                     </td>
                     <td>
-                        {% for category in script.categories.all %}
-                        {{category.name}},
-                        {% endfor %}
+                        {{script.category.name}}
                     </td>
                     <td>{{ script.created }}</td>
                     <td>{{script.last_updated}}</td>

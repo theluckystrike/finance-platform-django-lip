@@ -34,9 +34,7 @@
                     {% endfor %}
                 </td>
                 <td>
-                    {% for category in script.categories.all %}
-                    {{category.name}},
-                    {% endfor %}
+                    {{script.category.category.name}}
                 </td>
                 <td>{{ script.created }}</td>
                 <td>{{ script.last_updated }}</td>
