@@ -131,7 +131,7 @@ stack-data==0.6.2
 terminado==0.17.1
 tinycss2==1.2.1
 tomli==2.0.1
-toolbox==0.0.1
+-e git+https://github.com/ndaskalovic/finance-toolbox.git#egg=toolbox
 tornado==6.3.2
 traitlets==5.9.0
 typing_extensions==4.6.3
