@@ -7,13 +7,15 @@ class ScriptTable(tables.Table):
 
     subcategory1 = tables.Column(
         empty_values=(), verbose_name="Sub category 1", orderable=False)
-    category = tables.Column(empty_values=(), verbose_name="Category", orderable=False)
+    category = tables.Column(
+        empty_values=(), verbose_name="Category", orderable=False)
     subcategory2 = tables.Column(
-        accessor="category", verbose_name="Sub category 2")
+        empty_values=(), verbose_name="Sub category 2")
     created = tables.Column(verbose_name="Added")
-    
+
     view_link = tables.Column(empty_values=(), verbose_name="")
-    select_box = tables.Column(empty_values=(), verbose_name=mark_safe('<input type="checkbox" id="selectAllCheckbox" onclick="toggleCheckboxes()">'))
+    select_box = tables.Column(empty_values=(), verbose_name=mark_safe(
+        '<input type="checkbox" id="selectAllCheckbox" onclick="toggleCheckboxes()">'))
 
     class Meta:
         model = Script
@@ -24,14 +26,25 @@ class ScriptTable(tables.Table):
                  "tbody": {"id": "scriptsCheckboxes"}}
 
     def render_subcategory1(self, value, record):
-        return record.category.parent_category.name
+        if record.category:
+            return record.category.parent_category.name
+        else:
+            return "-"
+
+    def render_subcategory2(self, value, record):
+        if record.category:
+            return record.category.name
+        else:
+            return "-"
 
     def render_category(self, value, record):
-        return record.category.parent_category.parent_category.name
-    
+        if record.category:
+            return record.category.parent_category.parent_category.name
+        else:
+            return "-"
+
     def render_view_link(self, value, record):
         return mark_safe('<a href="/scripts/{}" class="text-decoration-none"> View script </a>'.format(record.name.replace(' ', '%20')))
-    
+
     def render_select_box(self, value, record):
         return mark_safe('<input type="checkbox" name="scripts" value="{}">'.format(record.id))
-

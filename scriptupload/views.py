@@ -42,8 +42,8 @@ def upload_script(request):
         # TODO: check for same name script
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            category_name = form.cleaned_data["category_name"]
-            category = Category.objects.get(name=category_name)
+            # category_name = form.cleaned_data["category_name"]
+            # category = Category.objects.get(pk=category_name)
             file = form.cleaned_data['file']
             script = form.save(commit=False)
             if file.name.endswith('.ipynb'):
@@ -62,8 +62,8 @@ def upload_script(request):
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
             script.save()
-            script.category = category
-            script.save()
+            # script.category = category
+            # script.save()
             messages.success(request, "Script added successfully")
         else:
             messages.info(
@@ -113,11 +113,12 @@ def script_page(request, scriptname):
     if request.method == "POST":
         nameform = ScriptUploadForm(request.POST, instance=script)
         if nameform.is_valid():
-            nameform.save()
+            s = nameform.save(commit=False)
+            s.category = get_object_or_404(Category, pk=request.POST['category_name'])
+            s.save()
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
-        nameform.fields['category_name'].initial = script.category.name
     return render(request, "bootstrap/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 

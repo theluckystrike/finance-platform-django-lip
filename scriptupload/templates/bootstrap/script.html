@@ -119,11 +119,25 @@
                 <div class="modal-body">
                     <div class="mb-4">
                         <label for="name" class="form-label">Script name</label>
-                        <input type="text" id="name" name="name" placeholder="{{ nameform.instance.name }}"
+                        <input type="text" id="name" name="name" value="{{nameform.instance.name}}" placeholder="{{ nameform.instance.name }}"
                             class="form-control" autocomplete="on" required>
                     </div>
                     <div class="mb-4">
-                        {{ nameform.category_name.as_hidden }}
+                        <label for="category_name" class="form-label">Category</label>
+                        <select id="category_name" name="category_name" class="form-control" required>
+                            <option value="" disabled selected>Select a category</option>
+                            {% for cat in categories %}
+                            <optgroup label="{{cat.name}}">
+                                {% for subcat in cat.category_set.all %}
+                            <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                                {% for subsubcat in subcat.category_set.all %}
+                                <option value="{{subsubcat.pk}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">

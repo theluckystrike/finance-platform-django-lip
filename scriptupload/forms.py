@@ -12,7 +12,7 @@ from .models import Script, Category, Report, ReportEmailTask
 
 
 class ScriptUploadForm(forms.ModelForm):
-    category_name = forms.CharField(max_length=100)
+    category_name = forms.ModelChoiceField(queryset=Category.objects.filter(parent_category__parent_category__isnull=False), to_field_name="pk")
 
     class Meta:
         model = Script

@@ -18,7 +18,7 @@
                     {% for subcat in cat.category_set.all %}
                 <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
                     {% for subsubcat in subcat.category_set.all %}
-                    <option value="{{subsubcat.name}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                    <option value="{{subsubcat.pk}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
                     {% endfor %}
                 </optgroup>
                 {% endfor %}
