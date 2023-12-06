@@ -12,24 +12,38 @@
                 class="align-text-bottom" data-feather="download"></span></button>
     </div>
 </div>
-<div class="table-responsive">
+<div class="">
     {% if scripts %}
-    Category: <select id="categoryselect">
-        <option value="-1">--</option>
-        {% for category in categories %}
-        <option value="{{category.id}}">{{category.name}}</option>
-        {% endfor %}
-    </select>
-    Sub category 1: <select id="subcategoryselect">
-        <option value="-1">--</option>
-    </select>
-    Sub category 2: <select id="subsubcategoryselect">
-        <option value="-1">--</option>
-    </select>
-    <button onclick="filter()">Filter</button>
+    <div id="filters" class="row">
+        <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
+            <label class="form-label">Category</label>
+            <select id="categoryselect" class="form-select">
+                <option value="-1">--</option>
+                {% for category in categories %}
+                <option value="{{category.id}}">{{category.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
+            <label class="form-label">Sub category 1</label>
+            <select id="subcategoryselect" class="form-select">
+                <option value="-1">--</option>
+            </select>
+
+        </div>
+        <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
+            <label class="form-label">Sub category2</label>
+            <select id="subsubcategoryselect" class="form-select">
+                <option value="-1">--</option>
+            </select>
+        </div>
+        <div class="col h-full py-3">
+                <button onclick="filter()" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
     <form method="post" id="customReportForm">
         {% csrf_token %}
-        <label class="mb-4 just-content-end" for="">
+        <label class="just-content-end text-center my-3" for="">
             Run selected scripts when generating report? &emsp;{{form.run_scripts}}
         </label>
         {% render_table script_table %}

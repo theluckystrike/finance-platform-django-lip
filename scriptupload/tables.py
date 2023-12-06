@@ -19,7 +19,7 @@ class ScriptTable(tables.Table):
 
     class Meta:
         model = Script
-        template_name = "django_tables2/bootstrap5.html"
+        template_name = "django_tables2/bootstrap5-responsive.html"
         fields = ("select_box", "name", "category",
                   "subcategory1", "subcategory2", "created", "last_updated", "view_link")
         attrs = {"class": "table table-striped table-sm",
