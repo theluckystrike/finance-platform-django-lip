@@ -321,11 +321,11 @@ def custom_report_page(request):
         scripts = Script.objects.filter(category_id=subcategory2)
 
     table = ScriptTable(scripts)
-    RequestConfig(request).configure(table)
+    RequestConfig(request, paginate=False).configure(table)
 
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
-    return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required

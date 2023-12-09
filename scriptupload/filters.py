@@ -23,3 +23,5 @@ class ScriptFilter(django_filters.FilterSet):
     class Meta:
         model = Script
         fields = []
+
+    categpry = filters.ModelChoiceField()

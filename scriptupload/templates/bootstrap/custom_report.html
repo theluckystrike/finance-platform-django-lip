@@ -3,22 +3,23 @@
 {% load render_table from django_tables2 %}
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">All scripts ({{scripts|length}})</h1>
+    <h1 class="h2">All scripts <span id="headerInfo">({{number_of_scripts}})</span></h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        
-        <button type="submit" class="btn btn-sm btn-outline-secondary my-1 me-2" data-bs-toggle="modal" data-bs-target="#saveReportModal">Save report&nbsp;<span
-                class="align-text-bottom" data-feather="save"></span></button>
-        <button type="submit" form="customReportForm" class="btn btn-sm btn-outline-success my-1">Download report&nbsp;<span
-                class="align-text-bottom" data-feather="download"></span></button>
+
+        <button type="submit" class="btn btn-sm btn-outline-secondary my-1 me-2" data-bs-toggle="modal"
+            data-bs-target="#saveReportModal">Save report&nbsp;<span class="align-text-bottom"
+                data-feather="save"></span></button>
+        <button type="submit" form="customReportForm" class="btn btn-sm btn-outline-success my-1">Download
+            report&nbsp;<span class="align-text-bottom" data-feather="download"></span></button>
     </div>
 </div>
-<div class="">
-    {% if scripts %}
+<div>
+    {% if number_of_scripts > -1 %}
     <div id="filters" class="row">
         <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
             <label class="form-label">Category</label>
             <select id="categoryselect" class="form-select">
-                <option value="-1">--</option>
+                <option value="-1">All</option>
                 {% for category in categories %}
                 <option value="{{category.id}}">{{category.name}}</option>
                 {% endfor %}
@@ -27,18 +28,18 @@
         <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
             <label class="form-label">Sub category 1</label>
             <select id="subcategoryselect" class="form-select">
-                <option value="-1">--</option>
+                <option value="-1">All</option>
             </select>
 
         </div>
         <div class="col-12 col-xs-6 col-md-6 col-lg-3 col-xl-3 col-sm-12">
             <label class="form-label">Sub category2</label>
             <select id="subsubcategoryselect" class="form-select">
-                <option value="-1">--</option>
+                <option value="-1">All</option>
             </select>
         </div>
         <div class="col h-full py-3">
-                <button onclick="filter()" class="btn btn-primary">Filter</button>
+            <button onclick="filter()" class="btn btn-primary">Filter</button>
         </div>
     </div>
     <form method="post" id="customReportForm">
@@ -47,7 +48,7 @@
             Run selected scripts when generating report? &emsp;{{form.run_scripts}}
         </label>
         {% render_table script_table %}
-        
+
     </form>
     {% else %}
     <span class="text-large">
@@ -58,8 +59,8 @@
 <div class="modal fade" id="saveReportModal" tabindex="-1" aria-labelledby="saveReportModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{% url 'save_custom_report' %}" method="post"
-                enctype="multipart/form-data" id="saveReportForm">
+            <form action="{% url 'save_custom_report' %}" method="post" enctype="multipart/form-data"
+                id="saveReportForm">
                 {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title" id="saveReportModalLabel">Create a new custom report</h5>
@@ -102,34 +103,37 @@
         $.ajax({
             type: 'GET',
             url: url,
-            success: function(data){
-                $("#customReportForm").html($(data).find("#customReportForm"))
+            success: function (data) {
+                $("#customReportForm").replaceWith($("#customReportForm", data));
+                $("#headerInfo").replaceWith($("#headerInfo", data));
             }
         })
     }
+    function resetSelect(selectid) {
+        $('#' + selectid).find('option')
+            .remove()
+            .end()
+            .append($('<option>', {
+                value: "-1",
+                text: "All"
+            }))
+    }
     $("#categoryselect").change(
-        function() {
+        function () {
             id = $("#categoryselect").val()
+            if (id == "-1") {
+                resetSelect("subcategoryselect");
+                resetSelect("subsubcategoryselect");
+                return
+            }
             $.ajax({
                 type: 'GET',
-                url: '/categories/get-subcategories/'+id + '/',
+                url: '/categories/get-subcategories/' + id + '/',
                 // data: $('#filterForm').serialize(),
-                success: function(response){
+                success: function (response) {
+                    resetSelect("subcategoryselect");
+                    resetSelect("subsubcategoryselect");
                     select = $("#subcategoryselect")
-                    select.find('option')
-                        .remove()
-                        .end()
-                        .append($('<option>', {
-                            value: "-1",
-                            text: "--"
-                        }))
-                    $("#subsubcategoryselect").find('option')
-                        .remove()
-                        .end()
-                        .append($('<option>', {
-                            value: "-1",
-                            text: "--"
-                        }))
                     $.each(response.subcategories, function (index, subcategory) {
                         select.append($('<option>', {
                             value: subcategory.id,
@@ -142,21 +146,19 @@
         }
     )
     $("#subcategoryselect").change(
-        function() {
+        function () {
             id = $("#subcategoryselect").val()
+            if (id == "-1") {
+                resetSelect("subsubcategoryselect");
+                return
+            }
             $.ajax({
                 type: 'GET',
-                url: '/categories/get-subcategories/'+id + '/',
+                url: '/categories/get-subcategories/' + id + '/',
                 // data: $('#filterForm').serialize(),
-                success: function(response){
+                success: function (response) {
+                    resetSelect("subsubcategoryselect")
                     select = $("#subsubcategoryselect")
-                    select.find('option')
-                        .remove()
-                        .end()
-                        .append($('<option>', {
-                        value: "-1",
-                        text: "--"
-                    }))
                     $.each(response.subcategories, function (index, subcategory) {
                         select.append($('<option>', {
                             value: subcategory.id,
@@ -177,43 +179,43 @@
         });
     }
 
-     document.addEventListener('DOMContentLoaded', function () {
-            var form1 = document.getElementById('customReportForm');
-            var form2 = document.getElementById('saveReportForm');
+    document.addEventListener('DOMContentLoaded', function () {
+        var form1 = document.getElementById('customReportForm');
+        var form2 = document.getElementById('saveReportForm');
 
-            // Event listener for checkbox changes in form1
-            form1.addEventListener('change', function () {
-                updateScriptsField(form1)
-            });
-
-            function updateScriptsField() {
-             var selectedScripts = getSelectedCheckboxValues(document.getElementById("scriptsCheckboxes"));
-             var scriptsField = form2.querySelector('[name="scripts"]');
-
-             // Clear existing selections
-             while (scriptsField.options.length > 0) {
-                 scriptsField.remove(0);
-             }
-
-             // Add selected scripts to the Django form's scripts field
-             selectedScripts.forEach(function (scriptId) {
-                 var option = document.createElement('option');
-                 option.value = scriptId;
-                 option.text = 'Script ' + scriptId;
-                 option.selected = 'selected';
-                 scriptsField.add(option);
-             });
-         }
-
-            // Function to get selected checkbox values
-            function getSelectedCheckboxValues(form) {
-                var checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-                var values = Array.from(checkboxes).map(function (checkbox) {
-                    return checkbox.value;
-                });
-                console.log(values)
-                return values;
-            }
+        // Event listener for checkbox changes in form1
+        form1.addEventListener('change', function () {
+            updateScriptsField(form1)
         });
+
+        function updateScriptsField() {
+            var selectedScripts = getSelectedCheckboxValues(document.getElementById("scriptsCheckboxes"));
+            var scriptsField = form2.querySelector('[name="scripts"]');
+
+            // Clear existing selections
+            while (scriptsField.options.length > 0) {
+                scriptsField.remove(0);
+            }
+
+            // Add selected scripts to the Django form's scripts field
+            selectedScripts.forEach(function (scriptId) {
+                var option = document.createElement('option');
+                option.value = scriptId;
+                option.text = 'Script ' + scriptId;
+                option.selected = 'selected';
+                scriptsField.add(option);
+            });
+        }
+
+        // Function to get selected checkbox values
+        function getSelectedCheckboxValues(form) {
+            var checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+            var values = Array.from(checkboxes).map(function (checkbox) {
+                return checkbox.value;
+            });
+            console.log(values)
+            return values;
+        }
+    });
 </script>
 {% endblock %}
