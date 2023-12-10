@@ -134,9 +134,7 @@ def run_script(script_instance):
         if storage.exists(os.path.join(script_dir, img[-1])):
             storage.delete(os.path.join(script_dir, img[-1]))
         # save new image
-        storage.save(os.path.join(script_dir, img[-1]), File(i))
-        script_instance.image = os.path.join(script_dir, img[-1])
-        script_instance.save(update_fields=["image", "last_updated"])
+        script_instance.image.save(os.path.join(script_dir, img[-1]), File(i))
         i.close()
     script.close()
     os.chdir(settings.BASE_DIR)

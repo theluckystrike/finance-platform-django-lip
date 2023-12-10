@@ -5,6 +5,7 @@ These configure what the user will interact with and see when they visit each pa
 Each function configures a different view and defines which one in its name.
 """
 
+from django.views.generic.edit import UpdateView
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
@@ -168,6 +169,44 @@ def script_edit_page(request, scriptname):
         return HttpResponseRedirect(f"/scripts/{scriptname}")
 
 
+def update_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    form = NewCategoryForm(request.POST, instance=category)
+    print(category.name, form.instance.name)
+    if form.is_valid():
+        ob = form.save(commit=False)
+        parent = form.cleaned_data["parent"]
+        
+        ob_type = ob.get_level()
+        if parent == -1:
+            if ob_type != 0:
+                messages.error(request, "Cannot promote category")
+            else:
+                ob.parent_category = None
+                ob.save()
+                messages.success(request, mark_safe(f"Successfully updated"))
+        elif parent == ob.id:
+            messages.error(
+                request, "Cannot make category a subcategory of itself")
+        else:
+            parent_cat = get_object_or_404(Category, pk=parent)
+            parent_cat_type = parent_cat.get_level()
+            if (ob_type == 2 and parent_cat_type == 1) or (ob_type == 1 and parent_cat_type == 0):
+                ob.parent_category = parent_cat
+                ob.save()
+                messages.success(request, mark_safe(f"Successfully updated"))
+            else:
+                messages.error(request, "Not allowed")
+    else:
+        messages.error(request, "There was an error making this update")
+    return redirect("manage_categories")
+
+
+def category_manager_page(request):
+    form = NewCategoryForm()
+    return render(request, "bootstrap/category/category_manage.html", {"form": form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+
+
 @login_required
 def create_category(request):
     """
@@ -326,7 +365,7 @@ def custom_report_page(request):
             category__parent_category_id=subcategory1)
         filtersubcat2 = Category.objects.filter(
             parent_category_id=subcategory1)
-        
+
     if subcategory2 and subcategory2 and category:
         scripts = Script.objects.filter(category_id=subcategory2)
 
@@ -344,7 +383,7 @@ def custom_report_page(request):
     # category_hierarchy["subsubcategories"] = [c.id for c in Category.objects.filter(
     #     parent_category__parent_category__parent_category=None)]
     # print(category_hierarchy["subsubcategories"])
-    return render(request, "bootstrap/custom_report.html", {"catfilter": filtercat,"subcat1filter": filtersubcat1, "subcat1": subcategory1, "subcat2filter": filtersubcat2, "subcat2": subcategory2, "script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/custom_report.html", {"catfilter": filtercat, "subcat1filter": filtersubcat1, "subcat1": subcategory1, "subcat2filter": filtersubcat2, "subcat2": subcategory2, "script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -370,16 +409,6 @@ def reports_page(request):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
-
-
-@register.filter
-def script_sub_categories(script):
-    return "foo"
-
-
-@register.filter
-def script_categories(script):
-    return "bar"
 
 
 @login_required

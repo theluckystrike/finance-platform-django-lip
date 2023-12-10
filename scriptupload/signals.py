@@ -72,4 +72,4 @@ def save_report(Report):
 
     @receiver(post_save, sender=Report, weak=False)
     def update_last_updated(sender, instance, **kwargs):
-        instance.last_updates = datetime.now()
+        instance.last_updated = datetime.now()

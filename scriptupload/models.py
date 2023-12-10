@@ -42,6 +42,17 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def get_children(self):
+        return Category.objects.filter(parent_category=self)
+
+    def get_level(self):
+        if not self.parent_category:
+            return 0
+        elif not self.parent_category.parent_category:
+            return 1
+        else:
+            return 2
+
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
@@ -63,7 +74,7 @@ class Script(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(
-        Category, on_delete=models.DO_NOTHING, blank=True, null=True)
+        Category, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.name
