@@ -5,12 +5,12 @@ from .models import Script
 
 class ScriptTable(tables.Table):
 
-    subcategory1 = tables.Column(
-        empty_values=(), verbose_name="Sub category 1", orderable=False)
     category = tables.Column(
-        empty_values=(), verbose_name="Category", orderable=False)
+        empty_values=(), verbose_name="Category", order_by="category.parent_category.parent_category.name")
+    subcategory1 = tables.Column(
+        empty_values=(), verbose_name="Sub category 1", order_by="category.parent_category.name")
     subcategory2 = tables.Column(
-        empty_values=(), verbose_name="Sub category 2")
+        empty_values=(), verbose_name="Sub category 2", order_by="category.name")
     created = tables.Column(verbose_name="Added")
 
     view_link = tables.Column(empty_values=(), verbose_name="")
