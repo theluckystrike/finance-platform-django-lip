@@ -21,7 +21,11 @@
             <select id="categoryselect" class="form-select">
                 <option value="-1">All</option>
                 {% for category in categories %}
+                {% if category.id == catfilter|add:"0" %}
+                <option value="{{category.id}}" selected>{{category.name}}</option>
+                {% else %}
                 <option value="{{category.id}}">{{category.name}}</option>
+                {% endif %}
                 {% endfor %}
             </select>
         </div>
@@ -29,6 +33,13 @@
             <label class="form-label">Sub category 1</label>
             <select id="subcategoryselect" class="form-select">
                 <option value="-1">All</option>
+                {% for subcat in subcat1filter %}
+                {% if subcat.id == subcat1|add:"0" %}
+                    <option value="{{subcat.id}}" selected>{{subcat.name}}</option>
+                {% else %}
+                    <option value="{{subcat.id}}">{{subcat.name}}</option>
+                {% endif %}
+                {% endfor %}
             </select>
 
         </div>
@@ -36,6 +47,13 @@
             <label class="form-label">Sub category2</label>
             <select id="subsubcategoryselect" class="form-select">
                 <option value="-1">All</option>
+                {% for subcat in subcat2filter %}
+                {% if subcat.id == subcat2|add:"0" %}
+                <option value="{{subcat.id}}" selected>{{subcat.name}}</option>
+                {% else %}
+                <option value="{{subcat.id}}">{{subcat.name}}</option>
+                {% endif %}
+                {% endfor %}
             </select>
         </div>
         <div class="col h-full py-3">
@@ -100,7 +118,7 @@
             url += '&subcategory2=' + subsubategory
         }
         location.replace(url)
-        return 
+        return
         // $.ajax({
         //     type: 'GET',
         //     url: url,
@@ -151,7 +169,7 @@
     }
     function updateSubSubCategory() {
         return new Promise(function (resolve, reject) {
-            
+
             const id = $("#subcategoryselect").val()
             if (id == "-1") {
                 resetSelect("subsubcategoryselect");
@@ -177,35 +195,6 @@
     $("#categoryselect").change(updateSubCategory)
     $("#subcategoryselect").change(updateSubSubCategory)
 
-    function setSelectedOption() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryid = urlParams.get("category");
-        const subcategoryid = urlParams.get("subcategory1");
-        const subsubcategoryid = urlParams.get("subcategory2");
-        if (categoryid) {
-            $('#categoryselect option[value="' + categoryid + '"]').prop("selected", true);
-            if (subcategoryid) {
-                updateSubCategory().then(function (response) {
-                    $('#subcategoryselect option[value="' + subcategoryid + '"]').prop("selected", true);
-                    if (subsubcategoryid) {
-                        updateSubSubCategory().then(function (response){
-                            $('#subsubcategoryselect option[value="' + subsubcategoryid + '"]').prop("selected", true);
-        
-                        })
-                    } else {
-                        updateSubSubCategory();
-                    }
-                }
-    
-                )
-            } else {
-                updateSubCategory();
-            }
-        }
-
-
-    }
-    $("#filters").ready(setSelectedOption)
 
     function toggleCheckboxes() {
         var selectAllCheckbox = document.getElementById('selectAllCheckbox');

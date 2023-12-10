@@ -114,7 +114,8 @@ def script_page(request, scriptname):
         nameform = ScriptUploadForm(request.POST, instance=script)
         if nameform.is_valid():
             s = nameform.save(commit=False)
-            s.category = get_object_or_404(Category, pk=request.POST['category_name'])
+            s.category = get_object_or_404(
+                Category, pk=request.POST['category_name'])
             s.save()
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
@@ -311,13 +312,22 @@ def custom_report_page(request):
     category = request.GET.get("category", None)
     subcategory1 = request.GET.get("subcategory1", None)
     subcategory2 = request.GET.get("subcategory2", None)
+    filtercat = None
+    filtersubcat1 = None
+    filtersubcat2 = None
     if category:
         scripts = Script.objects.filter(
             category__parent_category__parent_category_id=category)
-    if subcategory1:
+        filtersubcat1 = Category.objects.filter(parent_category_id=category)
+        filtercat = category
+
+    if subcategory1 and category:
         scripts = Script.objects.filter(
             category__parent_category_id=subcategory1)
-    if subcategory2:
+        filtersubcat2 = Category.objects.filter(
+            parent_category_id=subcategory1)
+        
+    if subcategory2 and subcategory2 and category:
         scripts = Script.objects.filter(category_id=subcategory2)
 
     table = ScriptTable(scripts)
@@ -334,7 +344,7 @@ def custom_report_page(request):
     # category_hierarchy["subsubcategories"] = [c.id for c in Category.objects.filter(
     #     parent_category__parent_category__parent_category=None)]
     # print(category_hierarchy["subsubcategories"])
-    return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/custom_report.html", {"catfilter": filtercat,"subcat1filter": filtersubcat1, "subcat1": subcategory1, "subcat2filter": filtersubcat2, "subcat2": subcategory2, "script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
