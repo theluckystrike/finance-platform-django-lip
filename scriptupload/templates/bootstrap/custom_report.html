@@ -86,10 +86,9 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     function filter() {
-        category = $("#categoryselect").val()
-        subcategory = $("#subcategoryselect").val()
-        subsubategory = $("#subsubcategoryselect").val()
-        // location.replace('/reports/custom-report/?' + 'category=' + category + '&subcategory1=' + subcategory + "&subcategory2=" + subsubategory)
+        const category = $("#categoryselect").val()
+        const subcategory = $("#subcategoryselect").val()
+        const subsubategory = $("#subsubcategoryselect").val()
         url = '/reports/custom-report/?'
         if (category != "-1") {
             url += 'category=' + category
@@ -100,14 +99,17 @@
         if (subsubategory != "-1") {
             url += '&subcategory2=' + subsubategory
         }
-        $.ajax({
-            type: 'GET',
-            url: url,
-            success: function (data) {
-                $("#customReportForm").replaceWith($("#customReportForm", data));
-                $("#headerInfo").replaceWith($("#headerInfo", data));
-            }
-        })
+        location.replace(url)
+        return 
+        // $.ajax({
+        //     type: 'GET',
+        //     url: url,
+        //     success: function (data) {
+        //         $("#customReportForm").replaceWith($("#customReportForm", data));
+        //         $("#headerInfo").replaceWith($("#headerInfo", data));
+        //         history.pushState({}, "", url)
+        //     }
+        // })
     }
     function resetSelect(selectid) {
         $('#' + selectid).find('option')
@@ -118,9 +120,10 @@
                 text: "All"
             }))
     }
-    $("#categoryselect").change(
-        function () {
-            id = $("#categoryselect").val()
+    function updateSubCategory() {
+        return new Promise(function (resolve, reject) {
+
+            const id = $("#categoryselect").val()
             if (id == "-1") {
                 resetSelect("subcategoryselect");
                 resetSelect("subsubcategoryselect");
@@ -129,7 +132,6 @@
             $.ajax({
                 type: 'GET',
                 url: '/categories/get-subcategories/' + id + '/',
-                // data: $('#filterForm').serialize(),
                 success: function (response) {
                     resetSelect("subcategoryselect");
                     resetSelect("subsubcategoryselect");
@@ -140,14 +142,17 @@
                             text: subcategory.name
                         }))
                     })
-
+                    resolve(response)
                 }
             })
         }
-    )
-    $("#subcategoryselect").change(
-        function () {
-            id = $("#subcategoryselect").val()
+
+        )
+    }
+    function updateSubSubCategory() {
+        return new Promise(function (resolve, reject) {
+            
+            const id = $("#subcategoryselect").val()
             if (id == "-1") {
                 resetSelect("subsubcategoryselect");
                 return
@@ -155,7 +160,6 @@
             $.ajax({
                 type: 'GET',
                 url: '/categories/get-subcategories/' + id + '/',
-                // data: $('#filterForm').serialize(),
                 success: function (response) {
                     resetSelect("subsubcategoryselect")
                     select = $("#subsubcategoryselect")
@@ -165,11 +169,44 @@
                             text: subcategory.name
                         }))
                     })
-
+                    resolve(response)
                 }
             })
+        })
+    }
+    $("#categoryselect").change(updateSubCategory)
+    $("#subcategoryselect").change(updateSubSubCategory)
+
+    function setSelectedOption() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryid = urlParams.get("category");
+        const subcategoryid = urlParams.get("subcategory1");
+        const subsubcategoryid = urlParams.get("subcategory2");
+        if (categoryid) {
+            $('#categoryselect option[value="' + categoryid + '"]').prop("selected", true);
+            if (subcategoryid) {
+                updateSubCategory().then(function (response) {
+                    $('#subcategoryselect option[value="' + subcategoryid + '"]').prop("selected", true);
+                    if (subsubcategoryid) {
+                        updateSubSubCategory().then(function (response){
+                            $('#subsubcategoryselect option[value="' + subsubcategoryid + '"]').prop("selected", true);
+        
+                        })
+                    } else {
+                        updateSubSubCategory();
+                    }
+                }
+    
+                )
+            } else {
+                updateSubCategory();
+            }
         }
-    )
+
+
+    }
+    $("#filters").ready(setSelectedOption)
+
     function toggleCheckboxes() {
         var selectAllCheckbox = document.getElementById('selectAllCheckbox');
         var checkboxes = document.querySelectorAll('#scriptsCheckboxes input[type="checkbox"]');

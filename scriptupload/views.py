@@ -325,6 +325,15 @@ def custom_report_page(request):
 
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
+    # subcats = {}
+    # for c in Category.objects.all():
+    #     subcats[c.name] = {'id': c.id, "subcategories":Category.objects.filter(parent_category=c)}
+    # category_hierarchy = {}
+    # category_hierarchy["categories"] = Category.objects.filter(parent_category=None)
+    # category_hierarchy["subcategories"] = Category.objects.filter(parent_category__parent_category=None)
+    # category_hierarchy["subsubcategories"] = [c.id for c in Category.objects.filter(
+    #     parent_category__parent_category__parent_category=None)]
+    # print(category_hierarchy["subsubcategories"])
     return render(request, "bootstrap/custom_report.html", {"script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
 
 
