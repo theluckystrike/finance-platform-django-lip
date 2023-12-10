@@ -76,8 +76,6 @@ INSTALLED_APPS = [
     'databaseinterface',
     'storages',
     'django_tables2',
-    "crispy_forms",
-    "crispy_bootstrap4",
     'django_filters',
 ]
 
@@ -95,9 +93,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10000,
 }
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
-
-CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
