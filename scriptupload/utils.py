@@ -16,6 +16,10 @@ from io import BytesIO
 import ast
 import pkgutil
 import subprocess
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
@@ -28,9 +32,9 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
-    if runscripts:
-        for script in scripts:
-            run_script(script)
+    # if runscripts:
+    #     for script in scripts:
+    #         run_script(script)
     image_paths = [
         storage.url(script.image.name) for script in scripts
         if script.image.name != "" and script.image is not None
@@ -51,15 +55,36 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     x = (page_width - title_width) / 2
     y = page_height - 50
     c.drawString(x, y, title_text)
+    # subtitle
+    subtitle_text = datetime.now().strftime('%d %B %Y %H:%M')
+    subtitle_width = c.stringWidth(subtitle_text, "Helvetica", 12)
+    x = (page_width - subtitle_width) / 2
+    y -= 20
+    c.setFont("Helvetica", 12)
+    c.drawString(x, y, subtitle_text)
+    c.setFont("Helvetica-Bold", 18)
 
     # add the images to the pdf
-    x, y = 50, 500
+    page_top = page_height - 100
+    page_bottom = 50
+    x, y = (page_width-500)/2, page_top
     for i in range(len(image_paths)):
-        if i % 2 == 0 and i != 0:
-            y = 500
+        this_image_width = 500
+        this_image_height = (scripts[i].image.height) * \
+            (500/scripts[i].image.width)
+        y = y - this_image_height
+
+        if this_image_height > page_top-page_bottom:
+            logger.error(f"[scripts to buffer converter] Script *{scripts[i].name}* had an image that is too high")
+            continue
+
+        if y < page_bottom:
             c.showPage()
-        c.drawImage(image_paths[i], x, y, width=500, height=250)
-        y -= 300
+            y = page_top - this_image_height
+
+        c.drawImage(image_paths[i], x, y, width=this_image_width, height=this_image_height)
+        y -= 50
+
     # save to buffer
     c.save()
     # reset the buffer position
