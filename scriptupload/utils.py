@@ -22,6 +22,52 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def get_script_list(scripts):
+    """
+    {
+        cat1: [
+            subcat1: [
+                subsubcat1: script query set,
+                subsubcat2: script query set,
+                ...
+            ],
+            ...
+        ],
+        ...
+    ]
+    """
+    categories = {}
+    for script in scripts:
+        cat = script.category.parent_category.parent_category
+        subcat = script.category.parent_category
+        subsubcat = script.category
+        if cat not in categories.keys():
+            categories[cat] = {
+                "subcategories": {
+                    subcat: {
+                        "subsubcategories": {
+                            subsubcat: [script]
+                        }
+                    }
+                }
+            }
+            continue
+        if subcat not in categories[cat]["subcategories"].keys():
+            categories[cat]["subcategories"][subcat] = {
+                "subsubcategories": {
+                    subsubcat: [script]
+                }
+            }
+            continue
+        if subsubcat not in categories[cat]["subcategories"][subcat]["subsubcategories"].keys():
+            categories[cat]["subcategories"][subcat]["subsubcategories"][subsubcat] = [
+                script]
+            continue
+        categories[cat]["subcategories"][subcat]["subsubcategories"][subsubcat].append(
+            script)
+    return categories
+
+
 def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     """
     Converts a report that was generated to a PDF file.
@@ -29,18 +75,15 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     :param category: The category that the report was generated for.
     :return: The PDF file.
     """
+    if len(scripts) == 0:
+        return None
     # get storage
     storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
     # get urls of each script image
-    # if runscripts:
-    #     for script in scripts:
-    #         run_script(script)
-    image_paths = [
-        storage.url(script.image.name) for script in scripts
-        if script.image.name != "" and script.image is not None
-    ]
-    if len(image_paths) == 0:
-        return None
+    if runscripts:
+        for script in scripts:
+            run_script(script)
+
     # open a buffer so that files are saves to temporary memory
     buffer = BytesIO()
     # set the title of the pdf
@@ -67,24 +110,49 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     # add the images to the pdf
     page_top = page_height - 100
     page_bottom = 50
-    x, y = (page_width-500)/2, page_top
-    for i in range(len(image_paths)):
-        this_image_width = 500
-        this_image_height = (scripts[i].image.height) * \
-            (500/scripts[i].image.width)
-        y = y - this_image_height
+    x, y = (page_width-500)/2, page_top - 20
 
-        if this_image_height > page_top-page_bottom:
-            logger.error(f"[scripts to buffer converter] Script *{scripts[i].name}* had an image that is too high")
-            continue
+    script_hierarchy = get_script_list(scripts)
+    
+    # draw all of the headings and script charts
+    for heading in script_hierarchy.keys():
+        for subheading in script_hierarchy[heading]["subcategories"].keys():
+            for subsubheading in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"].keys():
+                # draw heading
+                subheading_text = f"{heading} -> {subheading} -> {subsubheading}"
+                c.setFont("Helvetica-Bold", 14)
+                c.drawString(x, y, subheading_text)
+                y -= 30
+                for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
+                    if not script.image:
+                        continue
+                    this_image_width = 500
+                    this_image_height = (script.image.height) * \
+                        (500/script.image.width) + 20
+                    y -= this_image_height
 
-        if y < page_bottom:
-            c.showPage()
-            y = page_top - this_image_height
 
-        c.drawImage(image_paths[i], x, y, width=this_image_width, height=this_image_height)
-        y -= 50
+                    if this_image_height > page_top-page_bottom:
+                        logger.error(
+                            f"[scripts to buffer converter] Script *{scripts.name}* had an image that is too high")
+                        continue
 
+                    if y < page_bottom:
+                        c.showPage()
+                        y = page_top - this_image_height
+                    # draw script source below script
+                    annotation = f"Source script: {script.name}"
+                    annotation_x_pos = (page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
+                    c.setFont("Helvetica", 11)
+                    c.drawString(annotation_x_pos, y, annotation)
+                    y += 20
+
+                    c.drawImage(storage.url(script.image.name), x, y,
+                                width=this_image_width, height=this_image_height)
+                    y -= 60
+                # new page for new category and reset y position
+                c.showPage()
+                y = page_top
     # save to buffer
     c.save()
     # reset the buffer position
