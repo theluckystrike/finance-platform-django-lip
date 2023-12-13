@@ -10,15 +10,15 @@
     <form class="w-75" style="max-width: 600px;" method="post" enctype="multipart/form-data" action="">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="category_name" class="form-label">Category</label>
-            <select id="category_name" name="category_name" class="form-control" required>
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="category" class="form-control" required>
                 <option value="" disabled selected>Select a category</option>
                 {% for cat in categories %}
                 <optgroup label="{{cat.name}}">
                     {% for subcat in cat.category_set.all %}
                 <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
                     {% for subsubcat in subcat.category_set.all %}
-                    <option value="{{subsubcat.pk}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                    <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
                     {% endfor %}
                 </optgroup>
                 {% endfor %}

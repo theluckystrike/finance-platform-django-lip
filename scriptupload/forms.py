@@ -12,11 +12,10 @@ from .models import Script, Category, Report, ReportEmailTask
 
 
 class ScriptUploadForm(forms.ModelForm):
-    category_name = forms.ModelChoiceField(queryset=Category.objects.filter(parent_category__parent_category__isnull=False), to_field_name="pk")
 
     class Meta:
         model = Script
-        fields = ("name", "file", "image", "category_name")
+        fields = ("name", "file", "image", "category")
 
 
 class NewCategoryForm(forms.ModelForm):

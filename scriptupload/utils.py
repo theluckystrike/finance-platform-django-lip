@@ -159,7 +159,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
                 subheading_text = f"{heading} -> {subheading} -> {subsubheading}"
                 c.setFont("Helvetica-Bold", 14)
                 c.drawString(x, y, subheading_text)
-                y -= 30
+                y -= 40
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
                     # skip if this script does not have an image
                     x, y = draw_script(x, y, script)
@@ -170,7 +170,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     subheading_text = "Uncategorised"
     c.setFont("Helvetica-Bold", 14)
     c.drawString(x, y, subheading_text)
-    y -= 30
+    y -= 40
     for script in uncatagorised:
         x, y = draw_script(x, y, script)
     c.showPage()

@@ -43,8 +43,6 @@ def upload_script(request):
         # TODO: check for same name script
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            # category_name = form.cleaned_data["category_name"]
-            # category = Category.objects.get(pk=category_name)
             file = form.cleaned_data['file']
             script = form.save(commit=False)
             if file.name.endswith('.ipynb'):
@@ -63,8 +61,7 @@ def upload_script(request):
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
             script.save()
-            # script.category = category
-            # script.save()
+
             messages.success(request, "Script added successfully")
         else:
             messages.info(
@@ -114,10 +111,7 @@ def script_page(request, scriptname):
     if request.method == "POST":
         nameform = ScriptUploadForm(request.POST, instance=script)
         if nameform.is_valid():
-            s = nameform.save(commit=False)
-            s.category = get_object_or_404(
-                Category, pk=request.POST['category_name'])
-            s.save()
+            nameform.save()
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
@@ -369,7 +363,7 @@ def custom_report_page(request):
     if subcategory2 and subcategory2 and category:
         scripts = Script.objects.filter(category_id=subcategory2)
 
-    table = ScriptTable(scripts)
+    table = ScriptTable(scripts, order_by="created")
     RequestConfig(request, paginate=False).configure(table)
 
     script_form = ScriptSelectForm()
