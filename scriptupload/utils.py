@@ -37,7 +37,11 @@ def get_script_list(scripts):
     ]
     """
     categories = {}
+    uncategorised = []
     for script in scripts:
+        if not script.category:
+            uncategorised.append(script)
+            continue
         cat = script.category.parent_category.parent_category
         subcat = script.category.parent_category
         subsubcat = script.category
@@ -65,7 +69,7 @@ def get_script_list(scripts):
             continue
         categories[cat]["subcategories"][subcat]["subsubcategories"][subsubcat].append(
             script)
-    return categories
+    return categories, uncategorised
 
 
 def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
@@ -112,7 +116,36 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     page_bottom = 50
     x, y = (page_width-500)/2, page_top - 20
 
-    script_hierarchy = get_script_list(scripts)
+    def draw_script(x, y, script):
+        if not script.image:
+            return x, y
+        this_image_width = 500
+        this_image_height = (script.image.height) * \
+            (500/script.image.width) + 20
+        y -= this_image_height
+
+
+        if this_image_height > page_top-page_bottom:
+            logger.error(
+                f"[scripts to buffer converter] Script *{scripts.name}* had an image that is too high")
+            return x, y
+
+        if y < page_bottom:
+            c.showPage()
+            y = page_top - this_image_height
+        # draw script source below script
+        annotation = f"Source script: {script.name}"
+        annotation_x_pos = (page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
+        c.setFont("Helvetica", 11)
+        c.drawString(annotation_x_pos, y, annotation)
+        y += 20
+
+        c.drawImage(storage.url(script.image.name), x, y,
+                    width=this_image_width, height=this_image_height)
+        y -= 60
+        return x, y
+
+    script_hierarchy, uncatagorised = get_script_list(scripts)
     
     # draw all of the headings and script charts
     for heading in script_hierarchy.keys():
@@ -124,35 +157,19 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
                 c.drawString(x, y, subheading_text)
                 y -= 30
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
-                    if not script.image:
-                        continue
-                    this_image_width = 500
-                    this_image_height = (script.image.height) * \
-                        (500/script.image.width) + 20
-                    y -= this_image_height
-
-
-                    if this_image_height > page_top-page_bottom:
-                        logger.error(
-                            f"[scripts to buffer converter] Script *{scripts.name}* had an image that is too high")
-                        continue
-
-                    if y < page_bottom:
-                        c.showPage()
-                        y = page_top - this_image_height
-                    # draw script source below script
-                    annotation = f"Source script: {script.name}"
-                    annotation_x_pos = (page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
-                    c.setFont("Helvetica", 11)
-                    c.drawString(annotation_x_pos, y, annotation)
-                    y += 20
-
-                    c.drawImage(storage.url(script.image.name), x, y,
-                                width=this_image_width, height=this_image_height)
-                    y -= 60
+                    # skip if this script does not have an image
+                    x, y = draw_script(x, y, script)
                 # new page for new category and reset y position
                 c.showPage()
                 y = page_top
+
+    for script in uncatagorised:
+        subheading_text = "Uncategorised"
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(x, y, subheading_text)
+        y -= 30
+        x, y = draw_script(x,y,script)
+    c.showPage()
     # save to buffer
     c.save()
     # reset the buffer position
