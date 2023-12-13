@@ -116,6 +116,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     page_bottom = 50
     x, y = (page_width-500)/2, page_top - 20
 
+    # TODO: should probably be its own function
     def draw_script(x, y, script):
         if not script.image:
             return x, y
@@ -127,7 +128,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
 
         if this_image_height > page_top-page_bottom:
             logger.error(
-                f"[scripts to buffer converter] Script *{scripts.name}* had an image that is too high")
+                f"[scripts to buffer converter] Script *{script.name}* had an image that is too high")
             return x, y
 
         if y < page_bottom:
