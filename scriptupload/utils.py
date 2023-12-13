@@ -120,6 +120,9 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     def draw_script(x, y, script):
         if not script.image:
             return x, y
+        this_image_width = 500
+        this_image_height = (script.image.height) * \
+            (this_image_width/script.image.width) + 20
 
         if this_image_height > page_top-page_bottom:
             logger.error(
@@ -128,10 +131,6 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
             this_image_height = page_top-page_bottom + 50
             this_image_width = (script.image.width) * \
                 (this_image_height/script.image.height)
-        else:
-            this_image_width = 500
-            this_image_height = (script.image.height) * \
-                (this_image_width/script.image.width) + 20
 
         y -= this_image_height
         if y < page_bottom:
