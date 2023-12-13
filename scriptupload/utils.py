@@ -128,7 +128,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
             logger.error(
                 f"[scripts to buffer converter] Script *{script.name}* had an image that is too high")
             # scale width according to height
-            this_image_height = page_top-page_bottom + 50
+            this_image_height = page_top-page_bottom - 50
             this_image_width = (script.image.width) * \
                 (this_image_height/script.image.height)
 
@@ -143,7 +143,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
         c.setFont("Helvetica", 11)
         c.drawString(annotation_x_pos, y, annotation)
         y += 20
-
+        x = (page_width-this_image_width)/2
         c.drawImage(storage.url(script.image.name), x, y,
                     width=this_image_width, height=this_image_height)
         y -= 60
