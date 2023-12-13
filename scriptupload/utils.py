@@ -120,23 +120,27 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     def draw_script(x, y, script):
         if not script.image:
             return x, y
-        this_image_width = 500
-        this_image_height = (script.image.height) * \
-            (500/script.image.width) + 20
-        y -= this_image_height
-
 
         if this_image_height > page_top-page_bottom:
             logger.error(
                 f"[scripts to buffer converter] Script *{script.name}* had an image that is too high")
-            return x, y
+            # scale width according to height
+            this_image_height = page_top-page_bottom + 50
+            this_image_width = (script.image.width) * \
+                (this_image_height/script.image.height)
+        else:
+            this_image_width = 500
+            this_image_height = (script.image.height) * \
+                (this_image_width/script.image.width) + 20
 
+        y -= this_image_height
         if y < page_bottom:
             c.showPage()
             y = page_top - this_image_height
         # draw script source below script
         annotation = f"Source script: {script.name}"
-        annotation_x_pos = (page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
+        annotation_x_pos = (
+            page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
         c.setFont("Helvetica", 11)
         c.drawString(annotation_x_pos, y, annotation)
         y += 20
@@ -147,7 +151,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
         return x, y
 
     script_hierarchy, uncatagorised = get_script_list(scripts)
-    
+
     # draw all of the headings and script charts
     for heading in script_hierarchy.keys():
         for subheading in script_hierarchy[heading]["subcategories"].keys():
@@ -164,12 +168,12 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
                 c.showPage()
                 y = page_top
 
+    subheading_text = "Uncategorised"
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(x, y, subheading_text)
+    y -= 30
     for script in uncatagorised:
-        subheading_text = "Uncategorised"
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(x, y, subheading_text)
-        y -= 30
-        x, y = draw_script(x,y,script)
+        x, y = draw_script(x, y, script)
     c.showPage()
     # save to buffer
     c.save()
