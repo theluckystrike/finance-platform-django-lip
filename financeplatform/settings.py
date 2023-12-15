@@ -170,7 +170,7 @@ LOGGING = {
     },
     'loggers': {
         'testlogger': {
-            # 'handlers': ['console'],
+            'handlers': ['console'],
             'level': 'INFO',
         }
     }
@@ -215,7 +215,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), logging=False)
 
 # TODO: update this to work without s3 for developmentfr
 if USE_S3:
