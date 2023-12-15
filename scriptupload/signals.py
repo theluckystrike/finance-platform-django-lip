@@ -14,7 +14,7 @@ from datetime import datetime
 import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('testlogger')
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.

@@ -170,7 +170,7 @@ LOGGING = {
     },
     'loggers': {
         'testlogger': {
-            'handlers': ['console'],
+            # 'handlers': ['console'],
             'level': 'INFO',
         }
     }

@@ -52,7 +52,7 @@ class IndexAction(models.Model):
         verbose_name_plural = "Index Actions"
 
     def __str__(self):
-        return f"{self.ticker}-{self.index}"
+        return f"{self.ticker}-{self.index}-{self.name}"
 
 
 class Rate(models.Model):
@@ -66,7 +66,7 @@ class Rate(models.Model):
         verbose_name_plural = "Rates"
 
     def __str__(self):
-        return f"{self.country}-{self.date}"
+        return f"{self.country}-{self.date}-{self.term}"
 
 
 # set signals

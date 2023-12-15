@@ -14,7 +14,7 @@ Command->handle()
 From the command line on the server, run 'python manage.py updatedb' to
 execute
 """
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('testlogger')
 
 
 def send_pdf(task):

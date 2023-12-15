@@ -19,7 +19,7 @@ import subprocess
 import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('testlogger')
 
 
 def get_script_list(scripts):
