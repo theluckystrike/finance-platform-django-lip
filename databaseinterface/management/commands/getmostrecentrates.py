@@ -11,7 +11,6 @@ import logging
 logger = logging.getLogger('testlogger')
 
 
-today = datetime.now().date()
 FRED_API_KEY = "ab6e5457e7a876372303c324b39edcae"
 fred = Fred(api_key=FRED_API_KEY)
 
@@ -76,14 +75,16 @@ def cdn_benchmark_yield(term, start_date, end_date):
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        data_key = list(data['observations'][0].keys())[1]
+        if len(data['observations']) == 0:
+            data_key = []
+        else:
+            data_key = list(data['observations'][0].keys())[1]
         s = pd.Series({x['d']: x[data_key]['v']
                       for x in data['observations']}).astype(float)
         s.name = term
         s.index = pd.DatetimeIndex(s.index)
-    else:
-        print("Failed to retrieve data")
-    return s
+        return s
+    raise Exception("Could not get cdn benchmark yield data")
 
 
 def cdn_get_series(series_id, start_date, end_date):
@@ -147,7 +148,10 @@ def rates_data_to_df(start_date, end_date):
 
 
 def add_rate_data(data):
-    for index, row in data.iterrows():
+    most_recent_date = Rate.objects.all().order_by(
+        "-date")[0].date
+    filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
+    for index, row in filtered_data.iterrows():
         newdata = Rate(
             date=row["date"],
             rate=round(row["rate"], 2),
@@ -155,10 +159,12 @@ def add_rate_data(data):
             term=row["term"]
         )
         newdata.save()
+    logger.info(
+        f"[rate data updater] Added {len(filtered_data)}/{len(data)} new rate entries to database")
 
 
 class Command(BaseCommand):
-    help = "Get most recent data"
+    help = "Get recent rates data and add to database"
 
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
@@ -170,9 +176,18 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
+        today = datetime.now().date() + timedelta(days=1)
         rates_start_date = Rate.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)
-        rates_data = rates_data_to_df(rates_start_date, today)
+        if rates_start_date == today:
+            logger.info(
+                f"[rate data updater] Aborting since most recent data is from yesterday")
+            return
+        try:
+            rates_data = rates_data_to_df(rates_start_date, today)
+        except Exception as e:
+            logger.info(f"[rate data updater] Could not get rates data -> {e}")
+            return
         logger.info(
             f"[rate data updater] Found {len(rates_data)} new rates entries from {rates_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
         # print(rates_start_date, rates_data)

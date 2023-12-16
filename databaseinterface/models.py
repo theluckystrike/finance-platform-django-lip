@@ -34,7 +34,7 @@ class IndexConstituent(models.Model):
         verbose_name_plural = "Index Constituents"
 
     def __str__(self):
-        return f"{self.ticker}-{self.index}"
+        return f"{self.ticker}-{self.index}-added-{self.date_added}"
 
 # TODO: could create many to many field of tickers
 # to store the stocks in each index
@@ -52,7 +52,7 @@ class IndexAction(models.Model):
         verbose_name_plural = "Index Actions"
 
     def __str__(self):
-        return f"{self.ticker}-{self.index}-{self.name}"
+        return f"{self.ticker}-{self.index}-{self.name}-{self.date}"
 
 
 class Rate(models.Model):

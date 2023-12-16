@@ -8,8 +8,6 @@ import logging
 logger = logging.getLogger('testlogger')
 
 
-today = datetime.now().date()
-
 """
 Define any function you want to keep or run here and then call them from
 Command->handle()
@@ -65,28 +63,39 @@ def get_actions(start_date, end_date):
 
 
 def add_constituent_data(data):
-    for index, row in data.iterrows():
+    most_recent_date = IndexConstituent.objects.all().order_by(
+        "-date_added")[0].date_added
+    filtered_data = data[data["date_added"] > pd.to_datetime(most_recent_date)]
+    for index, row in filtered_data.iterrows():
         newdata = IndexConstituent(
             index=row["index"],
             ticker=row["symbol"],
             date_added=row["date_added"]
         )
         newdata.save()
+    logger.info(
+        f"[index data updater] Added {len(filtered_data)}/{len(data)} new constituent entries to database")
 
 
 def add_action_data(data):
-    for index, row in data.iterrows():
-        newdata = IndexAction(
-            index=row["index"],
-            ticker=row["symbol"],
-            date=row["date"],
-            name=row["name"]
-        )
-        newdata.save()
+    most_recent_date = IndexAction.objects.all().order_by(
+        "-date")[0].date
+    filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
+    for index, row in filtered_data.iterrows():
+        if most_recent_date < pd.to_datetime(row["date"], format="%Y-%m-%d").date():
+            newdata = IndexAction(
+                index=row["index"],
+                ticker=row["symbol"],
+                date=row["date"],
+                name=row["name"]
+            )
+            newdata.save()
+    logger.info(
+        f"[index data updater] Added {len(filtered_data)}/{len(data)} new action entries to database")
 
 
 class Command(BaseCommand):
-    help = "Populate database"
+    help = "Get recent index action and constituent data and add to database"
 
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
@@ -98,16 +107,25 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
+        today = datetime.now().date() + timedelta(days=1)
         constituents_start_date = IndexConstituent.objects.all().order_by(
             "-date_added")[0].date_added + timedelta(days=1)
-        constituent_data = get_constituents(constituents_start_date, today)
-        add_constituent_data(constituent_data)
-        logger.info(
-            f"[index data updater] Found {len(constituent_data)} new constituent entries from {constituents_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
+        if constituents_start_date == today:
+            logger.info(
+                f"[index data updater] Aborting constituents update since most recent data is from yesterday")
+        else:
+            constituent_data = get_constituents(constituents_start_date, today)
+            logger.info(
+                f"[index data updater] Found {len(constituent_data)} new constituent entries from {constituents_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
+            add_constituent_data(constituent_data)
 
         actions_start_date = IndexAction.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)
-        actions_data = get_actions(actions_start_date, today)
-        logger.info(
-            f"[index data updater] Found {len(actions_data)} new action entries from {actions_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
-        add_action_data(actions_data)
+        if actions_start_date == today:
+            logger.info(
+                f"[index data updater] Aborting actions update since most recent data is from yesterday")
+        else:
+            actions_data = get_actions(actions_start_date, today)
+            logger.info(
+                f"[index data updater] Found {len(actions_data)} new action entries from {actions_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
+            add_action_data(actions_data)
