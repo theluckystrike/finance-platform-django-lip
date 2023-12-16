@@ -6,13 +6,14 @@ import requests
 import pandas as pd
 from databaseinterface.models import Rate
 import logging
+import os
+from dotenv import load_dotenv
+
+if not ("DYNO" in os.environ):
+    load_dotenv()
 
 
 logger = logging.getLogger('testlogger')
-
-
-FRED_API_KEY = "ab6e5457e7a876372303c324b39edcae"
-fred = Fred(api_key=FRED_API_KEY)
 
 """
 Define any function you want to keep or run here and then call them from
@@ -104,6 +105,7 @@ def get_us_data(start_date, end_date):
     current_year = datetime.now().year
     us_yields = us_benchmark_yield(
         terms=[0.25, 2, 5, 10, 30], start_year=current_year, end_year=current_year, start_date=start_date, end_date=end_date)
+    fred = Fred()
     us_on_yield = fred.get_series(
         'FEDFUNDS', observation_start=start_date, obeservation_end=end_date)
     return us_yields, us_on_yield

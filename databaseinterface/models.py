@@ -1,8 +1,6 @@
 from django.db import models
 from datetime import datetime
 
-# Create your models here.
-
 
 class OHLCData(models.Model):
     """
@@ -36,16 +34,12 @@ class IndexConstituent(models.Model):
     def __str__(self):
         return f"{self.ticker}-{self.index}-added-{self.date_added}"
 
-# TODO: could create many to many field of tickers
-# to store the stocks in each index
-# would mean renaming IndexConstituents to just stock
-
 
 class IndexAction(models.Model):
     index = models.CharField(max_length=5)
     ticker = models.CharField(max_length=5)
     date = models.DateField()
-    name = models.CharField(max_length=7)  # (added, removed)
+    name = models.CharField(max_length=7)
 
     class Meta:
         verbose_name = "Index Action"
@@ -67,33 +61,3 @@ class Rate(models.Model):
 
     def __str__(self):
         return f"{self.country}-{self.date}-{self.term}"
-
-
-# set signals
-
-
-# class Stock(models.Model):
-#     name = models.CharField(max_length=15)
-#     ticker = models.CharField(max_length=5)
-#     # no date_added
-
-# class Index(models.Model):
-#     name = models.CharField(max_length=15)
-#     ticker = models.CharField(max_length=5)
-#     stocks = models.ManyToManyField(Stock)
-
-
-# class IndexAction(models.Model):
-#     index = models.ForeignKey(Index)
-#     stock = models.ForeignKey(Stock)
-#     date = models.DateTimeField()
-#     name = models.CharField(max_length=7)
-
-# class OHLCData(models.Model):
-#     stock = models.ForeignKey(Stock) # CASCADE or something
-#     date = models.DateTimeField()
-#     open = models.DecimalField(max_digits=19, decimal_places=4)
-#     high = models.DecimalField(max_digits=19, decimal_places=4)
-#     low = models.DecimalField(max_digits=19, decimal_places=4)
-#     close = models.DecimalField(max_digits=19, decimal_places=4)
-#     volume = models.BigIntegerField()
