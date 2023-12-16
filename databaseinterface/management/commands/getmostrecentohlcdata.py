@@ -74,6 +74,8 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
+        logger.info(
+            f"[ohlc data updater] Started updating OHLC data")
         today = datetime.now().date() + timedelta(days=1)
         ohlc_start_date = OHLCData.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)

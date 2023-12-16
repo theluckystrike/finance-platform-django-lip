@@ -178,6 +178,8 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
+        logger.info(
+            f"[rate data updater] Started updating rates data")
         today = datetime.now().date() + timedelta(days=1)
         rates_start_date = Rate.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)

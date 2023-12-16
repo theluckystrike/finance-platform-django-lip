@@ -107,6 +107,8 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
+        logger.info(
+            f"[index data updater] Starting updating index actions and constituents data")
         today = datetime.now().date() + timedelta(days=1)
         constituents_start_date = IndexConstituent.objects.all().order_by(
             "-date_added")[0].date_added + timedelta(days=1)

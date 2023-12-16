@@ -20,19 +20,19 @@ from .models import Script, Category, Report, ReportEmailTask
 @admin.register(Script)
 class ScriptAdmin(admin.ModelAdmin):
     # inlines = [CategoryInline]
-    pass
+    ordering = ("-created",)
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("name",)
 
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("-created",)
 
 
 @admin.register(ReportEmailTask)
 class ReportEmailTaskAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("report",)

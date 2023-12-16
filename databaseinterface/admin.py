@@ -6,19 +6,19 @@ from .models import OHLCData, IndexAction, IndexConstituent, Rate
 
 @admin.register(OHLCData)
 class OHLCDataAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("-date",)
 
 
 @admin.register(IndexAction)
 class IndexActionsAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("-date",)
 
 
 @admin.register(IndexConstituent)
 class IndexConstituentsAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("-date_added",)
 
 
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
-    pass
+    ordering = ("-date",)
