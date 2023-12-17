@@ -3,7 +3,6 @@ Configures utility (helper) functions to be used in other places in the project.
 """
 
 
-import sys
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
@@ -19,6 +18,7 @@ import subprocess
 import logging
 import matplotlib.pyplot as plt
 import importlib
+from unittest.mock import patch
 
 
 plt.switch_backend("agg")
@@ -233,15 +233,14 @@ def run_script(script_instance):
     script = script_instance.file
     plt = importlib.reload(plt)
 
-    plt.savefig = custom_savefig
-    script_namespace = {
-        'plt': plt
-    }
-
-    try:
-        exec(script.read(), script_namespace)
-    except Exception as e:
-        return False, e
+    # script_namespace = {
+    #     'plt': plt
+    # }
+    with patch("matplotlib.pyplot.savefig", new=custom_savefig):
+        try:
+            exec(script.read())
+        except Exception as e:
+            return False, e
 
     if plot_buffer:
         script_instance.image.save("test.png", File(plot_buffer))
