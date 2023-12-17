@@ -214,7 +214,7 @@ def custom_savefig(*args, **kwargs):
 
     if args and isinstance(args[0], str):
         buf = BytesIO()
-        original_save_func(buf, format='png', **kwargs)
+        original_save_func(buf, format='png')
         buf.seek(0)
         plot_buffer = buf
 
@@ -249,7 +249,7 @@ def run_script(script_instance):
 
         return True, None
     else:
-        plt.savefig("test2.png", dpi=300)
+        plt.savefig(plot_buffer, format="png")
         if plot_buffer:
             script_instance.image.save("test.png", File(plot_buffer))
             plot_buffer.close()
