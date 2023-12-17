@@ -85,6 +85,36 @@ class Script(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
+    index_in_category = models.IntegerField(blank=True, default=0)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_category = self.category
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if not self.__original_category:
+            new_category_scripts = self.category.script_set.all().order_by("-index_in_category")
+            if len(new_category_scripts) > 0:
+                self.index_in_category = new_category_scripts[0].index_in_category + 1
+            else:
+                self.index_in_category = 0
+
+        elif self.__original_category and self.category != self.__original_category:
+            # update order in old category
+            old_category_scripts = self.__original_category.script_set.filter(
+                index_in_category__gt=self.index_in_category)
+            for script in old_category_scripts:
+                script.index_in_category -= 1
+                script.save(update_fields=["index_in_category"])
+
+            # set index in new category
+            new_category_scripts = self.category.script_set.all().order_by("-index_in_category")
+            if len(new_category_scripts) > 0:
+                self.index_in_category = new_category_scripts[0].index_in_category + 1
+            else:
+                self.index_in_category = 0
+
+        super().save(force_insert, force_update, *args, **kwargs)
 
     def __str__(self):
         return self.name

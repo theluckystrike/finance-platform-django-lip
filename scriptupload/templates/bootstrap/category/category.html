@@ -1,5 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 {% load static %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -7,9 +8,6 @@
         {% if category.parent_category.parent_category %}{{category.parent_category.parent_category.name}} &rarr; {% endif %}
         {% if category.parent_category %}{{category.parent_category.name}} &rarr; {% endif %}
         {{category.name}}&ensp;
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
-            <span data-feather="edit" class="align-text-middle"></span>
-        </button>
     </h1>
     {% if category.script_set.all %}
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -19,58 +17,8 @@
     </div>
     {% endif %}
 </div>
-<div class="table-responsive">
-    {% if category.script_set.all %}
-    <table class="table table-striped table-sm">
-        <thead>
-            <tr>
-                <th scope="col">Script name</th>
-                <th scope="col">Last run</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for script in category.script_set.all %}
-            <tr>
-                <th scope="row">{{script.name}}</th>
-                <td>{{script.last_updated}}</td>
-                <td><a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none">View script</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <span class="text-large">
-        Nothing to see here
-    </span>
-    {% endif %}
-</div>
+{% render_table table %}
 
-<div class="modal fade" id="changeNameModal" tabindex="-1" aria-labelledby="changeNameModal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Change category name</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-4">
-                        <label for="name" class="form-label">New category name</label>
-                        <input type="text" id="name" name="name" placeholder="{{ form.instance.name }}" class="form-control" autocomplete="on" required>
-                    </div>
-                    <div class="mb-4">
-                        {{ form.parent.as_hidden }}
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 {% endblock %}

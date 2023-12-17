@@ -8,6 +8,8 @@ from django.utils.safestring import mark_safe
 from ..forms import NewCategoryForm
 from ..models import Category, Script
 from ..utils import scripts_to_httpresponse
+from ..tables import ScriptTable
+from django_tables2 import RequestConfig
 
 
 @login_required
@@ -16,16 +18,10 @@ def category_page(request, categoryname):
     Configures the page that shows all scripts that are in a certain category, given the category name.
     """
     category = get_object_or_404(Category, name=categoryname)
-    if request.method == "POST":
-        form = NewCategoryForm(request.POST, instance=category)
-        if form.is_valid():
-            form.save()
-            return redirect(category_page, form.cleaned_data['name'])
-    else:
-        form = NewCategoryForm(instance=category)
-        if category.parent_category:
-            form.fields['parent'].initial = 0
-    return render(request, "bootstrap/category/category.html", {"form": form, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    table = ScriptTable(Script.objects.filter(category=category).order_by("index_in_category"), exclude=["select_box", "category",
+                                                                                                         "subcategory1", "subcategory2"])
+    RequestConfig(request, paginate=False).configure(table)
+    return render(request, "bootstrap/category/category.html", {"table": table, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 def update_category(request, pk):

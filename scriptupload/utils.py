@@ -26,7 +26,7 @@ original_save_func = plt.savefig
 logger = logging.getLogger('testlogger')
 
 
-def get_script_list(scripts):
+def get_script_hierarchy(scripts):
     """
     {
         cat1: [
@@ -153,7 +153,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
         y -= 60
         return x, y
 
-    script_hierarchy, uncatagorised = get_script_list(scripts)
+    script_hierarchy, uncatagorised = get_script_hierarchy(scripts)
 
     # draw all of the headings and script charts
     for heading in script_hierarchy.keys():
