@@ -18,7 +18,6 @@ import subprocess
 import logging
 import matplotlib.pyplot as plt
 import importlib
-from unittest.mock import patch
 
 
 plt.switch_backend("agg")
@@ -214,7 +213,7 @@ def custom_savefig(*args, **kwargs):
 
     if args and isinstance(args[0], str):
         buf = BytesIO()
-        original_save_func(buf, format='png')
+        original_save_func(buf, format='png', **kwargs)
         buf.seek(0)
         plot_buffer = buf
 
@@ -233,14 +232,15 @@ def run_script(script_instance):
     script = script_instance.file
     plt = importlib.reload(plt)
 
-    # script_namespace = {
-    #     'plt': plt
-    # }
-    with patch("matplotlib.pyplot.savefig", new=custom_savefig):
-        try:
-            exec(script.read(), {}, {})
-        except Exception as e:
-            return False, e
+    plt.savefig = custom_savefig
+    script_namespace = {
+        'plt': plt
+    }
+
+    try:
+        exec(script.read(), script_namespace)
+    except Exception as e:
+        return False, e
 
     if plot_buffer:
         script_instance.image.save("test.png", File(plot_buffer))
@@ -249,7 +249,7 @@ def run_script(script_instance):
 
         return True, None
     else:
-        plt.savefig(plot_buffer, format="png")
+        plt.savefig("test2.png", dpi=300)
         if plot_buffer:
             script_instance.image.save("test.png", File(plot_buffer))
             plot_buffer.close()
