@@ -8,6 +8,7 @@ from databaseinterface.models import Rate
 import logging
 import os
 from dotenv import load_dotenv
+from django.utils import timezone
 
 if not ("DYNO" in os.environ):
     load_dotenv()
@@ -102,7 +103,7 @@ def cdn_get_series(series_id, start_date, end_date):
 
 
 def get_us_data(start_date, end_date):
-    current_year = datetime.now().year
+    current_year = timezone.now().year
     us_yields = us_benchmark_yield(
         terms=[0.25, 2, 5, 10, 30], start_year=current_year, end_year=current_year, start_date=start_date, end_date=end_date)
     fred = Fred()
@@ -180,7 +181,7 @@ class Command(BaseCommand):
         """
         logger.info(
             f"[rate data updater] Started updating rates data")
-        today = datetime.now().date() + timedelta(days=1)
+        today = timezone.now().date() + timedelta(days=1)
         rates_start_date = Rate.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)
         if rates_start_date == today:

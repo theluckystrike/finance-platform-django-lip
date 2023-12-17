@@ -7,7 +7,6 @@ If they are not passed when the code is called, whatever value comes after the e
 Reference: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 """
 
-from datetime import datetime
 from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
@@ -16,6 +15,7 @@ from .signals import script_signals, report_signals
 from .utils import scripts_to_pdfbuffer
 from django.core.files import File
 import os
+from django.utils import timezone
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -93,7 +93,6 @@ class Script(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__original_category = self.category
-        self.__original_image = self.image
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         super().save(force_insert, force_update, *args, **kwargs)
@@ -146,8 +145,8 @@ class Report(models.Model):
         buffer = scripts_to_pdfbuffer(
             self.scripts.all(), self.name, runscripts)
         self.latest_pdf.save(
-            f"{self.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
-        self.last_updated = datetime.now()
+            f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+        self.last_updated = timezone.now()
         self.save()
 
     class Meta:

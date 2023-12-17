@@ -18,6 +18,7 @@ import subprocess
 import logging
 import matplotlib.pyplot as plt
 import importlib
+from django.utils import timezone
 
 
 plt.switch_backend("agg")
@@ -107,7 +108,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     y = page_height - 50
     c.drawString(x, y, title_text)
     # subtitle
-    subtitle_text = datetime.now().strftime('%d %B %Y %H:%M')
+    subtitle_text = timezone.now().strftime('%d %B %Y %H:%M')
     subtitle_width = c.stringWidth(subtitle_text, "Helvetica", 12)
     x = (page_width - subtitle_width) / 2
     y -= 20
@@ -190,7 +191,7 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     # create response for downloading file
     response = HttpResponse(buffer.read(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="{}_report_{}.pdf"'.format(
-        categoryname if categoryname else "CustomReport", datetime.now().strftime("%d_%m_%Y_%H_%M")
+        categoryname if categoryname else "CustomReport", timezone.now().strftime("%d_%m_%Y_%H_%M")
     )
     # close buffer and return http response
     buffer.close()
@@ -237,7 +238,7 @@ def run_script(script_instance):
         script_instance.image.save("output_plot.png", File(plot_buffer))
         plot_buffer.close()
         plot_buffer = None
-        script_instance.last_updated = datetime.now()
+        script_instance.last_updated = timezone.now()
         script_instance.save(update_fields=["last_updated"])
         return True, None
     else:
@@ -246,7 +247,7 @@ def run_script(script_instance):
             script_instance.image.save("output_plot.png", File(plot_buffer))
             plot_buffer.close()
             plot_buffer = None
-            script_instance.last_updated = datetime.now()
+            script_instance.last_updated = timezone.now()
             script_instance.save(update_fields=["last_updated"])
             return True, None
     return False, "Could not find script plot"

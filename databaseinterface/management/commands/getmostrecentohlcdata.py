@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import logging
 import yfinance as yf
+from django.utils import timezone
 
 
 logger = logging.getLogger('testlogger')
@@ -76,7 +77,7 @@ class Command(BaseCommand):
         """
         logger.info(
             f"[ohlc data updater] Started updating OHLC data")
-        today = datetime.now().date() + timedelta(days=1)
+        today = timezone.now().date() + timedelta(days=1)
         ohlc_start_date = OHLCData.objects.all().order_by(
             "-date")[0].date + timedelta(days=1)
         if ohlc_start_date == today:

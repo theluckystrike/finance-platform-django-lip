@@ -4,6 +4,7 @@ from scriptupload.models import ReportEmailTask
 from datetime import datetime
 import logging
 from django.conf import settings
+from django.utils import timezone
 
 
 """
@@ -18,14 +19,14 @@ logger = logging.getLogger('testlogger')
 
 def send_pdf(task):
     task.report.update()
-    today_str = datetime.today().strftime("%A")
+    today_str = timezone.now().strftime("%A")
     mail = EmailMessage(
-        f"{task.report.name} Scheduled Report {datetime.now().strftime('%Y/%m/%d')}",
+        f"{task.report.name} Scheduled Report {timezone.now().strftime('%Y/%m/%d')}",
         f"Report: {task.report.name}\nSchedule: {'Daily' if task.day == '*' else f'Every {today_str}'}\n\nPlease find your report attached.\n\n",
         f"Financial-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
         [task.email]
     )
-    mail.attach(f"{task.report.name}_{datetime.now().strftime('%Y_%m_%d')}.pdf",
+    mail.attach(f"{task.report.name}_{timezone.now().strftime('%Y_%m_%d')}.pdf",
                 task.report.latest_pdf.read(), "application/pdf")
     mail.send(fail_silently=False)
 
@@ -43,8 +44,8 @@ class Command(BaseCommand):
         Write any code that you want to run on the tables
         in this function only
         """
-        today = datetime.weekday(datetime.today()) + 1
-        today_full = datetime.today().strftime('%d-%m-%Y')
+        today = datetime.weekday(timezone.now()) + 1
+        today_full = timezone.now().strftime('%d-%m-%Y')
         tasks = ReportEmailTask.objects.all()
         num_tasks = len(tasks)
         logger.info(
