@@ -238,7 +238,7 @@ def run_script(script_instance):
     # }
     with patch("matplotlib.pyplot.savefig", new=custom_savefig):
         try:
-            exec(script.read())
+            exec(script.read(), {}, {})
         except Exception as e:
             return False, e
 
