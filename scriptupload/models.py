@@ -11,7 +11,7 @@ from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
-from .signals import delete_script_files, save_report
+from .signals import script_signals, report_signals
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -113,6 +113,5 @@ class ReportEmailTask(models.Model):
         return f"{self.report.name}-{self.day}"
 
 
-delete_script_files(Script)
-# save_script(Script)
-save_report(Report)
+script_signals(Script)
+report_signals(Report)

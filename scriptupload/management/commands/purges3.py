@@ -5,6 +5,7 @@ from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from scriptupload.signals import rm
+import os
 
 
 logger = logging.getLogger('testlogger')
@@ -39,12 +40,12 @@ class Command(BaseCommand):
         s3_report_dirs, _ = storage.listdir("reports")
 
         scripts_to_delete = [
-            dir for dir in s3_script_dirs if dir not in script_names]
+            os.path.join("scripts", dir) for dir in s3_script_dirs if dir not in script_names]
         reports_to_delete = [
-            dir for dir in s3_report_dirs if dir not in report_names]
+            os.path.join("reports", dir) for dir in s3_report_dirs if dir not in report_names]
 
         logger.info(
-            f"[purge s3] Purging {len(s3_script_dirs)} scripts and {len(s3_report_dirs)} reports from storage")
+            f"[purge s3] Purging {len(scripts_to_delete)} scripts and {len(reports_to_delete)} reports from storage")
         for scriptdir in scripts_to_delete:
             rm(scriptdir, storage)
         for reportdir in reports_to_delete:

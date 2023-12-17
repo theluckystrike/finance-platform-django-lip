@@ -28,7 +28,7 @@ def rm(directory, storage):
         rm(dirpath, storage)
 
 
-def delete_script_files(Script):
+def script_signals(Script):
     """
     Deletes a file from the database, if it exists, and delete any empty directory that may be left.
 
@@ -38,12 +38,12 @@ def delete_script_files(Script):
     @receiver(post_delete, sender=Script, weak=False)
     def delete_files(sender, instance, **kwargs):
         parent_dir = os.path.dirname(instance.file.name)
-        rm(parent_dir)
+        rm(parent_dir, privateStorage)
         logger.info(
             f"[script post delete signal] Cleaned up stored file and image for script * {instance.name} *")
 
 
-def save_report(Report):
+def report_signals(Report):
 
     @receiver(m2m_changed, sender=Report.scripts.through, weak=False)
     def update_scripts_report(sender, instance, **kwargs):
@@ -56,6 +56,6 @@ def save_report(Report):
     @receiver(post_delete, sender=Report, weak=False)
     def cleanup_storage_files(sender, instance, **kwargs):
         parent_dir = os.path.dirname(instance.latest_pdf.name)
-        rm(parent_dir)
+        rm(parent_dir, privateStorage)
         logger.info(
             f"[report post delete signal] Cleaned up stored pdf for report * {instance.name} *")
