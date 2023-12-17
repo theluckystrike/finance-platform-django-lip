@@ -6,7 +6,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_delete, m2m_changed
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
-from .utils import update_report_pdf
 from django.conf import settings
 import logging
 import os
@@ -49,7 +48,7 @@ def report_signals(Report):
     def update_scripts_report(sender, instance, **kwargs):
         scripts = instance.scripts.all()
         if len(scripts) > 0:
-            update_report_pdf(instance)
+            instance.update()
             logger.info(
                 f"[report m2m signal] Updated pdf for report * {instance.name} *")
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
-from ..utils import run_script, scripts_to_httpresponse, update_report_pdf
+from ..utils import run_script, scripts_to_httpresponse
 from django.shortcuts import get_object_or_404, redirect
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
@@ -115,7 +115,7 @@ def delete_report(request, reportid):
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
-        update_report_pdf(report, True)
+        report.update(True)
     return redirect(report_page, report.name)
 
 

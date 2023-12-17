@@ -7,11 +7,14 @@ If they are not passed when the code is called, whatever value comes after the e
 Reference: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 """
 
+from datetime import datetime
 from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
+from .utils import scripts_to_pdfbuffer
+from django.core.files import File
 import os
 
 # This line configures which type of storage to use.
@@ -82,7 +85,7 @@ class Script(models.Model):
         blank=True, upload_to=script_file_path, storage=privateStorage,
         max_length=200)
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
@@ -90,8 +93,10 @@ class Script(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__original_category = self.category
+        self.__original_image = self.image
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        super().save(force_insert, force_update, *args, **kwargs)
         if not self.__original_category:
             new_category_scripts = self.category.script_set.all().order_by("-index_in_category")
             if len(new_category_scripts) > 0:
@@ -114,8 +119,6 @@ class Script(models.Model):
             else:
                 self.index_in_category = 0
 
-        super().save(force_insert, force_update, *args, **kwargs)
-
     def __str__(self):
         return self.name
 
@@ -132,12 +135,20 @@ class Report(models.Model):
     name = models.CharField(max_length=100, unique=True)
     scripts = models.ManyToManyField(Script)
     created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(blank=True, null=True)
     latest_pdf = models.FileField(
         upload_to=report_file_path, storage=privateStorage, blank=True)
 
     def __str__(self):
         return self.name
+
+    def update(self, runscripts=False):
+        buffer = scripts_to_pdfbuffer(
+            self.scripts.all(), self.name, runscripts)
+        self.latest_pdf.save(
+            f"{self.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+        self.last_updated = datetime.now()
+        self.save()
 
     class Meta:
         verbose_name = "Report"

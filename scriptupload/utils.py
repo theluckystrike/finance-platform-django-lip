@@ -197,14 +197,6 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     return response
 
 
-def update_report_pdf(report, runscripts=False):
-    scripts = report.scripts.all()
-    buffer = scripts_to_pdfbuffer(scripts, report.name, runscripts)
-    report.latest_pdf.save(
-        f"{report.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
-    buffer.close()
-
-
 plot_buffer = None
 
 
@@ -241,19 +233,21 @@ def run_script(script_instance):
         exec(script.read(), script_namespace)
     except Exception as e:
         return False, e
-
     if plot_buffer:
         script_instance.image.save("output_plot.png", File(plot_buffer))
         plot_buffer.close()
         plot_buffer = None
-
+        script_instance.last_updated = datetime.now()
+        script_instance.save(update_fields=["last_updated"])
         return True, None
     else:
-        plt.savefig("test2.png", dpi=300)
+        plt.savefig("output_plot_forced.png", dpi=300)
         if plot_buffer:
             script_instance.image.save("output_plot.png", File(plot_buffer))
             plot_buffer.close()
             plot_buffer = None
+            script_instance.last_updated = datetime.now()
+            script_instance.save(update_fields=["last_updated"])
             return True, None
     return False, "Could not find script plot"
 

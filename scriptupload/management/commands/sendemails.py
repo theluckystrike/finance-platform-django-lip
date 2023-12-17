@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.core.mail import EmailMessage
 from scriptupload.models import ReportEmailTask
-from scriptupload.utils import update_report_pdf
 from datetime import datetime
 import logging
 from django.conf import settings
@@ -18,7 +17,7 @@ logger = logging.getLogger('testlogger')
 
 
 def send_pdf(task):
-    update_report_pdf(task.report)
+    task.report.update()
     today_str = datetime.today().strftime("%A")
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {datetime.now().strftime('%Y/%m/%d')}",

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
@@ -123,6 +124,8 @@ def script_edit_page(request, scriptname):
         # encode and save to file
         script.file.save(os.path.basename(script.file.name),
                          ContentFile(edited_content.encode("utf-8")))
+        script.last_updated = datetime.now()
+        script.save(update_fields=["last_updated"])
         messages.success(request, "Script updated successfully")
         return HttpResponseRedirect(f"/scripts/{scriptname}")
 
