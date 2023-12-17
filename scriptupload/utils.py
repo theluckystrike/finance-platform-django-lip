@@ -3,6 +3,7 @@ Configures utility (helper) functions to be used in other places in the project.
 """
 
 
+import sys
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
@@ -17,7 +18,11 @@ import pkgutil
 import subprocess
 import logging
 import matplotlib.pyplot as plt
+import importlib
 
+
+plt.switch_backend("agg")
+original_save_func = plt.savefig
 
 logger = logging.getLogger('testlogger')
 
@@ -193,8 +198,15 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     return response
 
 
+def update_report_pdf(report, runscripts=False):
+    scripts = report.scripts.all()
+    buffer = scripts_to_pdfbuffer(scripts, report.name, runscripts)
+    report.latest_pdf.save(
+        f"{report.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+    buffer.close()
+
+
 plot_buffer = None
-original_save_func = plt.savefig
 
 
 def custom_savefig(*args, **kwargs):
@@ -207,16 +219,6 @@ def custom_savefig(*args, **kwargs):
         plot_buffer = buf
 
 
-def update_report_pdf(report, runscripts=False):
-    scripts = report.scripts.all()
-    buffer = scripts_to_pdfbuffer(scripts, report.name, runscripts)
-    report.latest_pdf.save(
-        f"{report.name}_report_{datetime.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
-    buffer.close()
-
-# run the script assuming that it saves the chart image as output
-
-
 def run_script(script_instance):
     """
     Runs a script and saves the result back to storage, deleting the previous version.
@@ -226,12 +228,12 @@ def run_script(script_instance):
     otherwise.
     """
     global plot_buffer
+    global plt
 
     script = script_instance.file
-    import matplotlib.pyplot as plt
+    plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
-    plt.switch_backend("Agg")
     script_namespace = {
         'plt': plt
     }

@@ -51,6 +51,7 @@ def upload_script(request):
                 exporter = PythonExporter()
                 (python_code, resources) = exporter.from_notebook_node(nb_content)
                 python_file_name = file.name.replace('.ipynb', '.py')
+                # TODO: use a buffer here
                 with open(python_file_name, 'w') as output_file:
                     output_file.write(python_code)
                 # create the new file object
