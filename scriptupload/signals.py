@@ -3,22 +3,29 @@ Configuration for saving/deleting a script from the database.
 """
 
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete, pre_save, m2m_changed, post_save
+from django.db.models.signals import post_delete, m2m_changed
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
-from django.conf import settings
-import os
-from datetime import datetime
 from .utils import update_report_pdf
-from datetime import datetime
+from django.conf import settings
 import logging
+import os
 
 
 logger = logging.getLogger('testlogger')
-
+privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
-privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
+
+
+def rm(directory, storage):
+    dirs, files = storage.listdir(directory)
+    for file in files:
+        filepath = os.path.join(directory, file)
+        storage.delete(filepath)
+    for dir in dirs:
+        dirpath = os.path.join(directory, dir)
+        rm(dirpath, storage)
 
 
 def delete_script_files(Script):
@@ -28,36 +35,12 @@ def delete_script_files(Script):
     :param Script: The script that is to be deleted.
     :return: None.
     """
-    @receiver(pre_delete, sender=Script, weak=False)
+    @receiver(post_delete, sender=Script, weak=False)
     def delete_files(sender, instance, **kwargs):
-        storage = privateStorage
-        # check if script file exists and delete it
-        if instance.file.name:
-            if storage.exists(instance.file.name):
-                storage.delete(instance.file.name)
-                logger.info(
-                    f"[script pre delete signal] Deleted chart file for {instance.name}")
-        # check if image file exists and delete it
-        if instance.image.name:
-            if storage.exists(instance.image.name):
-                storage.delete(instance.image.name)
-                logger.info(
-                    f"[script pre delete signal] Deleted image file for {instance.name}")
-        # delete empty directory
-        dir_to_remove = os.path.dirname(instance.file.name)
-        storage.delete(dir_to_remove)
-
-
-# def save_script(Script):
-#     """
-#     Saves a new script to the database.
-
-#     :param Script: The script that is to be added.
-#     :return: None.
-#     """
-#     @receiver(pre_save, sender=Script, weak=False)
-#     def update_last_updated(sender, instance, **kwargs):
-#         instance.last_updated = datetime.now()
+        parent_dir = os.path.dirname(instance.file.name)
+        rm(parent_dir)
+        logger.info(
+            f"[script post delete signal] Cleaned up stored file and image for script * {instance.name} *")
 
 
 def save_report(Report):
@@ -70,6 +53,9 @@ def save_report(Report):
             logger.info(
                 f"[report m2m signal] Updated pdf for report * {instance.name} *")
 
-    @receiver(post_save, sender=Report, weak=False)
-    def update_last_updated(sender, instance, **kwargs):
-        instance.last_updated = datetime.now()
+    @receiver(post_delete, sender=Report, weak=False)
+    def cleanup_storage_files(sender, instance, **kwargs):
+        parent_dir = os.path.dirname(instance.latest_pdf.name)
+        rm(parent_dir)
+        logger.info(
+            f"[report post delete signal] Cleaned up stored pdf for report * {instance.name} *")
