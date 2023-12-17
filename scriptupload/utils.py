@@ -241,10 +241,11 @@ def run_script(script_instance):
         script_instance.last_updated = timezone.now()
         script_instance.save(update_fields=["last_updated"])
         return True, None
-    else:
+    else: 
+        # savefig has been monkey patched
         plt.savefig("output_plot_forced.png", dpi=300)
         if plot_buffer:
-            script_instance.image.save("output_plot.png", File(plot_buffer))
+            script_instance.image.save("output_plot_forced.png", File(plot_buffer))
             plot_buffer.close()
             plot_buffer = None
             script_instance.last_updated = timezone.now()

@@ -105,7 +105,7 @@ def delete_script(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         script.delete()
-    return redirect(all_script_page)
+    return redirect(upload_script)
 
 
 @login_required

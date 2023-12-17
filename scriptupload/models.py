@@ -96,14 +96,14 @@ class Script(models.Model):
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         super().save(force_insert, force_update, *args, **kwargs)
-        if not self.__original_category:
+        if not self.__original_category and self.category:
             new_category_scripts = self.category.script_set.all().order_by("-index_in_category")
             if len(new_category_scripts) > 0:
                 self.index_in_category = new_category_scripts[0].index_in_category + 1
             else:
                 self.index_in_category = 0
 
-        elif self.__original_category and self.category != self.__original_category:
+        elif self.__original_category and self.category and self.category != self.__original_category:
             # update order in old category
             old_category_scripts = self.__original_category.script_set.filter(
                 index_in_category__gt=self.index_in_category)
