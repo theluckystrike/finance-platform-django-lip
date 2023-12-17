@@ -2,7 +2,7 @@
 Configures utility (helper) functions to be used in other places in the project.
 """
 
-import os
+
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
@@ -10,13 +10,13 @@ from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-import shutil
 from datetime import datetime
 from io import BytesIO
 import ast
 import pkgutil
 import subprocess
 import logging
+import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger('testlogger')
@@ -166,14 +166,14 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
                 # new page for new category and reset y position
                 c.showPage()
                 y = page_top
-
-    subheading_text = "Uncategorised"
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(x, y, subheading_text)
-    y -= 40
-    for script in uncatagorised:
-        x, y = draw_script(x, y, script)
-    c.showPage()
+    if len(uncatagorised) > 0:
+        subheading_text = "Uncategorised"
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(x, y, subheading_text)
+        y -= 40
+        for script in uncatagorised:
+            x, y = draw_script(x, y, script)
+        c.showPage()
     # save to buffer
     c.save()
     # reset the buffer position
@@ -193,14 +193,18 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     return response
 
 
-# not used
-def handle_script_upload(file):
-    print("file recieved", file.name)
-    path = f"scripts/{file.name.replace('.py', '')}/{file.name}"
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "wb+") as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
+plot_buffer = None
+original_save_func = plt.savefig
+
+
+def custom_savefig(*args, **kwargs):
+    global plot_buffer
+
+    if args and isinstance(args[0], str):
+        buf = BytesIO()
+        original_save_func(buf, format='png', **kwargs)
+        buf.seek(0)
+        plot_buffer = buf
 
 
 def update_report_pdf(report, runscripts=False):
@@ -221,45 +225,41 @@ def run_script(script_instance):
     :return: True if ran script with no errors, stacktrace as string
     otherwise.
     """
-    # find the script
-    script_dir = os.path.dirname(script_instance.file.name)
-    # unique local temporary directory
-    local_dir = script_dir + str(datetime.now()).replace(" ", "")
-    os.makedirs(local_dir, exist_ok=True)
-    # chose appropriate storage and open file
-    storage = PrivateMediaStorage() if settings.USE_S3 else default_storage
-    script = storage.open(script_instance.file.name)
-    # move to script directory and execute
-    os.chdir(local_dir)
-    try:
-        subprocess.run(["python", "-c", script.read()], stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        os.chdir(settings.BASE_DIR)
-        if os.path.exists(local_dir):
-            shutil.rmtree(local_dir)
-        script.close()
-        return False, e.stderr
-    img = [f for f in os.listdir() if f.endswith('.png')]
-    if len(img) > 0:
-        # if the script has already saved an image
-        i = open(img[-1], 'rb')
-        # delete last image if it exists
-        if storage.exists(os.path.join(script_dir, img[-1])):
-            storage.delete(os.path.join(script_dir, img[-1]))
-        # save new image
-        script_instance.image.save(os.path.join(script_dir, img[-1]), File(i))
-        i.close()
-    script.close()
-    os.chdir(settings.BASE_DIR)
-    # delete local directory that was made
-    if os.path.exists(local_dir):
-        shutil.rmtree(local_dir)
-    return True, None
+    global plot_buffer
 
+    script = script_instance.file
+    import matplotlib.pyplot as plt
+
+    plt.savefig = custom_savefig
+    plt.switch_backend("Agg")
+    script_namespace = {
+        'plt': plt
+    }
+
+    try:
+        exec(script.read(), script_namespace)
+    except Exception as e:
+        return False, e
+
+    if plot_buffer:
+        script_instance.image.save("test.png", File(plot_buffer))
+        plot_buffer.close()
+        plot_buffer = None
+
+        return True, None
+    else:
+        plt.savefig("test2.png", dpi=300)
+        if plot_buffer:
+            script_instance.image.save("test.png", File(plot_buffer))
+            plot_buffer.close()
+            plot_buffer = None
+            return True, None
+    return False, "Could not find script plot"
 
 # utililty methods for finding dependencies on scripts that are not
 # not installed on the server
+
+
 def extract_imports(script_text):
     tree = ast.parse(script_text)
     imports = []
