@@ -243,7 +243,7 @@ def run_script(script_instance):
         return False, e
 
     if plot_buffer:
-        script_instance.image.save("test.png", File(plot_buffer))
+        script_instance.image.save("output_plot.png", File(plot_buffer))
         plot_buffer.close()
         plot_buffer = None
 
@@ -251,7 +251,7 @@ def run_script(script_instance):
     else:
         plt.savefig("test2.png", dpi=300)
         if plot_buffer:
-            script_instance.image.save("test.png", File(plot_buffer))
+            script_instance.image.save("output_plot.png", File(plot_buffer))
             plot_buffer.close()
             plot_buffer = None
             return True, None

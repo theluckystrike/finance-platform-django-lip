@@ -12,6 +12,7 @@ from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
+import os
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -22,11 +23,20 @@ def script_file_path(instance, filename):
     """
     A getter method for the path to the scripts.
     """
-    return f"scripts/{instance.name}/{filename}"
+    if settings.DEBUG:
+        directory_name = "scripts-dev"
+    else:
+        print("not dev directory for scripts")
+        directory_name = "scripts"
+    return os.path.join(directory_name, instance.name, filename)
 
 
 def report_file_path(instance, filename):
-    return f"reports/{instance.name}/{filename}"
+    if settings.DEBUG:
+        directory_name = "reports-dev"
+    else:
+        directory_name = "reports"
+    return os.path.join(directory_name, instance.name, filename)
 
 
 class Category(models.Model):

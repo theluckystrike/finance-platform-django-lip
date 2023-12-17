@@ -25,8 +25,6 @@ urlpatterns = [
     path('scripts/<str:scriptname>/delete/', views.delete_script, name="delete_script"),
     path('all-scripts/', views.all_script_page, name="all_scripts"),
     path('script-search/', views.script_search, name="script_search"),
-    path('script-delete-category/<int:scriptid>/<str:categoryid>/', views.script_delete_category, name="script_delete_category"),
-    path('script-add-category/<int:scriptid>/', views.script_add_category, name="script_add_category"),
     # categories
     path('categories/<str:categoryname>/', views.category_page, name="category"),
     path('categories/get-subcategories/<int:categoryid>/', views.get_subcategories, name="get_subcategories"),

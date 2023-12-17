@@ -8,18 +8,8 @@ from django.contrib import admin
 from .models import Script, Category, Report, ReportEmailTask
 
 
-# admin.site.register(Script)
-# admin.site.register(Category)
-
-# class CategoryInline(admin.TabularInline):
-#     model = Script.categories.through
-#     can_delete = True
-#     extra = 1
-
-
 @admin.register(Script)
 class ScriptAdmin(admin.ModelAdmin):
-    # inlines = [CategoryInline]
     ordering = ("-created",)
 
 

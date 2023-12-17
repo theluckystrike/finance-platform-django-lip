@@ -217,7 +217,6 @@ USE_TZ = True
 
 django_heroku.settings(locals(), logging=False)
 
-# TODO: update this to work without s3 for developmentfr
 if USE_S3:
     # aws settings
     AWS_S3_REGION_NAME = 'eu-central-1'
