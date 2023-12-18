@@ -32,7 +32,7 @@ class IndexConstituent(models.Model):
         verbose_name_plural = "Index Constituents"
 
     def __str__(self):
-        return f"{self.ticker}-{self.index}-added-{self.date_added}"
+        return f"{self.ticker} added to {self.index} on {self.date_added}"
 
 
 class IndexAction(models.Model):
@@ -46,7 +46,13 @@ class IndexAction(models.Model):
         verbose_name_plural = "Index Actions"
 
     def __str__(self):
-        return f"{self.ticker}-{self.index}-{self.name}-{self.date}"
+        if self.name == "added":
+            s = f"{self.ticker} added to {self.index} on {self.date}"
+        elif self.name == "removed":
+            s = f"{self.ticker} removed from {self.index} on {self.date}"
+        else:
+            s = "Name of Action not in ['added', 'removed']"
+        return s
 
 
 class Rate(models.Model):
