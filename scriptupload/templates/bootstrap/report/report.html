@@ -2,6 +2,62 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .tree-container * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .tree-container ul li {
+        margin-left: 20px;
+        position: relative;
+        padding-left: 10px;
+        line-height: 1.5;
+        font-size: 16px;
+        /* Adjust font size as needed */
+    }
+
+    .tree-container ul li::before {
+        content: " ";
+        position: absolute;
+        width: 1px;
+        background-color: #000;
+        top: 5px;
+        bottom: -15px;
+        left: -15px;
+    }
+
+    .tree-container body>ul>li:first-child::before {
+        top: 15px;
+    }
+
+    .tree-container ul li:not(:first-child):last-child::before {
+        display: none;
+    }
+
+    .tree-container ul li:only-child::before {
+        display: list-item;
+        content: " ";
+        position: absolute;
+        width: 1px;
+        background-color: #000;
+        top: 5px;
+        bottom: 10px;
+        height: 10px;
+        left: -15px;
+    }
+
+    .tree-container ul li::after {
+        content: " ";
+        position: absolute;
+        left: -15px;
+        width: 15px;
+        height: 1px;
+        background-color: #000;
+        top: 15px;
+    }
+</style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">{{report.name}}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -11,8 +67,8 @@
         {% endif %}
         <form method="post" action="{% url 'update_report' report.id %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Update&nbsp;<span class="align-text-bottom"
-                    data-feather="play"></span></button>
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Update&nbsp;<span
+                    class="align-text-bottom" data-feather="play"></span></button>
         </form>
         <form method="post" action="{% url 'delete_report' report.id %}">
             {% csrf_token %}
@@ -75,19 +131,50 @@
             {% endif %}
         </div>
     </div>
-    <div class="mt-3 col-12 col-md-6 col-sm-12">
-        <h4>Scripts in this report</h4>
-        {% for category in report_categories %}
-        <h6>
-            {% if category.parent_category.parent_category %}{{category.parent_category.parent_category.name}} &rarr; {% endif %}
-            {% if category.parent_category %}{{category.parent_category.name}} &rarr; {% endif %}
-            {{category.name}}</h6>
+    <div class="mt-3 col-12 col-md-6 col-sm-12 tree-container">
+        <h4 class="pb-4">Scripts in this report</h4>
+ 
         <ul>
-            {% for script in report_categories|get_item:category %}
-            <li><a href="{% url 'script' script.name %}" class="text-decoration-none"> {{script.name}}</a></li>
+            {% for supercategory, values in report_categories.items %}
+            <li>{{supercategory}}
+                <ul>
+                    {% with categories=values|get_item:"subcategories" %}
+                    {% for category, subcategories_values in categories.items %}
+                    <li>
+                        {{category}}
+                        <ul>
+                            {% with subcategories=subcategories_values|get_item:"subsubcategories" %}
+                            {% for subcategory, subcategory_items in subcategories.items %}
+                            <li>{{subcategory}}
+                                <ul>
+                                    {% for script in subcategory_items %}
+                                        <li><a href="{% url 'script' script.name %}">{{script.name}}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% endfor %}
+                            {% endwith %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                    {% endwith %}
+                </ul>
+            </li>
             {% endfor %}
         </ul>
-        {% endfor %}
+        <br>
+        {% if uncategorised_scripts %}
+        <ul>
+            <li>
+                Uncategorised
+                <ul>
+                    {% for script in uncategorised_scripts %}
+                    <li><a href="{% url 'script' script.name %}">{{script.name}}</a></li>          
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+        {% endif %}
     </div>
 </div>
 <div class="text-muted">

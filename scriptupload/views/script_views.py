@@ -137,7 +137,6 @@ def change_script_category_index(request, pk):
         new_index = request.POST.get("new-index")
         script = get_object_or_404(Script, pk=pk)
         script.update_index(int(new_index))
-
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
 

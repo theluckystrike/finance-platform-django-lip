@@ -41,7 +41,7 @@ def get_script_hierarchy(scripts):
         ...
     ]
     """
-    categories = {}
+    categories = dict()
     uncategorised = []
     for script in scripts:
         if not script.category:

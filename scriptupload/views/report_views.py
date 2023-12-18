@@ -1,3 +1,4 @@
+from ..utils import get_script_hierarchy
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
@@ -139,6 +140,9 @@ def report_page(request, reportname):
             report_categories[script.category] = [script]
         else:
             report_categories[script.category].append(script)
+
+    report_categories, uncategorised = get_script_hierarchy(
+        report.scripts.all().order_by("index_in_category"))
     days_of_week = {
         "1": "Monday",
         "2": "Tuesday",
@@ -158,6 +162,7 @@ def report_page(request, reportname):
             "report": report,
             "tasks": ReportEmailTask.objects.filter(report=report),
             "days_of_week": days_of_week,
-            "report_categories": report_categories
+            "report_categories": report_categories,
+            "uncategorised_scripts": uncategorised
         }
     )
