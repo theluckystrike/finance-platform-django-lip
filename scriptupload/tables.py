@@ -48,3 +48,18 @@ class ScriptTable(tables.Table):
 
     def render_select_box(self, value, record):
         return mark_safe('<input type="checkbox" name="scripts" value="{}">'.format(record.id))
+
+
+class DragnDropTable(tables.Table):
+    name = tables.Column(orderable=False)
+    created = tables.Column(orderable=False)
+    last_updated = tables.Column(orderable=False)
+
+    class Meta:
+        model = Script
+        row_attrs = {
+            "data-id": lambda record: record.pk
+        }
+        template_name = "django_tables2/bootstrap5-responsive.html"
+        fields = ("name", "created", "last_updated")
+        attrs = {"class": "table table-striped table-sm"}

@@ -1,3 +1,4 @@
+import json
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
@@ -128,6 +129,17 @@ def script_edit_page(request, scriptname):
         script.save(update_fields=["last_updated"])
         messages.success(request, "Script updated successfully")
         return HttpResponseRedirect(f"/scripts/{scriptname}")
+
+
+@login_required
+def change_script_category_index(request, pk):
+    if request.method == "POST":
+        new_index = request.POST.get("new-index")
+        script = get_object_or_404(Script, pk=pk)
+        script.update_index(int(new_index))
+
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
 
 
 @login_required

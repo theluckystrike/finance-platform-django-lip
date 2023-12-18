@@ -19,12 +19,13 @@ urlpatterns = [
     path('reports/update/<int:reportid>/', views.update_report, name="update_report"),
     path('save-custom-report/', views.save_custom_report, name="save_custom_report"),
     # scripts
-    path('scripts/<str:scriptname>/', views.script_page, name="script"),
-    path('scripts/<str:scriptname>/edit/', views.script_edit_page, name="script_edit"),
-    path('scripts/<str:scriptname>/run/', views.run_script_code, name="run_script"),
-    path('scripts/<str:scriptname>/delete/', views.delete_script, name="delete_script"),
+    path('scripts/view/<str:scriptname>/', views.script_page, name="script"),
+    path('scripts/view/<str:scriptname>/edit/', views.script_edit_page, name="script_edit"),
+    path('scripts/view/<str:scriptname>/run/', views.run_script_code, name="run_script"),
+    path('scripts/view/<str:scriptname>/delete/', views.delete_script, name="delete_script"),
     path('all-scripts/', views.all_script_page, name="all_scripts"),
     path('script-search/', views.script_search, name="script_search"),
+    path('scripts/<pk>/change-index/', views.change_script_category_index, name="script_change_index"),
     # categories
     path('categories/<str:categoryname>/', views.category_page, name="category"),
     path('categories/get-subcategories/<int:categoryid>/', views.get_subcategories, name="get_subcategories"),

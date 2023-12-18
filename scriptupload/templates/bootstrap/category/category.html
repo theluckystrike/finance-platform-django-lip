@@ -3,6 +3,10 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
+<link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
+<script src="//code.jquery.com/jquery-1.11.1.js"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">
         {% if category.parent_category.parent_category %}{{category.parent_category.parent_category.name}} &rarr; {% endif %}
@@ -17,8 +21,37 @@
     </div>
     {% endif %}
 </div>
+{% if category.script_set.all %}
 {% render_table table %}
-
+Drag rows to re-order them
+{% else %}
+Nothing to see here
+{% endif %}
+<script>
+    $(function () {
+            $("tbody").sortable({
+                items: "tr",
+                cursor: "move",
+                axis: "y",
+                update: function (event, ui) {
+                    var url = "{% url 'script_change_index' 'SCRIPT_ID'  %}";
+                    url = url.replace("SCRIPT_ID", ui.item.data("id"));
+                    $.post(
+                        url,
+                        {
+                            "new-index": ui.item.index(),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        function(data, status) {
+                            if (!status==200) {
+                                console.log(data)
+                            }
+                        }
+                    )
+                }
+            });
+        });
+</script>
 
 
 {% endblock %}

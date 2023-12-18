@@ -90,6 +90,41 @@ class Script(models.Model):
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
 
+    def update_index(self, new_idx):
+        """
+        Update the index of the script in its current category
+        """
+        old_idx = self.index_in_category
+        if new_idx == old_idx or not self.category:
+            return
+        if new_idx < 0:
+            raise Exception(
+                f"Invalid script index in category -> {self.name} with new index {new_idx} from old index {old_idx}")
+        if old_idx > new_idx:
+            # shift up scripts between new and old
+            scripts_to_shift_down = self.category.script_set.filter(
+                index_in_category__gt=new_idx-1
+            ).filter(
+                index_in_category__lt=old_idx
+            )
+            for script in scripts_to_shift_down:
+                script.index_in_category += 1
+                script.save(update_fields=['index_in_category'])
+        elif old_idx < new_idx:
+            # shift down scripts between new and old
+            scripts_to_shift_down = self.category.script_set.filter(
+                index_in_category__gt=old_idx
+            ).filter(
+                index_in_category__lt=new_idx+1
+            )
+            for script in scripts_to_shift_down:
+                script.index_in_category -= 1
+                script.save(update_fields=['index_in_category'])
+        # set new index
+        self.index_in_category = new_idx
+        self.save(update_fields=["index_in_category"])
+        return
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__original_category = self.category
