@@ -67,7 +67,7 @@
         <ul>
             {% for category in categories %}
             <li><a class="category" data-category-id="{{category.id}}"
-                    data-parent-id="{{category.parent_category.id}}">{{category.name}}</a>
+                    data-parent-id="-1">{{category.name}}</a>
                 <ul>
                     {% for subcategory in category.get_children %}
                     <li>
