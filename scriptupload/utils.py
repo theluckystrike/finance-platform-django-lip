@@ -157,16 +157,19 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     script_hierarchy, uncatagorised = get_script_hierarchy(scripts)
 
     # draw all of the headings and script charts
+
     for heading in script_hierarchy.keys():
         for subheading in script_hierarchy[heading]["subcategories"].keys():
-            for subsubheading in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"].keys():
+            # sort by subsubcategory alphabetically
+            subsubheadings = sorted(script_hierarchy[heading]["subcategories"]
+                                    [subheading]["subsubcategories"].keys(), key=lambda cat: cat.name)
+            for subsubheading in subsubheadings:
                 # draw heading
                 subheading_text = f"{heading} -> {subheading} -> {subsubheading}"
                 c.setFont("Helvetica-Bold", 14)
                 c.drawString(x, y, subheading_text)
                 y -= 40
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
-                    # skip if this script does not have an image
                     x, y = draw_script(x, y, script)
                 # new page for new category and reset y position
                 c.showPage()
@@ -241,11 +244,12 @@ def run_script(script_instance):
         script_instance.last_updated = timezone.now()
         script_instance.save(update_fields=["last_updated"])
         return True, None
-    else: 
+    else:
         # savefig has been monkey patched
         plt.savefig("output_plot_forced.png", dpi=300)
         if plot_buffer:
-            script_instance.image.save("output_plot_forced.png", File(plot_buffer))
+            script_instance.image.save(
+                "output_plot_forced.png", File(plot_buffer))
             plot_buffer.close()
             plot_buffer = None
             script_instance.last_updated = timezone.now()

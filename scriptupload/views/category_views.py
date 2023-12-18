@@ -91,7 +91,7 @@ def generate_category_report(request, categoryid):
     """
     if request.method == "GET":
         category = get_object_or_404(Category, pk=categoryid)
-        category_scripts = category.script_set.all()
+        category_scripts = category.script_set.all().order_by("index_in_category")
         if len(category_scripts) > 0:
             pdf_response = scripts_to_httpresponse(
                 category_scripts, categoryname=category.name)

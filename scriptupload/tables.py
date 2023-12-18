@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
 from .models import Script
+from django.urls import reverse
 
 
 class ScriptTable(tables.Table):
@@ -44,7 +45,7 @@ class ScriptTable(tables.Table):
             return "-"
 
     def render_view_link(self, value, record):
-        return mark_safe('<a href="/scripts/{}" class="text-decoration-none"> View script </a>'.format(record.name.replace(' ', '%20')))
+        return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))
 
     def render_select_box(self, value, record):
         return mark_safe('<input type="checkbox" name="scripts" value="{}">'.format(record.id))
@@ -54,6 +55,7 @@ class DragnDropTable(tables.Table):
     name = tables.Column(orderable=False)
     created = tables.Column(orderable=False)
     last_updated = tables.Column(orderable=False)
+    view_link = tables.Column(empty_values=(), verbose_name="")
 
     class Meta:
         model = Script
@@ -61,5 +63,8 @@ class DragnDropTable(tables.Table):
             "data-id": lambda record: record.pk
         }
         template_name = "django_tables2/bootstrap5-responsive.html"
-        fields = ("name", "created", "last_updated")
+        fields = ("name", "created", "last_updated", "view_link")
         attrs = {"class": "table table-striped table-sm"}
+
+    def render_view_link(self, value, record):
+        return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))
