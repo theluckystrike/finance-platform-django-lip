@@ -17,7 +17,7 @@ privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 
 
-def rm(directory, storage):
+def rm(directory, storage=privateStorage):
     dirs, files = storage.listdir(directory)
     for file in files:
         filepath = os.path.join(directory, file)

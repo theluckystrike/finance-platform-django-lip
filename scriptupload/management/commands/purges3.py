@@ -37,24 +37,37 @@ class Command(BaseCommand):
             f"[purge S3] Purging '{scriptsdir}' and '{reportsdir}' directories in S3 bucket")
 
 
+
         scripts = Script.objects.all()
         reports = Report.objects.all()
 
-        script_names = [s.name for s in scripts]
-        report_names = [r.name for r in reports]
+        script_names = [os.path.dirname(s.file.name) for s in scripts]
+        report_names = [os.path.dirname(r.latest_pdf.name) for r in reports]
 
         S3_script_dirs, _ = storage.listdir(scriptsdir)
         S3_report_dirs, _ = storage.listdir(reportsdir)
 
-        scripts_to_delete = [
-            os.path.join("scripts", dir) for dir in S3_script_dirs if dir not in script_names]
-        reports_to_delete = [
-            os.path.join("reports", dir) for dir in S3_report_dirs if dir not in report_names]
+        S3_script_dirs = [os.path.join(scriptsdir, s) for s in S3_script_dirs]
+        S3_report_dirs = [os.path.join(reportsdir, s) for s in S3_report_dirs]
 
-        logger.info(
-            f"[purge S3] Purging {len(scripts_to_delete)} scripts and {len(reports_to_delete)} reports from storage")
-        for scriptdir in scripts_to_delete:
-            rm(scriptdir, storage)
-        for reportdir in reports_to_delete:
-            rm(reportdir, storage)
+        scripts_to_delete = [
+            dir for dir in S3_script_dirs if dir not in script_names]
+        reports_to_delete = [
+            dir for dir in S3_report_dirs if dir not in report_names]
+
+        print("\nWant to delete the following:\n")
+        print("  Scripts:")
+        for script in scripts_to_delete:
+            print(f"    - {script}")
+        print("\n  Reports:")
+        for report in reports_to_delete:
+            print(f"    - {report}")
+        proceed = input("\nDo you wish to proceed? [y/n]  ")
+        if proceed == "y":
+            logger.info(
+                f"[purge S3] Purging {len(scripts_to_delete)} scripts and {len(reports_to_delete)} reports from storage")
+            for scriptdir in scripts_to_delete:
+                rm(scriptdir, storage)
+            for reportdir in reports_to_delete:
+                rm(reportdir, storage)
         logger.info(f"[purge S3] Completed purging")

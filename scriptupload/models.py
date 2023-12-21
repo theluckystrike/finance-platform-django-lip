@@ -127,9 +127,9 @@ class Script(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__original_category = self.category
+        self.__original_name = self.name
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        super().save(force_insert, force_update, *args, **kwargs)
         if not self.__original_category and self.category:
             new_category_scripts = self.category.script_set.all().order_by("-index_in_category")
             if len(new_category_scripts) > 0:
@@ -151,6 +151,17 @@ class Script(models.Model):
                 self.index_in_category = new_category_scripts[0].index_in_category + 1
             else:
                 self.index_in_category = 0
+        self.__original_category = self.category
+        if self.__original_name != self.name and self.__original_name and self.name:
+            self.__original_name = self.name
+            print("changing directory of script")
+            original_directory = os.path.dirname(self.file.name)
+            self.file.save(os.path.basename(self.file.name), self.file)
+            self.image.save(os.path.basename(self.image.name), self.image)
+            from .signals import rm
+            rm(original_directory)
+
+        super().save(force_insert, force_update, *args, **kwargs)
 
     def __str__(self):
         return self.name
