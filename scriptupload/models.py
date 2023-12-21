@@ -29,7 +29,6 @@ def script_file_path(instance, filename):
     if settings.DEBUG:
         directory_name = "scripts-dev"
     else:
-        print("not dev directory for scripts")
         directory_name = "scripts"
     return os.path.join(directory_name, instance.name, filename)
 
