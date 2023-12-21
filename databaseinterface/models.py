@@ -17,6 +17,7 @@ class OHLCData(models.Model):
     class Meta:
         verbose_name = "OHLC Data"
         verbose_name_plural = "OHLC Data"
+        unique_together = ["ticker", "date"]
 
     def __str__(self):
         return f"{self.ticker}-{datetime.strftime(self.date, r'%Y-%m-%d')}"
@@ -30,6 +31,7 @@ class IndexConstituent(models.Model):
     class Meta:
         verbose_name = "Index Constituent"
         verbose_name_plural = "Index Constituents"
+        unique_together = ["index", "date_added", "ticker"]
 
     def __str__(self):
         return f"{self.ticker} added to {self.index} on {self.date_added}"
@@ -44,6 +46,7 @@ class IndexAction(models.Model):
     class Meta:
         verbose_name = "Index Action"
         verbose_name_plural = "Index Actions"
+        unique_together = ["index", "ticker", "date", "name"]
 
     def __str__(self):
         if self.name == "added":
@@ -64,6 +67,7 @@ class Rate(models.Model):
     class Meta:
         verbose_name = "Rate"
         verbose_name_plural = "Rates"
+        unique_together = ["date", "rate", "country", "term"]
 
     def __str__(self):
         return f"{self.country}-{self.date}-{self.term}"

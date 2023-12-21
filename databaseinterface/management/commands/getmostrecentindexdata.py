@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import logging
 from django.utils import timezone
+from django.db.utils import IntegrityError
 
 
 logger = logging.getLogger('testlogger')
@@ -79,11 +80,9 @@ def add_constituent_data(data):
 
 
 def add_action_data(data):
-    most_recent_date = IndexAction.objects.all().order_by(
-        "-date")[0].date
-    filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
-    for index, row in filtered_data.iterrows():
-        if most_recent_date < pd.to_datetime(row["date"], format="%Y-%m-%d").date():
+    count = 0
+    for index, row in data.iterrows():
+        try:
             newdata = IndexAction(
                 index=row["index"],
                 ticker=row["symbol"],
@@ -91,8 +90,10 @@ def add_action_data(data):
                 name=row["name"]
             )
             newdata.save()
+        except IntegrityError:
+            count += 1
     logger.info(
-        f"[index data updater] Added {len(filtered_data)}/{len(data)} new action entries to database")
+        f"[index data updater] Added {len(data)-count}/{len(data)} new action entries to database")
 
 
 class Command(BaseCommand):
@@ -101,34 +102,28 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
         # parser.add_argument("poll_ids", nargs="+", type=int)
-        pass
+        parser.add_argument("-d", dest="days_back",
+                            default=4, type=int, action='store')
 
     def handle(self, *args, **options):
         """
         Write any code that you want to run on the tables
         in this function only
         """
+        days_back = options["days_back"]
         logger.info(
             f"[index data updater] Starting updating index actions and constituents data")
         today = timezone.now().date() + timedelta(days=1)
-        constituents_start_date = IndexConstituent.objects.all().order_by(
-            "-date_added")[0].date_added + timedelta(days=1)
-        if constituents_start_date == today:
-            logger.info(
-                f"[index data updater] Aborting constituents update since most recent data is from yesterday")
-        else:
-            constituent_data = get_constituents(constituents_start_date, today)
-            logger.info(
-                f"[index data updater] Found {len(constituent_data)} new constituent entries from {constituents_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
-            add_constituent_data(constituent_data)
+        constituents_start_date = today - timedelta(days=days_back)
 
-        actions_start_date = IndexAction.objects.all().order_by(
-            "-date")[0].date + timedelta(days=1)
-        if actions_start_date == today:
-            logger.info(
-                f"[index data updater] Aborting actions update since most recent data is from yesterday")
-        else:
-            actions_data = get_actions(actions_start_date, today)
-            logger.info(
-                f"[index data updater] Found {len(actions_data)} new action entries from {actions_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
-            add_action_data(actions_data)
+        constituent_data = get_constituents(constituents_start_date, today)
+        logger.info(
+            f"[index data updater] Found {len(constituent_data)} new constituent entries from {constituents_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
+        add_constituent_data(constituent_data)
+
+        actions_start_date = constituents_start_date
+
+        actions_data = get_actions(actions_start_date, today)
+        logger.info(
+            f"[index data updater] Found {len(actions_data)} new action entries from {actions_start_date.strftime('%Y-%m-%d')} to {today.strftime('%Y-%m-%d')}")
+        add_action_data(actions_data)

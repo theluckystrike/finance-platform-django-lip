@@ -1,3 +1,4 @@
+from django.db.utils import IntegrityError
 from fredapi import Fred  # https://mortada.net/python-api-for-fred.html
 from django.core.management.base import BaseCommand
 from lxml import etree
@@ -151,19 +152,20 @@ def rates_data_to_df(start_date, end_date):
 
 
 def add_rate_data(data):
-    most_recent_date = Rate.objects.all().order_by(
-        "-date")[0].date
-    filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
-    for index, row in filtered_data.iterrows():
-        newdata = Rate(
-            date=row["date"],
-            rate=round(row["rate"], 2),
-            country=row["country"],
-            term=row["term"]
-        )
-        newdata.save()
+    count = 0
+    for index, row in data.iterrows():
+        try:
+            newdata = Rate(
+                date=row["date"],
+                rate=round(row["rate"], 2),
+                country=row["country"],
+                term=row["term"]
+            )
+            newdata.save()
+        except IntegrityError:
+            count += 1
     logger.info(
-        f"[rate data updater] Added {len(filtered_data)}/{len(data)} new rate entries to database")
+        f"[rate data updater] Added {len(data)-count}/{len(data)} new rate entries to database")
 
 
 class Command(BaseCommand):
@@ -172,22 +174,19 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
         # parser.add_argument("poll_ids", nargs="+", type=int)
-        pass
+        parser.add_argument("-d", dest="days_back",
+                            default=4, type=int, action='store')
 
     def handle(self, *args, **options):
         """
         Write any code that you want to run on the tables
         in this function only
         """
+        days_back = options["days_back"]
         logger.info(
             f"[rate data updater] Started updating rates data")
         today = timezone.now().date() + timedelta(days=1)
-        rates_start_date = Rate.objects.all().order_by(
-            "-date")[0].date + timedelta(days=1)
-        if rates_start_date == today:
-            logger.info(
-                f"[rate data updater] Aborting since most recent data is from yesterday")
-            return
+        rates_start_date = today - timedelta(days=days_back)
         try:
             rates_data = rates_data_to_df(rates_start_date, today)
         except Exception as e:

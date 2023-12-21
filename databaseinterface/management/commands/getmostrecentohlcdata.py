@@ -5,6 +5,7 @@ import pandas as pd
 import logging
 import yfinance as yf
 from django.utils import timezone
+from django.db.utils import IntegrityError
 
 
 logger = logging.getLogger('testlogger')
@@ -44,22 +45,26 @@ def get_ohlc_data(start_date, end_date):
 
 
 def add_ohlc_data(data):
-    most_recent_date = OHLCData.objects.all().order_by(
-        "-date")[0].date
-    filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
-    for index, row in filtered_data.iterrows():
-        newdata = OHLCData(
-            ticker=row["symbol"],
-            date=row["date"],
-            open=round(row["open"], 3),
-            high=round(row["high"], 3),
-            low=round(row["low"], 3),
-            close=round(row["close"], 3),
-            volume=int(row["volume"]),
-        )
-        newdata.save()
+    # most_recent_date = OHLCData.objects.all().order_by(
+    #     "-date")[0].date
+    # filtered_data = data[data["date"] > pd.to_datetime(most_recent_date)]
+    count = 0
+    for index, row in data.iterrows():
+        try:
+            newdata = OHLCData(
+                ticker=row["symbol"],
+                date=row["date"],
+                open=round(row["open"], 3),
+                high=round(row["high"], 3),
+                low=round(row["low"], 3),
+                close=round(row["close"], 3),
+                volume=int(row["volume"]),
+            )
+            newdata.save()
+        except IntegrityError:
+            count += 1
     logger.info(
-        f"[ohlc data updater] Added {len(filtered_data)}/{len(data)} new ohlc entries to database")
+        f"[ohlc data updater] Added {len(data)-count}/{len(data)} new ohlc entries to database")
 
 
 class Command(BaseCommand):
@@ -68,18 +73,20 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
         # parser.add_argument("poll_ids", nargs="+", type=int)
-        pass
+        parser.add_argument("-d", dest="days_back",
+                            default=4, type=int, action='store')
 
     def handle(self, *args, **options):
         """
         Write any code that you want to run on the tables
         in this function only
         """
+        days_back = options["days_back"]
         logger.info(
             f"[ohlc data updater] Started updating OHLC data")
         today = timezone.now().date() + timedelta(days=1)
-        ohlc_start_date = OHLCData.objects.all().order_by(
-            "-date")[0].date + timedelta(days=1)
+
+        ohlc_start_date = today - timedelta(days=days_back)
         if ohlc_start_date == today:
             logger.info(
                 f"[ohlc data updater] Aborting ohlc update since most recent data is from yesterday")
