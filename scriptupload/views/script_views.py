@@ -1,4 +1,3 @@
-import json
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
@@ -128,7 +127,7 @@ def script_edit_page(request, scriptname):
         script.last_updated = timezone.now()
         script.save(update_fields=["last_updated"])
         messages.success(request, "Script updated successfully")
-        return HttpResponseRedirect(f"/scripts/{scriptname}")
+        return redirect(script_page, script.name)
 
 
 @login_required
