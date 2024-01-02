@@ -16,6 +16,7 @@ from .utils import scripts_to_pdfbuffer
 from django.core.files import File
 import os
 from django.utils import timezone
+from .signals import rm
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -154,11 +155,10 @@ class Script(models.Model):
         self.__original_category = self.category
         if self.__original_name != self.name and self.__original_name and self.name:
             self.__original_name = self.name
-            print("changing directory of script")
             original_directory = os.path.dirname(self.file.name)
             self.file.save(os.path.basename(self.file.name), self.file)
             self.image.save(os.path.basename(self.image.name), self.image)
-            from .signals import rm
+            
             rm(original_directory)
 
         super().save(force_insert, force_update, *args, **kwargs)

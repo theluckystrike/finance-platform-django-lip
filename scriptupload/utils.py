@@ -10,7 +10,6 @@ from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-from datetime import datetime
 from io import BytesIO
 import ast
 import pkgutil
@@ -142,10 +141,10 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
             c.showPage()
             y = page_top - this_image_height
         # draw script source below script
-        annotation = f"Source script: {script.name}"
+        annotation = f"Source script: {script.name}, Last Updated: {script.last_updated.strftime('%d %B %Y %H:%M')}"
         annotation_x_pos = (
-            page_width - c.stringWidth(annotation, "Helvetica", 11)) / 2
-        c.setFont("Helvetica", 11)
+            page_width - c.stringWidth(annotation, "Helvetica", 8)) / 2
+        c.setFont("Helvetica", 8)
         c.drawString(annotation_x_pos, y, annotation)
         y += 20
         x = (page_width-this_image_width)/2
