@@ -18,6 +18,9 @@ privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 
 
 def rm(directory, storage=privateStorage):
+    if directory.replace("/", "") in ["private", "scripts-dev", "reports-dev", "scripts", "reports"]:
+        logger.error(f"[rm util] Attempted to delete directory {directory} - ABORTED")
+        return
     dirs, files = storage.listdir(directory)
     for file in files:
         filepath = os.path.join(directory, file)
@@ -25,6 +28,7 @@ def rm(directory, storage=privateStorage):
     for dir in dirs:
         dirpath = os.path.join(directory, dir)
         rm(dirpath, storage)
+    logger.info(f"[rm util] Deleted directory {directory}")
 
 
 def script_signals(Script):
@@ -36,10 +40,12 @@ def script_signals(Script):
     """
     @receiver(post_delete, sender=Script, weak=False)
     def delete_files(sender, instance, **kwargs):
-        parent_dir = os.path.dirname(instance.file.name)
-        rm(parent_dir, privateStorage)
+        # parent_dir = os.path.dirname(instance.file.name)
+        # rm(parent_dir, privateStorage)
+        instance.file.delete(save=False)
+        instance.image.delete(save=False)
         logger.info(
-            f"[script post delete signal] Cleaned up stored file and image for script * {instance.name} *")
+            f"[script post delete signal] Cleaned up files for script * {instance.name} * after deletion")
 
 
 def report_signals(Report):
@@ -57,4 +63,4 @@ def report_signals(Report):
         parent_dir = os.path.dirname(instance.latest_pdf.name)
         rm(parent_dir, privateStorage)
         logger.info(
-            f"[report post delete signal] Cleaned up stored pdf for report * {instance.name} *")
+            f"[report post delete signal] Cleaned up directory {parent_dir} for report * {instance.name} * after deletion")

@@ -208,7 +208,8 @@ def custom_savefig(*args, **kwargs):
 
     if args and isinstance(args[0], str):
         buf = BytesIO()
-        original_save_func(buf, format='png', **kwargs)
+        # original_save_func(buf, format='png', **kwargs)
+        original_save_func(buf, format='png', dpi=300)
         buf.seek(0)
         plot_buffer = buf
 

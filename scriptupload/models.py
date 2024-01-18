@@ -153,11 +153,12 @@ class Script(models.Model):
             else:
                 self.index_in_category = 0
         self.__original_category = self.category
-        if self.__original_name != self.name and self.__original_name and self.name:
+        if self.__original_name != self.name and self.__original_name is not None and self.name is not None:
             self.__original_name = self.name
             original_directory = os.path.dirname(self.file.name)
             self.file.save(os.path.basename(self.file.name), self.file)
-            self.image.save(os.path.basename(self.image.name), self.image)
+            if self.image:
+                self.image.save(os.path.basename(self.image.name), self.image)
             
             rm(original_directory)
 
