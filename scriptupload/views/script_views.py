@@ -13,7 +13,10 @@ import os
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
 from ..tables import ScriptTable
+import logging
 from django_tables2 import RequestConfig
+
+logger = logging.getLogger('testlogger')
 
 
 @login_required
@@ -25,9 +28,14 @@ def upload_script(request):
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data['file']
+            # print(file.name)
+            # split_name = "".join(file.name.split(".")[:-1]).replace("/", "")
+            # file.name = split_name + "." + file.name.split(".")[-1]
+            # print(split_name, " -- ", file.name)
             script = form.save(commit=False)
             if (not file.name.endswith(".py")) and (not file.name.endswith(".ipynb")):
                 messages.error(request, "Not a valid python file")
+
             if file.name.endswith('.ipynb'):
                 # if the file is a jupyter notebook, we need to convert it
                 nb_content = nbformat.read(file, as_version=4)
@@ -45,7 +53,7 @@ def upload_script(request):
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
             script.save()
-
+            logger.info(f"[script upload view] Uploaded script * {script.name} *")
             messages.success(request, "Script added successfully")
         else:
             messages.info(

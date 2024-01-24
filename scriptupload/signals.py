@@ -18,8 +18,8 @@ privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 
 
 def rm(directory, storage=privateStorage):
-    if directory.replace("/", "") in ["private", "scripts-dev", "reports-dev", "scripts", "reports"]:
-        logger.error(f"[rm util] Attempted to delete directory {directory} - ABORTED")
+    if directory.replace("/", "") in ["private", "scripts-dev", "reports-dev", "scripts", "reports", ""]:
+        logger.error(f"[rm util] Attempted to delete directory '{directory}' - ABORTED")
         return
     dirs, files = storage.listdir(directory)
     for file in files:
@@ -28,7 +28,7 @@ def rm(directory, storage=privateStorage):
     for dir in dirs:
         dirpath = os.path.join(directory, dir)
         rm(dirpath, storage)
-    logger.info(f"[rm util] Deleted directory {directory}")
+    logger.info(f"[rm util] Deleted directory '{directory}'")
 
 
 def script_signals(Script):

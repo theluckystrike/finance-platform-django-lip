@@ -159,8 +159,8 @@ class Script(models.Model):
             self.file.save(os.path.basename(self.file.name), self.file)
             if self.image:
                 self.image.save(os.path.basename(self.image.name), self.image)
-            
-            rm(original_directory)
+            if original_directory != "":
+                rm(original_directory)
 
         super().save(force_insert, force_update, *args, **kwargs)
 
