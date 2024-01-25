@@ -34,7 +34,8 @@ def upload_script(request):
             # print(split_name, " -- ", file.name)
             script = form.save(commit=False)
             if (not file.name.endswith(".py")) and (not file.name.endswith(".ipynb")):
-                messages.error(request, "Not a valid python file")
+                messages.error(request, mark_safe("<u>Not a valid Python file</u>:<br/>File must be .py or .ipynb"))
+                return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
             if file.name.endswith('.ipynb'):
                 # if the file is a jupyter notebook, we need to convert it
@@ -53,7 +54,8 @@ def upload_script(request):
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
             script.save()
-            logger.info(f"[script upload view] Uploaded script * {script.name} *")
+            logger.info(
+                f"[script upload view] Uploaded script * {script.name} *")
             messages.success(request, "Script added successfully")
         else:
             messages.info(
