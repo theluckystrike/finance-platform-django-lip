@@ -296,22 +296,22 @@ def install_missing_libraries(missing_libraries):
 
 
 def handover(user, script):
-    from .models import ScriptRunResult
+    script.status = "running"
+    script.error_message = ""
+    script.save(update_fields=["status", "error_message"])
     success, message = run_script(script)
+    logger.info(f"[script handover] Running script * {script.name} * by user * {user.username} *")
     if success:
-        result = ScriptRunResult(
-            user=user,
-            result="success",
-            message="",
-            script=script
-        )
-        result.save()
+        script.status = "success"
+        script.error_message = ""
+        script.save(update_fields=["status", "error_message"])
+        logger.info(
+            f"[script handover] Script * {script.name} * run by user * {user.username} * SUCCESS")
     else:
-        result = ScriptRunResult(
-            user=user,
-            result="failure",
-            message=message,
-            script=script
-        )
-        result.save()
+        script.status = "failure"
+        script.error_message = message
+        script.save(update_fields=["status", "error_message"])
+        logger.info(
+            f"[script handover] Script * {script.name} * run by user * {user.username} * FAILURE")
+    
 

@@ -26,6 +26,7 @@ urlpatterns = [
     path('all-scripts/', views.all_script_page, name="all_scripts"),
     path('script-search/', views.script_search, name="script_search"),
     path('scripts/<pk>/change-index/', views.change_script_category_index, name="script_change_index"),
+    path('scripts/<int:scriptid>/get-status/', views.get_script_status, name="script_status"),
     # categories
     path('categories/<str:categoryname>/', views.category_page, name="category"),
     path('categories/get-subcategories/<int:categoryid>/', views.get_subcategories, name="get_subcategories"),

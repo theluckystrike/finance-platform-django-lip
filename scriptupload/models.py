@@ -90,6 +90,8 @@ class Script(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
+    status = models.CharField(max_length=15, default="success")
+    error_message = models.TextField(null=True)
 
     def update_index(self, new_idx):
         """
@@ -199,24 +201,6 @@ class Report(models.Model):
     class Meta:
         verbose_name = "Report"
         verbose_name_plural = "Reports"
-
-
-class ScriptRunResult(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    result = models.CharField(max_length=20)
-    message = models.TextField()
-    script = models.ForeignKey(Script, on_delete=models.SET_NULL, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        if self.script and self.user:
-            return f"{self.script.name}-{self.user.username}-{self.created.strftime('%d/%m/%Y %H:%M:%S')}-{self.result}"
-        else:
-            return "script removed"
-
-    class Meta:
-        verbose_name = "Script Run Result"
-        verbose_name_plural = "Script Run Results"
 
 
 class ReportEmailTask(models.Model):

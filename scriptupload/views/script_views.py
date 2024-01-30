@@ -4,7 +4,7 @@ from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from ..forms import ScriptUploadForm
 from ..utils import run_script, handover
-from ..models import Script, Category, ScriptRunResult
+from ..models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 import nbformat
@@ -105,11 +105,24 @@ def run_script_code(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         script_run_result = task_queue.submit(handover, request.user, script)
+        logger.info(f"[task queue] Started new thread to run script * {script.name} * by user * {request.user.username} *")
         # success, message = run_script(script)
         # if not success:
         #     messages.error(request, mark_safe(
         #         f"<u>Error when running script:</u><br/>{message}"))
     return redirect(script_page, scriptname)
+
+
+@login_required
+def get_script_status(request, scriptid):
+    script = get_object_or_404(Script, pk=scriptid)
+    if request.method == "GET":
+        script_status = script.status
+        if script_status == "success" or script_status == "running":
+            return JsonResponse({"status": script_status})
+        elif script_status == "failure":
+            return JsonResponse({"status": script_status, "error_message": script.error_message})
+
 
 
 @login_required

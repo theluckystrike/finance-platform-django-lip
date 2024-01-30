@@ -5,7 +5,7 @@ See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
 """
 
 from django.contrib import admin
-from .models import Script, Category, Report, ReportEmailTask, ScriptRunResult
+from .models import Script, Category, Report, ReportEmailTask
 
 
 @admin.register(Script)
@@ -26,8 +26,3 @@ class ReportAdmin(admin.ModelAdmin):
 @admin.register(ReportEmailTask)
 class ReportEmailTaskAdmin(admin.ModelAdmin):
     ordering = ("report",)
-
-
-@admin.register(ScriptRunResult)
-class ScriptRunResultAdmin(admin.ModelAdmin):
-    ordering = ("script",)

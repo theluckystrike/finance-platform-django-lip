@@ -7,9 +7,34 @@
         min-height: 50vh;
         max-width: 1200px;
     }
+    #placeholder-no-border {
+        min-height: 50vh;
+        max-width: 1200px;
+    }
 
     #script-chart {
         max-width: 1200px;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        /* Light grey */
+        border-top: 16px solid #3498db;
+        /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -21,17 +46,17 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-danger my-1">Delete&nbsp;<span class="align-text-bottom"
+            <button type="submit" class="btn btn-sm btn-outline-danger my-1 {% if script.status == 'running' %} disabled {% endif %}">Delete&nbsp;<span class="align-text-bottom"
                     data-feather="x-circle"></span></button>
         </form>
         <form method="post" action="{% url 'run_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Run&nbsp;<span
-                    class="align-text-bottom" data-feather="play"></span></button>
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2 {% if script.status == 'running' %} disabled {% endif %}">Run&nbsp;<span
+                    class="align-text-bottom" data-feather="play" onclick="pollResult()"></span></button>
         </form>
 
         <a href="{% url 'script_edit' scriptname=script.name %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary my-1">Edit&nbsp;<span
+            <button type="button" class="btn btn-sm btn-outline-secondary my-1 {% if script.status == 'running' %} disabled {% endif %}">Edit&nbsp;<span
                     class="align-text-bottom" data-feather="external-link"></span></button>
         </a>
     </div>
@@ -39,6 +64,8 @@
 <div class="row">
 
     <div class="col-12 col-md-9 col-lg-9" id="script-frame">
+        
+        {% if script.status == "success" %}
         {% if script.image %}
         <div class="d-flex align-item-center m-2">
             <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
@@ -48,13 +75,23 @@
             <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
         </div>
         {% endif %}
+        {% elif script.status == "running" %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder-no-border">
+            <div class="mx-auto my-auto"><div class="loader"></div></div>
+        </div>
+        {% elif script.status == "failure" %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small"><u>This script produced an error:</u><br> {{script.error_message}}</div>
+        </div>
+        {% endif %}
     </div>
     <div class="col-12 col-md-3 col-lg-3">
         <div class="row">
             <div class="col-12">
                 <h4>Info</h4>
                 <div class="my-2">
-                    <p>Category: {{script.category.parent_category.parent_category.name}} &rarr; {{script.category.parent_category.name}} &rarr; {{script.category.name}} </p>
+                    <p>Category: {{script.category.parent_category.parent_category.name}} &rarr;
+                        {{script.category.parent_category.name}} &rarr; {{script.category.name}} </p>
                     <p></p>
                     <p>Uploaded: {{ script.created }}</p>
                     <p></p>
@@ -67,8 +104,7 @@
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="" method="post"
-                enctype="multipart/form-data">
+            <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title" id="categoryModalLabel">Add script to an additional category</h5>
@@ -119,8 +155,8 @@
                 <div class="modal-body">
                     <div class="mb-4">
                         <label for="name" class="form-label">Script name</label>
-                        <input type="text" id="name" name="name" value="{{nameform.instance.name}}" placeholder="{{ nameform.instance.name }}"
-                            class="form-control" autocomplete="on" required>
+                        <input type="text" id="name" name="name" value="{{nameform.instance.name}}"
+                            placeholder="{{ nameform.instance.name }}" class="form-control" autocomplete="on" required>
                     </div>
                     <div class="mb-4">
                         <label for="category" class="form-label">Category</label>
@@ -148,4 +184,33 @@
         </div>
     </div>
 </div>
+<script>
+    var status = "{{script.status}}"
+    if (status == "running") {
+        pollResult()
+    }
+    function pollResult() {
+        console.log("polling")
+        var intervalId = setInterval(function () {
+            $.ajax({
+                url: "{% url 'script_status' scriptid=script.id %}",
+                type: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        console.log('Success response received:', response);
+                        clearInterval(intervalId); // Stop the interval
+                        window.location.reload()
+                    } else if (response.status == "failure") {
+                        console.log('Failure response received:', response);
+                        clearInterval(intervalId); // Stop the interval
+                        window.location.reload()
+                    }
+                },
+                error: function () {
+                    console.error('Error in request');
+                }
+            });
+        }, 5000); // 5000 milliseconds (5 seconds)
+    }
+</script>
 {% endblock %}
