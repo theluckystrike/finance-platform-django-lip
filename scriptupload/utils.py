@@ -18,6 +18,9 @@ import logging
 import matplotlib.pyplot as plt
 import importlib
 from django.utils import timezone
+# from django.apps import apps
+
+# ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
 
 
 plt.switch_backend("agg")
@@ -290,3 +293,25 @@ def install_missing_libraries(missing_libraries):
             # TODO: add to requirements.txt
         except subprocess.CalledProcessError:
             print(f"Failed to install package - {library}")
+
+
+def handover(user, script):
+    from .models import ScriptRunResult
+    success, message = run_script(script)
+    if success:
+        result = ScriptRunResult(
+            user=user,
+            result="success",
+            message="",
+            script=script
+        )
+        result.save()
+    else:
+        result = ScriptRunResult(
+            user=user,
+            result="failure",
+            message=message,
+            script=script
+        )
+        result.save()
+

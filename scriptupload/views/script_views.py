@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from ..forms import ScriptUploadForm
-from ..utils import run_script
-from ..models import Script, Category
+from ..utils import run_script, handover
+from ..models import Script, Category, ScriptRunResult
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 import nbformat
@@ -15,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from ..tables import ScriptTable
 import logging
 from django_tables2 import RequestConfig
+from django.apps import apps
+
 
 logger = logging.getLogger('testlogger')
 
@@ -34,7 +36,8 @@ def upload_script(request):
             # print(split_name, " -- ", file.name)
             script = form.save(commit=False)
             if (not file.name.endswith(".py")) and (not file.name.endswith(".ipynb")):
-                messages.error(request, mark_safe("<u>Not a valid Python file</u>:<br/>File must be .py or .ipynb"))
+                messages.error(request, mark_safe(
+                    "<u>Not a valid Python file</u>:<br/>File must be .py or .ipynb"))
                 return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
             if file.name.endswith('.ipynb'):
@@ -98,12 +101,14 @@ def run_script_code(request, scriptname):
     """
     Configures the "Run" button that shows when looking at a script and the page that is shown when clicked.
     """
+    task_queue = apps.get_app_config("scriptupload").executor
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        success, message = run_script(script)
-        if not success:
-            messages.error(request, mark_safe(
-                f"<u>Error when running script:</u><br/>{message}"))
+        script_run_result = task_queue.submit(handover, request.user, script)
+        # success, message = run_script(script)
+        # if not success:
+        #     messages.error(request, mark_safe(
+        #         f"<u>Error when running script:</u><br/>{message}"))
     return redirect(script_page, scriptname)
 
 

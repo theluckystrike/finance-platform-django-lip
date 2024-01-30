@@ -3,6 +3,7 @@ Configuration for uploading new scripts to the project.
 """
 
 from django.apps import AppConfig
+from concurrent.futures import ThreadPoolExecutor
 
 
 class ScriptuploadConfig(AppConfig):
@@ -11,3 +12,4 @@ class ScriptuploadConfig(AppConfig):
 
     def ready(self):
         import scriptupload.signals
+        self.executor = ThreadPoolExecutor(max_workers=1)
