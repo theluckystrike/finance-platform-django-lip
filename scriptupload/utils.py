@@ -227,6 +227,10 @@ def run_script(script_instance):
     """
     global plot_buffer
     global plt
+    logger.info(f"[script runner] Running script * {script_instance.name} *")
+    script_instance.status = "running"
+    script_instance.error_message = ""
+    script_instance.save(update_fields=["status", "error_message"])
 
     script = script_instance.file
     plt = importlib.reload(plt)
@@ -239,6 +243,11 @@ def run_script(script_instance):
     try:
         exec(script.read(), script_namespace)
     except Exception as e:
+        script_instance.status = "failure"
+        script_instance.error_message = e
+        script_instance.save(update_fields=["status", "error_message"])
+        logger.error(
+            f"[script runner] Failed to run script * {script_instance.name} * with error -> \n{e}")
         return False, e
     if plot_buffer:
         script_instance.image.save("output_plot.png", File(plot_buffer))
@@ -246,6 +255,10 @@ def run_script(script_instance):
         plot_buffer = None
         script_instance.last_updated = timezone.now()
         script_instance.save(update_fields=["last_updated"])
+        script_instance.status = "success"
+        script_instance.save(update_fields=["status"])
+        logger.info(
+            f"[script runner] Successfully ran script * {script_instance.name} *")
         return True, None
     else:
         # savefig has been monkey patched
@@ -257,7 +270,16 @@ def run_script(script_instance):
             plot_buffer = None
             script_instance.last_updated = timezone.now()
             script_instance.save(update_fields=["last_updated"])
+            script_instance.status = "success"
+            script_instance.save(update_fields=["status"])
+            logger.info(
+                f"[script runner] Successfully ran script * {script_instance.name} *")
             return True, None
+    script_instance.status = "failure"
+    script_instance.error_message = "Could not find script plot"
+    script_instance.save(update_fields=["status", "error_message"])
+    logger.error(
+        f"[script runner] The script * {script_instance.name} * did not output an image")
     return False, "Could not find script plot"
 
 # utililty methods for finding dependencies on scripts that are not
@@ -296,22 +318,28 @@ def install_missing_libraries(missing_libraries):
 
 
 def handover(user, script):
-    script.status = "running"
-    script.error_message = ""
-    script.save(update_fields=["status", "error_message"])
     success, message = run_script(script)
-    logger.info(f"[script handover] Running script * {script.name} * by user * {user.username} *")
+    logger.info(
+        f"[script handover] Running script * {script.name} * by user * {user.username} *")
     if success:
-        script.status = "success"
-        script.error_message = ""
-        script.save(update_fields=["status", "error_message"])
+        # script.status = "success"
+        # script.error_message = ""
+        # script.save(update_fields=["status", "error_message"])
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {user.username} * SUCCESS")
     else:
-        script.status = "failure"
-        script.error_message = message
-        script.save(update_fields=["status", "error_message"])
+        # script.status = "failure"
+        # script.error_message = message
+        # script.save(update_fields=["status", "error_message"])
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {user.username} * FAILURE")
-    
 
+
+def handover_report(user, report, run_scripts=False):
+    logger.info(
+        f"[report handover] Updating report * {report.name} * by user * {user.username} *")
+    report.update(run_scripts)
+    report.status = "success"
+    report.save(update_fields=["status"])
+    logger.info(
+        f"[report handover] Updated report * {report.name} * by user * {user.username} *")

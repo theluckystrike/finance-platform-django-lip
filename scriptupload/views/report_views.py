@@ -1,15 +1,19 @@
+from django.http import JsonResponse
 from ..utils import get_script_hierarchy
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
-from ..utils import run_script, scripts_to_httpresponse
-from django.shortcuts import get_object_or_404, redirect
+from ..utils import run_script, scripts_to_httpresponse, handover_report
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
 from ..tables import ScriptTable
 from django_tables2 import RequestConfig
+from django.apps import apps
+import logging
+
+logger = logging.getLogger('testlogger')
 
 
 @login_required
@@ -116,8 +120,24 @@ def delete_report(request, reportid):
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
-        report.update(True)
+        task_queue = apps.get_app_config("scriptupload").executor
+        report.status = "running"
+        report.save(update_fields=["status"])
+        task_queue.submit(handover_report, request.user, report, True)
+        logger.info(
+            f"[task queue] Added update of report * {report.name} * by user * {request.user.username} * to task queue")
     return redirect(report_page, report.name)
+
+
+@login_required
+def get_report_status(request, reportid):
+    report = get_object_or_404(Report, pk=reportid)
+    if request.method == "GET":
+        report_status = report.status
+        if report_status == "success" or report_status == "running":
+            return JsonResponse({"status": report_status})
+        elif report_status == "failure":
+            return JsonResponse({"status": report_status, "error_message": report.error_message})
 
 
 @login_required

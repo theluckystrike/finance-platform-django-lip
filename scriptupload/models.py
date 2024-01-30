@@ -17,7 +17,6 @@ from django.core.files import File
 import os
 from django.utils import timezone
 from .signals import rm
-from django.contrib.auth.models import User
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -186,6 +185,7 @@ class Report(models.Model):
     last_updated = models.DateTimeField(blank=True, null=True)
     latest_pdf = models.FileField(
         upload_to=report_file_path, storage=privateStorage, blank=True)
+    status = models.CharField(max_length=15, default="success")
 
     def __str__(self):
         return self.name

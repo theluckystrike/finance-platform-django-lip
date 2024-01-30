@@ -104,8 +104,12 @@ def run_script_code(request, scriptname):
     task_queue = apps.get_app_config("scriptupload").executor
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        script_run_result = task_queue.submit(handover, request.user, script)
-        logger.info(f"[task queue] Started new thread to run script * {script.name} * by user * {request.user.username} *")
+        script.status = "running"
+        script.error_message = ""
+        script.save(update_fields=["status", "error_message"])
+        task_queue.submit(handover, request.user, script)
+        logger.info(
+            f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
         # success, message = run_script(script)
         # if not success:
         #     messages.error(request, mark_safe(
@@ -122,7 +126,6 @@ def get_script_status(request, scriptid):
             return JsonResponse({"status": script_status})
         elif script_status == "failure":
             return JsonResponse({"status": script_status, "error_message": script.error_message})
-
 
 
 @login_required

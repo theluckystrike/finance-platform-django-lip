@@ -23,12 +23,6 @@ class Command(BaseCommand):
         logger.info(
             "[all script runner] Starting to run all scripts on scheduled job")
         for script in Script.objects.all():
-            succ, strace = run_script(script)
-            if succ is False:
-                logger.error(
-                    f"[all script runner] Failed to run script * {script.name} * ->\n{strace}")
-            else:
-                logger.info(
-                    f"[all script runner] Successfully ran script * {script.name} *")
+            run_script(script)
         logger.info(
             "[all script runner] Finished running all scripts on scheduled job")

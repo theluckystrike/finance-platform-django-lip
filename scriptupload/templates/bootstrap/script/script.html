@@ -16,26 +16,6 @@
         max-width: 1200px;
     }
 
-    .loader {
-        border: 16px solid #f3f3f3;
-        /* Light grey */
-        border-top: 16px solid #3498db;
-        /* Blue */
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
 </style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">{{script.name}}&ensp;
@@ -46,19 +26,24 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-danger my-1 {% if script.status == 'running' %} disabled {% endif %}">Delete&nbsp;<span class="align-text-bottom"
+            <button type="submit" class="btn btn-sm btn-outline-danger my-1{% if script.status == 'running' %} disabled {% endif %}">Delete&nbsp;<span class="align-text-bottom"
                     data-feather="x-circle"></span></button>
         </form>
         <form method="post" action="{% url 'run_script' script.name %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2 {% if script.status == 'running' %} disabled {% endif %}">Run&nbsp;<span
-                    class="align-text-bottom" data-feather="play" onclick="pollResult()"></span></button>
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2{% if script.status == 'running' %} disabled {% endif %}">Run&nbsp;<span
+                    class="align-text-bottom" data-feather="play"></span></button>
         </form>
 
-        <a href="{% url 'script_edit' scriptname=script.name %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary my-1 {% if script.status == 'running' %} disabled {% endif %}">Edit&nbsp;<span
+        {% if script.status == "running" %}
+            <button type="button" class="btn btn-sm btn-outline-secondary my-1 disabled">Edit&nbsp;<span
+                    class="align-text-bottom" data-feather="external-link"></span></button>
+        {% else %}
+        <a href="{% url 'script_edit' scriptname=script.name %}" >
+            <button type="button" class="btn btn-sm btn-outline-secondary my-1">Edit&nbsp;<span
                     class="align-text-bottom" data-feather="external-link"></span></button>
         </a>
+        {% endif %}
     </div>
 </div>
 <div class="row">
@@ -77,7 +62,7 @@
         {% endif %}
         {% elif script.status == "running" %}
         <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder-no-border">
-            <div class="mx-auto my-auto"><div class="loader"></div></div>
+            <div class="mx-auto my-auto"><div class="spinner-border" role="status"></div></div>
         </div>
         {% elif script.status == "failure" %}
         <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
@@ -190,19 +175,16 @@
         pollResult()
     }
     function pollResult() {
-        console.log("polling")
         var intervalId = setInterval(function () {
             $.ajax({
                 url: "{% url 'script_status' scriptid=script.id %}",
                 type: 'GET',
                 success: function (response) {
                     if (response.status === 'success') {
-                        console.log('Success response received:', response);
-                        clearInterval(intervalId); // Stop the interval
+                        clearInterval(intervalId);
                         window.location.reload()
                     } else if (response.status == "failure") {
-                        console.log('Failure response received:', response);
-                        clearInterval(intervalId); // Stop the interval
+                        clearInterval(intervalId);
                         window.location.reload()
                     }
                 },
@@ -210,7 +192,7 @@
                     console.error('Error in request');
                 }
             });
-        }, 5000); // 5000 milliseconds (5 seconds)
+        }, 5000);
     }
 </script>
 {% endblock %}

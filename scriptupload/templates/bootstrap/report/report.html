@@ -61,18 +61,23 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">{{report.name}}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+        {% if report.status == 'running' %}
+        <div class="mx-2 my-1">
+            <div class="spinner-border" role="status"></div>
+        </div>
+        {% endif %}
         {% if report.latest_pdf %}
         <a href="{{ report.latest_pdf.url }}" class="btn btn-sm btn-outline-secondary my-1">View latest&nbsp;<span
                 class="align-text-bottom" data-feather="eye"></span></a>
         {% endif %}
         <form method="post" action="{% url 'update_report' report.id %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2">Update&nbsp;<span
+            <button type="submit" class="btn btn-sm btn-outline-success my-1 mx-2 {% if report.status == 'running' %} disabled {% endif %}">Update&nbsp;<span
                     class="align-text-bottom" data-feather="play"></span></button>
         </form>
         <form method="post" action="{% url 'delete_report' report.id %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-danger my-1">Delete&nbsp;<span class="align-text-bottom"
+            <button type="submit" class="btn btn-sm btn-outline-danger my-1 {% if report.status == 'running' %} disabled {% endif %}">Delete&nbsp;<span class="align-text-bottom"
                     data-feather="file-minus"></span></button>
         </form>
     </div>
@@ -180,5 +185,30 @@
 <div class="text-muted">
     <b>Created:</b> {{report.created}} &ensp; <b>Last run:</b> {{report.last_updated}}
 </div>
-
+<script>
+    var status = "{{report.status}}"
+    if (status == "running") {
+        pollReport()
+    }
+    function pollReport() {
+        var intervalId = setInterval(function () {
+            $.ajax({
+                url: "{% url 'report_status' reportid=report.id %}",
+                type: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        clearInterval(intervalId);
+                        window.location.reload()
+                    } else if (response.status == "failure") {
+                        clearInterval(intervalId);
+                        window.location.reload()
+                    }
+                },
+                error: function () {
+                    console.error('Error in request');
+                }
+            });
+        }, 5000);
+    }
+</script>
 {% endblock %}

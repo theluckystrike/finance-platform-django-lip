@@ -17,6 +17,7 @@ urlpatterns = [
     path('reports/delete-task/<int:taskid>/', views.delete_task, name="delete_task"),
     path('reports/delete/<int:reportid>/', views.delete_report, name="delete_report"),
     path('reports/update/<int:reportid>/', views.update_report, name="update_report"),
+    path('reports/get-status/<int:reportid>/', views.get_report_status, name="report_status"),
     path('save-custom-report/', views.save_custom_report, name="save_custom_report"),
     # scripts
     path('scripts/view/<str:scriptname>/', views.script_page, name="script"),
