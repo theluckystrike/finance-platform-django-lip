@@ -74,7 +74,7 @@ def custom_report_page(request):
     if subcategory2 and subcategory2 and category:
         scripts = Script.objects.filter(category_id=subcategory2)
 
-    table = ScriptTable(scripts, order_by="created")
+    table = ScriptTable(scripts, order_by="-created")
     RequestConfig(request, paginate=False).configure(table)
 
     script_form = ScriptSelectForm()
