@@ -21,7 +21,9 @@ def save_custom_report(request):
     if request.method == "POST":
         form = NewReportForm(request.POST)
         if form.is_valid():
-            form.save()
+            report = form.save()
+            report.added_by = request.user
+            report.save(update_fields=["added_by"])
             messages.success(request, "Report successfully created")
         else:
             messages.info(request, "A report with this name already exists")

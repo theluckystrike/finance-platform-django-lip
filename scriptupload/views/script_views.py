@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from ..forms import ScriptUploadForm
-from ..utils import run_script, handover
+from ..utils import handover
 from ..models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
@@ -30,10 +30,6 @@ def upload_script(request):
         form = ScriptUploadForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.cleaned_data['file']
-            # print(file.name)
-            # split_name = "".join(file.name.split(".")[:-1]).replace("/", "")
-            # file.name = split_name + "." + file.name.split(".")[-1]
-            # print(split_name, " -- ", file.name)
             script = form.save(commit=False)
             if (not file.name.endswith(".py")) and (not file.name.endswith(".ipynb")):
                 messages.error(request, mark_safe(
@@ -111,10 +107,6 @@ def run_script_code(request, scriptname):
         task_queue.submit(handover, request.user, script)
         logger.info(
             f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
-        # success, message = run_script(script)
-        # if not success:
-        #     messages.error(request, mark_safe(
-        #         f"<u>Error when running script:</u><br/>{message}"))
     return redirect(script_page, scriptname)
 
 

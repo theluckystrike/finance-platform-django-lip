@@ -188,6 +188,8 @@ class Report(models.Model):
     latest_pdf = models.FileField(
         upload_to=report_file_path, storage=privateStorage, blank=True)
     status = models.CharField(max_length=15, default="success")
+    added_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
