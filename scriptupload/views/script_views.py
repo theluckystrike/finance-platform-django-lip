@@ -56,6 +56,7 @@ def upload_script(request):
                 # remove the temporary file
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
+            script.added_by = request.user
             script.save()
             logger.info(
                 f"[script upload view] Uploaded script * {script.name} *")

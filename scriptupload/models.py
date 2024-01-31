@@ -17,6 +17,7 @@ from django.core.files import File
 import os
 from django.utils import timezone
 from .signals import rm
+from django.contrib.auth.models import User
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -91,6 +92,7 @@ class Script(models.Model):
     index_in_category = models.IntegerField(blank=True, default=0)
     status = models.CharField(max_length=15, default="success")
     error_message = models.TextField(null=True, blank=True)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def update_index(self, new_idx):
         """
