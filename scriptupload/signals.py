@@ -2,6 +2,7 @@
 Configuration for saving/deleting a script from the database.
 """
 
+from django.apps import apps
 from django.dispatch import receiver
 from django.db.models.signals import post_delete, m2m_changed
 from financeplatform.storage_backends import PrivateMediaStorage
@@ -9,7 +10,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 import logging
 import os
-
+from .utils import handover_report
 
 logger = logging.getLogger('testlogger')
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -54,7 +55,8 @@ def report_signals(Report):
     def update_scripts_report(sender, instance, **kwargs):
         scripts = instance.scripts.all()
         if len(scripts) > 0:
-            instance.update()
+            task_queue = apps.get_app_config("scriptupload").executor
+            task_queue.submit(handover_report, None, instance, False)
             logger.info(
                 f"[report m2m signal] Updated pdf for report * {instance.name} *")
 

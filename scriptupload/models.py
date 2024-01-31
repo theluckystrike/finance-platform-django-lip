@@ -191,11 +191,14 @@ class Report(models.Model):
         return self.name
 
     def update(self, runscripts=False):
+        self.status = "running"
+        self.save(update_fields=["status"])
         buffer = scripts_to_pdfbuffer(
             self.scripts.all().order_by("index_in_category"), self.name, runscripts)
         self.latest_pdf.save(
             f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
         self.last_updated = timezone.now()
+        self.status = "success"
         self.save()
 
     class Meta:

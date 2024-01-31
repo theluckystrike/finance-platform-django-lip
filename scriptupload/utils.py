@@ -318,22 +318,30 @@ def install_missing_libraries(missing_libraries):
 
 
 def handover(user, script):
+    if user is None:
+        username = "None"
+    else:
+        username = user.username
     success, message = run_script(script)
     logger.info(
-        f"[script handover] Running script * {script.name} * by user * {user.username} *")
+        f"[script handover] Running script * {script.name} * by user * {username} *")
     if success:
         logger.info(
-            f"[script handover] Script * {script.name} * run by user * {user.username} * SUCCESS")
+            f"[script handover] Script * {script.name} * run by user * {username} * SUCCESS")
     else:
         logger.info(
-            f"[script handover] Script * {script.name} * run by user * {user.username} * FAILURE")
+            f"[script handover] Script * {script.name} * run by user * {username} * FAILURE")
 
 
 def handover_report(user, report, run_scripts=False):
+    if user is None:
+        username = "None"
+    else:
+        username = user.username
     logger.info(
-        f"[report handover] Updating report * {report.name} * by user * {user.username} *")
+        f"[report handover] Updating report * {report.name} * by user * {username} *")
     report.update(run_scripts)
     report.status = "success"
     report.save(update_fields=["status"])
     logger.info(
-        f"[report handover] Updated report * {report.name} * by user * {user.username} *")
+        f"[report handover] Updated report * {report.name} * by user * {username} *")

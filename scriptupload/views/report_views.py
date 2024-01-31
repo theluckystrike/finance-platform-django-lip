@@ -121,8 +121,6 @@ def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
         task_queue = apps.get_app_config("scriptupload").executor
-        report.status = "running"
-        report.save(update_fields=["status"])
         task_queue.submit(handover_report, request.user, report, True)
         logger.info(
             f"[task queue] Added update of report * {report.name} * by user * {request.user.username} * to task queue")
