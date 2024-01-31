@@ -90,7 +90,7 @@ class Script(models.Model):
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
     status = models.CharField(max_length=15, default="success")
-    error_message = models.TextField(null=True)
+    error_message = models.TextField(null=True, blank=True)
 
     def update_index(self, new_idx):
         """

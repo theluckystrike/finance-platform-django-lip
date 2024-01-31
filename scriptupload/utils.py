@@ -322,15 +322,9 @@ def handover(user, script):
     logger.info(
         f"[script handover] Running script * {script.name} * by user * {user.username} *")
     if success:
-        # script.status = "success"
-        # script.error_message = ""
-        # script.save(update_fields=["status", "error_message"])
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {user.username} * SUCCESS")
     else:
-        # script.status = "failure"
-        # script.error_message = message
-        # script.save(update_fields=["status", "error_message"])
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {user.username} * FAILURE")
 
