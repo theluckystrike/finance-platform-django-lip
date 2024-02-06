@@ -68,3 +68,48 @@ class DragnDropTable(tables.Table):
 
     def render_view_link(self, value, record):
         return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))
+
+
+class ReportScriptTable(tables.Table):
+    category = tables.Column(
+        empty_values=(), verbose_name="Category", order_by="category.parent_category.parent_category.name")
+    subcategory1 = tables.Column(
+        empty_values=(), verbose_name="Sub category 1", order_by="category.parent_category.name")
+    subcategory2 = tables.Column(
+        empty_values=(), verbose_name="Sub category 2", order_by="category.name")
+
+    delete_button = tables.Column(empty_values=(), verbose_name="")
+
+    view_link = tables.Column(empty_values=(), verbose_name="")
+
+    class Meta:
+        model = Script
+        template_name = "django_tables2/bootstrap5-responsive.html"
+        fields = ("name", "category",
+                  "subcategory1", "subcategory2", "delete_button", "view_link")
+        attrs = {"class": "table table-striped table-sm",
+                 "tbody": {"id": "scriptsCheckboxes"}}
+
+    def render_subcategory1(self, value, record):
+        if record.category:
+            return record.category.parent_category.name
+        else:
+            return "-"
+
+    def render_subcategory2(self, value, record):
+        if record.category:
+            return record.category.name
+        else:
+            return "-"
+
+    def render_category(self, value, record):
+        if record.category:
+            return record.category.parent_category.parent_category.name
+        else:
+            return "-"
+
+    def render_delete_button(self, value, record):
+        return mark_safe('<button hx-delete="{}" hx-swap="none" hx-confirm="Are you sure?" class="text-danger text-decoration-none px-1"> Delete </button>'.format(f"remove-script/{record.pk}/"))
+
+    def render_view_link(self, value, record):
+        return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))

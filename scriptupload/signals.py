@@ -51,14 +51,14 @@ def script_signals(Script):
 
 def report_signals(Report):
 
-    @receiver(m2m_changed, sender=Report.scripts.through, weak=False)
-    def update_scripts_report(sender, instance, **kwargs):
-        scripts = instance.scripts.all()
-        if len(scripts) > 0:
-            task_queue = apps.get_app_config("scriptupload").executor
-            task_queue.submit(handover_report, None, instance, False)
-            logger.info(
-                f"[report m2m signal] Updated pdf for report * {instance.name} *")
+    # @receiver(m2m_changed, sender=Report.scripts.through, weak=False)
+    # def update_scripts_report(sender, instance, **kwargs):
+    #     scripts = instance.scripts.all()
+    #     if len(scripts) > 0:
+    #         task_queue = apps.get_app_config("scriptupload").executor
+    #         task_queue.submit(handover_report, None, instance, False)
+    #         logger.info(
+    #             f"[report m2m signal] Updated pdf for report * {instance.name} *")
 
     @receiver(post_delete, sender=Report, weak=False)
     def cleanup_storage_files(sender, instance, **kwargs):

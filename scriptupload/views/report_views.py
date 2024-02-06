@@ -1,14 +1,15 @@
 from django.http import JsonResponse
+from django.urls import reverse
 from ..utils import get_script_hierarchy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
-from ..utils import run_script, scripts_to_httpresponse, handover_report
+from ..utils import run_script, scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
-from ..tables import ScriptTable
+from ..tables import ScriptTable, ReportScriptTable
 from django_tables2 import RequestConfig
 from django.apps import apps
 import logging
@@ -81,7 +82,22 @@ def custom_report_page(request):
 
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
-    return render(request, "bootstrap/report/custom_report.html", {"catfilter": filtercat, "subcat1filter": filtersubcat1, "subcat1": subcategory1, "subcat2filter": filtersubcat2, "subcat2": subcategory2, "script_table": table, "report_form": report_form, "form": script_form, "number_of_scripts": len(scripts), "categories": Category.objects.filter(parent_category=None)})
+    return render(
+        request,
+        "bootstrap/report/custom_report.html",
+        {
+            "catfilter": filtercat,
+            "subcat1filter": filtersubcat1,
+            "subcat1": subcategory1,
+            "subcat2filter": filtersubcat2,
+            "subcat2": subcategory2,
+            "script_table": table,
+            "report_form": report_form,
+            "form": script_form,
+            "number_of_scripts": len(scripts),
+            "categories": Category.objects.filter(parent_category=None)
+        }
+    )
 
 
 @login_required
@@ -130,6 +146,17 @@ def update_report(request, reportid):
 
 
 @login_required
+def remove_script_from_report(request, reportname, scriptid):
+    report = get_object_or_404(Report, name=reportname)
+    if request.method == "DELETE":
+        script = Script.objects.get(id=scriptid)
+        report.scripts.remove(script)
+        logger.info(
+            f"[task queue] Removed script * {script.name}, ID:{script.id} * from report * {report.name} *")
+    return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
+
+
+@login_required
 def get_report_status(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "GET":
@@ -173,6 +200,8 @@ def report_page(request, reportname):
         "7": "Sunday",
         "*": "day"
     }
+    table = ReportScriptTable(report.scripts.all(), order_by="subcategory2")
+    RequestConfig(request, paginate=False).configure(table)
     return render(
         request,
         "bootstrap/report/report.html",
@@ -183,6 +212,7 @@ def report_page(request, reportname):
             "tasks": ReportEmailTask.objects.filter(report=report),
             "days_of_week": days_of_week,
             "report_categories": report_categories,
-            "uncategorised_scripts": uncategorised
+            "uncategorised_scripts": uncategorised,
+            "report_scripts_table": table
         }
     )

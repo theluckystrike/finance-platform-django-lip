@@ -1,7 +1,10 @@
 {% extends 'bootstrap/base.html' %}
 {% load static %}
-
+{% load render_table from django_tables2 %}
 {% block content %}
+<script src="https://unpkg.com/htmx.org@1.9.10"
+    integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+    crossorigin="anonymous"></script>
 <style>
     .tree-container * {
         margin: 0;
@@ -136,10 +139,11 @@
             {% endif %}
         </div>
     </div>
-    <div class="mt-3 col-12 col-md-6 col-sm-12 tree-container">
+    <div class="mt-3 col-12 col-md-6 col-sm-12 tree-container" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <h4 class="pb-4">Scripts in this report</h4>
+        {% render_table report_scripts_table %}
  
-        <ul>
+        <!-- <ul>
             {% for supercategory, values in report_categories.items %}
             <li>{{supercategory}}
                 <ul>
@@ -166,8 +170,8 @@
                 </ul>
             </li>
             {% endfor %}
-        </ul>
-        <br>
+        </ul> -->
+        <!-- <br>
         {% if uncategorised_scripts %}
         <ul>
             <li>
@@ -179,7 +183,7 @@
                 </ul>
             </li>
         </ul>
-        {% endif %}
+        {% endif %} -->
     </div>
 </div>
 <div class="text-muted">

@@ -6,7 +6,7 @@ Configures utility (helper) functions to be used in other places in the project.
 from django.conf import settings
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files import File
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import default_storage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -21,6 +21,15 @@ from django.utils import timezone
 # from django.apps import apps
 
 # ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
+
+
+
+#  from https://stackoverflow.com/questions/65569673/htmx-hx-target-swap-html-vs-full-page-reload
+class HTTPResponseHXRedirect(HttpResponseRedirect):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self['HX-Redirect'] = self['Location']
+    status_code = 200
 
 
 plt.switch_backend("agg")
