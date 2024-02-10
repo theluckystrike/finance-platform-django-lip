@@ -79,6 +79,8 @@ INSTALLED_APPS = [
     'django_filters',
 ]
 
+SCOUT_NAME = "Finance Platform scout"
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 4 days
