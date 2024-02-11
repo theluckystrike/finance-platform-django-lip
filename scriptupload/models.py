@@ -201,6 +201,7 @@ class Report(models.Model):
             self.scripts.all().order_by("index_in_category"), self.name, runscripts)
         self.latest_pdf.save(
             f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+        buffer.close()
         self.last_updated = timezone.now()
         self.status = "success"
         self.save()

@@ -252,7 +252,7 @@ def run_script(script_instance):
     plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
-    plt.show = custom_show
+    # plt.show = custom_show
     script_namespace = {
         'plt': plt
     }
@@ -265,6 +265,9 @@ def run_script(script_instance):
         script_instance.save(update_fields=["status", "error_message"])
         logger.error(
             f"[script runner] Failed to run script * {script_instance.name} * with error -> \n{e}")
+        if plot_buffer:
+            plot_buffer.close()
+        plot_buffer = None
         plt.close()
         return False, e
     if plot_buffer:
@@ -301,6 +304,7 @@ def run_script(script_instance):
     logger.error(
         f"[script runner] The script * {script_instance.name} * did not output an image")
     plt.close()
+    plot_buffer = None
     return False, "Could not find script plot"
 
 # utililty methods for finding dependencies on scripts that are not
