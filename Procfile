@@ -1,1 +1,1 @@
-web: newrelic-admin run-program gunicorn financeplatform.wsgi
+web: gunicorn financeplatform.wsgi
