@@ -1,3 +1,4 @@
+// from https://github.com/bigskysoftware/htmx/issues/1202
 htmx.defineExtension('path-params', {
     onEvent: function (name, evt) {
         if (name === "htmx:configRequest") {

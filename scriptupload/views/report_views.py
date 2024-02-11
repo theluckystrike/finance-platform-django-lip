@@ -152,7 +152,7 @@ def remove_script_from_report(request, reportname, scriptid):
         script = Script.objects.get(id=scriptid)
         report.scripts.remove(script)
         logger.info(
-            f"[task queue] Removed script * {script.name}, ID:{script.id} * from report * {report.name} *")
+            f"[reports] Removed script * {script.name}, ID:{script.id} * from report * {report.name} *")
     return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
 
 
@@ -163,7 +163,7 @@ def add_script_to_report(request, reportname, scriptid):
         script = Script.objects.get(id=scriptid)
         report.scripts.add(script)
         logger.info(
-            f"[task queue] Added script * {script.name}, ID:{script.id} * to report * {report.name} *")
+            f"[reports] Added script * {script.name}, ID:{script.id} * to report * {report.name} *")
     return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
 
 
