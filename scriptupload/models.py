@@ -204,6 +204,7 @@ class Report(models.Model):
         self.last_updated = timezone.now()
         self.status = "success"
         buffer.close()
+        del buffer
         self.save()
 
     class Meta:

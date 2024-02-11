@@ -24,7 +24,6 @@ import gc
 # ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
 
 
-
 #  from https://stackoverflow.com/questions/65569673/htmx-hx-target-swap-html-vs-full-page-reload
 class HTTPResponseHXRedirect(HttpResponseRedirect):
     def __init__(self, *args, **kwargs):
@@ -196,6 +195,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
         c.showPage()
     # save to buffer
     c.save()
+    del c
     # reset the buffer position
     buffer.seek(0)
     return buffer
@@ -306,40 +306,6 @@ def run_script(script_instance):
     plt.close()
     plot_buffer = None
     return False, "Could not find script plot"
-
-# utililty methods for finding dependencies on scripts that are not
-# not installed on the server
-
-
-def extract_imports(script_text):
-    tree = ast.parse(script_text)
-    imports = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for name in node.names:
-                imports.append(name.name)
-        elif isinstance(node, ast.ImportFrom):
-            module = node.module
-            for name in node.names:
-                imports.append(f"{module}.{name.name}")
-    return imports
-
-
-def check_installed_libraries(imports):
-    missing_libraries = []
-    for library in imports:
-        if not pkgutil.find_loader(library):
-            missing_libraries.append(library)
-    return missing_libraries
-
-
-def install_missing_libraries(missing_libraries):
-    for library in missing_libraries:
-        try:
-            subprocess.check_call(['pip', 'install', library])
-            # TODO: add to requirements.txt
-        except subprocess.CalledProcessError:
-            print(f"Failed to install package - {library}")
 
 
 def handover(user, script):
