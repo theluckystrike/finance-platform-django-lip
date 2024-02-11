@@ -203,6 +203,7 @@ class Report(models.Model):
             f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
         self.last_updated = timezone.now()
         self.status = "success"
+        buffer.close()
         self.save()
 
     class Meta:
