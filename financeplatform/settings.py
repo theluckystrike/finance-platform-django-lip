@@ -146,6 +146,16 @@ DATABASES = {
     }
 }
 
+if not IS_HEROKU:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'heroku_db',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

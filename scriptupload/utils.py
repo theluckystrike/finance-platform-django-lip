@@ -16,9 +16,9 @@ import pkgutil
 import subprocess
 import logging
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import importlib
 from django.utils import timezone
+import gc
 # from django.apps import apps
 
 # ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
@@ -252,7 +252,7 @@ def run_script(script_instance):
     plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
-    # plt.show = custom_show
+    plt.show = custom_show
     script_namespace = {
         'plt': plt
     }
@@ -356,6 +356,7 @@ def handover(user, script):
     else:
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {username} * FAILURE")
+    gc.collect()
 
 
 def handover_report(user, report, run_scripts=False):
@@ -370,3 +371,4 @@ def handover_report(user, report, run_scripts=False):
     report.save(update_fields=["status"])
     logger.info(
         f"[report handover] Updated report * {report.name} * by user * {username} *")
+    gc.collect()
