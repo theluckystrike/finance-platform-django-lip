@@ -16,6 +16,7 @@ import pkgutil
 import subprocess
 import logging
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import importlib
 from django.utils import timezone
 # from django.apps import apps
@@ -226,6 +227,12 @@ def custom_savefig(*args, **kwargs):
         plot_buffer = buf
 
 
+def custom_show(*args, **kwargs):
+    # https://matplotlib.org/stable/gallery/user_interfaces/web_application_server_sgskip.html
+    # monkey patch function to prevent memory leak in matplotlib.pyplot
+    pass
+
+
 def run_script(script_instance):
     """
     Runs a script and saves the result back to storage, deleting the previous version.
@@ -245,6 +252,7 @@ def run_script(script_instance):
     plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
+    plt.show = custom_show
     script_namespace = {
         'plt': plt
     }
