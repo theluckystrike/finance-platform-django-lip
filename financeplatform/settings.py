@@ -31,7 +31,7 @@ IS_HEROKU = "DYNO" in os.environ
 
 # If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
 # environment variables from a .env file.
-if not ("DYNO" in os.environ):
+if not IS_HEROKU:
     load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -157,7 +157,7 @@ LOGGING = {
             'datefmt': '%Y-%m-%d %H:%M:%S'
         },
         'simple': {
-            'format': '%(asctime)s [%(process)d] CUSTOM LOGS [%(levelname)s] %(message)s',
+            'format': '[%(process)d] CUSTOM LOGS [%(levelname)s] %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S'
         }
     },
@@ -167,6 +167,11 @@ LOGGING = {
             'class': 'logging.NullHandler',
         },
         'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'heroku': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
