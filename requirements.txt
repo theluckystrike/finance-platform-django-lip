@@ -96,6 +96,7 @@ nbconvert==7.8.0
 nbformat==5.9.2
 ndindex==1.7
 nest-asyncio==1.5.6
+newrelic==9.6.0
 notebook==7.0.3
 notebook_shim==0.2.3
 numexpr==2.8.7
@@ -114,6 +115,7 @@ prometheus-client==0.17.1
 prompt-toolkit==3.0.38
 psutil==5.9.5
 psycopg2==2.9.6
+psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pure-eval==0.2.2
 py-cpuinfo==9.0.0
@@ -153,6 +155,7 @@ terminado==0.17.1
 threadpoolctl==3.2.0
 tinycss2==1.2.1
 tomli==2.0.1
+-e git+https://github.com/ndaskalovic/finance-toolbox.git@7d8051803e04ab167f6cd9c52c43974cf30bc634#egg=toolbox
 tornado==6.3.2
 tqdm==4.66.1
 traitlets==5.9.0
@@ -171,4 +174,3 @@ wrapt==1.16.0
 yarl==1.9.4
 yfinance==0.2.36
 zipp==3.15.0
--e git+https://github.com/ndaskalovic/finance-toolbox.git#egg=toolbox
