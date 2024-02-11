@@ -18,7 +18,7 @@ logger = logging.getLogger('testlogger')
 
 
 def send_pdf(task):
-    task.report.update()
+    task.report.update(True)
     today_str = timezone.now().strftime("%A")
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {timezone.now().strftime('%Y/%m/%d')}",

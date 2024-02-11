@@ -11,9 +11,6 @@ from django.core.files.storage import default_storage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from io import BytesIO
-import ast
-import pkgutil
-import subprocess
 import logging
 import matplotlib.pyplot as plt
 import importlib
