@@ -179,7 +179,7 @@ LOGGING = {
     },
     'loggers': {
         'testlogger': {
-            'handlers': ['console'],
+            'handlers': ['heroku'],
             'level': 'INFO',
         }
     }
