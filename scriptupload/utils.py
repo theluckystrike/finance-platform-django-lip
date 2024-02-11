@@ -265,6 +265,7 @@ def run_script(script_instance):
         script_instance.save(update_fields=["status", "error_message"])
         logger.error(
             f"[script runner] Failed to run script * {script_instance.name} * with error -> \n{e}")
+        plt.close()
         return False, e
     if plot_buffer:
         script_instance.image.save("output_plot.png", File(plot_buffer))
@@ -276,6 +277,7 @@ def run_script(script_instance):
         script_instance.save(update_fields=["status"])
         logger.info(
             f"[script runner] Successfully ran script * {script_instance.name} *")
+        plt.close()
         return True, None
     else:
         # savefig has been monkey patched
@@ -291,12 +293,14 @@ def run_script(script_instance):
             script_instance.save(update_fields=["status"])
             logger.info(
                 f"[script runner] Successfully ran script * {script_instance.name} *")
+            plt.close()
             return True, None
     script_instance.status = "failure"
     script_instance.error_message = "Could not find script plot"
     script_instance.save(update_fields=["status", "error_message"])
     logger.error(
         f"[script runner] The script * {script_instance.name} * did not output an image")
+    plt.close()
     return False, "Could not find script plot"
 
 # utililty methods for finding dependencies on scripts that are not
