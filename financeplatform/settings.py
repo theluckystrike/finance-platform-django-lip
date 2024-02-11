@@ -156,7 +156,8 @@ LOGGING = {
             'datefmt': '%Y-%m-%d %H:%M:%S'
         },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(asctime)s [%(process)d] CUSTOM LOGS [%(levelname)s] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
         }
     },
     'handlers': {
@@ -167,7 +168,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+            'formatter': 'simple'
         }
     },
     'loggers': {

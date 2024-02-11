@@ -157,6 +157,17 @@ def remove_script_from_report(request, reportname, scriptid):
 
 
 @login_required
+def add_script_to_report(request, reportname, scriptid):
+    report = get_object_or_404(Report, name=reportname)
+    if request.method == "GET":
+        script = Script.objects.get(id=scriptid)
+        report.scripts.add(script)
+        logger.info(
+            f"[task queue] Added script * {script.name}, ID:{script.id} * to report * {report.name} *")
+    return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
+
+
+@login_required
 def get_report_status(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "GET":
