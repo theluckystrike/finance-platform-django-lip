@@ -140,6 +140,8 @@ def delete_report(request, reportid):
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
+        report.status = "running"
+        report.save(update_fields=["status"])
         django_rq.get_queue("reports").enqueue(
             handover_report, request.user, report, True)
         logger.info(

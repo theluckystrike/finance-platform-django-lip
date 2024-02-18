@@ -198,8 +198,9 @@ class Report(models.Model):
         return self.name
 
     def update(self, runscripts=False):
-        self.status = "running"
-        self.save(update_fields=["status"])
+        if self.status != "running":
+            self.status = "running"
+            self.save(update_fields=["status"])
         try:
             buffer = scripts_to_pdfbuffer(
                 self.scripts.all().order_by("index_in_category"), self.name, runscripts)
