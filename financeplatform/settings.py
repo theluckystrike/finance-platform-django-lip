@@ -95,8 +95,14 @@ RQ_QUEUES = {
 }
 
 # see this issue https://github.com/rq/django-rq/issues/542
-RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
+RQ = {
+    "WORKER_CLASS": "scriptupload.workers.CustomWorker",
+}
+
 RQ_SHOW_ADMIN_LINK = True
+
+# TODO: custom RQ error handler to set the status of a script
+# or report to "failure" if job fails
 
 SCOUT_NAME = "Finance Platform scout"
 

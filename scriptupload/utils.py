@@ -13,7 +13,7 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 import logging
 import matplotlib.pyplot as plt
-import importlib
+# import importlib
 from django.utils import timezone
 import gc
 # from django.apps import apps
@@ -237,25 +237,34 @@ def run_script(script_instance):
     :return: True if ran script with no errors, stacktrace as string
     otherwise.
     """
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import yfinance as yf
+    import requests
     global plot_buffer
-    global plt
+    # global plt
     logger.info(f"[script runner] Running script * {script_instance.name} *")
     script = script_instance.file
     if script_instance.status != "running":
         script_instance.status = "running"
         script_instance.error_message = ""
         script_instance.save(update_fields=["status", "error_message"])
-    plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
     plt.show = custom_show
     script_namespace = {
-        'plt': plt
+        'plt': plt,
+        'pd': pd,
+        'yf': yf,
+        'requests': requests
     }
 
     try:
-        exec(script.read(), script_namespace)
+        s = script.read()
+        exec(compile(s, "script code", "exec", dont_inherit=True), script_namespace)
     except Exception as e:
+        # try this: exc_info = sys.exc_info()
+            # exc_string = ''.join(traceback.format_exception(*exc_info))
         script_instance.status = "failure"
         script_instance.error_message = e
         script_instance.save(update_fields=["status", "error_message"])
@@ -277,6 +286,7 @@ def run_script(script_instance):
         logger.info(
             f"[script runner] Successfully ran script * {script_instance.name} *")
         plt.close()
+        del plt, pd, yf, requests
         return True, None
     else:
         # savefig has been monkey patched
@@ -291,8 +301,9 @@ def run_script(script_instance):
             script_instance.status = "success"
             script_instance.save(update_fields=["status"])
             logger.info(
-                f"[script runner] Successfully ran script * {script_instance.name} *")
+                f"[script runner] Successfully forced script * {script_instance.name} *")
             plt.close()
+            del plt, pd, yf, requests
             return True, None
     script_instance.status = "failure"
     script_instance.error_message = "Could not find script plot"
@@ -300,6 +311,7 @@ def run_script(script_instance):
     logger.error(
         f"[script runner] The script * {script_instance.name} * did not output an image")
     plt.close()
+    del plt, pd, yf, requests
     plot_buffer = None
     return False, "Could not find script plot"
 
