@@ -13,7 +13,6 @@ from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
 from ..tables import ScriptTable, ReportScriptTable
 from django_tables2 import RequestConfig
-from django.apps import apps
 import logging
 
 logger = logging.getLogger('testlogger')

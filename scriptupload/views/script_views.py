@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import login_required
 from ..tables import ScriptTable
 import logging
 from django_tables2 import RequestConfig
-from django.apps import apps
 
 
 logger = logging.getLogger('testlogger')
