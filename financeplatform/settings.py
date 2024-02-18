@@ -78,7 +78,25 @@ INSTALLED_APPS = [
     'storages',
     'django_tables2',
     'django_filters',
+    'django_rq',
 ]
+
+# django-rq
+
+RQ_QUEUES = {
+    'scripts': {
+        'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
+        'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
+    },
+    'reports': {
+        'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
+        'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
+    },
+}
+
+# see this issue https://github.com/rq/django-rq/issues/542
+RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
+RQ_SHOW_ADMIN_LINK = True
 
 SCOUT_NAME = "Finance Platform scout"
 
@@ -167,9 +185,13 @@ LOGGING = {
             'datefmt': '%Y-%m-%d %H:%M:%S'
         },
         'simple': {
-            'format': '[%(process)d] CUSTOM LOGS [%(levelname)s] %(message)s',
+            'format': '[%(process)d] APP LOGS @ %(asctime)s [%(levelname)s] %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S'
-        }
+        },
+        "rq_console": {
+            "format": "[%(process)d] RQ LOGS @ %(asctime)s [%(levelname)s] %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
     },
     'handlers': {
         'null': {
@@ -183,15 +205,25 @@ LOGGING = {
         },
         'heroku': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
+            'class': "rq.logutils.ColorizingStreamHandler",
             'formatter': 'simple'
-        }
+        },
+        "rq_console": {
+            "level": "DEBUG",
+            "class": "rq.logutils.ColorizingStreamHandler",
+            "formatter": "rq_console",
+            "exclude": ["%(asctime)s"],
+        },
     },
     'loggers': {
         'testlogger': {
             'handlers': ['heroku'],
             'level': 'INFO',
-        }
+        },
+        "rq.worker": {
+            "handlers": ["rq_console"],
+            "level": "DEBUG"
+        },
     }
 }
 

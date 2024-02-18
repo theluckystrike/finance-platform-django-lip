@@ -17,7 +17,6 @@ import importlib
 from django.utils import timezone
 import gc
 # from django.apps import apps
-
 # ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
 
 
@@ -241,11 +240,11 @@ def run_script(script_instance):
     global plot_buffer
     global plt
     logger.info(f"[script runner] Running script * {script_instance.name} *")
-    script_instance.status = "running"
-    script_instance.error_message = ""
-    script_instance.save(update_fields=["status", "error_message"])
-
     script = script_instance.file
+    if script_instance.status != "running":
+        script_instance.status = "running"
+        script_instance.error_message = ""
+        script_instance.save(update_fields=["status", "error_message"])
     plt = importlib.reload(plt)
 
     plt.savefig = custom_savefig
@@ -310,9 +309,9 @@ def handover(user, script):
         username = "None"
     else:
         username = user.username
-    success, message = run_script(script)
     logger.info(
-        f"[script handover] Running script * {script.name} * by user * {username} *")
+        f"[script handover] Running script * {script.name} * for user * {username} *")
+    success, message = run_script(script)
     if success:
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {username} * SUCCESS")
@@ -328,10 +327,8 @@ def handover_report(user, report, run_scripts=False):
     else:
         username = user.username
     logger.info(
-        f"[report handover] Updating report * {report.name} * by user * {username} *")
+        f"[report handover] Updating report * {report.name} * for user * {username} *")
     report.update(run_scripts)
-    report.status = "success"
-    report.save(update_fields=["status"])
-    logger.info(
-        f"[report handover] Updated report * {report.name} * by user * {username} *")
     gc.collect()
+    logger.info(
+        f"[report handover] Finished update of report * {report.name} * for user * {username} *")

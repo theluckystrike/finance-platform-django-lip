@@ -1,3 +1,4 @@
+import django_rq
 from django.http import JsonResponse
 from django.urls import reverse
 from ..utils import get_script_hierarchy
@@ -5,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
 from ..utils import run_script, scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
+from django.views.decorators.cache import never_cache
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
@@ -134,12 +136,13 @@ def delete_report(request, reportid):
     return redirect(reports_page)
 
 
+@never_cache
 @login_required
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
-        task_queue = apps.get_app_config("scriptupload").executor
-        task_queue.submit(handover_report, request.user, report, True)
+        django_rq.get_queue("reports").enqueue(
+            handover_report, request.user, report, True)
         logger.info(
             f"[task queue] Added update of report * {report.name} * by user * {request.user.username} * to task queue")
     return redirect(report_page, report.name)
@@ -167,6 +170,7 @@ def add_script_to_report(request, reportname, scriptid):
     return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
 
 
+@never_cache
 @login_required
 def get_report_status(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
@@ -178,6 +182,7 @@ def get_report_status(request, reportid):
             return JsonResponse({"status": report_status, "error_message": report.error_message})
 
 
+@never_cache
 @login_required
 def report_page(request, reportname):
     report = get_object_or_404(Report, name=reportname)

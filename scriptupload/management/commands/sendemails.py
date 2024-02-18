@@ -18,7 +18,7 @@ logger = logging.getLogger('testlogger')
 
 
 def send_pdf(task):
-    task.report.update(True)
+    task.report.update()
     today_str = timezone.now().strftime("%A")
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {timezone.now().strftime('%Y/%m/%d')}",
@@ -52,8 +52,13 @@ class Command(BaseCommand):
             f"[email sender] Sending all emails for today {today_full}")
         for i, task in enumerate(tasks):
             if task.day == "*" or int(task.day) == today:
-                send_pdf(task)
-                logger.info(
-                    f"[email sender] {i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today}")
+                try:
+                    send_pdf(task)
+                    logger.info(
+                        f"[email sender] {i+1}/{num_tasks} -> Sent email to {task.email} for day {task.day} on day {today} with report * {task.report.name} *")
+                except Exception as e:
+                    logger.error(
+                        f"[email sender] {i+1}/{num_tasks} -> FAILED to send email with report * {task.report.name} * to {task.email} for day {task.day} on day {today}. Error ->\n{str(e)}")
+
         logger.info(
             f"[email sender] Finished sending all emails for {today_full}")

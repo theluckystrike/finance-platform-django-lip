@@ -7,6 +7,7 @@ If they are not passed when the code is called, whatever value comes after the e
 Reference: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
 """
 
+import logging
 from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
@@ -22,6 +23,7 @@ from django.contrib.auth.models import User
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
+logger = logging.getLogger('testlogger')
 
 
 def script_file_path(instance, filename):
@@ -92,7 +94,8 @@ class Script(models.Model):
     index_in_category = models.IntegerField(blank=True, default=0)
     status = models.CharField(max_length=15, default="success")
     error_message = models.TextField(null=True, blank=True)
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    added_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def update_index(self, new_idx):
         """
@@ -197,14 +200,25 @@ class Report(models.Model):
     def update(self, runscripts=False):
         self.status = "running"
         self.save(update_fields=["status"])
-        buffer = scripts_to_pdfbuffer(
-            self.scripts.all().order_by("index_in_category"), self.name, runscripts)
-        self.latest_pdf.save(
-            f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
-        self.last_updated = timezone.now()
-        self.status = "success"
-        buffer.close()
-        del buffer
+        try:
+            buffer = scripts_to_pdfbuffer(
+                self.scripts.all().order_by("index_in_category"), self.name, runscripts)
+            self.latest_pdf.save(
+                f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+            self.last_updated = timezone.now()
+            self.status = "success"
+            buffer.close()
+            del buffer
+            self.status = "success"
+            self.save(update_fields=["status"])
+            logger.info(
+                f"[report update] Successfully updated report * {self.name} *")
+        except Exception as e:
+            self.status = "failure"
+            self.save(update_fields=["status"])
+            logger.error(
+                f"[report update] Failed to update report * {self.name} * with error ->\n{str(e)}")
+
         self.save()
 
     class Meta:

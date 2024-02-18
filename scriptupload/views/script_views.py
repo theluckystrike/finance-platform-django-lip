@@ -1,3 +1,4 @@
+import django_rq
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
@@ -7,6 +8,7 @@ from ..utils import handover
 from ..models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
+from django.views.decorators.cache import never_cache
 import nbformat
 from nbconvert import PythonExporter
 import os
@@ -93,18 +95,18 @@ def script_page(request, scriptname):
     return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@never_cache
 @login_required
 def run_script_code(request, scriptname):
     """
     Configures the "Run" button that shows when looking at a script and the page that is shown when clicked.
     """
-    task_queue = apps.get_app_config("scriptupload").executor
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         script.status = "running"
         script.error_message = ""
         script.save(update_fields=["status", "error_message"])
-        task_queue.submit(handover, request.user, script)
+        django_rq.get_queue("scripts").enqueue(handover, request.user, script)
         logger.info(
             f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
     return redirect(script_page, scriptname)
