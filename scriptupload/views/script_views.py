@@ -8,7 +8,6 @@ from ..utils import handover
 from ..models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
-from django.views.decorators.cache import never_cache
 import nbformat
 from nbconvert import PythonExporter
 import os
@@ -94,7 +93,6 @@ def script_page(request, scriptname):
     return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
-@never_cache
 @login_required
 def run_script_code(request, scriptname):
     """

@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
 from ..utils import run_script, scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
-from django.views.decorators.cache import never_cache
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
@@ -135,7 +134,6 @@ def delete_report(request, reportid):
     return redirect(reports_page)
 
 
-@never_cache
 @login_required
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
@@ -171,7 +169,6 @@ def add_script_to_report(request, reportname, scriptid):
     return HTTPResponseHXRedirect(redirect_to=reverse("report", args=(report.name,)))
 
 
-@never_cache
 @login_required
 def get_report_status(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
@@ -183,7 +180,6 @@ def get_report_status(request, reportid):
             return JsonResponse({"status": report_status, "error_message": report.error_message})
 
 
-@never_cache
 @login_required
 def report_page(request, reportname):
     report = get_object_or_404(Report, name=reportname)
