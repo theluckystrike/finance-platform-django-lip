@@ -95,9 +95,9 @@ RQ_QUEUES = {
 }
 
 # see this issue https://github.com/rq/django-rq/issues/542
-RQ = {
-    "WORKER_CLASS": "scriptupload.workers.CustomWorker",
-}
+# RQ = {
+#     "WORKER_CLASS": "scriptupload.workers.CustomWorker",
+# }
 
 RQ_SHOW_ADMIN_LINK = True
 
