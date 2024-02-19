@@ -13,7 +13,7 @@ from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
-from .utils import scripts_to_pdfbuffer
+from .utils.utils import scripts_to_pdfbuffer
 from django.core.files import File
 import os
 from django.utils import timezone
@@ -209,7 +209,6 @@ class Report(models.Model):
             self.last_updated = timezone.now()
             self.status = "success"
             buffer.close()
-            del buffer
             self.status = "success"
             self.save(update_fields=["status"])
             logger.info(

@@ -4,16 +4,14 @@ Configures utility (helper) functions to be used in other places in the project.
 
 
 from django.conf import settings
+from .scriptrunners import run_script_matplotlib_pyplot
 from financeplatform.storage_backends import PrivateMediaStorage
-from django.core.files import File
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import default_storage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from io import BytesIO
 import logging
-import matplotlib.pyplot as plt
-# import importlib
 from django.utils import timezone
 import gc
 # from django.apps import apps
@@ -27,9 +25,6 @@ class HTTPResponseHXRedirect(HttpResponseRedirect):
         self['HX-Redirect'] = self['Location']
     status_code = 200
 
-
-plt.switch_backend("agg")
-original_save_func = plt.savefig
 
 logger = logging.getLogger('testlogger')
 
@@ -98,7 +93,7 @@ def scripts_to_pdfbuffer(scripts, categoryname=None, runscripts=False):
     # get urls of each script image
     if runscripts:
         for script in scripts:
-            run_script(script)
+            run_script_matplotlib_pyplot(script)
 
     # open a buffer so that files are saves to temporary memory
     buffer = BytesIO()
@@ -209,121 +204,14 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     return response
 
 
-plot_buffer = None
-
-
-def custom_savefig(*args, **kwargs):
-    global plot_buffer
-
-    if args and isinstance(args[0], str):
-        buf = BytesIO()
-        # original_save_func(buf, format='png', **kwargs)
-        original_save_func(buf, format='png', dpi=300)
-        buf.seek(0)
-        plot_buffer = buf
-
-
-def custom_show(*args, **kwargs):
-    # https://matplotlib.org/stable/gallery/user_interfaces/web_application_server_sgskip.html
-    # monkey patch function to prevent memory leak in matplotlib.pyplot
-    pass
-
-
-def run_script(script_instance):
-    """
-    Runs a script and saves the result back to storage, deleting the previous version.
-
-    :param file: The file that contains the script to be run.
-    :return: True if ran script with no errors, stacktrace as string
-    otherwise.
-    """
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import yfinance as yf
-    import requests
-    global plot_buffer
-    # global plt
-    logger.info(f"[script runner] Running script * {script_instance.name} *")
-    script = script_instance.file
-    if script_instance.status != "running":
-        script_instance.status = "running"
-        script_instance.error_message = ""
-        script_instance.save(update_fields=["status", "error_message"])
-
-    plt.savefig = custom_savefig
-    plt.show = custom_show
-    script_namespace = {
-        'plt': plt,
-        'pd': pd,
-        'yf': yf,
-        'requests': requests
-    }
-
-    try:
-        s = script.read()
-        exec(compile(s, "script code", "exec", dont_inherit=True), script_namespace)
-    except Exception as e:
-        # try this: exc_info = sys.exc_info()
-            # exc_string = ''.join(traceback.format_exception(*exc_info))
-        script_instance.status = "failure"
-        script_instance.error_message = e
-        script_instance.save(update_fields=["status", "error_message"])
-        logger.error(
-            f"[script runner] Failed to run script * {script_instance.name} * with error -> \n{e}")
-        if plot_buffer:
-            plot_buffer.close()
-        plot_buffer = None
-        plt.close()
-        return False, e
-    if plot_buffer:
-        script_instance.image.save("output_plot.png", File(plot_buffer))
-        plot_buffer.close()
-        plot_buffer = None
-        script_instance.last_updated = timezone.now()
-        script_instance.save(update_fields=["last_updated"])
-        script_instance.status = "success"
-        script_instance.save(update_fields=["status"])
-        logger.info(
-            f"[script runner] Successfully ran script * {script_instance.name} *")
-        plt.close()
-        del plt, pd, yf, requests
-        return True, None
-    else:
-        # savefig has been monkey patched
-        plt.savefig("output_plot_forced.png", dpi=300)
-        if plot_buffer:
-            script_instance.image.save(
-                "output_plot_forced.png", File(plot_buffer))
-            plot_buffer.close()
-            plot_buffer = None
-            script_instance.last_updated = timezone.now()
-            script_instance.save(update_fields=["last_updated"])
-            script_instance.status = "success"
-            script_instance.save(update_fields=["status"])
-            logger.info(
-                f"[script runner] Successfully forced script * {script_instance.name} *")
-            plt.close()
-            del plt, pd, yf, requests
-            return True, None
-    script_instance.status = "failure"
-    script_instance.error_message = "Could not find script plot"
-    script_instance.save(update_fields=["status", "error_message"])
-    logger.error(
-        f"[script runner] The script * {script_instance.name} * did not output an image")
-    plt.close()
-    del plt, pd, yf, requests
-    plot_buffer = None
-    return False, "Could not find script plot"
-
-
-def handover(user, script):
+def handover_script(user, script):
     if user is None:
         username = "None"
     else:
         username = user.username
     logger.info(
         f"[script handover] Running script * {script.name} * for user * {username} *")
-    success, message = run_script(script)
+    success, message = run_script_matplotlib_pyplot(script)
     if success:
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {username} * SUCCESS")

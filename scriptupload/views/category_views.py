@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from ..forms import NewCategoryForm
 from ..models import Category, Script
-from ..utils import scripts_to_httpresponse
+from ..utils.utils import scripts_to_httpresponse
 from ..tables import DragnDropTable
 from django_tables2 import RequestConfig
 

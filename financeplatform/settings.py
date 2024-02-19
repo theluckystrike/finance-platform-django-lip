@@ -96,19 +96,16 @@ RQ_QUEUES = {
 
 # see this issue https://github.com/rq/django-rq/issues/542
 RQ = {
-    "WORKER_CLASS": 'rq.Worker',
+    "WORKER_CLASS": 'scriptupload.workers.JobWorker',
 }
 
 # fork() causing issues on my latpop but fine on Heroku
 # CustomWorker inherits rq.SimpleWorker with no forking i.e
 # runs in same process just different thread
 if not IS_HEROKU:
-    RQ['WORKER_CLASS'] = "scriptupload.workers.CustomWorker"
+    RQ['WORKER_CLASS'] = "scriptupload.workers.SimpleJobWorker"
 
 RQ_SHOW_ADMIN_LINK = True
-
-# TODO: custom RQ error handler to set the status of a script
-# or report to "failure" if job fails
 
 SCOUT_NAME = "Finance Platform scout"
 

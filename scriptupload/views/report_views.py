@@ -1,11 +1,13 @@
 import django_rq
 from django.http import JsonResponse
 from django.urls import reverse
-from ..utils import get_script_hierarchy
+
+from ..utils.scriptrunners import run_script_matplotlib_pyplot
+from ..utils.utils import get_script_hierarchy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
-from ..utils import run_script, scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
+from ..utils.utils import scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
 from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
@@ -41,7 +43,7 @@ def custom_report_page(request):
                 ran_all_scripts = True
                 if form.cleaned_data['run_scripts']:
                     for script in scripts:
-                        success, message = run_script(script)
+                        success, message = run_script_matplotlib_pyplot(script)
                         if not success:
                             messages.error(request, mark_safe(
                                 f"<u>Error when running script {script.name}:</u><br/>{message}"))
