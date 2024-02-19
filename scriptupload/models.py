@@ -19,6 +19,7 @@ import os
 from django.utils import timezone
 from .signals import rm
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -87,15 +88,24 @@ class Script(models.Model):
     image = models.ImageField(
         blank=True, upload_to=script_file_path, storage=privateStorage,
         max_length=200)
+    table_file = models.FileField(upload_to=script_file_path,
+                                  storage=privateStorage, max_length=100, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
-    status = models.CharField(max_length=15, default="success")
+    status = models.CharField(max_length=12, default="success")
     error_message = models.TextField(null=True, blank=True)
     added_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class OutputDataType(models.TextChoices):
+        MPL_PYPLT = "plt", _("matplotlib.pyplot")
+        PANDAS = "pd", _("pandas")
+
+    output_type = models.CharField(
+        max_length=7, choices=OutputDataType.choices, default=OutputDataType.MPL_PYPLT)
 
     def update_index(self, new_idx):
         """

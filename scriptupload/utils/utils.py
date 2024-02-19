@@ -4,7 +4,7 @@ Configures utility (helper) functions to be used in other places in the project.
 
 
 from django.conf import settings
-from .scriptrunners import run_script_matplotlib_pyplot
+from .scriptrunners import run_script
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.files.storage import default_storage
@@ -211,7 +211,7 @@ def handover_script(user, script):
         username = user.username
     logger.info(
         f"[script handover] Running script * {script.name} * for user * {username} *")
-    success, message = run_script_matplotlib_pyplot(script)
+    success, message = run_script(script)
     if success:
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {username} * SUCCESS")
