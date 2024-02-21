@@ -28,17 +28,17 @@
         <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
             <button type="submit"
-                class="btn btn-sm btn-outline-danger my-1{% if script.status == 'running' %} disabled {% endif %}">Delete&nbsp;<span
+                class="btn btn-sm btn-outline-danger my-1{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">Delete&nbsp;<span
                     class="align-text-bottom" data-feather="x-circle"></span></button>
         </form>
         <form method="post" action="{% url 'run_script' script.name %}">
             {% csrf_token %}
             <button type="submit"
-                class="btn btn-sm btn-outline-success my-1 mx-2{% if script.status == 'running' %} disabled {% endif %}">Run&nbsp;<span
+                class="btn btn-sm btn-outline-success my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">Run&nbsp;<span
                     class="align-text-bottom" data-feather="play"></span></button>
         </form>
 
-        {% if script.status == "running" %}
+        {% if script.status == script.ExecutionStatus.RUNNING %}
         <button type="button" class="btn btn-sm btn-outline-secondary my-1 disabled">Edit&nbsp;<span
                 class="align-text-bottom" data-feather="external-link"></span></button>
         {% else %}
@@ -53,9 +53,19 @@
 
     <div class="col-12 col-md-9 col-lg-9" id="script-frame">
         {% if script.status == script.ExecutionStatus.SUCCESS %}
-            {% if script.image and script.output_type == script.OutputDataType.MPL_PYPLT or script.output_type == script.OutputDataType.PD_AND_MPL %}
+            {% if script.image and script.output_type == script.OutputDataType.MPL_PYPLT %}
             <div class="d-flex align-item-center m-2">
                 <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
+            </div>
+            {% elif script.image and script.output_type == script.OutputDataType.PD_AND_MPL %}
+            <div class="d-flex align-item-center m-2">
+                <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
+            </div>
+            {% elif script.table_file and script.output_type == script.OutputDataType.PD_AND_MPL %}
+            <div class="d-flex align-item-center m-2">
+                <div class="w-100 h-100 mx-auto" id=script-chart> 
+                    {% render_table script_table %}
+                </div>
             </div>
             {% elif script.table_file and script.output_type == script.OutputDataType.PANDAS %}
             <div class="d-flex align-item-center m-2">

@@ -241,7 +241,6 @@ class Report(models.Model):
                 f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", pfd_file)
             self.last_updated = timezone.now()
             self.status = "success"
-            self.status = "success"
             self.save(update_fields=["status"])
             logger.info(
                 f"[report update] Successfully updated report * {self.name} *")
