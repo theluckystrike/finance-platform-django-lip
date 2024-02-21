@@ -32,6 +32,15 @@
 
         </div>
         <div class="mb-3">
+            <label for="output_type" class="form-label">How would you like to view data?</label>
+            <select name="output_type" class="form-control" required>
+                <option value="" disabled selected>Select an option</option>
+                {% for type in output_types %}
+                    <option  value="{{type}}">{{type.label}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
             <label for="name" class="form-label">Script name</label>
             <input type="text" id="name" name="name" class="form-control" required>
         </div>

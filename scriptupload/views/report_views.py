@@ -1,8 +1,7 @@
 import django_rq
 from django.http import JsonResponse
 from django.urls import reverse
-
-from ..utils.scriptrunners import run_script_matplotlib_pyplot
+from ..utils.runners import run_script
 from ..utils.utils import get_script_hierarchy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
@@ -43,7 +42,7 @@ def custom_report_page(request):
                 ran_all_scripts = True
                 if form.cleaned_data['run_scripts']:
                     for script in scripts:
-                        success, message = run_script_matplotlib_pyplot(script)
+                        success, message = run_script(script)
                         if not success:
                             messages.error(request, mark_safe(
                                 f"<u>Error when running script {script.name}:</u><br/>{message}"))
@@ -177,7 +176,6 @@ def get_report_status(request, reportid):
     if request.method == "GET":
         report_status = report.status
         return JsonResponse({"status": report_status})
-
 
 
 @login_required

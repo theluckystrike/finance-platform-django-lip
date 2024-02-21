@@ -14,6 +14,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
 from .utils.utils import scripts_to_pdf
+from .utils.runners import run_script
 import os
 from django.utils import timezone
 from .signals import rm
@@ -107,9 +108,9 @@ class Script(models.Model):
         User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class OutputDataType(models.TextChoices):
-        MPL_PYPLT = "plt", _("matplotlib.pyplot")
-        PANDAS = "pd", _("pandas")
-        PD_AND_MPL = "pd plt", _("pandas matplotlib.pyplot")
+        MPL_PYPLT = "plt", _("Chart (using matplotlib.pyplot.savefig())")
+        PANDAS = "pd", _("Table (using pandas.Dataframe.to_csv())")
+        PD_AND_MPL = "pd plt", _("Chart and Table")
 
     output_type = models.CharField(
         max_length=10, choices=OutputDataType.choices, default=OutputDataType.MPL_PYPLT)
@@ -129,6 +130,9 @@ class Script(models.Model):
     def set_last_updated(self):
         self.last_updated = timezone.now()
         self.save(update_fields=["last_updated"])
+
+    def update(self):
+        run_script(self)
 
     def update_index(self, new_idx):
         """

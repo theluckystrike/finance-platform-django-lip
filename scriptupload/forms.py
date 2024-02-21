@@ -15,7 +15,7 @@ class ScriptUploadForm(forms.ModelForm):
 
     class Meta:
         model = Script
-        fields = ("name", "file", "image", "category")
+        fields = ("name", "file", "image", "category", "output_type")
 
 
 class NewCategoryForm(forms.ModelForm):

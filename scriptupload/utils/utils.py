@@ -3,7 +3,7 @@ Configures utility (helper) functions to be used in other places in the project.
 """
 
 
-from .scriptrunners import run_script
+from .runners import run_script
 from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from django.utils import timezone
@@ -89,8 +89,7 @@ def scripts_to_pdf(scripts, title):
             subsubheadings = sorted(script_hierarchy[heading]["subcategories"]
                                     [subheading]["subsubcategories"].keys(), key=lambda cat: cat.name)
             for subsubheading in subsubheadings:
-                builder.add_pagebreak_if_not_empty()
-                builder.add_subheading1(
+                builder.add_subheading1_new_page(
                     f"{heading} &#8594; {subheading} &#8594; {subsubheading}")
 
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
@@ -103,11 +102,31 @@ def scripts_to_pdf(scripts, title):
                             builder.add_table(
                                 script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     elif script.output_type == script.OutputDataType.PD_AND_MPL:
-                        if script.image and script.table_file:
+                        if script.image:
                             builder.add_image(
                                 script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        if script.table_file:
                             builder.add_table(
                                 script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+
+    if len(uncatagorised) > 0:
+        builder.add_subheading1_new_page("Uncategorised")
+        for script in uncatagorised:
+            if script.output_type == script.OutputDataType.MPL_PYPLT:
+                if script.image:
+                    builder.add_image(
+                        script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+            elif script.output_type == script.OutputDataType.PANDAS:
+                if script.table_file:
+                    builder.add_table(
+                        script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+            elif script.output_type == script.OutputDataType.PD_AND_MPL:
+                if script.image and script.table_file:
+                    builder.add_image(
+                        script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                    builder.add_table(
+                        script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+
 
     pdf_file = builder.to_file()
     # builder.cleanup()

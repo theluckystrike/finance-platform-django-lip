@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 import nbformat
 from nbconvert import PythonExporter
+from django.template.defaulttags import register
 import os
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
@@ -21,6 +22,7 @@ from django_tables2 import RequestConfig
 
 logger = logging.getLogger('testlogger')
 execution_states = Script.ExecutionStatus
+output_types = Script.OutputDataType
 
 
 @login_required
@@ -64,7 +66,7 @@ def upload_script(request):
                 request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
-    return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), 'output_types': output_types, "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -194,3 +196,8 @@ def script_search(request):
             data = "No results"
         return JsonResponse({"results": data})
     return HttpResponseRedirect("/")
+
+
+@register.filter
+def output_type_name(script):
+    return script.get_output_type_display()

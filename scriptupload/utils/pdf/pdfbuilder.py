@@ -1,5 +1,5 @@
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, KeepTogether, PageBreakIfNotEmpty
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, KeepTogether, PageBreakIfNotEmpty, PageBreak
 from reportlab.lib.units import inch
 from io import BytesIO
 from django.core.files import File
@@ -35,14 +35,15 @@ class PDFBuilder:
             self.flowables.append(Spacer(1, 12))
 
     def add_pagebreak(self):
-        self.flowables.append(PageBreakIfNotEmpty())
+        if len(self.flowables) > 3:
+            self.flowables.append(PageBreak())
 
     def add_pagebreak_if_not_empty(self):
         if len(self.flowables) > 3:
             self.flowables.append(PageBreakIfNotEmpty())
 
     def add_subheading1_new_page(self, subheading, spacer: bool = True):
-        self.add_pagebreak()
+        self.add_pagebreak_if_not_empty()
         self.add_subheading1(subheading, spacer)
 
     def add_subheading1(self, subheading, spacer: bool = True):
@@ -51,6 +52,9 @@ class PDFBuilder:
         self.flowables.append(title_subtitle_text)
         if spacer:
             self.flowables.append(Spacer(1, 12))
+
+    # def get_current_page_height(self):
+    #     pass
 
     def _chart_title(self, title):
         return Paragraph(
