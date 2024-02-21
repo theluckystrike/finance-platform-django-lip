@@ -14,7 +14,6 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
 from .utils.utils import scripts_to_pdf
-from django.core.files import File
 import os
 from django.utils import timezone
 from .signals import rm

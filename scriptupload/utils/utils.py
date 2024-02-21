@@ -3,14 +3,8 @@ Configures utility (helper) functions to be used in other places in the project.
 """
 
 
-from django.conf import settings
 from .scriptrunners import run_script
-from financeplatform.storage_backends import PrivateMediaStorage
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.files.storage import default_storage
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from io import BytesIO
 import logging
 from django.utils import timezone
 import gc
@@ -30,6 +24,7 @@ class HTTPResponseHXRedirect(HttpResponseRedirect):
 logger = logging.getLogger('testlogger')
 
 
+# TODO: optimise - maybe make 3 different models for categories
 def get_script_hierarchy(scripts):
     """
     {

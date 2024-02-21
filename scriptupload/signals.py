@@ -11,9 +11,9 @@ import logging
 import os
 
 logger = logging.getLogger('testlogger')
-privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
+privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 
 
 def rm(directory, storage=privateStorage):
