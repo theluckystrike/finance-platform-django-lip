@@ -22,6 +22,7 @@ from django_tables2 import RequestConfig
 logger = logging.getLogger('testlogger')
 execution_states = Script.ExecutionStatus
 
+
 @login_required
 def upload_script(request):
     """
@@ -91,13 +92,16 @@ def script_page(request, scriptname):
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
-    with script.table_file.open('r') as csvfile:
-        reader = csv.DictReader(csvfile)
-        data = list(reader)
-        headers = reader.fieldnames
+    if script.table_file:
+        with script.table_file.open('r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            data = list(reader)
+            headers = reader.fieldnames
 
-    table = create_dynamic_csv_table(headers, data)
-    RequestConfig(request).configure(table)
+        table = create_dynamic_csv_table(headers, data)
+        RequestConfig(request).configure(table)
+    else:
+        table = None
     return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script_table": table, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
