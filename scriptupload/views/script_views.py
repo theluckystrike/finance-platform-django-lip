@@ -1,4 +1,3 @@
-import django_tables2 as tables
 import csv
 import django_rq
 from django.utils import timezone
