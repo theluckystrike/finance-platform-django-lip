@@ -176,10 +176,8 @@ def get_report_status(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "GET":
         report_status = report.status
-        if report_status == "success" or report_status == "running":
-            return JsonResponse({"status": report_status})
-        elif report_status == "failure":
-            return JsonResponse({"status": report_status, "error_message": report.error_message})
+        return JsonResponse({"status": report_status})
+
 
 
 @login_required

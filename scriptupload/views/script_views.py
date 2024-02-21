@@ -1,3 +1,5 @@
+import django_tables2 as tables
+import csv
 import django_rq
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,13 +15,13 @@ from nbconvert import PythonExporter
 import os
 from django.core.files import File
 from django.contrib.auth.decorators import login_required
-from ..tables import ScriptTable
+from ..tables import ScriptTable, create_dynamic_csv_table
 import logging
 from django_tables2 import RequestConfig
 
 
 logger = logging.getLogger('testlogger')
-
+execution_states = Script.ExecutionStatus
 
 @login_required
 def upload_script(request):
@@ -90,7 +92,14 @@ def script_page(request, scriptname):
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
-    return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    with script.table_file.open('r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        data = list(reader)
+        headers = reader.fieldnames
+
+    table = create_dynamic_csv_table(headers, data)
+    RequestConfig(request).configure(table)
+    return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script_table": table, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -100,9 +109,7 @@ def run_script_code(request, scriptname):
     """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        script.status = "running"
-        script.error_message = ""
-        script.save(update_fields=["status", "error_message"])
+        script.set_status(execution_states.RUNNING)
         django_rq.get_queue("scripts").enqueue(
             handover_script, request.user, script)
         logger.info(
@@ -115,10 +122,10 @@ def get_script_status(request, scriptid):
     script = get_object_or_404(Script, pk=scriptid)
     if request.method == "GET":
         script_status = script.status
-        if script_status == "success" or script_status == "running":
-            return JsonResponse({"status": script_status})
-        elif script_status == "failure":
-            return JsonResponse({"status": script_status, "error_message": script.error_message})
+        if script_status != execution_states.FAILURE:
+            return JsonResponse({"status": script.get_status_display()})
+        else:
+            return JsonResponse({"status": script.get_status_display(), "error_message": script.error_message})
 
 
 @login_required

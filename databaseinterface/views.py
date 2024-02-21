@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .serializers import OHLCSerializer, UserSerializer, IndexActionSerializer, IndexConstituentSerializer, RateSerializer
 from .models import OHLCData, IndexConstituent, IndexAction, Rate
@@ -85,7 +84,8 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
         if index:
             queryset = queryset.filter(index__in=index)
         if start_date and end_date:
-            queryset = queryset.filter(date_added__range=[start_date, end_date])
+            queryset = queryset.filter(
+                date_added__range=[start_date, end_date])
         return queryset
 
 

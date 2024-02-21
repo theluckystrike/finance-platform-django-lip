@@ -13,7 +13,7 @@ from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
 from .signals import script_signals, report_signals
-from .utils.utils import scripts_to_pdfbuffer
+from .utils.utils import scripts_to_pdf
 from django.core.files import File
 import os
 from django.utils import timezone
@@ -95,17 +95,41 @@ class Script(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
-    status = models.CharField(max_length=12, default="success")
-    error_message = models.TextField(null=True, blank=True)
+
+    class ExecutionStatus(models.IntegerChoices):
+        SUCCESS = 0, _("success")
+        RUNNING = 1, _("running")
+        FAILURE = 2, _("failure")
+
+    status = models.IntegerField(
+        choices=ExecutionStatus.choices, default=ExecutionStatus.SUCCESS)
+    error_message = models.TextField(null=True, blank=True, max_length=300)
     added_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class OutputDataType(models.TextChoices):
         MPL_PYPLT = "plt", _("matplotlib.pyplot")
         PANDAS = "pd", _("pandas")
+        PD_AND_MPL = "pd plt", _("pandas matplotlib.pyplot")
 
     output_type = models.CharField(
-        max_length=7, choices=OutputDataType.choices, default=OutputDataType.MPL_PYPLT)
+        max_length=10, choices=OutputDataType.choices, default=OutputDataType.MPL_PYPLT)
+
+    def set_status(self, status, error_message: str = ""):
+        if status is int and status in self.ExecutionStatus.values:
+            new_status = self.ExecutionStatus.choices[status]
+        elif status is str and status in self.ExecutionStatus.labels:
+            new_status = self.ExecutionStatus.choices[self.ExecutionStatus.labels.index(
+                status)]
+        else:
+            new_status = status
+        self.status = new_status
+        self.error_message = error_message
+        self.save(update_fields=["status", "error_message"])
+
+    def set_last_updated(self):
+        self.last_updated = timezone.now()
+        self.save(update_fields=["last_updated"])
 
     def update_index(self, new_idx):
         """
@@ -212,13 +236,12 @@ class Report(models.Model):
             self.status = "running"
             self.save(update_fields=["status"])
         try:
-            buffer = scripts_to_pdfbuffer(
-                self.scripts.all().order_by("index_in_category"), self.name, runscripts)
+            pfd_file = scripts_to_pdf(
+                self.scripts.all().order_by("index_in_category"), self.name)
             self.latest_pdf.save(
-                f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", File(buffer))
+                f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", pfd_file)
             self.last_updated = timezone.now()
             self.status = "success"
-            buffer.close()
             self.status = "success"
             self.save(update_fields=["status"])
             logger.info(

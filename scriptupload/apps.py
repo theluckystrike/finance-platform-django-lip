@@ -16,7 +16,6 @@ class ScriptuploadConfig(AppConfig):
         for report in Report.objects.filter(status="running"):
             report.status = "success"
             report.save(update_fields=["status"])
-        for script in Script.objects.filter(status="running"):
-            script.status = "failure"
-            script.error_message = "Please try again"
-            script.save(update_fields=["status", "error_message"])
+        for script in Script.objects.filter(status=Script.ExecutionStatus.RUNNING):
+            script.set_status(Script.ExecutionStatus.FAILURE,
+                              "Please try again")

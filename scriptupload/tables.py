@@ -113,3 +113,12 @@ class ReportScriptTable(tables.Table):
 
     def render_view_link(self, value, record):
         return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))
+
+
+def create_dynamic_csv_table(headers, data):
+    columns = {header: tables.Column() for header in headers}
+    DynamicTable = type('tables.Table',
+                        (tables.Table,),
+                        {'Meta': type('Meta', (), {'template_name': 'django_tables2/bootstrap5-responsive.html', 'attrs': {"class": "table table-striped table-sm"}}),
+                            **columns})
+    return DynamicTable(data)
