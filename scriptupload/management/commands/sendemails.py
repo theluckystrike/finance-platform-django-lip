@@ -40,10 +40,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        """
-        Write any code that you want to run on the tables
-        in this function only
-        """
         today = datetime.weekday(timezone.now()) + 1
         today_full = timezone.now().strftime('%d-%m-%Y')
         tasks = ReportEmailTask.objects.all()

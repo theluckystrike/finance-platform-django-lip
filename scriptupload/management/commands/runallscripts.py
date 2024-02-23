@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from scriptupload.models import Script
-from scriptupload.utils import run_script
+from scriptupload.utils.runners import run_script
 import logging
 
 
@@ -8,7 +8,7 @@ logger = logging.getLogger('testlogger')
 
 
 class Command(BaseCommand):
-    help = "Send scheduled emails"
+    help = "Run and update all scripts in the database"
 
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
@@ -16,10 +16,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        """
-        Write any code that you want to run on the tables
-        in this function only
-        """
         logger.info(
             "[all script runner] Starting to run all scripts on scheduled job")
         for script in Script.objects.all():

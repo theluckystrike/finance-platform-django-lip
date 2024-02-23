@@ -21,11 +21,6 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        """
-        Write any code that you want to run on the tables
-        in this function only
-        """
-
         if settings.DEBUG:
             # return
             scriptsdir = "scripts-dev"
