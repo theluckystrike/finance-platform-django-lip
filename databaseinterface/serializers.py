@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import OHLCData, IndexAction, IndexConstituent, Rate
+from .models import OHLCData, IndexAction, IndexConstituent, Rate, StockExchangeData
 
 
 class OHLCSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,3 +31,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'username', 'email', 'groups']
+
+
+class StockExchangeDataSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = StockExchangeData
+        fields = ['date', 'exchange_name', "advances", "advances_volume", "declines",
+                  "declines_volume", "new_highs", "new_lows", "total_issues_traded"]

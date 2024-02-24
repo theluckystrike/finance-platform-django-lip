@@ -71,3 +71,23 @@ class Rate(models.Model):
 
     def __str__(self):
         return f"{self.country}-{self.date}-{self.term}"
+
+
+class StockExchangeData(models.Model):
+    date = models.DateField()
+    exchange_name = models.CharField(max_length=6)
+    advances = models.IntegerField()
+    advances_volume = models.BigIntegerField()
+    declines = models.IntegerField()
+    declines_volume = models.BigIntegerField()
+    new_highs = models.IntegerField()
+    new_lows = models.IntegerField()
+    total_issues_traded = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Stock Exchange Data"
+        verbose_name_plural = "Stock Exchange Data"
+        unique_together = ["date", "exchange_name"]
+
+    def __str__(self):
+        return f"{self.exchange_name} Data {self.date}"

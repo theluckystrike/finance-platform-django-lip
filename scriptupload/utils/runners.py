@@ -68,7 +68,7 @@ def clear_buffers():
 
 def run_script(script):
     logger.info(
-        f"[script runner] Running script * {script.name} * buffers: {mpl_plt_buffer} {pandas_csv_buffer}")
+        f"[script runner] Running script * {script.name} *")
     env = setup_patched_env()
     script.set_status(1)
 
