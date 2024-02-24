@@ -72,6 +72,8 @@ def run_script(script):
     env = setup_patched_env()
     script.set_status(1)
 
+    excStatus = script.ExecutionStatus
+
     error_message = ""
 
     try:
@@ -81,12 +83,12 @@ def run_script(script):
         exc_str = "".join(traceback.format_exception(*exc_info))
         logger.error(
             f"[script runner] Failed to run script * {script.name} * with error -> \n{exc_str}")
-        script.set_status("failure",  exc_str)
+        script.set_status(excStatus.FAILURE,  exc_str)
         return False, exc_str
     if mpl_plt_buffer:
         script.image.save("output_plot.png", File(mpl_plt_buffer))
         script.set_last_updated()
-        script.set_status(0)
+        script.set_status(excStatus.SUCCESS)
         logger.info(
             f"[matplotlib-pyplot script runner] Successfully captured chart for script * {script.name} *")
         plt_success = True
@@ -94,7 +96,7 @@ def run_script(script):
     if pandas_csv_buffer:
         script.table_file.save("output_table.csv", File(pandas_csv_buffer))
         script.set_last_updated()
-        script.set_status(0)
+        script.set_status(excStatus.SUCCESS)
         logger.info(
             f"[pandas script runner] Successfully captured table for script * {script.name} *")
         pd_success = True
@@ -104,6 +106,6 @@ def run_script(script):
         error_message = "Could not find an output, are you using to_csv() (pandas) or savefig() (matplotlib.pyplot)?"
         logger.error(
             f"[script runner] Could not find an output for script * {script.name} *")
-        script.set_status(1, error_message)
+        script.set_status(excStatus.FAILURE, error_message)
     clear_buffers()
     return success_flag, error_message
