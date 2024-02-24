@@ -242,7 +242,7 @@ class Report(models.Model):
             pfd_file = scripts_to_pdf(
                 self.scripts.all().order_by("index_in_category"), self.name)
             self.latest_pdf.save(
-                f"{self.name}_report_{timezone.now().strftime('%d_%m_%Y_%H_%M')}.pdf", pfd_file)
+                f"{self.name}.pdf", pfd_file)
             self.last_updated = timezone.now()
             self.status = "success"
             self.save(update_fields=["status"])

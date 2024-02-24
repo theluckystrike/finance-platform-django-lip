@@ -73,7 +73,8 @@ def run_script(script):
     script.set_status(1)
 
     excStatus = script.ExecutionStatus
-
+    plt_success = False
+    pd_success = False
     error_message = ""
 
     try:
