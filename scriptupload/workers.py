@@ -3,6 +3,8 @@ from rq.job import Job
 from rq.job import JobStatus
 from .models import Script, Report
 
+excStatus = Script.ExecutionStatus
+
 
 class SimpleJobWorker(SimpleWorker):
     def perform_job(self, job: Job, queue: Queue) -> bool:
@@ -32,9 +34,7 @@ class JobWorker(Worker):
             if len(job.args) > 0:
                 if isinstance(job.args[0], Script):
                     script = job.args[0]
-                    script.status = "failure"
-                    script.error_message = "Please try again"
-                    script.save(update_fields=['status', 'error_message'])
+                    script.set_status(excStatus.FAILURE, "Please try again")
                 elif isinstance(job.args[0], Report):
                     report = job.args[0]
                     report.status = "failure"
