@@ -37,7 +37,7 @@ def custom_to_csv(self, *args, **kwargs):
     global pandas_csv_buffer
     if args and isinstance(args[0], str):
         buffer = BytesIO()
-        ORIGINAL_PD_TO_CSV(self, buffer, index=False)
+        ORIGINAL_PD_TO_CSV(self.round(2), buffer)
         pandas_csv_buffer = buffer
         pandas_csv_buffer.seek(0)
         del buffer

@@ -90,4 +90,4 @@ class StockExchangeData(models.Model):
         unique_together = ["date", "exchange_name"]
 
     def __str__(self):
-        return f"{self.exchange_name} Data {self.date}"
+        return f"{self.exchange_name.upper()} {self.date}"
