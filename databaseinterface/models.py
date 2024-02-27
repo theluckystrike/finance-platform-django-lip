@@ -76,13 +76,13 @@ class Rate(models.Model):
 class StockExchangeData(models.Model):
     date = models.DateField()
     exchange_name = models.CharField(max_length=6)
-    advances = models.IntegerField()
-    advances_volume = models.BigIntegerField()
-    declines = models.IntegerField()
-    declines_volume = models.BigIntegerField()
-    new_highs = models.IntegerField()
-    new_lows = models.IntegerField()
-    total_issues_traded = models.IntegerField()
+    advances = models.IntegerField(blank=True, null=True)
+    advances_volume = models.BigIntegerField(blank=True, null=True)
+    declines = models.IntegerField(blank=True, null=True)
+    declines_volume = models.BigIntegerField(blank=True, null=True)
+    new_highs = models.IntegerField(blank=True, null=True)
+    new_lows = models.IntegerField(blank=True, null=True)
+    total_issues_traded = models.IntegerField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Stock Exchange Data"
