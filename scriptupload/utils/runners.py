@@ -47,6 +47,8 @@ def setup_patched_env():
     import matplotlib.pyplot as patched_plt
     import pandas as patched_pd
     patched_plt.switch_backend("agg")
+    patched_plt.rcParams["legend.labelcolor"] = '000000'
+    patched_plt.rcParams["legend.framealpha"] = 1.0
 
     patched_plt.savefig = custom_savefig
     patched_plt.show = custom_show
