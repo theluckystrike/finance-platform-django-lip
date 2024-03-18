@@ -53,42 +53,51 @@
 
     <div class="col-12 col-md-9 col-lg-9" id="script-frame">
         {% if script.status == script.ExecutionStatus.SUCCESS %}
-            {% if script.image and script.output_type == script.OutputDataType.MPL_PYPLT %}
-            <div class="d-flex align-item-center m-2">
-                <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
+        {% if script.image and script.output_type == script.OutputDataType.MPL_PYPLT %}
+        <div class="d-flex align-item-center m-2">
+            <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
+        </div>
+        {% elif script.table_file and script.output_type == script.OutputDataType.PANDAS %}
+        <div class="d-flex align-item-center m-2">
+            <div class="w-100 h-100 mx-auto" id=script-chart>
+                {% render_table script_table %}
             </div>
-            {% elif script.image and script.output_type == script.OutputDataType.PD_AND_MPL %}
-            <div class="d-flex align-item-center m-2">
-                <img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart">
-            </div>
-            {% elif script.table_file and script.output_type == script.OutputDataType.PD_AND_MPL %}
-            <div class="d-flex align-item-center m-2">
-                <div class="w-100 h-100 mx-auto" id=script-chart> 
-                    {% render_table script_table %}
-                </div>
-            </div>
-            {% elif script.table_file and script.output_type == script.OutputDataType.PANDAS %}
-            <div class="d-flex align-item-center m-2">
-                <div class="w-100 h-100 mx-auto" id=script-chart> 
-                    {% render_table script_table %}
-                </div>
-            </div>
-            {% else %}
-            <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
-                <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
-            </div>
-            {% endif %}
+        </div>
+        {% elif script.image and script.output_type == script.OutputDataType.PD_AND_MPL %}
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-chart" role="tabpanel" aria-labelledby="pills-chart-tab"><img class="w-100 h-100 mx-auto" src="{{script.image.url}}" id="script-chart"></div>
+            <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab"><div class="w-100 h-100 mx-auto" id=script-chart>
+                {% render_table script_table %}
+            </div></div>
+        </div>
+        <div class="d-flex justify-content-center  m-3">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-chart-tab" data-bs-toggle="pill" data-bs-target="#pills-chart"
+                    type="button" role="tab" aria-controls="pills-chart" aria-selected="true">Home</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-table-tab" data-bs-toggle="pill" data-bs-target="#pills-table"
+                    type="button" role="tab" aria-controls="pills-table" aria-selected="false">Chart</button>
+                </li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
+        </div>
+        {% endif %}
         {% elif script.status == script.ExecutionStatus.RUNNING %}
-            <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder-no-border">
-                <div class="mx-auto my-auto">
-                    <div class="spinner-border" role="status"></div>
-                </div>
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder-no-border">
+            <div class="mx-auto my-auto">
+                <div class="spinner-border" role="status"></div>
             </div>
+        </div>
         {% elif script.status == script.ExecutionStatus.FAILURE %}
-            <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
-                <div class="mx-auto my-auto lead-small"><u>This script produced an error:</u><br> {{script.error_message}}
-                </div>
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small"><u>This script produced an error:</u><br> {{script.error_message}}
             </div>
+        </div>
         {% endif %}
     </div>
 
