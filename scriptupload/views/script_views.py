@@ -94,8 +94,8 @@ def script_page(request, scriptname):
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
-    if script.table_file:
-        with script.table_file.open('r') as csvfile:
+    if script.has_table_data:
+        with script.table_data_file.open('r') as csvfile:
             reader = csv.DictReader(csvfile)
             data = list(reader)
             headers = reader.fieldnames

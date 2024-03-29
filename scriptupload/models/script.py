@@ -1,78 +1,21 @@
-"""
-Configuration for storing scripts in a database.
-
-The text inside the brackets on each line (for example, (max_length=100, unique=True)) are setting defaults for those values.
-If they are not passed when the code is called, whatever value comes after the equals symbol will be used.
-
-Reference: https://docs.djangoproject.com/en/4.2/topics/db/examples/many_to_many/
-"""
-
 import logging
 from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
-from .signals import script_signals, report_signals
-from .utils.utils import scripts_to_pdf
-from .utils.runners import run_script
+from ..utils.runners import run_script
 import os
 from django.utils import timezone
-from .signals import rm
+from ..signals import rm, script_signals
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-
+from .category import Category
+from .data import TableData
+from .filepaths import script_file_path
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 logger = logging.getLogger('testlogger')
-
-
-def script_file_path(instance, filename):
-    """
-    A getter method for the path to the scripts.
-    """
-    if settings.DEBUG:
-        directory_name = "scripts-dev"
-    else:
-        directory_name = "scripts"
-    return os.path.join(directory_name, instance.name, filename)
-
-
-def report_file_path(instance, filename):
-    if settings.DEBUG:
-        directory_name = "reports-dev"
-    else:
-        directory_name = "reports"
-    return os.path.join(directory_name, instance.name, filename)
-
-
-class Category(models.Model):
-    """
-    Config for the category of a new script.
-
-    The result of this is used to set the script category in the database.
-    """
-    name = models.CharField(max_length=100, unique=True)
-    parent_category = models.ForeignKey(
-        'self', on_delete=models.CASCADE, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-    def get_children(self):
-        return Category.objects.filter(parent_category=self)
-
-    def get_level(self):
-        if not self.parent_category:
-            return 0
-        elif not self.parent_category.parent_category:
-            return 1
-        else:
-            return 2
-
-    class Meta:
-        verbose_name = "Category"
-        verbose_name_plural = "Categories"
 
 
 class Script(models.Model):
@@ -130,6 +73,26 @@ class Script(models.Model):
     def set_last_updated(self):
         self.last_updated = timezone.now()
         self.save(update_fields=["last_updated"])
+
+    def save_table(self, filename, file):
+        if not self.has_table_data:
+            table_data = TableData(script=self)
+            table_data.csv_data.save(filename, file)
+            self.table_data = table_data
+            self.save()
+        else:
+            self.table_data.csv_data.save(filename, file)
+
+    @property
+    def table_data_file(self):
+        return self.table_data.csv_data
+
+    @property
+    def has_table_data(self):
+        try:
+            return self.table_data.csv_data is not None
+        except TableData.DoesNotExist:
+            return False
 
     def update(self):
         run_script(self)
@@ -216,59 +179,4 @@ class Script(models.Model):
         verbose_name_plural = "Scripts"
 
 
-class Report(models.Model):
-    """
-    Reports that have several script in them for generating
-    pdf reports
-    """
-    name = models.CharField(max_length=100, unique=True)
-    scripts = models.ManyToManyField(Script)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(blank=True, null=True)
-    latest_pdf = models.FileField(
-        upload_to=report_file_path, storage=privateStorage, blank=True)
-    status = models.CharField(max_length=15, default="success")
-    added_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    def update(self, runscripts=False):
-        if self.status != "running":
-            self.status = "running"
-            self.save(update_fields=["status"])
-        try:
-            pfd_file = scripts_to_pdf(
-                self.scripts.all().order_by("index_in_category"), self.name)
-            self.latest_pdf.save(
-                f"{self.name}.pdf", pfd_file)
-            self.last_updated = timezone.now()
-            self.status = "success"
-            self.save(update_fields=["status"])
-            logger.info(
-                f"[report update] Successfully updated report * {self.name} *")
-        except Exception as e:
-            self.status = "failure"
-            self.save(update_fields=["status"])
-            logger.error(
-                f"[report update] Failed to update report * {self.name} * with error ->\n{str(e)}")
-
-        self.save()
-
-    class Meta:
-        verbose_name = "Report"
-        verbose_name_plural = "Reports"
-
-
-class ReportEmailTask(models.Model):
-    report = models.ForeignKey(Report, on_delete=models.CASCADE)
-    email = models.EmailField(max_length=254)
-    day = models.CharField(max_length=1)
-
-    def __str__(self):
-        return f"{self.report.name}-{self.day}"
-
-
 script_signals(Script)
-report_signals(Report)

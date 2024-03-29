@@ -1,5 +1,5 @@
 """
-Configures utility (helper) functions to be used in other places in the project.
+General utility functions for the scriptupload app.
 """
 
 
@@ -7,7 +7,6 @@ from .runners import run_script
 from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from django.utils import timezone
-import gc
 from .pdf import PDFBuilder
 # from django.apps import apps
 # ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
@@ -25,6 +24,7 @@ logger = logging.getLogger('testlogger')
 
 
 # TODO: optimise - maybe make 3 different models for categories
+# use get_children of Category model
 def get_script_hierarchy(scripts):
     """
     {
@@ -98,16 +98,16 @@ def scripts_to_pdf(scripts, title):
                             builder.add_image(
                                 script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     elif script.output_type == script.OutputDataType.PANDAS:
-                        if script.table_file:
+                        if script.has_table_data:
                             builder.add_table(
-                                script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     elif script.output_type == script.OutputDataType.PD_AND_MPL:
                         if script.image:
                             builder.add_image(
                                 script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
-                        if script.table_file:
+                        if script.has_table_data:
                             builder.add_table(
-                                script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
 
     if len(uncatagorised) > 0:
         builder.add_subheading1_new_page("Uncategorised")
@@ -117,16 +117,15 @@ def scripts_to_pdf(scripts, title):
                     builder.add_image(
                         script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
             elif script.output_type == script.OutputDataType.PANDAS:
-                if script.table_file:
+                if script.has_table_data:
                     builder.add_table(
-                        script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
             elif script.output_type == script.OutputDataType.PD_AND_MPL:
-                if script.image and script.table_file:
+                if script.image and script.table_data:
                     builder.add_image(
                         script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     builder.add_table(
-                        script.table_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
-
+                        script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
 
     pdf_file = builder.to_file()
     # builder.cleanup()
@@ -158,7 +157,6 @@ def handover_script(user, script):
     else:
         logger.info(
             f"[script handover] Script * {script.name} * run by user * {username} * FAILURE")
-    gc.collect()
 
 
 def handover_report(user, report, run_scripts=False):
@@ -169,6 +167,5 @@ def handover_report(user, report, run_scripts=False):
     logger.info(
         f"[report handover] Updating report * {report.name} * for user * {username} *")
     report.update(run_scripts)
-    gc.collect()
     logger.info(
         f"[report handover] Finished update of report * {report.name} * for user * {username} *")

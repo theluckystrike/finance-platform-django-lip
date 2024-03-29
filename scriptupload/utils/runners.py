@@ -1,3 +1,7 @@
+"""
+This file contains the functions used to run scripts and capture their outputs.
+"""
+
 import sys
 import traceback
 import matplotlib.pyplot as plt
@@ -97,7 +101,7 @@ def run_script(script):
         plt_success = True
 
     if pandas_csv_buffer:
-        script.table_file.save("output_table.csv", File(pandas_csv_buffer))
+        script.save_table("output_table.csv", File(pandas_csv_buffer))
         script.set_last_updated()
         script.set_status(excStatus.SUCCESS)
         logger.info(
