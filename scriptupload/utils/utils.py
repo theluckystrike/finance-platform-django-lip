@@ -94,17 +94,17 @@ def scripts_to_pdf(scripts, title):
 
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
                     if script.output_type == script.OutputDataType.MPL_PYPLT:
-                        if script.image:
+                        if script.has_chart_data:
                             builder.add_image(
-                                script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     elif script.output_type == script.OutputDataType.PANDAS:
                         if script.has_table_data:
                             builder.add_table(
                                 script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     elif script.output_type == script.OutputDataType.PD_AND_MPL:
-                        if script.image:
+                        if script.has_chart_data:
                             builder.add_image(
-                                script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                         if script.has_table_data:
                             builder.add_table(
                                 script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
@@ -113,17 +113,17 @@ def scripts_to_pdf(scripts, title):
         builder.add_subheading1_new_page("Uncategorised")
         for script in uncatagorised:
             if script.output_type == script.OutputDataType.MPL_PYPLT:
-                if script.image:
+                if script.has_chart_data:
                     builder.add_image(
-                        script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
             elif script.output_type == script.OutputDataType.PANDAS:
                 if script.has_table_data:
                     builder.add_table(
                         script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
             elif script.output_type == script.OutputDataType.PD_AND_MPL:
-                if script.image and script.table_data:
+                if script.has_chart_data and script.table_data:
                     builder.add_image(
-                        script.image, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
                     builder.add_table(
                         script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
 

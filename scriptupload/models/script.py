@@ -10,7 +10,7 @@ from ..signals import rm, script_signals
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from .category import Category
-from .data import TableData
+from .data import TableData, ChartData
 from .filepaths import script_file_path
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -74,7 +74,11 @@ class Script(models.Model):
         self.last_updated = timezone.now()
         self.save(update_fields=["last_updated"])
 
-    def save_table(self, filename, file):
+    def save_table(self, filename: str, file):
+        if not filename.endswith(".csv"):
+            logger.error(
+                f"[script model] Tried to save table with invalid filename: {filename}")
+            return
         if not self.has_table_data:
             table_data = TableData(script=self)
             table_data.csv_data.save(filename, file)
@@ -83,15 +87,43 @@ class Script(models.Model):
         else:
             self.table_data.csv_data.save(filename, file)
 
+    def save_chart(self, filename: str, file):
+        if not filename.endswith(".png"):
+            logger.error(
+                f"[script model] Tried to save chart with invalid filename: {filename}")
+            return
+        if not self.has_chart_data:
+            chart_data = ChartData(script=self)
+            chart_data.image_file.save(filename, file)
+            self.chart_data = chart_data
+            self.save()
+        else:
+            self.chart_data.image_file.save(filename, file)
+
     @property
     def table_data_file(self):
-        return self.table_data.csv_data
+        return self.table_data.csv_data if self.has_table_data else None
+
+    @property
+    def chart_image_file(self):
+        return self.chart_data.image_file if self.has_chart_data else None
 
     @property
     def has_table_data(self):
         try:
             return self.table_data.csv_data is not None
+        # catch exception if table_data does not exist
         except TableData.DoesNotExist:
+            logging.debug(f"[script model] No table data for script: {self.name}")
+            return False
+
+    @property
+    def has_chart_data(self):
+        try:
+            return self.chart_data is not None
+        # catch exception if chart_data does not exist
+        except ChartData.DoesNotExist:
+            logging.debug(f"[script model] No chart data for script: {self.name}")
             return False
 
     def update(self):

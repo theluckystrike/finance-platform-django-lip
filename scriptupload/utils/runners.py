@@ -93,7 +93,7 @@ def run_script(script):
         script.set_status(excStatus.FAILURE,  exc_str)
         return False, exc_str
     if mpl_plt_buffer:
-        script.image.save("output_plot.png", File(mpl_plt_buffer))
+        script.save_chart("output_plot.png", File(mpl_plt_buffer))
         script.set_last_updated()
         script.set_status(excStatus.SUCCESS)
         logger.info(

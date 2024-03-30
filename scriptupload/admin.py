@@ -5,18 +5,31 @@ See https://docs.djangoproject.com/en/4.2/ref/contrib/admin/ for more details.
 """
 
 from django.contrib import admin
-from .models import Script, Category, Report, ReportEmailTask, TableData
+from .models import Script, Category, Report, ReportEmailTask, TableData, ChartData
+
+
+class ChartDataInline(admin.StackedInline):
+    model = ChartData
+
+
+class TableDataInline(admin.StackedInline):
+    model = TableData
 
 
 @admin.register(Script)
 class ScriptAdmin(admin.ModelAdmin):
     ordering = ("-created",)
+    inlines = [ChartDataInline, TableDataInline]
 
 
 @admin.register(TableData)
 class TableDataAdmin(admin.ModelAdmin):
-    # ordering = ("report",)
-    pass
+    ordering = ("-created",)
+
+
+@admin.register(ChartData)
+class ChartDataAdmin(admin.ModelAdmin):
+    ordering = ("-created",)
 
 
 @admin.register(Category)

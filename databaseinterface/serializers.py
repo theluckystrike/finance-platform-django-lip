@@ -1,6 +1,30 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import OHLCData, IndexAction, IndexConstituent, Rate, StockExchangeData
+# importing from other app to keep all DRF related content in this app
+from scriptupload.models import Script
+from collections import defaultdict
+import csv
+
+
+class ScriptSerializer(serializers.HyperlinkedModelSerializer):
+    table_data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Script
+        fields = ['name', 'table_data']
+
+    def get_table_data(self, obj):
+        if obj.has_table_data:
+            csv_file = obj.table_data_file
+            data = defaultdict(list)
+            f = csv_file.open("r")
+            reader = csv.DictReader(f)
+            for row in reader:
+                for key, value in row.items():
+                    data[key].append(value)
+            return dict(data)
+        return None
 
 
 class OHLCSerializer(serializers.HyperlinkedModelSerializer):

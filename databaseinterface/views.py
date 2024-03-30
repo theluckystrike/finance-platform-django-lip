@@ -1,9 +1,10 @@
-from rest_framework import viewsets, permissions
-from .serializers import OHLCSerializer, UserSerializer, IndexActionSerializer, IndexConstituentSerializer, RateSerializer, StockExchangeDataSerializer
+from rest_framework import viewsets, permissions, generics
+from .serializers import OHLCSerializer, UserSerializer, IndexActionSerializer, IndexConstituentSerializer, RateSerializer, StockExchangeDataSerializer, ScriptSerializer
 from .models import OHLCData, IndexConstituent, IndexAction, Rate, StockExchangeData
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
+from scriptupload.models import Script
 
 
 class OHLCViewSet(viewsets.ModelViewSet):
@@ -149,3 +150,10 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class ScriptTableDataRetrieveView(generics.RetrieveAPIView):
+    queryset = Script.objects.all()
+    serializer_class = ScriptSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
