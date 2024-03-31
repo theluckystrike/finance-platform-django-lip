@@ -4,6 +4,7 @@ from django.core.files.storage import default_storage
 from django.utils import timezone
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.conf import settings
+from ..signals import chart_data_signals, table_data_signals
 
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 # logger = logging.getLogger('testlogger')
@@ -32,7 +33,7 @@ class TableData(models.Model):
 
 class ChartData(models.Model):
     image_file = models.FileField(upload_to=chart_file_path,
-                                storage=privateStorage, max_length=200)
+                                  storage=privateStorage, max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(blank=True, null=True)
     script = models.OneToOneField(
@@ -48,3 +49,7 @@ class ChartData(models.Model):
     class Meta:
         verbose_name = "Chart Data"
         verbose_name_plural = "Chart Data"
+
+
+chart_data_signals(ChartData)
+table_data_signals(TableData)

@@ -114,7 +114,8 @@ class Script(models.Model):
             return self.table_data.csv_data is not None
         # catch exception if table_data does not exist
         except TableData.DoesNotExist:
-            logging.debug(f"[script model] No table data for script: {self.name}")
+            logging.debug(
+                f"[script model] No table data for script: {self.name}")
             return False
 
     @property
@@ -123,7 +124,8 @@ class Script(models.Model):
             return self.chart_data is not None
         # catch exception if chart_data does not exist
         except ChartData.DoesNotExist:
-            logging.debug(f"[script model] No chart data for script: {self.name}")
+            logging.debug(
+                f"[script model] No chart data for script: {self.name}")
             return False
 
     def update(self):
