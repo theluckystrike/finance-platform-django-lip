@@ -63,7 +63,7 @@
                 {% render_table script_table %}
             </div>
         </div>
-        {% elif script.has_table_date and script.has_chart_data and script.output_type == script.OutputDataType.PD_AND_MPL %}
+        {% elif script.has_table_data and script.has_chart_data and script.output_type == script.OutputDataType.PD_AND_MPL %}
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade" id="pills-chart" role="tabpanel" aria-labelledby="pills-chart-tab"><img
                     class="w-100 h-100 mx-auto" src="{{script.chart_image_file.url}}" id="script-chart"></div>
