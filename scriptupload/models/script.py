@@ -28,11 +28,6 @@ class Script(models.Model):
     # TODO rename and refactor "file"
     file = models.FileField(upload_to=script_file_path,
                             storage=privateStorage, max_length=200)
-    image = models.ImageField(
-        blank=True, upload_to=script_file_path, storage=privateStorage,
-        max_length=200)
-    table_file = models.FileField(upload_to=script_file_path,
-                                  storage=privateStorage, max_length=100, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(blank=True, null=True)
     category = models.ForeignKey(
@@ -200,8 +195,12 @@ class Script(models.Model):
             self.__original_name = self.name
             original_directory = os.path.dirname(self.file.name)
             self.file.save(os.path.basename(self.file.name), self.file)
-            if self.image:
-                self.image.save(os.path.basename(self.image.name), self.image)
+            if self.has_chart_data:
+                self.save_chart(os.path.basename(
+                    self.chart_image_file), self.chart_image_file)
+            if self.has_table_data:
+                self.save_table(os.path.basename(
+                    self.table_data_file), self.table_data_file)
             if original_directory != "":
                 rm(original_directory)
 
