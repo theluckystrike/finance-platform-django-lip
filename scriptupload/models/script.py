@@ -83,6 +83,7 @@ class Script(models.Model):
             table_data = TableData(script=self)
             table_data.csv_data.save(filename, file)
             self.table_data = table_data
+            # table_data.set_last_updated()
             self.save()
         else:
             self.table_data.csv_data.save(filename, file)
@@ -95,6 +96,7 @@ class Script(models.Model):
         if not self.has_chart_data:
             chart_data = ChartData(script=self)
             chart_data.image_file.save(filename, file)
+            # chart_data.set_last_updated()
             self.chart_data = chart_data
             self.save()
         else:
@@ -121,7 +123,7 @@ class Script(models.Model):
     @property
     def has_chart_data(self):
         try:
-            return self.chart_data is not None
+            return self.chart_data.image_file is not None
         # catch exception if chart_data does not exist
         except ChartData.DoesNotExist:
             logging.debug(
