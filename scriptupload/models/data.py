@@ -32,7 +32,7 @@ class TableData(models.Model):
 
 
 class ChartData(models.Model):
-    image_file = models.FileField(upload_to=chart_file_path,
+    image_file = models.ImageField(upload_to=chart_file_path,
                                   storage=privateStorage, max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(blank=True, null=True)
