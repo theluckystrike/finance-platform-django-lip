@@ -25,6 +25,8 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+ALLOWED_HOSTS = ["www.olandinvesmentslimited.com",
+                 "*.olandinvesmentslimited.com"]
 
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
 IS_HEROKU = "DYNO" in os.environ
