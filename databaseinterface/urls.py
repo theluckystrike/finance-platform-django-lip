@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import OHLCViewSet, UserViewSet, IndexActionViewSet, IndexConstituentViewSet, RateViewSet, StockExchangeDataViewSet, ScriptTableDataRetrieveView
+from .views import OHLCViewSet, UserViewSet, IndexActionViewSet, IndexConstituentViewSet, RateViewSet, StockExchangeDataViewSet, ScriptTableDataRetrieveView, BlackRockIndexDataViewSet
 
 router = routers.DefaultRouter()
 router.register(r'ohlcdata', OHLCViewSet, basename="ohlcdata")
@@ -9,6 +9,7 @@ router.register(r'indexconstituents', IndexConstituentViewSet,
 router.register(r'indexactions', IndexActionViewSet, basename="indexactions")
 router.register(r'rates', RateViewSet, basename="rates")
 router.register(r'exchanges', StockExchangeDataViewSet, basename="exchanges")
+router.register(r'blackrockindex', BlackRockIndexDataViewSet, basename="blackrockindex")
 router.register(r'users', UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
 

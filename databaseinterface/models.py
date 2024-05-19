@@ -6,6 +6,7 @@ class OHLCData(models.Model):
     """
     Open, high, low, close data
     """
+
     ticker = models.CharField(max_length=5)
     date = models.DateField()
     open = models.DecimalField(max_digits=19, decimal_places=3)
@@ -91,3 +92,25 @@ class StockExchangeData(models.Model):
 
     def __str__(self):
         return f"{self.exchange_name.upper()} {self.date}"
+
+
+class BlackRockIndexData(models.Model):
+    date = models.DateField()
+    ticker = models.CharField(max_length=6)
+    name = models.CharField(max_length=72)
+    sector = models.CharField(max_length=10)
+    weight = models.FloatField(default=0.0, null=True, blank=True)
+    notional_value = models.FloatField(default=0.0, null=True, blank=True)
+    isin = models.CharField(max_length=15)
+    location_of_risk = models.CharField(max_length=15)
+    exchange = models.CharField(max_length=30)
+    currency = models.CharField(max_length=5)
+    fx_rate = models.FloatField(default=0.0, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "BlackRock iShares S&P/TSX Capped Energy Index ETF Data"
+        verbose_name_plural = "BlackRock iShares S&P TSX"
+        # unique_together = ["date", "exchange_name"]
+
+    def __str__(self):
+        return f"{self.exchange.upper()} {self.date}"
