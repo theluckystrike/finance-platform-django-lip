@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import OHLCData, IndexAction, IndexConstituent, Rate, StockExchangeData
+from .models import (
+    OHLCData,
+    IndexAction,
+    IndexConstituent,
+    Rate,
+    StockExchangeData,
+    BlackRockIndexData,
+)
 
 # Register your models here.
 
@@ -26,4 +33,9 @@ class RateAdmin(admin.ModelAdmin):
 
 @admin.register(StockExchangeData)
 class StockExchangeAdmin(admin.ModelAdmin):
+    ordering = ("-date",)
+
+
+@admin.register(BlackRockIndexData)
+class BlackRockIndexAdmin(admin.ModelAdmin):
     ordering = ("-date",)
