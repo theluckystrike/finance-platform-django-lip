@@ -2,7 +2,25 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+<style>
+    .form-control {
+        margin-bottom: 1rem;
+        border: 2px solid #011C05;
+    }
+
+    .form-label {
+        color: #011C05;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .btn-dark{
+        background-color: #011C05;
+    }
+
+</style>
+
+<div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 text-center">
     <h1 class="h2">Upload a Script</h1>
 </div>
 
@@ -11,24 +29,28 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select id="category" name="category" class="form-control" required>
-                <option value="" disabled selected>Select a category</option>
-                {% for cat in categories %}
-                <optgroup label="{{cat.name}}">
-                    {% for subcat in cat.category_set.all %}
-                <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
-                    {% for subsubcat in subcat.category_set.all %}
-                    <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
-                    {% endfor %}
-                </optgroup>
-                {% endfor %}
-                </optgroup>
-                {% endfor %}
-            </select>
-
-            <button class="btn p-0" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <span class="form-text text-primary">Create a new category</span>
-            </button>
+            <div class="row mx-0 p-0">
+                <div class="col-11 m-0 p-0 pe-1">
+    
+                    <select id="category" name="category" class="form-control m-0" required>
+                        <option value="" disabled selected>Select a category</option>
+                        {% for cat in categories %}
+                        <optgroup label="{{cat.name}}">
+                            {% for subcat in cat.category_set.all %}
+                        <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                            {% for subsubcat in subcat.category_set.all %}
+                            <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-dark col col-1 p-0 justify-content-center" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span data-feather="plus" class="align-text-bottom p-0"></span>
+                </button>
+            </div>
 
         </div>
         <div class="mb-3">
@@ -48,7 +70,10 @@
             <label for="file" class="form-label">Select a file</label>
             <input type="file" id="file" name="file" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary">Upload</button>
+        <div class="mx-auto text-center">
+
+            <button type="submit" class="btn btn-dark px-5">Upload</button>
+        </div>
     </form>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
