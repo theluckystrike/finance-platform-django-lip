@@ -98,7 +98,7 @@ class BlackRockIndexData(models.Model):
     date = models.DateField()
     ticker = models.CharField(max_length=6)
     name = models.CharField(max_length=72)
-    sector = models.CharField(max_length=10)
+    sector = models.CharField(max_length=30)
     weight = models.FloatField(default=0.0, null=True, blank=True)
     notional_value = models.FloatField(default=0.0, null=True, blank=True)
     isin = models.CharField(max_length=15)
@@ -113,4 +113,4 @@ class BlackRockIndexData(models.Model):
         # unique_together = ["date", "exchange_name"]
 
     def __str__(self):
-        return f"{self.exchange.upper()} {self.date}"
+        return f"{self.ticker} {self.exchange.upper()} {self.date}"
