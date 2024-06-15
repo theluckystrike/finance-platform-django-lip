@@ -13,6 +13,8 @@ media
 
 scripts/
 staticfiles/
+scripts-dev/
+reports-dev/
 
 *.h5
 

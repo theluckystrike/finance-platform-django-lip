@@ -4,7 +4,12 @@ This file contains styles for the page, and is what makes it look good.
 each blob beginning with a period represents a class, and those without a period represent an ID. These are how the
 project knows where these styles should be applied.
  */
-
+:root {
+    --light-green: #EAFFEA;
+    --pale-green: #17AA1712;
+    --pale-cream: #F7FCF7;
+    --very-dark-green: #011C05;
+}
 body {
   font-size: .875rem;
 }
@@ -128,3 +133,67 @@ body {
   margin-top: .125rem;
   margin-left: 1.25rem;
 }
+.form-control {
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--very-dark-green);
+}
+
+.form-label {
+    color: #011C05;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.btn-dark{
+    background-color: var(--very-dark-green);
+    border-color: var(--very-dark-green);
+}
+
+
+.icon-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease;
+}
+
+.icon-button svg {
+    stroke-width: 3;
+    transition: stroke 0.3s ease;
+}
+
+.icon-button span {
+    position: absolute;
+    top: 43px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.icon-button:hover svg {
+    stroke: white;
+}
+.icon-button:hover i {
+    color: white;
+}
+.icon-button:hover {
+    background-color: #011C05; 
+}
+
+.nav-pills .nav-item .nav-link{
+  color: black;
+  }
+.nav-pills .nav-item .active{
+  background-color: var(--very-dark-green);
+  color: white;
+} 

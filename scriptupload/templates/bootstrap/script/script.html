@@ -17,41 +17,107 @@
     #script-chart {
         max-width: 1200px;
     }
+
+    th {
+        font-weight: 700;
+        margin-right: 30px;
+        padding-right: 10px;
+    }
+
+    table {
+        vertical-align: top;
+    }
+
+    th,
+    td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .dropdown-menu-info {
+        background-color: var(--very-dark-green);
+        color: white;
+        min-width: 30vw;
+    }
+
+    a.disabled {
+        pointer-events: none;
+        /* cursor: default; */
+        c
+    }
 </style>
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">{{script.name}}&ensp;
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h1">{{script.name}}&ensp;
+        <!-- <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
             <span data-feather="edit" class="align-text-middle"></span>
-        </button>
+        </button> -->
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+
+        {% if script.status == script.ExecutionStatus.RUNNING %}
+        <button type="button" class="btn icon-button my-1 mx-2 disabled">
+            <i data-feather="edit-2"></i>
+            <span>Edit</span>
+        </button>
+        {% else %}
+        <a href="{% url 'script_edit' scriptname=script.name %}" class="">
+            <button type="button" class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="edit-2"></i>
+                <span>Edit</span>
+            </button>
+        </a>
+        {% endif %}
+        <form method="post" action="{% url 'run_script' script.name %}">
+            {% csrf_token %}
+            <button type="submit" class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="play"></i>
+                <span>Run</span>
+            </button>
+        </form>
         <form method="post" action="{% url 'delete_script' script.name %}">
             {% csrf_token %}
             <button type="submit"
-                class="btn btn-sm btn-outline-danger my-1{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">Delete&nbsp;<span
-                    class="align-text-bottom" data-feather="x-circle"></span></button>
+                class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="trash"></i>
+                <span>Delete</span>
+            </button>
         </form>
-        <form method="post" action="{% url 'run_script' script.name %}">
-            {% csrf_token %}
-            <button type="submit"
-                class="btn btn-sm btn-outline-success my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">Run&nbsp;<span
-                    class="align-text-bottom" data-feather="play"></span></button>
-        </form>
-
-        {% if script.status == script.ExecutionStatus.RUNNING %}
-        <button type="button" class="btn btn-sm btn-outline-secondary my-1 disabled">Edit&nbsp;<span
-                class="align-text-bottom" data-feather="external-link"></span></button>
-        {% else %}
-        <a href="{% url 'script_edit' scriptname=script.name %}">
-            <button type="button" class="btn btn-sm btn-outline-secondary my-1">Edit&nbsp;<span
-                    class="align-text-bottom" data-feather="external-link"></span></button>
-        </a>
-        {% endif %}
+        <div class="btn-group">
+            <button type="button" class="icon-button my-1 mx-2" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                aria-expanded="false">
+                <i>i</i>
+                <span>Info</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-info mt-2 p-3">
+                <table>
+                    <tr>
+                        <th>ID (for API):</th>
+                        <td>{{ script.pk }}</td>
+                    </tr>
+                    <tr>
+                        <th>Category:</t>
+                        <td>{{script.category.parent_category.parent_category.name}} &rarr;
+                            {{script.category.parent_category.name}} &rarr; {{script.category.name}}</td>
+                    </tr>
+                    <tr>
+                        <th>Uploaded:</th>
+                        <td>{{ script.created }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last updated:</th>
+                        <td>{{ script.last_updated }}</td>
+                    </tr>
+                    <tr>
+                        <th>Output data type:</th>
+                        <td>{{ script|output_type_name }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
-
-    <div class="col-12 col-md-9 col-lg-9" id="script-frame">
+    <div class="col-12 col-md-9 col-lg-12" id="script-frame">
         {% if script.status == script.ExecutionStatus.SUCCESS %}
         {% if script.has_chart_data and script.output_type == script.OutputDataType.MPL_PYPLT %}
         <div class="d-flex align-item-center m-2">
@@ -64,16 +130,8 @@
             </div>
         </div>
         {% elif script.has_table_data and script.has_chart_data and script.output_type == script.OutputDataType.PD_AND_MPL %}
-        <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade" id="pills-chart" role="tabpanel" aria-labelledby="pills-chart-tab"><img
-                    class="w-100 h-100 mx-auto" src="{{script.chart_image_file.url}}" id="script-chart"></div>
-            <div class="tab-pane fade show active" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
-                <div class="w-100 h-100 mx-auto" id=script-chart>
-                    {% render_table script_table %}
-                </div>
-            </div>
         </div>
-        <div class="d-flex justify-content-center  m-3">
+        <div class="d-flex justify-content-center m-1">
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-chart-tab" data-bs-toggle="pill" data-bs-target="#pills-chart"
@@ -86,6 +144,14 @@
                 </li>
             </ul>
         </div>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade" id="pills-chart" role="tabpanel" aria-labelledby="pills-chart-tab"><img
+                    class="w-100 h-100 mx-auto" src="{{script.chart_image_file.url}}" id="script-chart"></div>
+            <div class="tab-pane fade show active" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+                <div class="w-100 h-100 mx-auto" id=script-chart>
+                    {% render_table script_table %}
+                </div>
+            </div>
         {% else %}
         <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
             <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
@@ -105,25 +171,6 @@
         {% endif %}
     </div>
 
-    <div class="col-12 col-md-3 col-lg-3">
-        <div class="row">
-            <div class="col-12">
-                <h4>Info</h4>
-                <div class="my-2">
-                    <p>ID (for API): {{ script.pk }}</p>
-                    <p></p>
-                    <p>Category: {{script.category.parent_category.parent_category.name}} &rarr;
-                        {{script.category.parent_category.name}} &rarr; {{script.category.name}} </p>
-                    <p></p>
-                    <p>Uploaded: {{ script.created }}</p>
-                    <p></p>
-                    <p>Last updated: {{ script.last_updated }}</p>
-                    <p></p>
-                    <p>Output data type: {{ script|output_type_name }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
