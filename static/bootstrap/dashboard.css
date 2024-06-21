@@ -197,3 +197,9 @@ body {
   background-color: var(--very-dark-green);
   color: white;
 } 
+
+.btn-secondary {
+    background-color: white;
+    border: 2px solid var(--very-dark-green);
+    color: black
+}

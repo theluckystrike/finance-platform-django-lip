@@ -23,9 +23,8 @@ class ScriptTable(tables.Table):
         template_name = "django_tables2/bootstrap5-responsive.html"
         fields = ("select_box", "name", "category",
                   "subcategory1", "subcategory2", "created", "last_updated", "view_link")
-        attrs = {"class": "table table-striped table-sm",
+        attrs = {"class": "table border border-white",
                  "tbody": {"id": "scriptsCheckboxes"}}
-
     def render_subcategory1(self, value, record):
         if record.category:
             return record.category.parent_category.name

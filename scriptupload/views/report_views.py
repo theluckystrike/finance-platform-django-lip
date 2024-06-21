@@ -11,7 +11,7 @@ from ..models import Script, Category, Report, ReportEmailTask
 from django.contrib import messages
 from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
-from ..tables import ScriptTable, ReportScriptTable
+from ..tables import ReportScriptTable
 from django_tables2 import RequestConfig
 import logging
 
@@ -78,9 +78,6 @@ def custom_report_page(request):
     if subcategory2 and subcategory2 and category:
         scripts = Script.objects.filter(category_id=subcategory2)
 
-    table = ScriptTable(scripts, order_by="-created")
-    RequestConfig(request, paginate=False).configure(table)
-
     script_form = ScriptSelectForm()
     report_form = NewReportForm()
     return render(
@@ -92,11 +89,11 @@ def custom_report_page(request):
             "subcat1": subcategory1,
             "subcat2filter": filtersubcat2,
             "subcat2": subcategory2,
-            "script_table": table,
             "report_form": report_form,
             "form": script_form,
             "number_of_scripts": len(scripts),
-            "categories": Category.objects.filter(parent_category=None)
+            "categories": Category.objects.filter(parent_category=None),
+            "scripts": scripts
         }
     )
 
