@@ -47,10 +47,10 @@
     }
 </style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-    <h1 class="h1">{{script.name}}&ensp;
-        <!-- <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
+    <h1 class="h1">{{script.name}}
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
             <span data-feather="edit" class="align-text-middle"></span>
-        </button> -->
+        </button>
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
 
@@ -60,7 +60,7 @@
             <span>Edit</span>
         </button>
         {% else %}
-        <a href="{% url 'script_edit' scriptname=script.name %}" class="">
+        <a href="{% url 'script_edit' scriptname=script.name %}" class="text-decoration-none text-black">
             <button type="button" class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
                 <i data-feather="edit-2"></i>
                 <span>Edit</span>
@@ -239,7 +239,7 @@
                                 {% for subcat in cat.category_set.all %}
                             <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
                                 {% for subsubcat in subcat.category_set.all %}
-                                <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                                    <option value="{{subsubcat.id}}" {% if subsubcat == nameform.instance.category %}selected{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
                                 {% endfor %}
                             </optgroup>
                             {% endfor %}

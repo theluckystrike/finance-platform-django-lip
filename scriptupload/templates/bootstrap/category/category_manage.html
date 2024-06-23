@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block content %}
+<script src="https://unpkg.com/htmx.org@1.9.10"
+    integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+    crossorigin="anonymous"></script>
+<script src="{% static 'bootstrap/path-params.js' %}"></script>
 <style>
     .tree-container * {
         margin: 0;
@@ -58,12 +62,12 @@
         top: 15px;
     }
 </style>
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Category manager</h1>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h1">Category manager</h1>
 </div>
 <div class="tree-container d-flex justify-content-center">
     <div>
-        <h1 class="h4 py-4">Category Tree</h1>
+        <h1 class="h4 py-4 text-decoration-underline">Category Tree</h1>
         <ul>
             {% for category in categories %}
             <li><a class="category" data-category-id="{{category.id}}"
@@ -91,11 +95,16 @@
 {% include 'bootstrap/forms/category_edit_form.html' %}
 <script>
     $(".category").on("click", function () {
-        console.log($(this).data("parent-id"))
-        form = $("#changeNameModal").find("form")
+        console.log($(this).data("category-id"))
+        modal = $("#changeNameModal")
+        form = modal.find("form")
         form.attr("action", "update/" + $(this).data("category-id") + "/")
         form.find('select option[value="' + $(this).data("parent-id") + '"]').prop("selected", true)
         form.find("#name").val($(this).text())
+        // replaces the hx-delete url for the delete button in the modal
+        modal.find(".btn-danger").attr("hx-delete", "delete/" + $(this).data("category-id") + "/")
+        // allow htmx to process the page again
+        htmx.process(document.body)
         $("#changeNameModal").modal("show")
     })
 </script>

@@ -7,8 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from ..forms import NewCategoryForm
 from ..models import Category, Script
-from ..utils.utils import scripts_to_httpresponse
+from ..utils.utils import scripts_to_httpresponse, HTTPResponseHXRedirect
 from ..tables import DragnDropTable
+from django.urls import reverse
 from django_tables2 import RequestConfig
 
 
@@ -24,6 +25,7 @@ def category_page(request, categoryname):
     return render(request, "bootstrap/category/category.html", {"table": table, "category": category, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
 
 
+@login_required
 def update_category(request, pk):
     category = get_object_or_404(Category, pk=pk)
     form = NewCategoryForm(request.POST, instance=category)
@@ -56,6 +58,7 @@ def update_category(request, pk):
     return redirect("manage_categories")
 
 
+@login_required
 def category_manager_page(request):
     form = NewCategoryForm()
     return render(request, "bootstrap/category/category_manage.html", {"form": form, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
@@ -83,6 +86,20 @@ def create_category(request):
             messages.info(request, "Category already exists")
 
     return HttpResponseRedirect("/")
+
+
+@login_required
+def delete_category(request, pk):
+    print("deleting", pk)
+    category = get_object_or_404(Category, id=pk)
+    if request.method == "DELETE":
+        category.delete()
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return HTTPResponseHXRedirect(redirect_to=referer)
+    else:
+        return HttpResponseRedirect('/')
 
 
 @login_required
