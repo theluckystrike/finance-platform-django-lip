@@ -17,6 +17,12 @@ class ScriptUploadForm(forms.ModelForm):
         model = Script
         fields = ("name", "file", "category", "output_type")
 
+    def __init__(self, *args, **kwargs):
+        super(ScriptUploadForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:  # Check if the form is used for updating
+            self.fields['file'].required = False
+            self.fields['output_type'].required = False
+
 
 class NewCategoryForm(forms.ModelForm):
     parent = forms.IntegerField()

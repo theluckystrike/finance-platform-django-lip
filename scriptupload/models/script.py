@@ -100,10 +100,18 @@ class Script(models.Model):
     @property
     def table_data_file(self):
         return self.table_data.csv_data if self.has_table_data else None
+    
+    @property
+    def table_data_filename(self):
+        return self.table_data.csv_data.name if self.has_table_data else None
 
     @property
     def chart_image_file(self):
         return self.chart_data.image_file if self.has_chart_data else None
+    
+    @property
+    def chart_image_filename(self):
+        return self.chart_data.image_file.name if self.has_chart_data else None
 
     @property
     def has_table_data(self):
@@ -190,19 +198,23 @@ class Script(models.Model):
                 self.index_in_category = new_category_scripts[0].index_in_category + 1
             else:
                 self.index_in_category = 0
+            logger.info(
+                f"[script model] Updated category of script * {self.name} * from '{self.__original_category.name}' to '{self.category.name}'")
         self.__original_category = self.category
-        if self.__original_name != self.name and self.__original_name is not None and self.name is not None:
+        if self.__original_name != self.name and self.__original_name is not None and self.name is not None and self.__original_name != "" and self.name != "":
             self.__original_name = self.name
             original_directory = os.path.dirname(self.file.name)
             self.file.save(os.path.basename(self.file.name), self.file)
             if self.has_chart_data:
                 self.save_chart(os.path.basename(
-                    self.chart_image_file), self.chart_image_file)
+                    self.chart_image_filename), self.chart_image_file)
             if self.has_table_data:
                 self.save_table(os.path.basename(
-                    self.table_data_file), self.table_data_file)
+                    self.table_data_filename), self.table_data_file)
             if original_directory != "":
                 rm(original_directory)
+            logger.info(
+                f"[script model] Updated name of script * {self.name} * from '{self.__original_name}' to '{self.name}'")
 
         super().save(force_insert, force_update, *args, **kwargs)
 

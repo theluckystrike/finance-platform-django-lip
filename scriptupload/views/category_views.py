@@ -9,9 +9,10 @@ from ..forms import NewCategoryForm
 from ..models import Category, Script
 from ..utils.utils import scripts_to_httpresponse, HTTPResponseHXRedirect
 from ..tables import DragnDropTable
-from django.urls import reverse
 from django_tables2 import RequestConfig
+import logging
 
+logger = logging.getLogger('testlogger')
 
 @login_required
 def category_page(request, categoryname):
@@ -90,10 +91,11 @@ def create_category(request):
 
 @login_required
 def delete_category(request, pk):
-    print("deleting", pk)
     category = get_object_or_404(Category, id=pk)
     if request.method == "DELETE":
+        cname = category.name
         category.delete()
+        logger.info(f"[category views] Deleted category '{cname}' with ID={pk}")
 
     referer = request.META.get('HTTP_REFERER')
     if referer:

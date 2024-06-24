@@ -17,7 +17,7 @@ privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 
 
 def rm(directory, storage=privateStorage):
-    if any(x in directory for x in ["private", "scripts-dev", "reports-dev", "scripts", "reports", ""]):
+    if any(x == directory for x in ["private", "scripts-dev", "reports-dev", "scripts", "reports", ""]):
         logger.error(
             f"[rm util] Attempted to delete directory '{directory}' - ABORTED")
         return

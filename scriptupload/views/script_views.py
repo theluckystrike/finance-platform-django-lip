@@ -89,12 +89,16 @@ def script_page(request, scriptname):
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
         nameform = ScriptUploadForm(request.POST, instance=script)
+
         if nameform.is_valid():
             nameform.save()
         return redirect(script_page, nameform.cleaned_data['name'])
     else:
         nameform = ScriptUploadForm(instance=script)
+        nameform.fields['file'].required = False
+        nameform.fields['output_type'].required = False
     if script.has_table_data:
+        # TODO this should be on the script model
         with script.table_data_file.open('r') as csvfile:
             reader = csv.DictReader(csvfile)
             data = list(reader)
