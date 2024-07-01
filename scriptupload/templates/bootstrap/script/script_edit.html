@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
     <h1 class="h2"><a href="{% url 'script' scriptname=script.name %}"><span class="back-button"
         data-feather="arrow-left"></span></a>&nbsp;{{script.name}} - edit code</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -35,12 +35,6 @@
     });
 </script>
 <style>
-    .back-button {
-        height: 24px;
-        width: 24px;
-        stroke-width: 3px;
-        color: black;
-    }
     
     .CodeMirror {
         border: 1px solid #eee;

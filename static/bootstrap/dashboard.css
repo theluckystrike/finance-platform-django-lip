@@ -203,3 +203,10 @@ body {
     border: 2px solid var(--very-dark-green);
     color: black
 }
+/* back button on category manage page and script code edit page */
+.back-button {
+        height: 24px;
+        width: 24px;
+        stroke-width: 3px;
+        color: black;
+    }

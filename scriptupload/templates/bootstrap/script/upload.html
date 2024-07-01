@@ -30,7 +30,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <button class="btn btn-dark col col-1 p-0 justify-content-center" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button class="btn btn-dark col col-1 p-0 justify-content-center" type="button" data-bs-toggle="modal" data-bs-target="#newCategoryModal">
                     <span data-feather="plus" class="align-text-bottom p-0"></span>
                 </button>
             </div>
@@ -58,13 +58,13 @@
             <button type="submit" class="btn btn-dark px-5">Upload</button>
         </div>
     </form>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="{% url 'create_category' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Create a category</h5>
+                        <h5 class="modal-title" id="newCategoryModalLabel">Create a category</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -87,7 +87,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{% url 'manage_categories' %}"><button type="button" class="btn btn-secondary">Edit All Categories</button></a>
                         <button type="submit" class="btn btn-dark">Save changes</button>
                     </div>
                 </form>

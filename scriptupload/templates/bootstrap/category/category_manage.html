@@ -63,15 +63,15 @@
     }
 </style>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-    <h1 class="h1">Category manager</h1>
+    <h1 class="h1"><a href="{% url 'uploadScript' %}"><span class="back-button"
+                data-feather="arrow-left"></span></a>&nbsp;Category manager</h1>
 </div>
 <div class="tree-container d-flex justify-content-center">
     <div>
         <h1 class="h4 py-4 text-decoration-underline">Category Tree</h1>
         <ul>
             {% for category in categories %}
-            <li><a class="category" data-category-id="{{category.id}}"
-                    data-parent-id="-1">{{category.name}}</a>
+            <li><a class="category" data-category-id="{{category.id}}" data-parent-id="-1">{{category.name}}</a>
                 <ul>
                     {% for subcategory in category.get_children %}
                     <li>
