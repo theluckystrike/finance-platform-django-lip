@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from .category import Category
 from .data import TableData, ChartData
 from .filepaths import script_file_path
+from django.urls import reverse
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -100,7 +101,7 @@ class Script(models.Model):
     @property
     def table_data_file(self):
         return self.table_data.csv_data if self.has_table_data else None
-    
+
     @property
     def table_data_filename(self):
         return self.table_data.csv_data.name if self.has_table_data else None
@@ -108,10 +109,14 @@ class Script(models.Model):
     @property
     def chart_image_file(self):
         return self.chart_data.image_file if self.has_chart_data else None
-    
+
     @property
     def chart_image_filename(self):
         return self.chart_data.image_file.name if self.has_chart_data else None
+
+    @property
+    def url(self):
+        return reverse('script', args=(self.name,))
 
     @property
     def has_table_data(self):

@@ -155,7 +155,7 @@ def update_report(request, reportid):
         report.status = "running"
         report.save(update_fields=["status"])
         django_rq.get_queue("reports").enqueue(
-            handover_report, request.user, report, True)
+            handover_report, request.user, report, True, f"{request.scheme}://{request.get_host()}")
         logger.info(
             f"[task queue] Added update of report * {report.name} * by user * {request.user.username} * to task queue")
     return redirect(report_page, report.name)

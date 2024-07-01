@@ -9,7 +9,6 @@ import logging
 from django.utils import timezone
 from .pdf import PDFBuilder
 # from django.apps import apps
-# ScriptRunResult = apps.get_model("scriptupload", "ScriptRunResult")
 
 
 #  from https://stackoverflow.com/questions/65569673/htmx-hx-target-swap-html-vs-full-page-reload
@@ -75,7 +74,7 @@ def get_script_hierarchy(scripts):
     return categories, uncategorised
 
 
-def scripts_to_pdf(scripts, title):
+def scripts_to_pdf(scripts, title, base_url=None):
     if len(scripts) == 0:
         return None
 
@@ -93,39 +92,46 @@ def scripts_to_pdf(scripts, title):
                     f"{heading} &#8594; {subheading} &#8594; {subsubheading}")
 
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
+                    script_caption = f'last updated: {script.last_updated.strftime("%d %B %Y at %H:%M")}'
+                    if base_url:
+                        print(base_url, script.url)
+                        script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
                     if script.output_type == script.OutputDataType.MPL_PYPLT:
                         if script.has_chart_data:
                             builder.add_image(
-                                script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.chart_image_file, script.name, script_caption)
                     elif script.output_type == script.OutputDataType.PANDAS:
                         if script.has_table_data:
                             builder.add_table(
-                                script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.table_data_file, script.name, script_caption)
                     elif script.output_type == script.OutputDataType.PD_AND_MPL:
                         if script.has_chart_data:
                             builder.add_image(
-                                script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.chart_image_file, script.name, script_caption)
                         if script.has_table_data:
                             builder.add_table(
-                                script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                                script.table_data_file, script.name, script_caption)
 
     if len(uncatagorised) > 0:
         builder.add_subheading1_new_page("Uncategorised")
         for script in uncatagorised:
+            script_caption = f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}"
+            if base_url:
+                script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
             if script.output_type == script.OutputDataType.MPL_PYPLT:
                 if script.has_chart_data:
                     builder.add_image(
-                        script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.chart_image_file, script.name, script_caption)
             elif script.output_type == script.OutputDataType.PANDAS:
                 if script.has_table_data:
                     builder.add_table(
-                        script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.table_data_file, script.name, script_caption)
             elif script.output_type == script.OutputDataType.PD_AND_MPL:
                 if script.has_chart_data and script.table_data:
                     builder.add_image(
-                        script.chart_image_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.chart_image_file, script.name, script_caption)
                     builder.add_table(
-                        script.table_data_file, script.name, f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}")
+                        script.table_data_file, script.name, script_caption)
 
     pdf_file = builder.to_file()
     # builder.cleanup()
@@ -159,13 +165,13 @@ def handover_script(user, script):
             f"[script handover] Script * {script.name} * run by user * {username} * FAILURE")
 
 
-def handover_report(user, report, run_scripts=False):
+def handover_report(user, report, run_scripts=False, base_url=None):
     if user is None:
         username = "None"
     else:
         username = user.username
     logger.info(
         f"[report handover] Updating report * {report.name} * for user * {username} *")
-    report.update(run_scripts)
+    report.update(run_scripts, base_url)
     logger.info(
         f"[report handover] Finished update of report * {report.name} * for user * {username} *")

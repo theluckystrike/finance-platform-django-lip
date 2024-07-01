@@ -54,9 +54,6 @@ class PDFBuilder:
         if spacer:
             self.flowables.append(Spacer(1, 12))
 
-    # def get_current_page_height(self):
-    #     pass
-
     def _chart_title(self, title):
         return Paragraph(
             title, style=chart_title_style)

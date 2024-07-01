@@ -34,13 +34,13 @@ class Report(models.Model):
     def __str__(self):
         return self.name
 
-    def update(self, runscripts=False):
+    def update(self, runscripts=False, base_url=None):
         if self.status != "running":
             self.status = "running"
             self.save(update_fields=["status"])
         try:
             pfd_file = scripts_to_pdf(
-                self.scripts.all().order_by("index_in_category"), self.name)
+                self.scripts.all().order_by("index_in_category"), self.name, base_url)
             self.latest_pdf.save(
                 f"{self.name}.pdf", pfd_file)
             self.last_updated = timezone.now()
