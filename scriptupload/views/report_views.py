@@ -1,13 +1,13 @@
 import django_rq
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from ..utils.runners import run_script
 from ..utils.utils import get_script_hierarchy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
-from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm
+from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm, MergeReportsForm
 from ..utils.utils import scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
-from ..models import Script, Category, Report, ReportEmailTask
+from ..models import Script, Category, Report, ReportEmailTask, merge_reports
 from django.contrib import messages
 from django.template.defaulttags import register
 from django.contrib.auth.decorators import login_required
@@ -100,13 +100,32 @@ def custom_report_page(request):
 
 @login_required
 def reports_page(request):
+    if request.method == "POST":
+        merge_form = MergeReportsForm(request.POST)
+        if merge_form.is_valid():
+            new_report_name = merge_form.cleaned_data['new_report_name']
+            report1 = merge_form.cleaned_data['report1']
+            report2 = merge_form.cleaned_data['report2']
+            if merge_reports(report1, report2, request.user, new_report_name):
+                messages.success(request, "Reports merged successfully")
+                # return HttpResponse(status=200)
+            else:
+                messages.error(request, "Unable to merge these reports")
+                # return HttpResponse(status=400)
+        else:
+            logger.debug(
+                f"[report merge] MergeReportsFrom was invalid: {merge_form.errors}")
+            messages.error(request, mark_safe(f"Unable to merge these reports:<br>{merge_form.errors}"))
+    else:
+        merge_form = MergeReportsForm()
     return render(
         request,
         "bootstrap/report/reports.html",
         {
             "scripts": Script.objects.all(),
             "categories": Category.objects.filter(parent_category=None),
-            "reports": Report.objects.all()
+            "reports": Report.objects.all(),
+            'merge_reports_form': merge_form
         }
     )
 

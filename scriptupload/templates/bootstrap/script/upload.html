@@ -15,7 +15,7 @@
             <div class="row mx-0 p-0">
                 <div class="col-11 m-0 p-0 pe-1">
     
-                    <select id="category" name="category" class="form-control m-0" required>
+                    <select id="category" name="category" class="form-select m-0" required>
                         <option value="" disabled selected>Select a category</option>
                         {% for cat in categories %}
                         <optgroup label="{{cat.name}}">
@@ -38,7 +38,7 @@
         </div>
         <div class="mb-3">
             <label for="output_type" class="form-label">How would you like to view data?</label>
-            <select name="output_type" class="form-control" required>
+            <select name="output_type" class="form-select" required>
                 <option value="" disabled selected>Select an option</option>
                 {% for type in output_types %}
                     <option  value="{{type}}">{{type.label}}</option>

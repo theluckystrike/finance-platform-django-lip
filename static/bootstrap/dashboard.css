@@ -133,7 +133,7 @@ body {
   margin-top: .125rem;
   margin-left: 1.25rem;
 }
-.form-control {
+.form-control, .form-select{
     margin-bottom: 1.5rem;
     border: 2px solid var(--very-dark-green);
 }

@@ -38,6 +38,12 @@ class NewReportForm(forms.ModelForm):
         fields = ("name", "scripts",)
 
 
+class MergeReportsForm(forms.Form):
+    new_report_name = forms.CharField(label="New Report Name", max_length=1000)
+    report1 = forms.ModelChoiceField(queryset=Report.objects.all(), label='Report 1')
+    report2 = forms.ModelChoiceField(queryset=Report.objects.all(), label='Report 2')
+
+
 class NewReportTaskForm(forms.ModelForm):
     class Meta:
         model = ReportEmailTask

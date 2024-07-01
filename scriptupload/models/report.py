@@ -70,4 +70,26 @@ class ReportEmailTask(models.Model):
         return f"{self.report.name}-{self.day}"
 
 
+def merge_reports(report1: Report, report2: Report, user: User, name: str):
+    logger.debug(
+        f"[report merge] Merging reports '{report1.name}' and '{report2.name}'")
+    r1c = report1.scripts.count()
+    r2c = report2.scripts.count()
+    if r1c == 0 or r2c == 0:
+        logger.debug(
+            f"[report merge] Reports '{report1.name}' ({r1c} scripts) and '{report2.name}' ({r2c} scripts) cannot be merged")
+        return False
+    if report1 == report2:
+        logger.debug(
+            f"[report merge] Cannot merge report '{report1.name}' ({r1c} scripts) with itself")
+        return False
+    merged_scripts_list = report1.scripts.all() | report2.scripts.all()
+    new_report = Report(added_by=user, name=name)
+    new_report.save()
+    new_report.scripts.set(merged_scripts_list)
+    logger.debug(
+        f"[report merge] Successfully merged reports '{report1.name}' ({r1c} scripts) and '{report2.name}' ({r2c} scripts)")
+    return True
+
+
 report_signals(Report)
