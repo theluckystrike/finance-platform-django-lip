@@ -108,10 +108,8 @@ def reports_page(request):
             report2 = merge_form.cleaned_data['report2']
             if merge_reports(report1, report2, request.user, new_report_name):
                 messages.success(request, "Reports merged successfully")
-                # return HttpResponse(status=200)
             else:
                 messages.error(request, "Unable to merge these reports")
-                # return HttpResponse(status=400)
         else:
             logger.debug(
                 f"[report merge] MergeReportsFrom was invalid: {merge_form.errors}")
@@ -122,7 +120,6 @@ def reports_page(request):
         request,
         "bootstrap/report/reports.html",
         {
-            "scripts": Script.objects.all(),
             "categories": Category.objects.filter(parent_category=None),
             "reports": Report.objects.all(),
             'merge_reports_form': merge_form
@@ -233,7 +230,7 @@ def report_page(request, reportname):
         request,
         "bootstrap/report/report.html",
         {
-            "scripts": Script.objects.all(),
+            # "scripts": Script.objects.all(),
             "categories": Category.objects.filter(parent_category=None),
             "report": report,
             "tasks": ReportEmailTask.objects.filter(report=report),
