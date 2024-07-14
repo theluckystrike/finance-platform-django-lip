@@ -11,8 +11,11 @@ import json
 logger = logging.getLogger("testlogger")
 logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
+indexes = {
+    "XEG": "https://www.blackrock.com/ca/investors/en/products/239839/ishares-sptsx-capped-energy-index-etf/1464253357814.ajax?tab=all&fileType=json",
+    "XDG": "https://www.blackrock.com/ca/investors/en/products/239848/ishares-sptsx-global-gold-index-etf/1464253357814.ajax?tab=all&fileType=json"
+}
 
-url = "https://www.blackrock.com/ca/investors/en/products/239839/ishares-sptsx-capped-energy-index-etf/1464253357814.ajax?tab=all&fileType=json"
 columns = [
     "Ticker",
     "Name",
@@ -27,11 +30,11 @@ columns = [
 ]
 
 
-def get_index_data():
+def get_index_data(url, indexticker):
     response = requests.get(url)
     if response.status_code != 200:
         logger.error(
-            f"[black rock index updater] Failed to get index. Status code {response.status_code} received. Error: {response.text}"
+            f"[black rock index updater] Failed to get index {indexticker}. Status code {response.status_code} received. Error: {response.text}"
         )
         return None
     rjson = json.loads(response.text.replace("\ufeff", ""))
@@ -44,12 +47,11 @@ def get_index_data():
     data = pd.DataFrame(data, columns=columns)
     todays_date = datetime.today().date()
     data["date"] = todays_date
-
     return data
 
 
-def add_index_data():
-    data = get_index_data()
+def add_index_data(url, indexticker):
+    data = get_index_data(url, indexticker)
     if data is None:
         return
     error_count = 0
@@ -57,6 +59,7 @@ def add_index_data():
         try:
             new_data_point = BlackRockIndexData(
                 date=row["date"],
+                indexticker=indexticker,
                 ticker=row["Ticker"],
                 name=row["Name"],
                 sector=row["Sector"],
@@ -73,7 +76,7 @@ def add_index_data():
             error_count += 1
 
     logger.info(
-        f"[stock exchange data updater] Added {len(data)-error_count}/{len(data)} new entries to database with date {data.iloc[0].date}"
+        f"[blackrock index data updater] Added {len(data)-error_count}/{len(data)} new entries to database with date {data.iloc[0].date} for {indexticker}"
     )
 
 
@@ -91,6 +94,7 @@ class Command(BaseCommand):
         in this function only
         """
 
-        logger.info(f"[blackrock index data updater] Updating Index data")
-        add_index_data()
-        logger.info(f"[blackrock index data updater] Finished updating Index data")
+        for indexticker, url in indexes.items():
+            logger.info(f"[blackrock index data updater] Updating index data for {indexticker}")
+            add_index_data(url, indexticker)
+            logger.info(f"[blackrock index data updater] Finished updating index data for {indexticker}")

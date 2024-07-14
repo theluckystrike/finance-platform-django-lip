@@ -106,7 +106,8 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
         if index:
             queryset = queryset.filter(index__in=index)
         if start_date and end_date:
-            queryset = queryset.filter(date_added__range=[start_date, end_date])
+            queryset = queryset.filter(
+                date_added__range=[start_date, end_date])
         return queryset
 
 
@@ -187,9 +188,10 @@ class ScriptTableDataRetrieveView(generics.RetrieveAPIView):
     lookup_field = "id"
 
 
-class BlackRockIndexDataViewSet(viewsets.ModelViewSet):
+class BlackRockXEGDataViewSet(viewsets.ModelViewSet):
 
-    queryset = BlackRockIndexData.objects.all().order_by("date")
+    queryset = BlackRockIndexData.objects.all().filter(
+        indexticker="XEG").order_by("date")
     serializer_class = BlackRockIndexDataSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -203,6 +205,30 @@ class BlackRockIndexDataViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    def get_queryset(self):
+        queryset = self.queryset
+        date = self.request.query_params.get("date", None)
+        if date:
+            queryset = queryset.filter(date=date)
+        return queryset
+
+
+class BlackRockXDGDataViewSet(viewsets.ModelViewSet):
+
+    queryset = BlackRockIndexData.objects.all().filter(
+        indexticker="XDG").order_by("date")
+    serializer_class = BlackRockIndexDataSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        is_many = isinstance(request.data, list)
+        serializer = self.get_serializer(data=request.data, many=is_many)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def get_queryset(self):
         queryset = self.queryset

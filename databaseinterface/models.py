@@ -95,6 +95,7 @@ class StockExchangeData(models.Model):
 
 
 class BlackRockIndexData(models.Model):
+    indexticker = models.CharField(max_length=6)
     date = models.DateField()
     ticker = models.CharField(max_length=6)
     name = models.CharField(max_length=72)
@@ -108,9 +109,9 @@ class BlackRockIndexData(models.Model):
     fx_rate = models.FloatField(default=0.0, null=True, blank=True)
 
     class Meta:
-        verbose_name = "BlackRock iShares S&P/TSX Capped Energy Index ETF Data"
-        verbose_name_plural = "BlackRock iShares S&P TSX"
-        # unique_together = ["date", "exchange_name"]
+        verbose_name = "BlackRock iShares ETF data"
+        verbose_name_plural = "BlackRock iShares ETF data"
+        unique_together = ["date", "ticker", "indexticker"]
 
     def __str__(self):
-        return f"{self.ticker} {self.exchange.upper()} {self.date}"
+        return f"{self.indexticker} - {self.ticker} {self.date}"
