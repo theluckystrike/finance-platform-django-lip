@@ -46,6 +46,8 @@ class Script(models.Model):
     added_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
 
+    description = models.TextField(null=True, blank=True, max_length=300)
+
     class OutputDataType(models.TextChoices):
         MPL_PYPLT = "plt", _("Chart (using matplotlib.pyplot.savefig())")
         PANDAS = "pd", _("Table (using pandas.Dataframe.to_csv())")

@@ -15,7 +15,7 @@ class ScriptuploadConfig(AppConfig):
     def ready(self):
         import scriptupload.signals
         # execute only if not running migrations
-        if 'migrate' not in sys.argv:
+        if 'migrate' not in sys.argv and 'makemigrations' not in sys.argv:
             from .models import Report, Script
             # reset runs that were interrupted by crash or other
             logger.info(
