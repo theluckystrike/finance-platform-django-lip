@@ -15,7 +15,7 @@ class ScriptUploadForm(forms.ModelForm):
 
     class Meta:
         model = Script
-        fields = ("name", "file", "category", "output_type")
+        fields = ("name", "file", "category", "output_type", "description")
 
     def __init__(self, *args, **kwargs):
         super(ScriptUploadForm, self).__init__(*args, **kwargs)

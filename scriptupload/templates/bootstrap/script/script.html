@@ -111,6 +111,14 @@
                         <th>Output data type:</th>
                         <td>{{ script|output_type_name }}</td>
                     </tr>
+                    <tr>
+                        <th>Description:</th>
+                        {% if script.description %}
+                        <td>{{ script.description}}</td>
+                        {% else %}
+                        <td>-</td>
+                        {% endif %}
+                    </tr>
                 </table>
             </div>
         </div>

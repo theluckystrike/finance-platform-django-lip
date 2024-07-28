@@ -4,26 +4,24 @@
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
     <h1 class="h2"><a href="{% url 'script' scriptname=script.name %}"><span class="back-button"
-        data-feather="arrow-left"></span></a>&nbsp;{{script.name}} - edit code</h1>
+                data-feather="arrow-left"></span></a>&nbsp;Editing ({{script.name}})</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <!-- <a href="{% url 'script_edit' scriptname=script.name %}"> -->
-            <button type="submit" form="codeForm" class="btn btn-sm btn-outline-success">Save changes&nbsp;<span
+        <button type="submit" form="codeForm" class="btn btn-sm btn-outline-success">Save changes&nbsp;<span
                 class="align-text-bottom" data-feather="save"></span></button>
-        <!-- </a> -->
     </div>
 </div>
-<!-- <div class="row p-2" id="something"> -->
-    <form method="POST" class="" id="codeForm">
-        {% csrf_token %}
-        <!-- <div class="border border-gray-400 p-2 h-[100%] text-left"> -->
-            <textarea id="codeEditorArea" style="display: none;" name="edited_content">{{ file_contents }}</textarea>
-        <!-- </div> -->
-    </form>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
-<!-- </div> -->
+<form method="POST" class="" id="codeForm">
+    {% csrf_token %}
+    <label for="" class="form-label">Description</label>
+    <textarea class="form-control" name="description">{{script.description}}</textarea>
+    <label for="" class="form-label">Code</label>
+    <textarea id="codeEditorArea" style="display: none;" name="edited_content">{{ file_contents }}</textarea>
+</form>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("codeEditorArea"), {
         mode: "python",  // Set the language mode
@@ -35,12 +33,10 @@
     });
 </script>
 <style>
-    
     .CodeMirror {
-        border: 1px solid #eee;
+        border: 2px solid #000000;
         height: 70vh;
     }
-    
-    </style>
+</style>
 <script>editor.refresh()</script>
 {% endblock %}

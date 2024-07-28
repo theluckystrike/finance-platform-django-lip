@@ -153,19 +153,26 @@ def script_edit_page(request, scriptname):
     """
     Configures the "Edit" button that shows when looking at a script and the page that is shown when clicked.
     """
+    script = get_object_or_404(Script, name=scriptname)
     if request.method == "GET":
-        script = get_object_or_404(Script, name=scriptname)
         file_contents = script.file.read().decode("utf-8")
-        return render(request, "bootstrap/script/script_edit.html", {'file_contents': file_contents, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+        return render(request, "bootstrap/script/script_edit.html", {'file_contents': file_contents, "script": script, "categories": Category.objects.filter(parent_category=None)})
     elif request.method == "POST":
-        script = get_object_or_404(Script, name=scriptname)
         # Get the edited script content from request
-        edited_content = request.POST.get('edited_content', '')
+        script_code = script.file.read().decode("utf-8")
+        edited_content = request.POST.get(
+            'edited_content', script_code)
+        edited_description = request.POST.get('description', script.description)
         # encode and save to file
-        script.file.save(os.path.basename(script.file.name),
-                         ContentFile(edited_content.encode("utf-8")))
-        script.last_updated = timezone.now()
-        script.save(update_fields=["last_updated"])
+        if edited_content != script_code:
+            script.file.save(os.path.basename(script.file.name),
+                            ContentFile(edited_content.encode("utf-8")))
+            logger.info(f'[script edit page] Successfully updated code for script * {script.name} *')
+        if edited_description != script.description:
+            script.description = edited_description
+            logger.info(f'[script edit page] Successfully updated description for script * {script.name} *')
+            # script.last_updated = timezone.now()
+            script.save(update_fields=["description"])
         messages.success(request, "Script updated successfully")
         return redirect(script_page, script.name)
 
