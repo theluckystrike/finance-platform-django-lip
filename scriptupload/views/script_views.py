@@ -38,7 +38,7 @@ def upload_script(request):
             if (not file.name.endswith(".py")) and (not file.name.endswith(".ipynb")):
                 messages.error(request, mark_safe(
                     "<u>Not a valid Python file</u>:<br/>File must be .py or .ipynb"))
-                return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+                return render(request, "bootstrap/script/upload.html", {"categories": Category.objects.filter(parent_category=None)})
 
             if file.name.endswith('.ipynb'):
                 # if the file is a jupyter notebook, we need to convert it
@@ -66,7 +66,7 @@ def upload_script(request):
                 request, "A script with this name has already been added")
     else:
         form = ScriptUploadForm()
-    return render(request, "bootstrap/script/upload.html", {"scripts": Script.objects.all(), 'output_types': output_types, "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/script/upload.html", {'output_types': output_types, "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -108,7 +108,7 @@ def script_page(request, scriptname):
         RequestConfig(request).configure(table)
     else:
         table = None
-    return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script_table": table, "script": script, "scripts": Script.objects.all(), "categories": Category.objects.filter(parent_category=None)})
+    return render(request, "bootstrap/script/script.html", {'nameform': nameform, "script_table": table, "script": script, "categories": Category.objects.filter(parent_category=None)})
 
 
 @login_required
@@ -158,13 +158,13 @@ def script_edit_page(request, scriptname):
         file_contents = script.file.read().decode("utf-8")
         return render(request, "bootstrap/script/script_edit.html", {'file_contents': file_contents, "script": script, "categories": Category.objects.filter(parent_category=None)})
     elif request.method == "POST":
-        # Get the edited script content from request
+        # Get the edited script content and description from request
         script_code = script.file.read().decode("utf-8")
         edited_content = request.POST.get(
             'edited_content', script_code)
         edited_description = request.POST.get('description', script.description)
-        # encode and save to file
         if edited_content != script_code:
+            # encode and save to file
             script.file.save(os.path.basename(script.file.name),
                             ContentFile(edited_content.encode("utf-8")))
             logger.info(f'[script edit page] Successfully updated code for script * {script.name} *')
