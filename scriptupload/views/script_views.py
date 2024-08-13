@@ -200,7 +200,11 @@ def script_search(request):
             for result in results:
                 r = {
                     'name': result.name,
-                    'url': f"/scripts/{result.name}"
+                    'url': f"/scripts/view/{result.name}",
+                    'category': result.category.name if result.category else "",
+                    'parent_category': result.category.parent_category.name if result.category else '',
+                    'super_category': result.category.parent_category.parent_category.name if result.category else ''
+
                 }
                 data.append(r)
         else:

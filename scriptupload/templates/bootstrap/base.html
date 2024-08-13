@@ -110,6 +110,47 @@
       border-style: solid;
       border-color: transparent transparent white transparent;
     }
+
+    #search-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    #search-results {
+      position: absolute;
+      top: 100%;
+      left: 3%;
+      width: 94%;
+      background-color: white;
+      /* border: 1px solid #ccc; */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .result-item {
+      padding: 10px;
+      border-left: 2px solid black;
+      border-right: 2px solid black;
+    }
+
+    .result-item:last-child {
+      border-bottom: 2px solid black;
+    }
+
+    .result-item:first-child {
+      border-top: 1px solid black;
+    }
+
+    .result-item:nth-child(even) {
+      background-color: rgb(241, 240, 240);
+    }
+
+    .result-item:hover {
+      background-color: rgb(204, 201, 201);
+      cursor: pointer;
+    }
   </style>
 
 
@@ -127,8 +168,53 @@
       data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <!-- TODO: SEARCH BAR AND JS -->
-    <input class="form-control w-50 rounded-pill border-0 mx-auto my-auto" type="text" placeholder="Search" aria-label="Search">
+    <div id="search-container">
+
+      <input class="form-control w-50 rounded-pill border-0 mx-auto my-auto w-100" type="text" id="search-input"
+        placeholder="Search" aria-label="Search">
+      <div id="search-results">
+
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $('#search-input').on('input', function () {
+          var query = $(this).val();
+          if (query.length > 2) { // Perform search if query length is greater than 2
+            $.ajax({
+              url: '/scripts/search/', // Update to your actual endpoint
+              type: 'POST',
+              data: { 'script_name': query, csrfmiddlewaretoken: '{{ csrf_token }}' },
+              success: function (data) {
+                var results = data.results;
+                var resultsDiv = $('#search-results');
+                resultsDiv.empty(); // Clear previous results
+                if (results.length > 0) {
+                  results.forEach(function (result) {
+                    var item = '<div class="result-item" onclick="' + "location.href='" + result.url + "'" + '"><span class="text-secondary">' + 
+                      result.super_category + '&rarr;' + result.parent_category + '&rarr;'+ result.category +
+                      '</span><br><b>' +
+                      result.name +
+                      '</b></div>';
+                    resultsDiv.append(item)
+                  });
+                } else {
+                  resultsDiv.append('<div class="result-item">No results found</div>');
+                }
+              },
+              error: function () {
+                $('#search-results').empty().append('<div class="result-item">Error occurred</div>');
+              }
+            });
+          } else {
+            $('#search-results').empty(); // Clear results if query is too short
+          }
+        });
+      });
+    </script>
+
   </header>
 
   <div class="container-fluid">

@@ -27,7 +27,7 @@ urlpatterns = [
     path('scripts/view/<str:scriptname>/run/', views.run_script_code, name="run_script"),
     path('scripts/view/<str:scriptname>/delete/', views.delete_script, name="delete_script"),
     path('all-scripts/', views.all_script_page, name="all_scripts"),
-    path('script-search/', views.script_search, name="script_search"),
+    path('scripts/search/', views.script_search, name="script_search"),
     path('scripts/<pk>/change-index/', views.change_script_category_index, name="script_change_index"),
     path('scripts/<int:scriptid>/get-status/', views.get_script_status, name="script_status"),
     # categories
