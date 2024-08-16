@@ -1,3 +1,0 @@
-from .report_views import *
-from .script_views import *
-from .category_views import *
