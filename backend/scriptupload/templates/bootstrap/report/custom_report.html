@@ -1,0 +1,362 @@
+{% extends 'bootstrap/base.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% block content %}
+
+<style>
+    #headerInfo {
+        font-size: 0.8em;
+        color: gray;
+    }
+
+    .wrap-word {
+        overflow-wrap: break-word;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
+    }
+
+    .table-card {
+        border: 1px solid rgba(0, 0, 0, 0.083);
+        transition: box-shadow 0.2s ease-in-out;
+    }
+
+    .table-card:hover {
+        -webkit-box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+        box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+    }
+
+    input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        display: inline-flex;
+        align-content: center;
+        justify-content: center;
+        font-size: 2rem;
+        padding: 0.1rem;
+        border: 0.15rem solid rgb(0, 0, 0);
+        border-radius: 0.3rem;
+        margin-right: 0.5em;
+    }
+
+    input[type="checkbox"]::before {
+        content: "";
+        width: 1rem;
+        height: 1rem;
+        clip-path: polygon(28% 38%, 41% 53%, 75% 24%, 86% 38%, 40% 78%, 15% 50%);
+        transform: scale(0);
+        background-color: rgb(0, 0, 0);
+    }
+
+    input[type="checkbox"]:checked::before {
+        transform: scale(1);
+        background-color: white;
+    }
+    input[type="checkbox"]:checked {
+        background-color: black;
+    }
+
+    input[type="checkbox"]:hover {
+        color: black;
+    }
+</style>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h1">All scripts <span id="headerInfo">({{number_of_scripts}})</span></h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+
+        <button type="submit" class="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
+            <i data-feather="filter"></i>
+            <span>Filter</span>
+        </button>
+        <button type="submit" class="btn icon-button my-1 mx-2" data-bs-toggle="modal"
+            data-bs-target="#saveReportModal">
+            <i data-feather="save"></i>
+            <span>Save</span>
+        </button>
+        <button type="submit" form="customReportForm" class="btn icon-button my-1 mx-2 disabled">
+            <i data-feather="download"></i>
+            <span>Download</span>
+        </button>
+    </div>
+</div>
+<div>
+    {% if number_of_scripts > -1 %}
+    <form method="post" id="customReportForm">
+        {% csrf_token %}
+        <div class="row mb-2 p-2 fw-bold">
+            <div class="col-5">
+                <h5><input type="checkbox" id="selectAllCheckbox" onclick="toggleCheckboxes()"> Name</h5>
+            </div>
+            <div class="col-1 mx-auto text-center">
+                Category
+            </div>
+            <div class="col-2 mx-auto text-center">
+                Sub Category 1
+            </div>
+            <div class="col-2 mx-auto text-center">
+                Sub Category 2
+            </div>
+            <div class="col-1 mx-auto text-center">
+                Created
+            </div>
+            <div class="col-1 mx-auto text-center">
+                Last updated
+            </div>
+        </div>
+        <div id="scriptsCheckboxes">
+            {% for script in scripts %}
+            <a href="{% url 'script' scriptname=script.name %}" class="text-decoration-none text-black">
+                <div class="row mb-2 p-2 table-card rounded-3">
+                    <div class="col-5">
+                        <span class="fw-bold fs-6"><input class="chbx" type="checkbox" name="scripts"
+                                value="{{script.id}}">
+                            {{script.name}}</span>
+                    </div>
+                    <div class="col-1 mx-auto text-center wrap-word">
+                        {{script.category.parent_category.parent_category}}
+                    </div>
+                    <div class="col-2 mx-auto text-center wrap-word">
+                        {{script.category.parent_category}}
+                    </div>
+                    <div class="col-2 mx-auto text-center wrap-word">
+                        {{script.category}}
+                    </div>
+                    <div class="col-1 mx-auto text-center">
+                        {{script.created|date:'m/d/y H:i'}}
+                    </div>
+                    <div class="col-1 mx-auto text-center">
+                        {{script.last_updated|date:'m/d/y H:i'}}
+                    </div>
+                </div>
+
+            </a>
+
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <span class="text-large">
+        Upload scripts to generate reports with them
+    </span>
+    {% endif %}
+</div>
+<div class="modal fade" id="saveReportModal" tabindex="-1" aria-labelledby="saveReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'save_custom_report' %}" method="post" enctype="multipart/form-data"
+                id="saveReportForm">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveReportModalLabel">Create a new custom report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="report_name" class="form-label">Name</label>
+                    <input type="text" name="name" id="report_name" class="form-control" required>
+                    <div class="d-none">
+                        {{report_form.scripts}}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content px-4">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div id="filters" class="row">
+                    <div class="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
+                        <label class="form-label">Category</label>
+                        <select id="categoryselect" class="form-select">
+                            <option value="-1">All</option>
+                            {% for category in categories %}
+                            {% if category.id == catfilter|add:"0" %}
+                            <option value="{{category.id}}" selected>{{category.name}}</option>
+                            {% else %}
+                            <option value="{{category.id}}">{{category.name}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
+                        <label class="form-label">Sub category 1</label>
+                        <select id="subcategoryselect" class="form-select">
+                            <option value="-1">All</option>
+                            {% for subcat in subcat1filter %}
+                            {% if subcat.id == subcat1|add:"0" %}
+                            <option value="{{subcat.id}}" selected>{{subcat.name}}</option>
+                            {% else %}
+                            <option value="{{subcat.id}}">{{subcat.name}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12">
+                        <label class="form-label">Sub category2</label>
+                        <select id="subsubcategoryselect" class="form-select">
+                            <option value="-1">All</option>
+                            {% for subcat in subcat2filter %}
+                            {% if subcat.id == subcat2|add:"0" %}
+                            <option value="{{subcat.id}}" selected>{{subcat.name}}</option>
+                            {% else %}
+                            <option value="{{subcat.id}}">{{subcat.name}}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button onclick="resetFilters()" class="btn btn-secondary">Reset</button>
+                <button onclick="filter()" class="btn btn-dark">Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filter() {
+        const category = $("#categoryselect").val()
+        const subcategory = $("#subcategoryselect").val()
+        const subsubategory = $("#subsubcategoryselect").val()
+        url = '/reports/custom-report/?'
+        if (category != "-1") {
+            url += 'category=' + category
+        }
+        if (subcategory != "-1") {
+            url += '&subcategory1=' + subcategory
+        }
+        if (subsubategory != "-1") {
+            url += '&subcategory2=' + subsubategory
+        }
+        location.replace(url)
+        return
+    }
+    function resetFilters() {
+        location.replace('/reports/custom-report/')
+    }
+    function resetSelect(selectid) {
+        $('#' + selectid).find('option')
+            .remove()
+            .end()
+            .append($('<option>', {
+                value: "-1",
+                text: "All"
+            }))
+    }
+    function updateSubCategory() {
+        return new Promise(function (resolve, reject) {
+
+            const id = $("#categoryselect").val()
+            if (id == "-1") {
+                resetSelect("subcategoryselect");
+                resetSelect("subsubcategoryselect");
+                return
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/categories/get-subcategories/' + id + '/',
+                success: function (response) {
+                    resetSelect("subcategoryselect");
+                    resetSelect("subsubcategoryselect");
+                    select = $("#subcategoryselect")
+                    $.each(response.subcategories, function (index, subcategory) {
+                        select.append($('<option>', {
+                            value: subcategory.id,
+                            text: subcategory.name
+                        }))
+                    })
+                    resolve(response)
+                }
+            })
+        }
+
+        )
+    }
+    function updateSubSubCategory() {
+        return new Promise(function (resolve, reject) {
+
+            const id = $("#subcategoryselect").val()
+            if (id == "-1") {
+                resetSelect("subsubcategoryselect");
+                return
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/categories/get-subcategories/' + id + '/',
+                success: function (response) {
+                    resetSelect("subsubcategoryselect")
+                    select = $("#subsubcategoryselect")
+                    $.each(response.subcategories, function (index, subcategory) {
+                        select.append($('<option>', {
+                            value: subcategory.id,
+                            text: subcategory.name
+                        }))
+                    })
+                    resolve(response)
+                }
+            })
+        })
+    }
+    $("#categoryselect").change(updateSubCategory)
+    $("#subcategoryselect").change(updateSubSubCategory)
+
+
+    function toggleCheckboxes() {
+        var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        var checkboxes = document.querySelectorAll('#scriptsCheckboxes input[type="checkbox"]');
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form1 = document.getElementById('customReportForm');
+        var form2 = document.getElementById('saveReportForm');
+
+        // Event listener for checkbox changes in form1
+        form1.addEventListener('change', function () {
+            updateScriptsField(form1)
+        });
+
+        function updateScriptsField() {
+            var selectedScripts = getSelectedCheckboxValues(document.getElementById("scriptsCheckboxes"));
+            var scriptsField = form2.querySelector('[name="scripts"]');
+
+            // Clear existing selections
+            while (scriptsField.options.length > 0) {
+                scriptsField.remove(0);
+            }
+
+            // Add selected scripts to the Django form's scripts field
+            selectedScripts.forEach(function (scriptId) {
+                var option = document.createElement('option');
+                option.value = scriptId;
+                option.text = 'Script ' + scriptId;
+                option.selected = 'selected';
+                scriptsField.add(option);
+            });
+        }
+
+        // Function to get selected checkbox values
+        function getSelectedCheckboxValues(form) {
+            var checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+            var values = Array.from(checkboxes).map(function (checkbox) {
+                return checkbox.value;
+            });
+            return values;
+        }
+    });
+</script>
+{% endblock %}

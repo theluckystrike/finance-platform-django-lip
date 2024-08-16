@@ -1,0 +1,9 @@
+@import './variables.css';
+
+
+.login-card{
+    max-width: 600px;
+    width: 75%;
+    background-color: var(--light-green);
+    border: none;
+}

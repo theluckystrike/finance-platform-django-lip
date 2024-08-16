@@ -1,0 +1,293 @@
+{% extends 'bootstrap/base.html' %}
+{% load static %}
+{% block content %}
+{% load render_table from django_tables2 %}
+<style>
+    #placeholder {
+        border: 3px dashed #a4a4a4;
+        min-height: 50vh;
+        max-width: 1200px;
+    }
+
+    #placeholder-no-border {
+        min-height: 50vh;
+        max-width: 1200px;
+    }
+
+    #script-chart {
+        max-width: 1200px;
+    }
+
+    th {
+        font-weight: 700;
+        margin-right: 30px;
+        padding-right: 10px;
+    }
+
+    table {
+        vertical-align: top;
+    }
+
+    th,
+    td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .dropdown-menu-info {
+        background-color: var(--very-dark-green);
+        color: white;
+        min-width: 30vw;
+    }
+
+    a.disabled {
+        pointer-events: none;
+        /* cursor: default; */
+        c
+    }
+</style>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+    <h1 class="h1">{{script.name}}
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#changeNameModal">
+            <span data-feather="edit" class="align-text-middle"></span>
+        </button>
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+
+        {% if script.status == script.ExecutionStatus.RUNNING %}
+        <button type="button" class="btn icon-button my-1 mx-2 disabled">
+            <i data-feather="edit-2"></i>
+            <span>Edit</span>
+        </button>
+        {% else %}
+        <a href="{% url 'script_edit' scriptname=script.name %}" class="text-decoration-none text-black">
+            <button type="button" class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="edit-2"></i>
+                <span>Edit</span>
+            </button>
+        </a>
+        {% endif %}
+        <form method="post" action="{% url 'run_script' script.name %}">
+            {% csrf_token %}
+            <button type="submit" class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="play"></i>
+                <span>Run</span>
+            </button>
+        </form>
+        <form method="post" action="{% url 'delete_script' script.name %}">
+            {% csrf_token %}
+            <button type="submit"
+                class="btn icon-button my-1 mx-2{% if script.status == script.ExecutionStatus.RUNNING %} disabled {% endif %}">
+                <i data-feather="trash"></i>
+                <span>Delete</span>
+            </button>
+        </form>
+        <div class="btn-group">
+            <button type="button" class="icon-button my-1 mx-2" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                aria-expanded="false">
+                <i>i</i>
+                <span>Info</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-info mt-2 p-3">
+                <table>
+                    <tr>
+                        <th>ID (for API):</th>
+                        <td>{{ script.pk }}</td>
+                    </tr>
+                    <tr>
+                        <th>Category:</t>
+                        <td>{{script.category.parent_category.parent_category.name}} &rarr;
+                            {{script.category.parent_category.name}} &rarr; {{script.category.name}}</td>
+                    </tr>
+                    <tr>
+                        <th>Uploaded:</th>
+                        <td>{{ script.created }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last updated:</th>
+                        <td>{{ script.last_updated }}</td>
+                    </tr>
+                    <tr>
+                        <th>Output data type:</th>
+                        <td>{{ script|output_type_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description:</th>
+                        {% if script.description %}
+                        <td>{{ script.description}}</td>
+                        {% else %}
+                        <td>-</td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-9 col-lg-12" id="script-frame">
+        {% if script.status == script.ExecutionStatus.SUCCESS %}
+        {% if script.has_chart_data and script.output_type == script.OutputDataType.MPL_PYPLT %}
+        <div class="d-flex align-item-center m-2">
+            <img class="w-100 h-100 mx-auto" src="{{script.chart_image_file.url}}" id="script-chart">
+        </div>
+        {% elif script.table_data and script.output_type == script.OutputDataType.PANDAS %}
+        <div class="d-flex align-item-center m-2">
+            <div class="w-100 h-100 mx-auto" id=script-chart>
+                {% render_table script_table %}
+            </div>
+        </div>
+        {% elif script.has_table_data and script.has_chart_data and script.output_type == script.OutputDataType.PD_AND_MPL %}
+        </div>
+        <div class="d-flex justify-content-center m-1">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-chart-tab" data-bs-toggle="pill" data-bs-target="#pills-chart"
+                        type="button" role="tab" aria-controls="pills-chart" aria-selected="true">Chart</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-table-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-table" type="button" role="tab" aria-controls="pills-table"
+                        aria-selected="false">Table</button>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade" id="pills-chart" role="tabpanel" aria-labelledby="pills-chart-tab"><img
+                    class="w-100 h-100 mx-auto" src="{{script.chart_image_file.url}}" id="script-chart"></div>
+            <div class="tab-pane fade show active" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+                <div class="w-100 h-100 mx-auto" id=script-chart>
+                    {% render_table script_table %}
+                </div>
+            </div>
+        {% else %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small">Run script to see the chart</div>
+        </div>
+        {% endif %}
+        {% elif script.status == script.ExecutionStatus.RUNNING %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder-no-border">
+            <div class="mx-auto my-auto">
+                <div class="spinner-border" role="status"></div>
+            </div>
+        </div>
+        {% elif script.status == script.ExecutionStatus.FAILURE %}
+        <div class="mx-auto rounded d-flex align-item-center m-2" id="placeholder">
+            <div class="mx-auto my-auto lead-small"><u>This script produced an error:</u><br> {{script.error_message}}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Add script to an additional category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="category_name" class="form-label">Category</label>
+                    <select id="category_name" name="category_name" class="form-control" required>
+                        <option value="" disabled selected>Select a category</option>
+                        {% for cat in categories %}
+                        <optgroup label="{{cat.name}}">
+                            {% for subcat in cat.category_set.all %}
+                        <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                            {% if subcat != script.category %}
+                            <option value="{{subcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}} general
+                            </option>
+                            {% endif %}
+                            {% for subsubcat in subcat.category_set.all %}
+                            {% if subsubcat != script.category %}
+                            <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeNameModal" tabindex="-1" aria-labelledby="changeNameModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change script name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <label for="name" class="form-label">Script name</label>
+                        <input type="text" id="name" name="name" value="{{nameform.instance.name}}"
+                            placeholder="{{ nameform.instance.name }}" class="form-control" autocomplete="on" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-control" required>
+                            <option value="" disabled selected>Select a category</option>
+                            {% for cat in categories %}
+                            <optgroup label="{{cat.name}}">
+                                {% for subcat in cat.category_set.all %}
+                            <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                                {% for subsubcat in subcat.category_set.all %}
+                                    <option value="{{subsubcat.id}}" {% if subsubcat == nameform.instance.category %}selected{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    var status = "{{script.status}}"
+    if (status == "{{script.ExecutionStatus.RUNNING}}") {
+        pollResult()
+    }
+    function pollResult() {
+        var intervalId = setInterval(function () {
+            $.ajax({
+                url: "{% url 'script_status' scriptid=script.id %}",
+                type: 'GET',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        clearInterval(intervalId);
+                        window.location.reload()
+                    } else if (response.status == "failure") {
+                        clearInterval(intervalId);
+                        window.location.reload()
+                    }
+                },
+                error: function () {
+                    console.error('Error in request');
+                }
+            });
+        }, 5000);
+    }
+</script>
+{% endblock %}

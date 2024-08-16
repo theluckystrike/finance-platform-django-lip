@@ -1,0 +1,104 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+
+
+<div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 text-center">
+    <h1 class="h1 fw-bold">Upload a Script</h1>
+</div>
+
+<div class="d-flex justify-content-center">
+    <form class="w-75" style="max-width: 600px;" method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <div class="row mx-0 p-0">
+                <div class="col-11 m-0 p-0 pe-1">
+    
+                    <select id="category" name="category" class="form-select m-0" required>
+                        <option value="" disabled selected>Select a category</option>
+                        {% for cat in categories %}
+                        <optgroup label="{{cat.name}}">
+                            {% for subcat in cat.category_set.all %}
+                        <optgroup label="&nbsp;&nbsp;&nbsp;&nbsp;{{subcat.name}}">
+                            {% for subsubcat in subcat.category_set.all %}
+                            <option value="{{subsubcat.id}}">&nbsp;&nbsp;&nbsp;&nbsp;{{subsubcat.name}}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-dark col col-1 p-0 justify-content-center" type="button" data-bs-toggle="modal" data-bs-target="#newCategoryModal">
+                    <span data-feather="plus" class="align-text-bottom p-0"></span>
+                </button>
+            </div>
+
+        </div>
+        <div class="mb-3">
+            <label for="output_type" class="form-label">How would you like to view data?</label>
+            <select name="output_type" class="form-select" required>
+                <option value="" disabled selected>Select an option</option>
+                {% for type in output_types %}
+                    <option  value="{{type}}">{{type.label}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Script name</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" id="description" name="description" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">Select a file</label>
+            <input type="file" id="file" name="file" class="form-control" required>
+        </div>
+        <div class="mx-auto text-center">
+
+            <button type="submit" class="btn btn-dark px-5">Upload</button>
+        </div>
+    </form>
+    <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'create_category' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newCategoryModalLabel">Create a category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Category name</label>
+                            <input type="text" id="name" name="name" class="form-control" autocomplete="on" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="parent" class="form-label">Parent category</label>
+                            <select id="parent" name="parent" class="form-control" required>
+                                <option value="" selected>Select a category</option>
+                                <option value="-1">None</option>
+                                {% for cat in categories %}
+                                <option value="{{cat.id}}">{{cat.name}}</option>
+                                {% for subcat in cat.category_set.all %}
+                                <option value="{{subcat.id}}">{{cat.name}}->{{subcat.name}}</option>
+                                {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{% url 'manage_categories' %}"><button type="button" class="btn btn-secondary">Edit All Categories</button></a>
+                        <button type="submit" class="btn btn-dark">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
