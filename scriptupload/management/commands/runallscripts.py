@@ -19,6 +19,6 @@ class Command(BaseCommand):
         logger.info(
             "[all script runner] Starting to run all scripts on scheduled job")
         for script in Script.objects.all():
-            run_script(script)
+            script.run()
         logger.info(
             "[all script runner] Finished running all scripts on scheduled job")

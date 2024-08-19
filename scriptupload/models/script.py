@@ -1,5 +1,6 @@
 import logging
 from django.db import models
+import django_rq
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
@@ -231,6 +232,10 @@ class Script(models.Model):
     class Meta:
         verbose_name = "Script"
         verbose_name_plural = "Scripts"
+
+    def run(self):
+        q = django_rq.get_queue("scripts")
+        q.enqueue(run_script, self)
 
 
 script_signals(Script)
