@@ -1,17 +1,22 @@
 .main-header-conatiner{
 	height: 70px;
 }
-.search-bar-conatiner>input{
 
+.search-bar-conatiner>input{
 	height: 50px;
 	width: 70%;
 	border-radius: 25px;
 	padding: 15px;
 }
-.search-bar-conatiner{
 
-	display: flex;
+.search-bar-conatiner{
+	    display: flex;
 		justify-content: center;
 		height: 100%;
 		align-items: center;
+}
+
+.header-fixed{
+	position: sticky;
+	top: 0;
 }

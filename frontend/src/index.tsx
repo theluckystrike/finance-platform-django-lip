@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import "./index.css";
+import "./assest/css/Custom.css";
 import { SimpleRoute } from "./Routes/SimpleRoute";
 import { AuthRoute } from "./Routes/AuthRoute";
 

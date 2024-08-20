@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import SimpleHeader from '../Comopnent/Header/SimpleHeader';
-import SimpleFooter from '../Comopnent/Footer/SimpleFooter';
+ 
 
 
 const AuthLayout: React.FC = () => {
