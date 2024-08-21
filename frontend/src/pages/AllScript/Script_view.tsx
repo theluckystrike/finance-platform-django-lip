@@ -81,7 +81,7 @@ const [activeComponet,setActivecomponet]=useState('chart')
                         <span>Chart</span>
                     </button>}
       
-                    {activeComponet=== 'chart'   &&              <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
+                    {activeComponet=== 'chart'   &&  <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
                     <Icon icon='TableRows' size='20px'/>
 
                         <span>Table</span>

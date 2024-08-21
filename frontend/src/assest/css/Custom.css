@@ -53,3 +53,7 @@ body {
   
   .modal-content {
     border-radius: 25px !important}
+	 
+	.tr-value:hover{
+		background-color: #9be59fc6;
+	}
