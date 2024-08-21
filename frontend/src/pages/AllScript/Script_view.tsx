@@ -34,7 +34,7 @@ const ScriptView = () => {
     
     }
 
-
+const [activeComponet,setActivecomponet]=useState('chart')
    
    
    
@@ -48,7 +48,7 @@ const ScriptView = () => {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3 pb-2 mb-3">
                 <div>
 
-                <h1 className="h1"> Gold Relative Strength  </h1>
+                <h1 className="h1"> Gold Relative Strength <span id="headerInfo">(132)</span> </h1>
             <h6 className='ps-1'>Last update {dateOnly}</h6>
 
                 </div>
@@ -69,28 +69,47 @@ const ScriptView = () => {
 
                         <span>Delete</span>
                     </button>
-                    <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2 disabled">
+                    <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
                     <Icon icon='Info' size='20px'/>
 
                         <span>Info</span>
                     </button>
+                 
+        {activeComponet=== 'table'   &&   <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('chart')} className="btn icon-button my-1 mx-2  ">
+                    <Icon icon='InsertChart' size='20px'/>
+
+                        <span>Chart</span>
+                    </button>}
+      
+                    {activeComponet=== 'chart'   &&              <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
+                    <Icon icon='TableRows' size='20px'/>
+
+                        <span>Table</span>
+                    </button>}
                 </div>
             </div>
             <div>
 
             </div>
-            <div style={{
+
+        {activeComponet=== 'table'   && <div style={{
+                width:'90%',
+                margin:'0px auto'
+            }}>
+            <ChartTable/>
+            
+            </div>}
+           {activeComponet=== 'chart'   && <div style={{
                 width:'80%',
                 margin:'0px auto'
             }}>
-<ChartTable/>
                 <Reanding/>
                 <Reanding/>
                 <Reanding/>
 
 
 
-            </div>
+            </div>}
            
             {/* <div style={{
                 width:'80%',

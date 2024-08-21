@@ -3,7 +3,7 @@ import { ReactComponent as Logo } from '../../assest/svg/logo_text_image_white.s
 import { SidebarMenu } from '../../Menu';
 import Icon from '../ui/icon/Icon';
 import dummyUser from '../../assest/image/logo/user.jpg'
-import {  useNavigate } from 'react-router-dom';
+import {  Link, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const navigate= useNavigate()
   
@@ -47,15 +47,15 @@ const Sidebar = () => {
       <img src={dummyUser} alt="" width={60} height={60} />
     </div>
     <div className="dropdown-menu text-center fw-bold"  aria-labelledby="dropdownMenuButton">
-      <a className="dropdown-item" href="#">
+      <Link className="dropdown-item" to="#">
         Profile
-      </a>
-      <a className="dropdown-item" href="#">
+      </Link>
+      <Link className="dropdown-item" to="#">
         Settings
-      </a>
-      <a className="dropdown-item" href="#">
+      </Link>
+      <Link className="dropdown-item" to="/">
         Sign Out
-      </a>
+      </Link>
       <div className='divss'></div>
     </div>
   </div>
