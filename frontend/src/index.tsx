@@ -5,8 +5,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./assest/css/Custom.css";
-import { SimpleRoute } from "./Routes/SimpleRoute";
-import { AuthRoute } from "./Routes/AuthRoute";
+import { SimpleRoute } from "./Routes/AuthRoute";
+import { AuthRoute } from "./Routes/SimpleRoutes";
 
 // Create the router instance with all route configurations
 const router = createBrowserRouter([

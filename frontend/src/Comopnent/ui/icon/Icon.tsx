@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as SvgIcon from './svg-icons';
 import * as Material from './material-icons';
-import pascalcase from 'pascalcase';
+
 
 interface IRefWrapperProps extends Record<string, any> {
 	children: ReactNode;
@@ -24,7 +24,7 @@ RefWrapper.displayName = 'RefWrapper';
  
 const Icon = forwardRef<HTMLSpanElement, any>(
 	({ icon, className, color, size, forceFamily, style, ...props }, ref) => {
-		const IconName = pascalcase(icon);
+		const IconName =  icon;
 
 		// @ts-ignore
 		// eslint-disable-next-line import/namespace

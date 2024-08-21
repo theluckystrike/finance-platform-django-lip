@@ -1,30 +1,62 @@
-// src/Routes/AuthRoutes.tsx
-import React from 'react';
-import AuthLayout from '../Layout/AuthLayout';
-import { AuthMenu } from '../Menu';
-import AuthLogin from '../pages/Auth/AuthLogin';
-import { AppRoute } from '../types/RouteTypes';
+import AuthGuard from "../Layout/AuthGuard";
+import AuthLayout from "../Layout/AuthLayout";
+import { ActiveRoute, SidebarMenu } from "../Menu";
+import CustomReport from "../pages/AllScript/AllScript";
+import ScriptView from "../pages/AllScript/Script_view";
+import  Home  from "../pages/Home/Home";
+import ReportViwe from "../pages/Reports/Report_view";
+import Report from "../pages/Reports/Reports";
+import UploadScript from "../pages/UploadScript/UploadScript";
  
-// Import other components and routes as needed
 
-export const AuthRoute: AppRoute[] = [
-  {
-    path: '/',
-    element: <AuthLayout />,
-    children: [
-      {
-        path: AuthMenu.login.path,
-        element: <AuthLogin />,
-      },
-      // Example of a protected route:
-      // {
-      //   path: 'profile',
-      //   element: (
-      //     <ProtectedRoutes>
-      //       <Profile />
-      //     </ProtectedRoutes>
-      //   ),
-      // },
-    ],
-  },
-];
+ 
+  
+ export const SimpleRoute = [
+    {
+      path: "/account",
+      element: (
+      <AuthGuard>
+        <AuthLayout/>
+      </AuthGuard>
+    ),
+      children: [
+        {
+          path: SidebarMenu.home.path,
+          element: <Home/>,
+        },
+        {
+          path: SidebarMenu.upload.path,
+          element: <UploadScript/>,
+        },
+        {
+          path: SidebarMenu.Allscripts.path,
+          element: <CustomReport/>,
+        },
+        {
+          path: SidebarMenu.Report.path,
+          element: <Report/>,
+        },
+        {
+          path: ActiveRoute.ReportDetails.path,
+          element: <ReportViwe/>,
+        },
+        {
+          path: ActiveRoute.ScriptDetails.path,
+          element: <ScriptView/>,
+        },
+        // {
+        //     path: 'profile',
+        //     element: (
+        //       <ProtectedRoutes>
+        //         <Profile />
+        //       </ProtectedRoutes>
+        //     ),
+        //   },
+         
+
+  
+      ],
+    
+    },
+
+  ];

@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import '../../assest/css/AllScript.css'
-import Icon from '../../Comopnent/ui/icon/Icon';
-import FilterModal from '../../Comopnent/ui/FilterModal/FilterModal';
+import Icon from '../ui/icon/Icon';
+import FilterModal from '../ui/FilterModal/FilterModal';
 import { ActiveRoute } from '../../Menu';
 
-const CustomReport = () => {
+const ChartTable = () => {
     const [category, setCategory] = useState("-1");
     const [subCategory, setSubCategory] = useState("-1");
     const [subSubCategory, setSubSubCategory] = useState("-1");
@@ -97,16 +97,7 @@ const CustomReport = () => {
         }
       ];
       
-      const [show, setShow] = useState(false);
-
-      const handleClose = () => setShow(false);
-      const handleShow = () => {
-        
-        console.log('runing');
-        
-        setShow(true);
-    
-    }
+ 
 
 
     useEffect(() => {
@@ -164,29 +155,7 @@ const CustomReport = () => {
     return (
 <>
         <div  className='mx-4'>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                <h1 className="h1">All scripts <span id="headerInfo">(132)</span></h1>
-                <div className="btn-toolbar mb-2 mb-md-0"  >
-                <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
-                       <Icon icon='AddBusiness' size='20px'/>
-                        <span>Add Home</span>
-                    </button>
-                    <button onClick={handleShow}   className="btn icon-button my-1 mx-2"  >
-                       <Icon icon='Filter' size='20px'/>
-                        <span>Filter</span>
-                    </button>
-                    <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#saveReportModal">
-                    <Icon icon='Save' size='20px'/>
-
-                        <span>Save</span>
-                    </button>
-                    <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2 disabled">
-                    <Icon icon='Download' size='20px'/>
-
-                        <span>Download</span>
-                    </button>
-                </div>
-            </div>
+           
             <div>
                 {132 > -1 ? (
                     <form method="post" id="customReportForm">
@@ -239,73 +208,12 @@ const CustomReport = () => {
                 )}
             </div>
 
-            <div className="modal fade" id="saveReportModal" tabIndex={-1} aria-labelledby="saveReportModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <form action="/save_custom_report" >
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="saveReportModalLabel">Create a new custom report</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <label htmlFor="report_name" className="form-label">Name</label>
-                                <input type="text" name="name" id="report_name" className="form-control" required />
-                                <select name="scripts" className="d-none" multiple>
-                                    {selectedScripts.map((scriptId) => (
-                                        <option value={scriptId} key={scriptId} selected>Script {scriptId}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" className="btn btn-dark">Create</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div className="modal fade" id="filtersModal" tabIndex={-1} aria-labelledby="filtersModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content px-4">
-                        <div className="modal-body">
-                            <div id="filters" className="row">
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
-                                    <label className="form-label">Category</label>
-                                    <select id="categoryselect" className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                     
-                                    </select>
-                                </div>
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
-                                    <label className="form-label">Sub category 1</label>
-                                    <select id="subcategoryselect" className="form-select" value={subCategory} onChange={(e) => setSubCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                      
-                                    </select>
-                                </div>
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12">
-                                    <label className="form-label">Sub category2</label>
-                                    <select id="subsubcategoryselect" className="form-select" value={subSubCategory} onChange={(e) => setSubSubCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                    
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-dark" onClick={handleFilter}>Filter</button>
-                                <button type="button" className="btn btn-outline-dark" onClick={handleResetFilters}>Reset Filters</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
         </div>
 
-        <FilterModal show={show} handleClose ={handleClose}/>
+        
         </>
     );
 };
 
-export default CustomReport;
+export default ChartTable;

@@ -1,5 +1,7 @@
 .main-header-conatiner{
 	height: 70px;
+ 
+
 }
 
 .search-bar-conatiner>input{
@@ -19,4 +21,5 @@
 .header-fixed{
 	position: sticky;
 	top: 0;
+	z-index: 9999 !important;
 }

@@ -41,3 +41,15 @@ body {
   .bg-light-green{
 	background-color: var(--light-green-color);
   }
+
+  .border-2px{
+	border: 2px solid var(--green-color) !important
+  }
+  input:focus{
+	border: none !important;
+  }
+
+ 
+  
+  .modal-content {
+    border-radius: 25px !important}
