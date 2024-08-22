@@ -53,7 +53,89 @@ body {
   
   .modal-content {
     border-radius: 25px !important}
-	 
+	 .modal-content .modal-body {
+		overflow: unset !important;
+	 }
 	.tr-value:hover{
 		background-color: #9be59fc6;
 	}
+
+
+	.dropdown input {
+		border: 2px solid var(--green-color);
+		width: 100%;
+		border-radius: 6px;
+padding: 5px 10px;
+height: 40px;
+
+	}
+	.dropdown label {
+		font-size: 18px;
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
+	.dropdown-content {
+		border: 2px solid var(--green-color);
+		width: 100%;
+		border-radius: 6px;
+padding: 6px;
+/* margin-top: 5px; */
+background: #fff !important;
+	}
+	.modal-dialog {
+		position: fixed; /* Use fixed positioning to ensure it stays centered relative to the viewport */
+		top: 50%; /* Position it at 50% from the top */
+		left: 50%; /* Position it at 50% from the left */
+		transform: translate(-50%, -65%) !important; /* Shift it back by 50% of its width and height to center */
+		/* Optional: Add some margin to adjust for scrollbars or viewport sizes */
+		max-width: 90%; /* Ensure the modal does not exceed the viewport width */
+		max-height: 90%; /* Ensure the modal does not exceed the viewport height */
+		overflow: auto; /* Allow scrolling if content exceeds modal size */
+	  }
+	  .dropbtn {
+		background-color: #04AA6D;
+		color: white;
+		padding: 16px;
+		font-size: 16px;
+		border: none;
+	  }
+	  
+	  .dropdown {
+		position: relative;
+		/* display: inline-block; */
+	  }
+	  
+	  .dropdown-content {
+		display: none;
+		position: absolute;
+		background-color: #f1f1f1;
+		min-width: 160px;
+		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		z-index: 1;
+	  }
+	  
+	  .dropdown-content a {
+		color: black;
+		padding: 8px 6px;
+		text-decoration: none;
+		display: block;
+		font-weight: 500;
+	  }
+	  .dropdown-content a:hover {
+		background-color: #b3eba1 !important;
+		border-radius: 7px;
+	  }
+	  
+	  .dropdown-content a:hover {background-color: #ddd;}
+	  
+	  .dropdown:hover .dropdown-content {display: block;}
+	  
+	  .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+
+
+	  @media screen and (max-width: 991px) {
+		.modal-dialog {
+			margin-top: 100px;
+		}
+	  }
