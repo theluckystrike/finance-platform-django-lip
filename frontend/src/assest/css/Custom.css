@@ -180,4 +180,6 @@ background: #fff !important;
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
 	background: #555; /* Thumb color on hover */
   }
-  
+  .light-green-bg {
+	background-color: var(--light-green-color);
+  }
