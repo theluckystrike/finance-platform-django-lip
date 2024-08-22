@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";
+import CategoryManger from "../pages/UploadScript/CategoryManger";
 
 // Lazy load the components
 const CustomReport = lazy(() => import("../pages/AllScript/AllScript"));
@@ -48,6 +49,10 @@ export const SimpleRoute = [
       {
         path: ActiveRoute.ScriptEdit.path,
         element: <ScriptEdit />,
+      },
+      {
+        path: ActiveRoute.CategoryManager.path,
+        element: <CategoryManger />,
       },
     ],
   },

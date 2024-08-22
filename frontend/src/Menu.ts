@@ -51,4 +51,9 @@ export const ActiveRoute = {
     path: "ScriptEdits",
     icon: "Script",
   },
+  CategoryManager: {
+    name: "Category Manager",
+    path: "category-manager",
+    icon: "CategoryManager",
+  },
 };

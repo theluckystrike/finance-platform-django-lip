@@ -183,3 +183,72 @@ background: #fff !important;
   .light-green-bg {
 	background-color: var(--light-green-color);
   }
+
+  .rc-tree {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+  }
+  
+  .rc-tree-treenode {
+	padding: 4px 8px;
+  }
+  
+  .rc-tree-treenode span {
+	color: #007bff; /* Link color */
+	cursor: pointer;
+  }
+  
+  .rc-tree-treenode-selected {
+	background-color: #f0f0f0;
+	border-radius: 4px;
+  }
+  
+  .rc-tree-treenode:hover {
+	background-color: #e6e6e6;
+  }
+  
+
+
+  /* CategoryTree.css */
+.category-tree ul {
+	list-style-type: none;
+	padding-left: 20px;
+	position: relative;
+  }
+  
+  .category-tree ul ul {
+	margin-left: 20px;
+	padding-left: 20px;
+	border-left: 1px solid #000; /* Line on the left side */
+  }
+  
+  .category-tree li {
+	margin: 8px 0;
+	padding-left: 1em;
+	position: relative;
+  }
+  
+  .category-tree li::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10px;
+	height: 1px;
+	background-color: #000; /* Horizontal line */
+  }
+  
+  .category-tree li::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -10px;
+	width: 1px;
+	height: 100%;
+	background-color: #000; /* Vertical line */
+  }
+  
+  .category-tree li:last-child::after {
+	height: 10px;
+  }
+  

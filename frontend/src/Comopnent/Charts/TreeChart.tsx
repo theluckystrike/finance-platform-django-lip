@@ -1,49 +1,84 @@
 import React from 'react';
-import Tree from 'react-d3-tree';
+ 
 
-// This is a simplified example of an org chart with a depth of 2.
-// Note how deeper levels are defined recursively via the `children` property.
-const orgChart = {
-  name: 'CEO',
-  children: [
-    {
-      name: 'Manager',
-      attributes: {
-        department: 'Production',
+const array = [
+  {
+    categoryName: 'Model Summaries',
+    subcategory: [
+      {
+        subcategoryName: 'Model Summaries-Tape',
+        innerCategory: ['Tape Summary'],
       },
-      children: [
-        {
-          name: 'Foreman',
-          attributes: {
-            department: 'Fabrication',
-          },
-          children: [
-            {
-              name: 'Worker',
-            },
-          ],
-        },
-        {
-          name: 'Foreman',
-          attributes: {
-            department: 'Assembly',
-          },
-          children: [
-            {
-              name: 'Worker',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+    ],
+  },
+  {
+    categoryName: 'Bonds',
+    subcategory: [
+      {
+        subcategoryName: 'Cross Market',
+        innerCategory: [
+          'Summary-XCCY',
+          'Regression-XCCY',
+          'Studies-XCCY',
+        ],
+      },
+      {
+        subcategoryName: 'USD Bonds',
+        innerCategory: [
+          'Summary-USD',
+          'Regression-USD',
+          'Studies-USD',
+        ],
+      },
+      {
+        subcategoryName: 'CAD Bonds',
+        innerCategory: [
+          'Summary-CAD',
+          'Regression-CAD',
+          'Studies-CAD',
+        ],
+      },
+    ],
+  },
+  {
+    categoryName: 'Tape',
+    subcategory: [
+      {
+        subcategoryName: 'Trend',
+        innerCategory: ['Trend 2.0'],
+      },
+    ],
+  },
+];
+
+// Helper function to transform the data
+const renderTree = (data:any) => {
+  return (
+    <ul>
+      {data.map((item:any, index:any) => (
+        <li key={index}>
+          {item.categoryName}
+          {item.subcategory && renderTree(item.subcategory)}
+          {item.innerCategory && (
+            <ul>
+              {item.innerCategory.map((innerItem:any, innerIndex:any) => (
+                <li key={innerIndex}>{innerItem}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
 };
 
-export default function OrgChartTree() {
+const CategoryTree = () => {
   return (
-    // `<Tree />` will fill width/height of its container; in this case `#treeWrapper`.
-    <div id="treeWrapper" style={{ width: '50em', height: '20em' }}>
-      <Tree data={orgChart} />
+    <div className="category-tree">
+      <h3>Category Tree</h3>
+      {renderTree(array)}
     </div>
   );
-}
+};
+
+export default CategoryTree;
