@@ -4,10 +4,6 @@ import { Outlet } from 'react-router-dom';
 
 
 const SimpleLayout: React.FC = () => {
-  useEffect(() => {
-    // Your useEffect code here
-  }, []);
-
   return (
     <div>
             <Outlet />

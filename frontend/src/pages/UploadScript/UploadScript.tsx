@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import Icon from "../../Comopnent/ui/icon/Icon";
+import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
 
 const UploadScriptForm = ( ) => {
  
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+  }
   return (
     <>
     <div className=" UploadScript_main_wrap mt-3">
@@ -28,8 +34,7 @@ const UploadScriptForm = ( ) => {
               <button
                 className="btn btn-dark col col-1 p-0 justify-content-center"
                 type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#newCategoryModal"
+                onClick={handleShow}
               >
                <Icon icon='Add' size='30px'/>
               </button>
@@ -133,8 +138,11 @@ const UploadScriptForm = ( ) => {
       </div>
 
     </div>
+    <CategoryModal show={show} handleClose={handleClose} />
     </>
   );
 };
 
 export default UploadScriptForm;
+
+ 

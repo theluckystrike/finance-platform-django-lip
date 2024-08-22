@@ -16,15 +16,7 @@ export const AuthRoute: AppRoute[] = [
         path: AuthMenu.login.path,
         element: <AuthLogin />,
       },
-      // Example of a protected route:
-      // {
-      //   path: 'profile',
-      //   element: (
-      //     <ProtectedRoutes>
-      //       <Profile />
-      //     </ProtectedRoutes>
-      //   ),
-      // },
+ 
     ],
   },
 ];

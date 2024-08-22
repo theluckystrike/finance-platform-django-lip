@@ -67,57 +67,9 @@ const LineChart  = () => {
       },
     },
   };
+ 
 
-  const randomizeData = () => {
-    data.datasets.forEach((dataset) => {
-      dataset.data = Utils.numbers({ count: data.labels.length, min: -100, max: 100 });
-    });
-    updateChart();
-  };
-
-  const addDataset = () => {
-    const dsColor = Utils.namedColor(data.datasets.length);
-    const newDataset = {
-      label: `Dataset ${data.datasets.length + 1}`,
-      backgroundColor: Utils.transparentize(dsColor, 0.5),
-      borderColor: dsColor,
-      data: Utils.numbers({ count: data.labels.length, min: -100, max: 100 }),
-    };
-    data.datasets.push(newDataset);
-    updateChart();
-  };
-
-  const addData = () => {
-    if (data.datasets.length > 0) {
-      data.labels.push(...Utils.months({ count: 1 }));
-
-      for (let index = 0; index < data.datasets.length; ++index) {
-        data.datasets[index].data.push(Utils.numbers({ count: 1, min: -100, max: 100 })[0]);
-      }
-
-      updateChart();
-    }
-  };
-
-  const removeDataset = () => {
-    data.datasets.pop();
-    updateChart();
-  };
-
-  const removeData = () => {
-    data.labels.pop(); // remove the label first
-
-    data.datasets.forEach((dataset) => {
-      dataset.data.pop();
-    });
-
-    updateChart();
-  };
-
-  const updateChart = () => {
-    // Use a chart update method here if needed, depending on how you manage the chart instance
-  };
-
+ 
   return (
     <div>
       <Line data={data} options={options} />

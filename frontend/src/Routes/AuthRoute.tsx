@@ -1,62 +1,54 @@
+import React, { Suspense, lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";
-import CustomReport from "../pages/AllScript/AllScript";
-import ScriptView from "../pages/AllScript/Script_view";
-import  Home  from "../pages/Home/Home";
-import ReportViwe from "../pages/Reports/Report_view";
-import Report from "../pages/Reports/Reports";
-import UploadScript from "../pages/UploadScript/UploadScript";
- 
 
- 
-  
- export const SimpleRoute = [
-    {
-      path: "/account",
-      element: (
+// Lazy load the components
+const CustomReport = lazy(() => import("../pages/AllScript/AllScript"));
+const ScriptEdit = lazy(() => import("../pages/AllScript/Script_Edit"));
+const ScriptView = lazy(() => import("../pages/AllScript/Script_view"));
+const Home = lazy(() => import("../pages/Home/Home"));
+const ReportView = lazy(() => import("../pages/Reports/Report_view"));
+const Report = lazy(() => import("../pages/Reports/Reports"));
+const UploadScript = lazy(() => import("../pages/UploadScript/UploadScript"));
+
+export const SimpleRoute = [
+  {
+    path: "/account",
+    element: (
       <AuthGuard>
-        <AuthLayout/>
+        <AuthLayout />
       </AuthGuard>
     ),
-      children: [
-        {
-          path: SidebarMenu.home.path,
-          element: <Home/>,
-        },
-        {
-          path: SidebarMenu.upload.path,
-          element: <UploadScript/>,
-        },
-        {
-          path: SidebarMenu.Allscripts.path,
-          element: <CustomReport/>,
-        },
-        {
-          path: SidebarMenu.Report.path,
-          element: <Report/>,
-        },
-        {
-          path: ActiveRoute.ReportDetails.path,
-          element: <ReportViwe/>,
-        },
-        {
-          path: ActiveRoute.ScriptDetails.path,
-          element: <ScriptView/>,
-        },
-        // {
-        //     path: 'profile',
-        //     element: (
-        //       <ProtectedRoutes>
-        //         <Profile />
-        //       </ProtectedRoutes>
-        //     ),
-        //   },
-         
-
-  
-      ],
-    
-    },
-
-  ];
+    children: [
+      {
+        path: SidebarMenu.home.path,
+        element: <Home />,
+      },
+      {
+        path: SidebarMenu.upload.path,
+        element: <UploadScript />,
+      },
+      {
+        path: SidebarMenu.Allscripts.path,
+        element: <CustomReport />,
+      },
+      {
+        path: SidebarMenu.Report.path,
+        element: <Report />,
+      },
+      {
+        path: ActiveRoute.ReportDetails.path,
+        element: <ReportView />,
+      },
+      {
+        path: ActiveRoute.ScriptDetails.path,
+        element: <ScriptView />,
+      },
+      {
+        path: ActiveRoute.ScriptEdit.path,
+        element: <ScriptEdit />,
+      },
+    ],
+  },
+];

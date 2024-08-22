@@ -18,10 +18,7 @@ const rootElement = document.getElementById("root") as HTMLElement;
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    {/* <ToastContainer /> */}
-    {/* <Provider store={store}> */}
     <RouterProvider router={router} />
-    {/* </Provider> */}
   </React.StrictMode>
 );
 

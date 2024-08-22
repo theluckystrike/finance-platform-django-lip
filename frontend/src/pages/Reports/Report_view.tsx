@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import '../../assest/css/AllScript.css'
 import Icon from '../../Comopnent/ui/icon/Icon';
+import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
 
 const ReportViwe = () => {
     const [category, setCategory] = useState("-1");
@@ -137,36 +138,46 @@ const ReportViwe = () => {
             .map((checkbox:any) => checkbox.value);
         setSelectedScripts(selected);
     };
+    const [show, setShow] = useState(false);
 
+    const handleClose = () => setShow(false);
+    const handleShow = () => {
+      
+     
+      
+      setShow(true);
+  
+  }
     return (
-        <div  className='mx-4'>
+                <>
+        <div  className='mx-5 py-3'>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
                 <h1 className="h1">Report Details <span id="headerInfo">(12)</span></h1>
-                <div className="btn-toolbar mb-2 mb-md-0" style={{zIndex:'-1'}}>
-                <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
+                <div className="btn-toolbar mb-2 mb-md-0"  >
+                <button onClick={handleShow} type="button" className="btn icon-button my-1 mx-2"  >
                        <Icon icon='CalendarToday' size='20px'/>
                         <span>
 Schedule
 Email
 </span>
                     </button>
-                    <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
+                    <button type="button" className="btn icon-button my-1 mx-2" >
                        <Icon icon='RemoveRedEye' size='20px'/>
                         <span>View Latest
 </span>
                     </button>
-                    <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#filtersModal">
+                    <button type="button" className="btn icon-button my-1 mx-2" >
                        <Icon icon='Delete' size='20px'/>
                         <span>Delete
 </span>
                     </button>
-                    <button type="button" className="btn icon-button my-1 mx-2" data-bs-toggle="modal" data-bs-target="#saveReportModal">
+                    <button type="button" className="btn icon-button my-1 mx-2" >
                     <Icon icon='SystemUpdateAlt' size='20px'/>
 
                         <span>Update
                         </span>
                     </button>
-                    <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
+                    <button type="submit"  className="btn icon-button my-1 mx-2">
                     <Icon icon='Info' size='20px'/>
 
                         <span>info</span>
@@ -267,69 +278,10 @@ Email
                 )}
             </div>
 
-            <div className="modal fade" id="saveReportModal" tabIndex={-1} aria-labelledby="saveReportModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <form action="/save_custom_report" >
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="saveReportModalLabel">Create a new custom report</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <label htmlFor="report_name" className="form-label">Name</label>
-                                <input type="text" name="name" id="report_name" className="form-control" required />
-                                <select name="scripts" className="d-none" multiple>
-                                    {selectedScripts.map((scriptId) => (
-                                        <option value={scriptId} key={scriptId} selected>Script {scriptId}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" className="btn btn-dark">Create</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div className="modal fade" id="filtersModal" tabIndex={-1} aria-labelledby="filtersModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content px-4">
-                        <div className="modal-body">
-                            <div id="filters" className="row">
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
-                                    <label className="form-label">Category</label>
-                                    <select id="categoryselect" className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                     
-                                    </select>
-                                </div>
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12 mb-3">
-                                    <label className="form-label">Sub category 1</label>
-                                    <select id="subcategoryselect" className="form-select" value={subCategory} onChange={(e) => setSubCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                      
-                                    </select>
-                                </div>
-                                <div className="col-12 col-xs-12 col-md-6 col-lg-6 col-xl-6 col-sm-12">
-                                    <label className="form-label">Sub category2</label>
-                                    <select id="subsubcategoryselect" className="form-select" value={subSubCategory} onChange={(e) => setSubSubCategory(e.target.value)}>
-                                        <option value="-1">All</option>
-                                    
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-dark" onClick={handleFilter}>Filter</button>
-                                <button type="button" className="btn btn-outline-dark" onClick={handleResetFilters}>Reset Filters</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
         </div>
+        <ScheduleEmailModal show={show} handleClose ={handleClose}/>
+        </>
     );
 };
 

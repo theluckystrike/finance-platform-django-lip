@@ -2,11 +2,13 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import '../../assest/css/AllScript.css'
 import Icon from '../../Comopnent/ui/icon/Icon';
-import FilterModal from '../../Comopnent/ui/FilterModal/FilterModal';
+import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
 import LineChart from '../../Comopnent/Charts/LineChart';
 import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChartTable from '../../Comopnent/Table/ChartTable';
+import PresentPastToggle from '../../Comopnent/ui/PresentPastToggle';
+import { ActiveRoute } from '../../Menu';
 
 const Components:any = {
     ScatterLineChart: ScatterLineChart,
@@ -14,49 +16,40 @@ const Components:any = {
   };
 const ScriptView = () => {
     const location = useLocation();
-  
+  const navigate = useNavigate()
     // Get the search parameters from the URL
     const searchParams = new URLSearchParams(location.search);
   
     // Retrieve the value of the 'chartname' parameter
     const chartName:any = searchParams.get('chartname') || <div></div>;
   
-   const Reanding = Components[chartName] 
-      
-      const [show, setShow] = useState(false);
+    const Reanding = Components[chartName] 
 
+      const [show, setShow] = useState(false);
       const handleClose = () => setShow(false);
       const handleShow = () => {
-        
-        console.log('runing');
-        
         setShow(true);
-    
     }
 
 const [activeComponet,setActivecomponet]=useState('chart')
-   
-   
-   
     const today = new Date();
     const dateOnly = today.toISOString().split('T')[0];
  
     
+
+    const editScript =()=>{
+        navigate(`/account/${ActiveRoute.ScriptEdit.path}`)
+    }
     return (
 <>
         <div  className='mx-4'>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3 pb-2 mb-3">
                 <div>
-
                 <h1 className="h1"> Gold Relative Strength <span id="headerInfo">(132)</span> </h1>
-            <h6 className='ps-1'>Last update {dateOnly}</h6>
-
+                <h6 className='ps-1'>Last update {dateOnly}</h6>
                 </div>
-             
-
-            
                 <div className="btn-toolbar mb-2 mb-md-0"  >
-                <button type="button" className="btn icon-button my-1 mx-2"  >
+                <button onClick={editScript} type="button" className="btn icon-button my-1 mx-2"  >
                        <Icon icon='Edit' size='20px'/>
                         <span>Edit</span>
                     </button>
@@ -75,7 +68,7 @@ const [activeComponet,setActivecomponet]=useState('chart')
                         <span>Info</span>
                     </button>
                  
-        {activeComponet=== 'table'   &&   <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('chart')} className="btn icon-button my-1 mx-2  ">
+                    {activeComponet=== 'table'   &&   <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('chart')} className="btn icon-button my-1 mx-2  ">
                     <Icon icon='InsertChart' size='20px'/>
 
                         <span>Chart</span>
@@ -90,8 +83,8 @@ const [activeComponet,setActivecomponet]=useState('chart')
             </div>
             <div>
 
-            </div>
-
+            </div>  
+            <PresentPastToggle/>
         {activeComponet=== 'table'   && <div style={{
                 width:'90%',
                 margin:'0px auto'
@@ -106,27 +99,7 @@ const [activeComponet,setActivecomponet]=useState('chart')
                 <Reanding/>
                 <Reanding/>
                 <Reanding/>
-
-
-
             </div>}
-           
-            {/* <div style={{
-                width:'80%',
-                margin:'0px auto'
-            }}>
-
-                <LineChart/>
-                <LineChart/>
-
-                <LineChart/>
-
-                <LineChart/>
-
-                <LineChart/>
-
-            </div>
-            */}
         </div>
 
         <FilterModal show={show} handleClose ={handleClose}/>

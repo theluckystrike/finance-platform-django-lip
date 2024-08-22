@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 
 import { Outlet } from "react-router-dom";
 
@@ -21,7 +21,10 @@ const AuthLayout = () => {
           <SimpleHeader />
          </div>
          <div className="content_main_wrap">
+         <Suspense fallback={<div>Loading...</div>}>
+      
           <Outlet />
+         </Suspense>
          </div>
          <div>
           <SimpleFooter />
