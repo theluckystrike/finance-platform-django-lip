@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
+import ArrowDown from '../../assest/image/arrow-down.png'
+
 
 const UploadScriptForm = ( ) => {
  
@@ -22,6 +24,9 @@ const UploadScriptForm = ( ) => {
             <div className="row mx-0 p-0">
               <div className="col-11 m-0 p-0 pe-1">
               <div className="dropdown">
+              <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
                     <input type="text" placeholder="All" />
                     <div className="dropdown-content">
                       <span>Returns</span>
@@ -44,6 +49,9 @@ const UploadScriptForm = ( ) => {
           <div className="mb-3">
             <label htmlFor="output_type" className="form-label">How would you like to view data?</label>
             <div className="dropdown">
+            <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
                     <input type="text" placeholder="All" />
                     <div className="dropdown-content">
                       <span>Chart</span>

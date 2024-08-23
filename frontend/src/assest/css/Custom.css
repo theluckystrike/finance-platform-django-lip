@@ -1,259 +1,324 @@
-:root{
-	--primary-color:#eaffea;
-	--black-color:rgb(0 0 0);
-	--green-color:#011C05;
-	--white-color:#fff;
-	 --light-green-color:#E5F7E6C6;
+:root {
+  --primary-color: #eaffea;
+  --black-color: rgb(0 0 0);
+  --green-color: #011c05;
+  --white-color: #fff;
+  --light-green-color: #e5f7e6c6;
 }
 
-@import './Header.css';
-@import './Home.css';
-@import './login.css';
-@import './sidebar.css';
- @import './dashboard.css';
-
+@import "./Header.css";
+@import "./Home.css";
+@import "./login.css";
+@import "./sidebar.css";
+@import "./dashboard.css";
 
 body {
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-	  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-	  sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-  }
-  
-  code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	  monospace;
-  }
-  
-  
-   
-  
-  * {
-	box-sizing: border-box;
-  }
-  
-   
-  .bg-green {
-	background-color: var(--green-color);
-  }
-  .bg-light-green{
-	background-color: var(--light-green-color);
-  }
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .border-2px{
-	border: 2px solid var(--green-color) !important
-  }
-  input:focus{
-	border: none !important;
-  }
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
 
- 
-  
-  .modal-content {
-    border-radius: 25px !important}
-	 .modal-content .modal-body {
-		overflow: unset !important;
-	 }
-	.tr-value:hover{
-		background-color: #9be59fc6;
-	}
+* {
+  box-sizing: border-box;
+}
 
+.bg-green {
+  background-color: var(--green-color);
+}
+.bg-light-green {
+  background-color: var(--light-green-color);
+}
 
-	.dropdown input {
-		border: 2px solid var(--green-color);
-		width: 100%;
-		border-radius: 6px;
-padding: 5px 10px;
-height: 40px;
+.border-2px {
+  border: 2px solid var(--green-color) !important;
+}
+input:focus {
+  border: none !important;
+}
 
-	}
-	.dropdown label {
-		font-size: 18px;
-		font-weight: 600;
-		margin-bottom: 6px;
-	}
-	.dropdown-content {
-		border: 2px solid var(--green-color);
-		width: 100%;
-		border-radius: 6px;
-padding: 6px;
-/* margin-top: 5px; */
-background: #fff !important;
-	}
-	.modal-dialog {
-		position: fixed; /* Use fixed positioning to ensure it stays centered relative to the viewport */
-		top: 50%; /* Position it at 50% from the top */
-		left: 50%; /* Position it at 50% from the left */
-		transform: translate(-50%, -65%) !important; /* Shift it back by 50% of its width and height to center */
-		/* Optional: Add some margin to adjust for scrollbars or viewport sizes */
-		max-width: 90%; /* Ensure the modal does not exceed the viewport width */
-		max-height: 90%; /* Ensure the modal does not exceed the viewport height */
-	  }
-	  .modal-footer {
-		border-top: none;
-	  }
-	  .dropbtn {
-		background-color: #04AA6D;
-		color: white;
-		padding: 16px;
-		font-size: 16px;
-		border: none;
-	  }
-	  
-	  .dropdown {
-		position: relative;
-		/* display: inline-block; */
-	  }
-	  
-	  .dropdown-content {
-		display: none;
-		position: absolute;
-		background-color: #f1f1f1;
-		min-width: 160px;
-		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-		z-index: 1;
-	  }
-	  
-	  .dropdown-content span {
-		color: black;
-		padding: 8px 6px;
-		text-decoration: none;
-		display: block;
-		font-weight: 500;
-	  }
-	  .dropdown-content span:hover {
-		background-color: #b3eba1 !important;
-		border-radius: 7px;
-	  }
-	  
-	  .dropdown-content a:hover {background-color: #ddd;}
-	  
-	  .dropdown:hover .dropdown-content {display: block;}
-	  
-	  .dropdown:hover .dropbtn {background-color: #3e8e41;}
+.modal-content {
+  border-radius: 25px !important;
+}
+.modal-content .modal-body {
+  overflow: unset !important;
+}
+.tr-value:hover {
+  background-color: #9be59fc6;
+}
+
+.dropdown input {
+  border: 2px solid var(--green-color);
+  width: 100%;
+  border-radius: 6px;
+  padding: 5px 10px;
+  height: 40px;
+}
+.dropdown label {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.dropdown-content {
+  border: 2px solid var(--green-color);
+  width: 100%;
+  border-radius: 6px;
+  padding: 6px;
+  /* margin-top: 5px; */
+  background: #fff !important;
+}
+.modal-dialog {
+  position: fixed; /* Use fixed positioning to ensure it stays centered relative to the viewport */
+  top: 50%; /* Position it at 50% from the top */
+  left: 50%; /* Position it at 50% from the left */
+  transform: translate(
+    -50%,
+    -65%
+  ) !important; /* Shift it back by 50% of its width and height to center */
+  /* Optional: Add some margin to adjust for scrollbars or viewport sizes */
+  max-width: 90%; /* Ensure the modal does not exceed the viewport width */
+  max-height: 90%; /* Ensure the modal does not exceed the viewport height */
+}
+.modal-footer {
+  border-top: none;
+}
+.dropbtn {
+  background-color: #04aa6d;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  /* display: inline-block; */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content span {
+  color: black;
+  padding: 8px 6px;
+  text-decoration: none;
+  display: block;
+  font-weight: 500;
+}
+.dropdown-content span:hover {
+  background-color: #b3eba1 !important;
+  border-radius: 7px;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
 
 .UploadScript_main_wrap h1 {
-	font-size: 45px;
-	text-align: center;
-	color: #011C05;
+  font-size: 45px;
+  text-align: center;
+  color: #011c05;
 }
 .bordered-button {
-	border: 2px solid black;
+  border: 2px solid black;
+}
+
+@media screen and (max-width: 991px) {
+  .modal-dialog {
+    margin-top: 100px;
   }
+}
 
-
-	  @media screen and (max-width: 991px) {
-		.modal-dialog {
-			margin-top: 100px;
-		}
-	  }
-
-	  /* scrollbar CSS */
-	  /* Hide the default scrollbar */
+/* scrollbar CSS */
+/* Hide the default scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-	width: 0; /* Hide vertical scrollbar */
-	height: 0; /* Hide horizontal scrollbar */
-  }
-  
-  /* Add a custom scrollbar track and thumb */
-  .custom-scrollbar {
-	overflow: auto; /* Ensure scrollbars appear when necessary */
-	height: 300px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar {
-	width: 12px; /* Width of the scrollbar */
-	height: 12px; /* Height of the scrollbar */
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-track {
-	background: #f1f1f1; /* Track color */
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-	background: #888; /* Thumb color */
-	border-radius: 10px; /* Rounded corners for the thumb */
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-	background: #555; /* Thumb color on hover */
-  }
-  .light-green-bg {
-	background-color: var(--light-green-color);
-  }
+  width: 0; /* Hide vertical scrollbar */
+  height: 0; /* Hide horizontal scrollbar */
+}
 
-  .rc-tree {
-	font-family: Arial, sans-serif;
-	font-size: 14px;
-  }
-  
-  .rc-tree-treenode {
-	padding: 4px 8px;
-  }
-  
-  .rc-tree-treenode span {
-	color: #007bff; /* Link color */
-	cursor: pointer;
-  }
-  
-  .rc-tree-treenode-selected {
-	background-color: #f0f0f0;
-	border-radius: 4px;
-  }
-  
-  .rc-tree-treenode:hover {
-	background-color: #e6e6e6;
-  }
-  
-  .tree-class span{
-color: #007bff;
-text-decoration: underline;
-  }
+/* Add a custom scrollbar track and thumb */
+.custom-scrollbar {
+  overflow: auto; /* Ensure scrollbars appear when necessary */
+  height: 300px;
+}
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+  height: 12px; /* Height of the scrollbar */
+}
 
-  /* CategoryTree.css */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Track color */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* Thumb color */
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Thumb color on hover */
+}
+.light-green-bg {
+  background-color: var(--light-green-color);
+}
+
+.rc-tree {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.rc-tree-treenode {
+  padding: 4px 8px;
+}
+
+.rc-tree-treenode span {
+  color: #007bff; /* Link color */
+  cursor: pointer;
+}
+
+.rc-tree-treenode-selected {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.rc-tree-treenode:hover {
+  background-color: #e6e6e6;
+}
+
+.tree-class span {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* CategoryTree.css */
 .category-tree ul {
-	list-style-type: none;
-	padding-left: 20px;
-	position: relative;
-  }
-  
-  .category-tree ul ul {
-	margin-left: 20px;
-	padding-left: 10px;
-	/* border-left: 1px solid #000; Line on the left side */
-  }
-  
-  .category-tree li {
-	margin: 8px 0;
-	padding-left: 1em;
-	position: relative;
-  }
-  
-  .category-tree li::before {
-	content: '';
-    position: absolute;
-    top: 10px;
-    left: -9px;
-    width: 17px;
-    height: 1px;
-    background-color: #000;
+  list-style-type: none;
+  padding-left: 20px;
+  position: relative;
+}
 
-  }
-  
-  .category-tree li::after {
-    content: '';
-    position: absolute;
-    top: 0px;
-    left: -10px;
-    width: 1px;
-    height: 121%;
-    background-color: #000;
-  }
-  
-  .category-tree li:last-child::after {
-	height: 10px;
-  }
-  
+.category-tree ul ul {
+  margin-left: 20px;
+  padding-left: 10px;
+  /* border-left: 1px solid #000; Line on the left side */
+}
+
+.category-tree li {
+  margin: 8px 0;
+  padding-left: 1em;
+  position: relative;
+}
+
+.category-tree li::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -9px;
+  width: 17px;
+  height: 1px;
+  background-color: #000;
+}
+
+.category-tree li::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: -10px;
+  width: 1px;
+  height: 121%;
+  background-color: #000;
+}
+
+.category-tree li:last-child::after {
+  height: 10px;
+}
+
+/* Basic styling for the button */
+.tooltip-btn {
+  position: relative;
+  /* background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px; */
+}
+
+/* Tooltip styling */
+.tooltip-text {
+  visibility: hidden;
+  background-color: #011c05;
+  color: #fff;
+  text-align: center;
+  border-radius: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 125%; /* Position above the button */
+  right: 0;
+  /* margin-left: -60px; */
+  opacity: 0;
+  transition: opacity 0.3s;
+  width: 220px;
+  /* height: 100px; */
+  padding: 10px 8px;
+}
+
+/* Add icon to tooltip using :after */
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: -19px; /* Position the arrow above the tooltip */
+  right: 8px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #011c05 transparent; /* Triangle pointing down */
+}
+
+/* Show tooltip on hover */
+.tooltip-btn:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+.tooltip_text_row h6 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  width: 40vw;
+  text-align: left;
+}
+.tooltip_text_row p {
+  margin: 0;
+  font-size: 12px;
+  width: 60vw;
+  text-align: left;
+}
+.arrow_down img {
+	width: 15px;
+	height: 15px;
+	position: absolute;
+	right: 10px;
+	top: 12px;
+}

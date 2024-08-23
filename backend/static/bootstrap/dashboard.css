@@ -181,13 +181,19 @@ body {
 }
 
 .icon-button:hover svg {
-    stroke: white;
+    /* stroke: white; */
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
 }
 .icon-button:hover i {
-    color: white;
+    /* color: white; */
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
 }
 .icon-button:hover {
-    background-color: #011C05; 
+    background-color: transparent; 
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
 }
 
 .nav-pills .nav-item .nav-link{
