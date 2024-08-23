@@ -1,30 +1,18 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+ 
+import React  from 'react';
 import '../../assest/css/AllScript.css'
 import Icon from '../../Comopnent/ui/icon/Icon';
-import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
-import LineChart from '../../Comopnent/Charts/LineChart';
-import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ChartTable from '../../Comopnent/Table/ChartTable';
-import PresentPastToggle from '../../Comopnent/ui/PresentPastToggle';
+ 
+ 
+import { useNavigate } from 'react-router-dom';
+  
 import CodeEdit from '../../Comopnent/CodeEditer/CodeEditer';
-
-const Components:any = {
-    ScatterLineChart: ScatterLineChart,
-    LineChart: LineChart
-  };
+ 
 const ScriptEdit
  = () => {
     const Navigate =useNavigate()
-    const location = useLocation();
-  
-    // Get the search parameters from the URL
-    const searchParams = new URLSearchParams(location.search);
-  
-    // Retrieve the value of the 'chartname' parameter
-    const chartName:any = searchParams.get('chartname') || <div></div>;
    
+ 
     return (
 <>
 <div className="m-4 ">

@@ -115,7 +115,7 @@ const CustomReport = () => {
         '#scriptsCheckboxes input[type="checkbox"]:checked'
       )
     ).map((checkbox: any) => checkbox.value);
-    setSelectedScripts(selected);
+    setSelectedScripts({...selected,...selectedScripts});
   };
 
   return (
@@ -219,7 +219,6 @@ const CustomReport = () => {
       </div>
 
       <FilterModal show={show} handleClose={handleClose} />
-
       <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
     </>
   );

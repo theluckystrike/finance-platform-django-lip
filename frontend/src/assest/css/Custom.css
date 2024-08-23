@@ -116,14 +116,14 @@ background: #fff !important;
 		z-index: 1;
 	  }
 	  
-	  .dropdown-content a {
+	  .dropdown-content span {
 		color: black;
 		padding: 8px 6px;
 		text-decoration: none;
 		display: block;
 		font-weight: 500;
 	  }
-	  .dropdown-content a:hover {
+	  .dropdown-content span:hover {
 		background-color: #b3eba1 !important;
 		border-radius: 7px;
 	  }
@@ -207,6 +207,10 @@ background: #fff !important;
 	background-color: #e6e6e6;
   }
   
+  .tree-class span{
+color: #007bff;
+text-decoration: underline;
+  }
 
 
   /* CategoryTree.css */
@@ -218,8 +222,8 @@ background: #fff !important;
   
   .category-tree ul ul {
 	margin-left: 20px;
-	padding-left: 20px;
-	border-left: 1px solid #000; /* Line on the left side */
+	padding-left: 10px;
+	/* border-left: 1px solid #000; Line on the left side */
   }
   
   .category-tree li {
@@ -230,22 +234,23 @@ background: #fff !important;
   
   .category-tree li::before {
 	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 10px;
-	height: 1px;
-	background-color: #000; /* Horizontal line */
+    position: absolute;
+    top: 10px;
+    left: -9px;
+    width: 17px;
+    height: 1px;
+    background-color: #000;
+
   }
   
   .category-tree li::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: -10px;
-	width: 1px;
-	height: 100%;
-	background-color: #000; /* Vertical line */
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: -10px;
+    width: 1px;
+    height: 121%;
+    background-color: #000;
   }
   
   .category-tree li:last-child::after {

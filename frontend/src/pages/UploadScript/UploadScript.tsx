@@ -24,10 +24,10 @@ const UploadScriptForm = ( ) => {
               <div className="dropdown">
                     <input type="text" placeholder="All" />
                     <div className="dropdown-content">
-                      <a>Returns</a>
-                      <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <span>Returns</span>
+                      <span>USD</span>
+                      <span>Bonds</span> <span>CAD</span>{" "}
+                      <span>Breadth</span>
                     </div>
                   </div>
               </div>
@@ -46,9 +46,9 @@ const UploadScriptForm = ( ) => {
             <div className="dropdown">
                     <input type="text" placeholder="All" />
                     <div className="dropdown-content">
-                      <a>Chart</a>
-                      <a>Table</a>
-                      <a>Chart and Table</a> 
+                      <span>Chart</span>
+                      <span>Table</span>
+                      <span>Chart and Table</span> 
                     </div>
                   </div>
           </div>
@@ -107,20 +107,20 @@ const UploadScriptForm = ( ) => {
                     <label htmlFor="parent" className="form-label">Parent category</label>
                     <input type="text" placeholder="All" />
                     <div className="dropdown-content custom-scrollbar">
-                      <a>None</a>
-                      <a>USD</a>
-                      <a>USD -- Economics</a> <a>USD -- Combo </a>{" "}
-                      <a>USD -- Benchmark Yeilds</a>
-                      <a>Tape</a>
-                      <a>Bonds</a>
-                      <a>Bonds -- Cross Market</a>
-                      <a>Bonds -- USD Bonds</a>
-                      <a>Bonds -- CAD Bonds</a>
-                      <a>CAD</a>
-                      <a>CAD -- Rendom</a>
-                      <a>CAD -- Money and Credit</a>
-                      <a>Breadth</a>
-                      <a>Breadth -- Breadth 1</a>
+                      <span>None</span>
+                      <span>USD</span>
+                      <span>USD -- Economics</span> <span>USD -- Combo </span>{" "}
+                      <span>USD -- Benchmark Yeilds</span>
+                      <span>Tape</span>
+                      <span>Bonds</span>
+                      <span>Bonds -- Cross Market</span>
+                      <span>Bonds -- USD Bonds</span>
+                      <span>Bonds -- CAD Bonds</span>
+                      <span>CAD</span>
+                      <span>CAD -- Rendom</span>
+                      <span>CAD -- Money and Credit</span>
+                      <span>Breadth</span>
+                      <span>Breadth -- Breadth 1</span>
 
 
                     </div>

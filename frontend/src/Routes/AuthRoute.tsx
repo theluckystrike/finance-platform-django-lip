@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";

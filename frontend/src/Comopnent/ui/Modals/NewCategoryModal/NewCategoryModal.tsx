@@ -1,12 +1,18 @@
 import { FC } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import { ActiveRoute } from '../../../../Menu';
+ 
 
-interface ScheduleEmailModalProps {
+interface NewCategoryModalProps {
+ 
   show: boolean;
   handleClose: () => void;
+  selected:string;
 }
 
-const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({show, handleClose }) => {
+const NewCategoryModal: FC<NewCategoryModalProps> = ({show,selected, handleClose }) => {
+  const navigate = useNavigate()
   return (
     <>
       <Modal  size="lg"
@@ -17,24 +23,24 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({show, handleClose }) =
           borderRadius:'25px',
           overflow:'hidden'
         }}> 
-
+<h4>Create a category</h4>
         <form  method="post" encType="multipart/form-data">
           <div className="mb-3">
-            <div className="row mx-0 px-5">
-              <div className="col-5 m-0 px-4">
-            <label htmlFor="category" className="form-label">Email</label>
+            <div className="row mx-0 px-3">
+              <div className="col-12 m-0  ">
+            <label htmlFor="category" className="form-label">New Category Name</label>
                 <input
                   id="category"
                   name="category"
                   className="form-control m-0"
-                  
+                  value={selected}
                   required
                 >
                    
                 </input>
               </div>
-            <div className="col-5 m-0 px-4">
-            <label htmlFor="category" className="form-label">Add Script</label>
+            <div className="col-12 m-0  ">
+            <label htmlFor="category" className="form-label">Parent Category</label>
                 <select
                   id="category"
                   name="category"
@@ -55,22 +61,37 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({show, handleClose }) =
                 </select>
               </div>
               
-            <div className="col-2 row m-0  ">
+            <div className="col-12 row  justify-content-evenly m-0  ">
             <label style={{  height: '33px'
 }} htmlFor="category" className="invisible">Last Updated</label>
  
+ 
               <button
               onClick={handleClose}
-                className="btn btn-dark  px-3   fw-bold  "
+                className="btn btn-danger col-3  px-3   fw-bold  "
                 type="button"
            
               >
-               Apply
+               Delete
+              </button>
+              <button
+              onClick={handleClose}
+                className="btn btn-light border border-2 border-dark col-3  px-3   fw-bold  "
+                type="button"
+           
+              >
+               Close
+              </button>
+              <button
+              onClick={handleClose}
+                className="btn btn-dark col-3  px-3   fw-bold  "
+                type="button"
+           
+              >
+               Save  
               </button>
               </div>  
-              <div className="col-12  row mt-3 px-4">
-             <p className='text-center'>All reports are sent at 12:00 PM UTC</p>
-              </div> 
+              
          
             </div>
           </div>
@@ -91,4 +112,4 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({show, handleClose }) =
   );
 }
 
-export default ScheduleEmailModal;
+export default NewCategoryModal;

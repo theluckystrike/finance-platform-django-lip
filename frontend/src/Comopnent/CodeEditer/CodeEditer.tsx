@@ -42,7 +42,7 @@ if __name__ == '__main__':
         value={code}
         language={language}
         placeholder={`Please enter ${language} code.`}
-        onChange={(evn) => setCode(evn.target.value)}
+        onChange={(evn:any) => setCode(evn.target.value)}
         padding={15}
         minHeight={300}
        

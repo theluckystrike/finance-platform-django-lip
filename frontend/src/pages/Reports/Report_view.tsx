@@ -1,16 +1,13 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import '../../assest/css/AllScript.css'
 import Icon from '../../Comopnent/ui/icon/Icon';
 import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
 
 const ReportViwe = () => {
-    const [category, setCategory] = useState("-1");
-    const [subCategory, setSubCategory] = useState("-1");
-    const [subSubCategory, setSubSubCategory] = useState("-1");
-    const [selectedScripts, setSelectedScripts] = useState([]);
-    const [subCategories, setSubCategories] = useState([]);
-    const [subSubCategories, setSubSubCategories] = useState([]);
+ 
+ 
+ 
     const data = [
         {
           title: "S&P 500 While NASDAQ AND DJIA Decline",
@@ -85,48 +82,7 @@ const ReportViwe = () => {
       ];
       
 
-
-
-    useEffect(() => {
-        if (category !== "-1") {
-            axios.get(`/categories/get-subcategories/${category}/`)
-                .then((response:any) => {
-                    setSubCategories(response.data.subcategories);
-                    setSubCategory("-1");
-                    setSubSubCategories([]);
-                });
-        } else {
-            setSubCategories([]);
-            setSubCategory("-1");
-            setSubSubCategories([]);
-        }
-    }, [category]);
-
-    useEffect(() => {
-        if (subCategory !== "-1") {
-            axios.get(`/categories/get-subcategories/${subCategory}/`)
-                .then(response => {
-                    setSubSubCategories(response.data.subcategories);
-                    setSubSubCategory("-1");
-                });
-        } else {
-            setSubSubCategories([]);
-            setSubSubCategory("-1");
-        }
-    }, [subCategory]);
-
-    const handleFilter = () => {
-        let url = '/reports/custom-report/?';
-        if (category !== "-1") url += `category=${category}`;
-        if (subCategory !== "-1") url += `&subcategory1=${subCategory}`;
-        if (subSubCategory !== "-1") url += `&subcategory2=${subSubCategory}`;
-        window.location.replace(url);
-    };
-
-    const handleResetFilters = () => {
-        window.location.replace('/reports/custom-report/');
-    };
-
+ 
     const toggleSelectAll = (event:any) => {
         const checkboxes = document.querySelectorAll('#scriptsCheckboxes input[type="checkbox"]');
         checkboxes.forEach((checkbox:any) => checkbox.checked = event.target.checked);
@@ -136,7 +92,9 @@ const ReportViwe = () => {
     const handleCheckboxChange = () => {
         const selected:any = Array.from(document.querySelectorAll('#scriptsCheckboxes input[type="checkbox"]:checked'))
             .map((checkbox:any) => checkbox.value);
-        setSelectedScripts(selected);
+            console.log(selected);
+            
+    
     };
     const [show, setShow] = useState(false);
 
