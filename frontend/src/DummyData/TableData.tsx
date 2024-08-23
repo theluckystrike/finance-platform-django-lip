@@ -184,3 +184,124 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
 ];
+
+export const Categoryarray = [
+  {
+    name: "Model Summaries",
+    subcategory: [
+      {
+        name: "Model Summaries-Tape",
+        innerCategory: ["Tape Summary", "Tape Summary2"],
+      },
+    ],
+  },
+  {
+    name: "Bonds",
+    subcategory: [
+      {
+        name: "Cross Market",
+        innerCategory: ["Summary-XCCY", "Regression-XCCY", "Studies-XCCY"],
+      },
+      {
+        name: "USD Bonds",
+        innerCategory: ["Summary-USD", "Regression-USD", "Studies-USD"],
+      },
+      {
+        name: "CAD Bonds",
+        innerCategory: ["Summary-CAD", "Regression-CAD", "Studies-CAD"],
+      },
+    ],
+  },
+  {
+    name: "Tape",
+    subcategory: [
+      {
+        name: "Trend",
+        innerCategory: ["Trend 2.0"],
+      },
+    ],
+  },
+];
+
+
+
+export const ScriptData = [
+  {
+    title: "S&P 500 While NASDAQ AND DJIA Decline",
+    category1: "Tape",
+    category2: "Relative Strength",
+    category3: "RS",
+    startDate: "08/18/24",
+    endDate: "08/20/24",
+    startTime: "18:52",
+    endTime: "10:03",
+    chart: "LineChart",
+  },
+  {
+    title: "Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression",
+    category1: "Bonds",
+    category2: "CAD Bonds",
+    category3: "Regression-CAD",
+    startDate: "11/18/23",
+    endDate: "08/20/24",
+    startTime: "17:39",
+    endTime: "10:03",
+    chart: "ScatterLineChart",
+  },
+  {
+    title: "Factor Returns Table",
+    category1: "Tape",
+    category2: "Returns",
+    category3: "Returns-Current",
+    startDate: "04/16/24",
+    endDate: "08/20/24",
+    startTime: "18:47",
+    endTime: "10:03",
+    chart: "LineChart",
+  },
+  {
+    title: "Philly and empire fed prices paid vs cpi",
+    category1: "Monetary",
+    category2: "Inflation",
+    category3: "Inflation-Models",
+    startDate: "11/16/23",
+    endDate: "08/20/24",
+    
+    startTime: "22:56",
+    endTime: "10:03",
+    chart: "LineChart",
+  },
+  {
+    title: "World Market ETFs Members 20pct 52WK High",
+    category1: "Tape",
+    category2: "Breadth",
+    category3: "Participation/Disperson",
+    startDate: "05/23/24",
+    endDate: "08/20/24",
+    startTime: "20:34",
+    endTime: "10:03",
+    chart: "LineChart",
+  },
+  {
+    title: "U.S. 2y5y Fixed Income",
+    category1: "Bonds",
+    category2: "USD Bonds",
+    category3: "Summary-USD",
+    startDate: "01/19/24",
+    endDate: "08/20/24",
+    startTime: "12:47",
+    endTime: "10:04",
+    chart: "LineChart",
+  },
+  {
+    title: "Continued Jobless Claims",
+    category1: "Econ",
+    category2: "Labour",
+    category3: "Labour-Models",
+    startDate: "08/08/24",
+    endDate: "08/20/24",
+    startTime: "19:44",
+    endTime: "10:03",
+    chart: "LineChart",
+  },
+];

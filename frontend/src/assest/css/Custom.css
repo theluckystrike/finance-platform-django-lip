@@ -1,260 +1,264 @@
-:root {
-  --primary-color: #eaffea;
-  --black-color: rgb(0 0 0);
-  --green-color: #011c05;
-  --white-color: #fff;
-  --light-green-color: #e5f7e6c6;
+
+:root{
+	--primary-color:#eaffea;
+	--black-color:rgb(0 0 0);
+	--green-color:#011C05;
+	--white-color:#fff;
+	 --light-green-color:#E5F7E6C6;
 }
 
-@import "./Header.css";
-@import "./Home.css";
-@import "./login.css";
-@import "./sidebar.css";
-@import "./dashboard.css";
+@import './Header.css';
+@import './Home.css';
+@import './login.css';
+@import './sidebar.css';
+ @import './dashboard.css';
+
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+	  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+	  sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+  }
+  
+  code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+	  monospace;
+  }
+  
+  
+   
+  
+  * {
+	box-sizing: border-box;
+  }
+  
+   
+  .bg-green {
+	background-color: var(--green-color);
+  }
+  .bg-light-green{
+	background-color: var(--light-green-color);
+  }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+  .border-2px{
+	border: 2px solid var(--green-color) !important
+  }
+  input:focus{
+	border: none !important;
+  }
 
-* {
-  box-sizing: border-box;
-}
+ 
+  
+  .modal-content {
+    border-radius: 25px !important}
+	 .modal-content .modal-body {
+		overflow: unset !important;
+	 }
+	.tr-value:hover{
+		background-color: #9be59fc6;
+	}
 
-.bg-green {
-  background-color: var(--green-color);
-}
-.bg-light-green {
-  background-color: var(--light-green-color);
-}
 
-.border-2px {
-  border: 2px solid var(--green-color) !important;
-}
-input:focus {
-  border: none !important;
-}
+	.dropdown input {
+		border: 2px solid var(--green-color);
+		width: 100%;
+		border-radius: 6px;
+padding: 5px 10px;
+height: 40px;
 
-.modal-content {
-  border-radius: 25px !important;
-}
-.modal-content .modal-body {
-  overflow: unset !important;
-}
-.tr-value:hover {
-  background-color: #9be59fc6;
-}
+	}
+	.dropdown label {
+		font-size: 18px;
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
+	.dropdown-content {
+		border: 2px solid var(--green-color);
+		width: 100%;
+		border-radius: 6px;
+padding: 6px;
+ 
+background: #fff !important;
+	}
+	.modal-dialog {
+		position: fixed;  
+		top: 50%;  
+		left: 50%;  
+		transform: translate(-50%, -65%) !important;  
+ 
+		max-width: 90%; 
+		max-height: 90%;  
+	  }
+	  .modal-footer {
+		border-top: none;
+	  }
+	  .dropbtn {
+		background-color: #04AA6D;
+		color: white;
+		padding: 16px;
+		font-size: 16px;
+		border: none;
+	  }
+	  
+	  .dropdown {
+		position: relative;
+ 
+	  }
+	  
+	  .dropdown-content {
+		display: none;
+		position: absolute;
+		background-color: #f1f1f1;
+		min-width: 160px;
+		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		z-index: 1;
+	  }
+	  
+	  .dropdown-content span {
+		color: black;
+		padding: 8px 6px;
+		text-decoration: none;
+		display: block;
+		font-weight: 500;
+	  }
 
-.dropdown input {
-  border: 2px solid var(--green-color);
-  width: 100%;
-  border-radius: 6px;
-  padding: 5px 10px;
-  height: 40px;
-}
-.dropdown label {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.dropdown-content {
-  border: 2px solid var(--green-color);
-  width: 100%;
-  border-radius: 6px;
-  padding: 6px;
-  /* margin-top: 5px; */
-  background: #fff !important;
-}
-.modal-dialog {
-  position: fixed; /* Use fixed positioning to ensure it stays centered relative to the viewport */
-  top: 50%; /* Position it at 50% from the top */
-  left: 50%; /* Position it at 50% from the left */
-  transform: translate(
-    -50%,
-    -65%
-  ) !important; /* Shift it back by 50% of its width and height to center */
-  /* Optional: Add some margin to adjust for scrollbars or viewport sizes */
-  max-width: 90%; /* Ensure the modal does not exceed the viewport width */
-  max-height: 90%; /* Ensure the modal does not exceed the viewport height */
-}
-.modal-footer {
-  border-top: none;
-}
-.dropbtn {
-  background-color: #04aa6d;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-}
 
-.dropdown {
-  position: relative;
-  /* display: inline-block; */
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
-
-.dropdown-content span {
-  color: black;
-  padding: 8px 6px;
-  text-decoration: none;
-  display: block;
-  font-weight: 500;
-}
-.dropdown-content span:hover {
-  background-color: #b3eba1 !important;
-  border-radius: 7px;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
-}
+	  .dropdown-content .hover-span:hover {
+		background-color: #b3eba1 !important;
+		border-radius: 7px;
+	  }
+	  
+	  
+	  .dropdown-content a:hover {background-color: #ddd;}
+	  
+	  .dropdown:hover .dropdown-content {display: block;}
+	  
+	  .dropdown:hover .dropbtn {background-color: #3e8e41;}
 
 .UploadScript_main_wrap h1 {
-  font-size: 45px;
-  text-align: center;
-  color: #011c05;
+	font-size: 45px;
+	text-align: center;
+	color: #011C05;
 }
 .bordered-button {
-  border: 2px solid black;
-}
-
-@media screen and (max-width: 991px) {
-  .modal-dialog {
-    margin-top: 100px;
+	border: 2px solid black;
   }
-}
 
-/* scrollbar CSS */
-/* Hide the default scrollbar */
+
+	  @media screen and (max-width: 991px) {
+		.modal-dialog {
+			margin-top: 100px;
+		}
+	  }
+ 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 0; /* Hide vertical scrollbar */
-  height: 0; /* Hide horizontal scrollbar */
-}
+	width: 0; 
+	height: 0;  
+  }
+  
+  
+  .custom-scrollbar {
+	overflow: auto;  
+	height: 300px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+	width: 12px; 
+	height: 12px;  
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+	background: #f1f1f1;  
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+	background: #888;  
+	border-radius: 10px; 
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #555;  
+  }
+  .light-green-bg {
+	background-color: var(--light-green-color);
+  }
 
-/* Add a custom scrollbar track and thumb */
-.custom-scrollbar {
-  overflow: auto; /* Ensure scrollbars appear when necessary */
-  height: 300px;
-}
+  .rc-tree {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+  }
+  
+  .rc-tree-treenode {
+	padding: 4px 8px;
+  }
+  
+  .rc-tree-treenode span {
+	color: #007bff; 
+	cursor: pointer;
+  }
+  
+  .rc-tree-treenode-selected {
+	background-color: #f0f0f0;
+	border-radius: 4px;
+  }
+  
+  .rc-tree-treenode:hover {
+	background-color: #e6e6e6;
+  }
+  
+  .tree-class span{
+color: #007bff;
+text-decoration: underline;
+  }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 12px; /* Width of the scrollbar */
-  height: 12px; /* Height of the scrollbar */
-}
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Track color */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888; /* Thumb color */
-  border-radius: 10px; /* Rounded corners for the thumb */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Thumb color on hover */
-}
-.light-green-bg {
-  background-color: var(--light-green-color);
-}
-
-.rc-tree {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-}
-
-.rc-tree-treenode {
-  padding: 4px 8px;
-}
-
-.rc-tree-treenode span {
-  color: #007bff; /* Link color */
-  cursor: pointer;
-}
-
-.rc-tree-treenode-selected {
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.rc-tree-treenode:hover {
-  background-color: #e6e6e6;
-}
-
-.tree-class span {
-  color: #007bff;
-  text-decoration: underline;
-}
-
-/* CategoryTree.css */
+  
 .category-tree ul {
-  list-style-type: none;
-  padding-left: 20px;
-  position: relative;
-}
+	list-style-type: none;
+	padding-left: 20px;
+	position: relative;
+  }
+  
+  .category-tree ul ul {
+	margin-left: 20px;
+	padding-left: 10px;
+  border-left: 1px solid #000; 
+  }
+  
+  .category-tree li {
+	margin: 8px 0;
+	padding-left: 1em;
+	position: relative;
+  }
+  
+  .category-tree li::before {
+	content: '';
+    position: absolute;
+    top: 10px;
+    left: -9px;
+    width: 17px;
+    height: 1px;
+    background-color: #000;
 
-.category-tree ul ul {
-  margin-left: 20px;
-  padding-left: 10px;
-  /* border-left: 1px solid #000; Line on the left side */
-}
-
-.category-tree li {
-  margin: 8px 0;
-  padding-left: 1em;
-  position: relative;
-}
-
-.category-tree li::before {
-  content: "";
-  position: absolute;
-  top: 10px;
-  left: -9px;
-  width: 17px;
-  height: 1px;
-  background-color: #000;
-}
-
-.category-tree li::after {
-  content: "";
-  position: absolute;
-  top: 0px;
-  left: -10px;
-  width: 1px;
-  height: 121%;
-  background-color: #000;
-}
-
-.category-tree li:last-child::after {
-  height: 10px;
-}
-
+  }
+  
+  .category-tree li::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: -10px;
+    width: 1px;
+    height: 121%;
+    background-color: #000;
+  }
+  
+  .category-tree li:last-child::after {
+	height: 10px;
+  }
+  
 /* Basic styling for the button */
 .tooltip-btn {
   position: relative;

@@ -21,6 +21,7 @@ const Sidebar = () => {
             <li
               onClick={() => changeRoute(value.path)}
               key={key}
+              style={{cursor: 'pointer'}}
               className={`row justify-content-evenly align-items-center ${
                 value?.hide ? "d-none" : ""
               }`}
@@ -37,7 +38,8 @@ const Sidebar = () => {
         <div className="user-profile-logo dropdown">
           <div
             className=""
-            style={{ borderRadius: "50%", overflow: "hidden" }}
+            style={{ borderRadius: "50%", overflow: "hidden",cursor: 'pointer' }}
+        
             id="dropdownMenuButton"
             data-bs-toggle="dropdown"
             aria-haspopup="true"

@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
 import { ActiveRoute } from '../../../../Menu';
+import { Categoryarray } from '../../../../DummyData/TableData';
 
 interface CategoryModalProps {
  
@@ -11,6 +12,8 @@ interface CategoryModalProps {
 
 const CategoryModal: FC<CategoryModalProps> = ({show, handleClose }) => {
   const navigate = useNavigate()
+
+  const [selectVlaue,setSelectValue]=useState('')
   return (
     <>
       <Modal  size="lg"
@@ -37,27 +40,39 @@ const CategoryModal: FC<CategoryModalProps> = ({show, handleClose }) => {
                    
                 </input>
               </div>
-            <div className="col-12 m-0  ">
+        
+              <div className="col-12  ">
             <label htmlFor="category" className="form-label">Parent Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
 
-                  <option value="Bonds">Bonds</option>
+                  <div className="dropdown">
+                    <input type="text" placeholder="All" value={selectVlaue}/>
+                    <div className="dropdown-content" style={ {height:'200px',overflow:'auto'}}>
+                      {Categoryarray.map((item, index) => (
+                        <span className="h6" key={index}>
+                          {item.name}
 
-                  <option value="CAD">CAD</option>
+                          {item.subcategory.map((subitem, subindex) => (
+                            <span className="text-muted" key={subindex}>
+                              {subitem.name}
 
-                  <option value="Breadth">Breadth</option>
-
-                </select>
-              </div>
+                              {subitem.innerCategory.map(
+                                (inneritem, innerindex) => (
+                                  <span
+                                    className="fs-6 hover-span"
+                                    key={innerindex}
+                                    onClick={()=>setSelectValue(inneritem)}
+                                  >
+                                    {inneritem}
+                                  </span>
+                                )
+                              )}
+                            </span>
+                          ))}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               
             <div className="col-12 row  justify-content-evenly m-0  ">
             <label style={{  height: '33px'
@@ -69,7 +84,7 @@ const CategoryModal: FC<CategoryModalProps> = ({show, handleClose }) => {
                 type="button"
            
               >
-               Edit Category
+               Edit All Category
               </button>
               <button
               onClick={handleClose}

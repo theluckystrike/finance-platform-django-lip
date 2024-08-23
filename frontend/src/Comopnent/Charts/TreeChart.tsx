@@ -1,43 +1,8 @@
 import React, { useState } from "react";
 import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
+import { Categoryarray } from "../../DummyData/TableData";
 
-const array = [
-  {
-    name: "Model Summaries",
-    subcategory: [
-      {
-        name: "Model Summaries-Tape",
-        innerCategory: ["Tape Summary", "Tape Summary"],
-      },
-    ],
-  },
-  {
-    name: "Bonds",
-    subcategory: [
-      {
-        name: "Cross Market",
-        innerCategory: ["Summary-XCCY", "Regression-XCCY", "Studies-XCCY"],
-      },
-      {
-        name: "USD Bonds",
-        innerCategory: ["Summary-USD", "Regression-USD", "Studies-USD"],
-      },
-      {
-        name: "CAD Bonds",
-        innerCategory: ["Summary-CAD", "Regression-CAD", "Studies-CAD"],
-      },
-    ],
-  },
-  {
-    name: "Tape",
-    subcategory: [
-      {
-        name: "Trend",
-        innerCategory: ["Trend 2.0"],
-      },
-    ],
-  },
-];
+ 
 
 // Helper function to transform the data
 const RenderTree = (data: any) => {
@@ -45,7 +10,7 @@ const RenderTree = (data: any) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = (value: any) => {
-    console.log("am running");
+ 
     setSelected(value);
     setShow(true);
   };
@@ -55,13 +20,13 @@ const RenderTree = (data: any) => {
       <ul className="tree-class">
         {data.map((item: any, index: any) => (
           <li key={index}>
-            <span onClick={() => handleShow(item.name)}> {item.name}</span>
+            <span onClick={() => handleShow(item.name)}  style={{cursor: 'pointer'}}> {item.name}</span>
             {/* {item.subcategory  && RenderTree(item.subcategory)} */}
             {item.subcategory && (
               <ul>
                 {item.subcategory.map((innerItem: any, innerIndex: any) => (
                   <li key={innerIndex}>
-                    <span onClick={() => handleShow(innerItem.name)}>
+                    <span onClick={() => handleShow(innerItem.name)}  style={{cursor: 'pointer'}}>
                       {" "}
                       {innerItem.name}
                     </span>
@@ -72,7 +37,7 @@ const RenderTree = (data: any) => {
                         {innerItem.innerCategory.map(
                           (subinnerItem: any, subinnerIndex: any) => (
                             <li key={subinnerIndex}>
-                              <span onClick={() => handleShow(subinnerItem)}>
+                              <span onClick={() => handleShow(subinnerItem)}  style={{cursor: 'pointer'}}>
                                 {subinnerItem}
                               </span>
                             </li>
@@ -100,7 +65,7 @@ const CategoryTree = () => {
   return (
     <div className="category-tree mx-auto w-25">
       <h3>Category Tree</h3>
-      {RenderTree(array)}
+      {RenderTree(Categoryarray)}
     </div>
   );
 };

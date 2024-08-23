@@ -117,6 +117,7 @@ const CustomReport = () => {
     ).map((checkbox: any) => checkbox.value);
     setSelectedScripts({...selected,...selectedScripts});
   };
+ 
 
   return (
     <>

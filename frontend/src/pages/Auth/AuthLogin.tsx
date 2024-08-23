@@ -50,7 +50,7 @@ function SignInComponent() {
               Forgot your password?
             </a>
           </div> */}
-				  <Link to="account/home">
+				  <Link to="account/upload">
 				  
           <button type="submit" className="button">Login</button>
 				  </Link>

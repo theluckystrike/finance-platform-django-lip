@@ -48,7 +48,7 @@ if __name__ == '__main__':
        
         data-color-mode="dark"
         style={{
-            maxHeight:"500px",
+          maxHeight:"500px",
           overflowY: 'auto',
           fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace',
         }}

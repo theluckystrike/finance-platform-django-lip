@@ -149,24 +149,17 @@ Email
             <label htmlFor="category" className="form-label">Add Script</label>
             <div className="row mx-0 p-0">
               <div className="col-10 m-0 p-0 pe-1">
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-
-                  <option value="Bonds">Bonds</option>
-
-                  <option value="CAD">CAD</option>
-
-                  <option value="Breadth">Breadth</option>
-
-                </select>
+              
+             
+              <div className="dropdown">
+                <input type="text" placeholder="All" />
+                <div className="dropdown-content">
+                  <span className="hover-span">Chart</span>
+                  <span className="hover-span">Table</span>
+                  <span className="hover-span">Chart and Table</span>
+                </div>
+              </div>
+          
               </div>
               <button
                 className="btn btn-dark col col-2 p-0 fw-bold justify-content-center"
