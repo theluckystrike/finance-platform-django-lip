@@ -7,7 +7,7 @@ export const Users =  [
       role: "Admin"
     },
     {
-      id: 2,
+      id: 2, 
       name: "Jane Smith",
       email: "jane.smith@example.com",
       password: "password456",
