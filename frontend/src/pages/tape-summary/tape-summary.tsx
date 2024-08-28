@@ -51,7 +51,7 @@ const TapeSummary: React.FC = () => {
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button
-              className="btn btn-dark col py-2 px-3 justify-content-center"
+              className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
               type="button"
               onClick={handleGetResults} 
               disabled={selectedScripts.length === 0}

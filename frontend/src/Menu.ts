@@ -57,8 +57,15 @@ export const SidebarMenu: SidebarMenutype = {
     path: "tape-summary",
     icon: "Summarize",
     hide:false,
-    role:'Admin'
+    role:'all'
   },
+  errorhandling:{
+    name: "Error Handling",
+    path: "error-handling",
+    icon: "Error",
+    hide:false,
+    role:'Admin'
+  }
 };
 
 export const ActiveRoute = {

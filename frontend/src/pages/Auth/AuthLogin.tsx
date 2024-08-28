@@ -57,7 +57,7 @@ function SignInComponent() {
           <Logo className="icon" width={230} />
         </div>
         <form onSubmit={formik.handleSubmit}>
-          <div>
+          <div className='mb-3'>
             <label htmlFor="email" className="label">Username</label>
             <input
               id="email"
@@ -74,7 +74,7 @@ function SignInComponent() {
               <div className="error-message">{formik.errors.email}</div>
             ) : null}
           </div>
-          <div>
+          <div className='mb-3'>
             <label htmlFor="password" className="label">Password</label>
             <input
               id="password"

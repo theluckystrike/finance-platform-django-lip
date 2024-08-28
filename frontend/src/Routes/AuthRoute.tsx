@@ -2,7 +2,8 @@ import React, { lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";
-import CategoryManger from "../pages/UploadScript/CategoryManger";
+ 
+ 
 
 // Lazy load the components
 const CustomReport = lazy(() => import("../pages/AllScript/AllScript"));
@@ -14,6 +15,12 @@ const Report = lazy(() => import("../pages/Reports/Reports"));
 const TapeSummary = lazy(() => import("../pages/tape-summary/tape-summary"));
 const TapeSummaryResult = lazy(() => import("../pages/tape-summary/tape-summary-result"))
 const UploadScript = lazy(() => import("../pages/UploadScript/UploadScript"));
+const CategoryManger = lazy(() => import("../pages/UploadScript/CategoryManger"));
+const ErrorHandling = lazy(() => import("../pages/ErrorHandling/ErrorHandle"));
+
+
+
+
 export const SimpleRoute = [
   {
     path: "/account",
@@ -62,6 +69,10 @@ export const SimpleRoute = [
       {
         path: ActiveRoute.TapeSummaryResult.path,
         element: <TapeSummaryResult />
+      },
+      {
+        path: SidebarMenu.errorhandling.path,
+        element: <ErrorHandling />
       }
     ],
   },

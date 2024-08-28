@@ -21,9 +21,11 @@ const AuthLayout = () => {
           <SimpleHeader />
          </div>
          <div className="content_main_wrap">
-         <Suspense fallback={<div>Loading...</div>}>
+         <Suspense fallback={<div className="loader-center"> <div className="  spinner-border text-dark" role="status">
+  
+  </div></div>}>
       
-          <Outlet />
+         <Outlet/>
          </Suspense>
          </div>
          <div>
