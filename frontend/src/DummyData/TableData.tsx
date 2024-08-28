@@ -223,15 +223,133 @@ export const Categoryarray = [
   },
 ];
 
+export const Categoryarray2 = [
+  {
+    name: "Model Summaries",
+    subcategory: [
+      {
+        name: "Model Summaries-Tape",
+        innerCategory: ["Tape Summary", "Tape Summary2", "Tape Summary3"],
+      },
+    ],
+  },
+  {
+    name: "Bonds",
+    subcategory: [
+      {
+        name: "Cross Market",
+        innerCategory: ["Summary-XCCY", "Regression-XCCY", "Studies-XCCY"],
+      },
+      {
+        name: "USD Bonds",
+        innerCategory: ["Summary-USD", "Regression-USD", "Studies-USD"],
+      },
+      {
+        name: "CAD Bonds",
+        innerCategory: ["Summary-CAD", "Regression-CAD", "Studies-CAD"],
+      },
+    ],
+  },
+  {
+    name: "Tape",
+    subcategory: [
+      {
+        name: "Trend",
+        innerCategory: ["Trend 2.0"],
+      },
+    ],
+  },
+  {
+    name: "Breadth",
+    subcategory: [
+      {
+        name: "Participation/Disperson",
+        innerCategory: ["Participation Metrics", "Disperson Metrics"],
+      },
+      {
+        name: "Thrust",
+        innerCategory: ["Thrust Analysis", "Thrust Indicators"],
+      },
+      {
+        name: "Relative Strength",
+        innerCategory: ["RS Metrics", "RS Indicators"],
+      },
+    ],
+  },
+  {
+    name: "Returns",
+    subcategory: [
+      {
+        name: "Returns-Current",
+        innerCategory: ["Current Data", "Recent Trends"],
+      },
+      {
+        name: "Returns Historic",
+        innerCategory: ["Historical Data", "Past Trends"],
+      },
+    ],
+  },
+  {
+    name: "Risk Management",
+    subcategory: [
+      {
+        name: "Risk Models",
+        innerCategory: ["Model A", "Model B", "Model C"],
+      },
+      {
+        name: "Risk Studies",
+        innerCategory: ["Study X", "Study Y"],
+      },
+    ],
+  },
+  {
+    name: "Monetary",
+    subcategory: [
+      {
+        name: "Inflation",
+        innerCategory: ["Inflation-Models", "Inflation Studies"],
+      },
+      {
+        name: "Bank Balance Sheet",
+        innerCategory: ["Central Bank", "Commercial Bank"],
+      },
+    ],
+  },
+  {
+    name: "Econ",
+    subcategory: [
+      {
+        name: "Labour",
+        innerCategory: ["Labour-Models", "Labour Data"],
+      },
+      {
+        name: "Housing",
+        innerCategory: ["Housing Models", "Housing Data"],
+      },
+    ],
+  },
+  {
+    name: "Combo",
+    subcategory: [
+      {
+        name: "Category A",
+        innerCategory: ["Item 1", "Item 2"],
+      },
+      {
+        name: "Category B",
+        innerCategory: ["Item 1", "Item 2"],
+      },
+    ],
+  },
+];
 
-
-export const ScriptData = [
+export const ScriptData = [ 
   {
     title: "S&P 500 While NASDAQ AND DJIA Decline",
     category1: "Tape",
     category2: "Relative Strength",
     category3: "RS",
-    startDate: "08/18/24",
+    startDate: "08/18/22",
     endDate: "08/20/24",
     startTime: "18:52",
     endTime: "10:03",
@@ -266,13 +384,13 @@ export const ScriptData = [
     category3: "Inflation-Models",
     startDate: "11/16/23",
     endDate: "08/20/24",
-    
+
     startTime: "22:56",
     endTime: "10:03",
     chart: "LineChart",
   },
   {
-    title: "World Market ETFs Members 20pct 52WK High",
+    title: "World Market ETFs Members 20pct 52WK",
     category1: "Tape",
     category2: "Breadth",
     category3: "Participation/Disperson",
@@ -305,3 +423,217 @@ export const ScriptData = [
     chart: "LineChart",
   },
 ];
+
+
+export const TapeSummaryData = [
+  {
+    id: 1,
+    title: "S&P 500 While NASDAQ AND DJIA Decline",
+    category: "Market Indices",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'S&P 500',
+          data: [65, 59, 80, 81, 56, 55],
+          borderColor: '#4bc0c0',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        },
+        {
+          label: '50-day Moving Average',
+          data: [45, 39, 60, 61, 46, 45],
+          borderColor: '#36a2eb',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        },
+        {
+          label: '200-day Moving Average',
+          data: [35, 29, 50, 51, 36, 35],
+          borderColor: '#ff6384',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 65 },
+      { date: '2024-02-01', value: 59 },
+      { date: '2024-03-01', value: 80 },
+      { date: '2024-04-01', value: 81 },
+      { date: '2024-05-01', value: 56 },
+      { date: '2024-06-01', value: 55 },
+    ],
+  },
+  {
+    id: 2,
+    title: "Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression",
+    category: "Bond Market",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "ScatterLineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: '2Yr vs 5Yr',
+          data: [20, 30, 40, 50, 60, 70],
+          borderColor: '#ff9f40',
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          type: 'scatter',
+        },
+        {
+          label: '5Yr vs 10Yr',
+          data: [10, 20, 30, 40, 50, 60],
+          borderColor: '#ffcd56',
+          backgroundColor: 'rgba(255, 205, 86, 0.2)',
+          type: 'scatter',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 20 },
+      { date: '2024-02-01', value: 30 },
+      { date: '2024-03-01', value: 40 },
+      { date: '2024-04-01', value: 50 },
+      { date: '2024-05-01', value: 60 },
+      { date: '2024-06-01', value: 70 },
+    ],
+  },
+  {
+    id: 4,
+    title: "Monthly Inflation Rates",
+    category: "Economic Indicators",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Inflation Rate',
+          data: [2.3, 2.5, 2.1, 2.3, 2.4, 2.6],
+          borderColor: '#36a2eb',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 2.3 },
+      { date: '2024-02-01', value: 2.5 },
+      { date: '2024-03-01', value: 2.1 },
+      { date: '2024-04-01', value: 2.3 },
+      { date: '2024-05-01', value: 2.4 },
+      { date: '2024-06-01', value: 2.6 },
+    ],
+  },
+  {
+    id: 6,
+    title: "GDP Growth Rate",
+    category: "Economic Indicators",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      datasets: [
+        {
+          label: 'GDP Growth',
+          data: [1.5, 2.0, 2.3, 2.1],
+          borderColor: '#ff6384',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-Q1', value: 1.5 },
+      { date: '2024-Q2', value: 2.0 },
+      { date: '2024-Q3', value: 2.3 },
+      { date: '2024-Q4', value: 2.1 },
+    ],
+  },
+  {
+    id: 7,
+    title: "Consumer Confidence Index",
+    category: "Economic Indicators",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Confidence Index',
+          data: [98, 100, 102, 104, 106, 108],
+          borderColor: '#ffcd56',
+          backgroundColor: 'rgba(255, 205, 86, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 98 },
+      { date: '2024-02-01', value: 100 },
+      { date: '2024-03-01', value: 102 },
+      { date: '2024-04-01', value: 104 },
+      { date: '2024-05-01', value: 106 },
+      { date: '2024-06-01', value: 108 },
+    ],
+  },
+  {
+    id: 11,
+    title: "Energy Consumption Trends",
+    category: "Energy",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Energy Consumption',
+          data: [700, 750, 720, 760, 780, 790],
+          borderColor: '#ff6384',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 700 },
+      { date: '2024-02-01', value: 750 },
+      { date: '2024-03-01', value: 720 },
+      { date: '2024-04-01', value: 760 },
+      { date: '2024-05-01', value: 780 },
+      { date: '2024-06-01', value: 790 },
+    ],
+  },
+  {
+    id: 14,
+    title: "Automobile Sales Trends",
+    category: "Automotive",
+    created: "2024-01-01",
+    lastUpdated: "2024-06-01",
+    chartType: "LineChart",
+    chartData: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Car Sales',
+          data: [1200, 1300, 1250, 1400, 1350, 1500],
+          borderColor: '#ff9f40',
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        },
+      ],
+    },
+    tableData: [
+      { date: '2024-01-01', value: 1200 },
+      { date: '2024-02-01', value: 1300 },
+      { date: '2024-03-01', value: 1250 },
+      { date: '2024-04-01', value: 1400 },
+      { date: '2024-05-01', value: 1350 },
+      { date: '2024-06-01', value: 1500 },
+    ],
+  },
+];
+
+
+

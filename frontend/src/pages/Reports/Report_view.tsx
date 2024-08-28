@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import '../../assest/css/AllScript.css'
 import Icon from '../../Comopnent/ui/icon/Icon';
 import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
+import { ActiveRoute } from '../../Menu';
+import { ScriptData, TapeSummaryData } from '../../DummyData/TableData';
 
 const ReportViwe = () => {
  
@@ -164,8 +166,7 @@ Email
               <button
                 className="btn btn-dark col col-2 p-0 fw-bold justify-content-center"
                 type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#newCategoryModal"
+                
               >
                Add
               </button>
@@ -189,8 +190,8 @@ Email
                          
                         </div>
                         <div id="scriptsCheckboxes">
-                            {data.slice(0,5).map((script:any) => (
-                                <a href={`/script/${script.name}`} className="text-decoration-none text-black" key={script.id}>
+                            {ScriptData.slice(0,5).map((script:any) => (
+                                <a href={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`} className="text-decoration-none text-black" key={script.id}>
                                     <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
                                         <div className="col-5">
                                             <span className="fw-bold fs-6">

@@ -84,12 +84,7 @@ title:'Merged example 1 and example 2',
           endTime: "10:03"
         }
       ];
-      
-
-
- 
-
-   
+  
 
     const handleFilter = () => {
         let url = '/reports/custom-report/?';

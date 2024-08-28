@@ -4,89 +4,39 @@ import Icon from "../../Comopnent/ui/icon/Icon";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
+import ArrowDown from '../../assest/image/arrow-down.png'
+import { ScriptData } from "../../DummyData/TableData";
+import { useCreateScriptMutation } from "../../Redux/Script";
+import { useGetAllProjectQuery } from "../../Redux/Project";
+import { useSelector } from "react-redux";
 
 const CustomReport = () => {
-  const [selectedScripts, setSelectedScripts] = useState([]);
+ 
 
-  const data = [
-    {
-      title: "S&P 500 While NASDAQ AND DJIA Decline",
-      category1: "Tape",
-      category2: "Relative Strength",
-      category3: "RS",
-      startDate: "08/18/24",
-      endDate: "08/20/24",
-      startTime: "18:52",
-      endTime: "10:03",
-      chart: "LineChart",
-    },
-    {
-      title: "Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression",
-      category1: "Bonds",
-      category2: "CAD Bonds",
-      category3: "Regression-CAD",
-      startDate: "11/18/23",
-      endDate: "08/20/24",
-      startTime: "17:39",
-      endTime: "10:03",
-      chart: "ScatterLineChart",
-    },
-    {
-      title: "Factor Returns Table",
-      category1: "Tape",
-      category2: "Returns",
-      category3: "Returns-Current",
-      startDate: "04/16/24",
-      endDate: "08/20/24",
-      startTime: "18:47",
-      endTime: "10:03",
-      chart: "LineChart",
-    },
-    {
-      title: "Philly and empire fed prices paid vs cpi",
-      category1: "Monetary",
-      category2: "Inflation",
-      category3: "Inflation-Models",
-      startDate: "11/16/23",
-      endDate: "08/20/24",
-      startTime: "22:56",
-      endTime: "10:03",
-      chart: "LineChart",
-    },
-    {
-      title: "World Market ETFs Members 20pct 52WK High",
-      category1: "Tape",
-      category2: "Breadth",
-      category3: "Participation/Disperson",
-      startDate: "05/23/24",
-      endDate: "08/20/24",
-      startTime: "20:34",
-      endTime: "10:03",
-      chart: "LineChart",
-    },
-    {
-      title: "U.S. 2y5y Fixed Income",
-      category1: "Bonds",
-      category2: "USD Bonds",
-      category3: "Summary-USD",
-      startDate: "01/19/24",
-      endDate: "08/20/24",
-      startTime: "12:47",
-      endTime: "10:04",
-      chart: "LineChart",
-    },
-    {
-      title: "Continued Jobless Claims",
-      category1: "Econ",
-      category2: "Labour",
-      category3: "Labour-Models",
-      startDate: "08/08/24",
-      endDate: "08/20/24",
-      startTime: "19:44",
-      endTime: "10:03",
-      chart: "LineChart",
-    },
-  ];
+  const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
+console.log(data,'data');
+const store = useSelector((i)=>i)
+console.log(store,'store');
+
+  const [selectedScripts, setSelectedScripts] = useState([]);
+  const [sortedData, setSortedData] = useState<any>([]);
+  const [sortValue,setSortValue]=useState('')
+
+ 
+
+  const handleShort = (value:any)=>{
+    setSortValue(value)
+    if(value==='Last Created'){
+      const sortedArray =  ScriptData.sort((a: any, b: any) => {
+        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+      });
+     
+      console.log(sortedArray.reverse() ,'sortedArray');
+      
+      setSortedData(sortedArray );
+    }
+  }
+ 
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -118,7 +68,6 @@ const CustomReport = () => {
     setSelectedScripts({...selected,...selectedScripts});
   };
  
-
   return (
     <>
       <div className="mx-4">
@@ -127,9 +76,42 @@ const CustomReport = () => {
             All scripts <span id="headerInfo">(132)</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
-            <button type="button" className="btn icon-button my-1 mx-2">
+
+
+
+          <form
+          className=""
+          
+          method="post"
+          encType="multipart/form-data"
+        >
+       
+
+       
+          <div className="mt-1 ">
+          
+          <div className="dropdown">
+              <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
+                <input type="text" placeholder="Sort by" value={sortValue}   />
+                <div className="dropdown-content">
+                  <span className="hover-span" onClick={()=>handleShort('Last Created')}>Last Created</span>
+                  {/* <span className="hover-span">Last Update</span>
+                  <span className="hover-span">A to z</span>
+                  <span className="hover-span">Z to a</span> */}
+
+                </div>
+              </div>
+             
+          </div>
+          </form>
+
+
+
+            <button type="button" className="btn icon-button my-1 mx-2"  >
               <Icon icon="AddBusiness" size="20px" />
-              <span>Add Home</span>
+              <span >Home</span>
             </button>
             <button onClick={handleShow} className="btn icon-button my-1 mx-2">
               <Icon icon="Filter" size="20px" />
@@ -172,7 +154,7 @@ const CustomReport = () => {
                 <div className="col-1 mx-auto text-center">Last updated</div>
               </div>
               <div id="scriptsCheckboxes">
-                {data.map((script: any) => (
+                {sortedData.length < 0 ?sortedData.reverse():ScriptData.map((script: any) => (
                   <a
                     href={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"

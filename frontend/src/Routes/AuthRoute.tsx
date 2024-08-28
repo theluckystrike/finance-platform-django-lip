@@ -11,8 +11,9 @@ const ScriptView = lazy(() => import("../pages/AllScript/Script_view"));
 const Home = lazy(() => import("../pages/Home/Home"));
 const ReportView = lazy(() => import("../pages/Reports/Report_view"));
 const Report = lazy(() => import("../pages/Reports/Reports"));
+const TapeSummary = lazy(() => import("../pages/tape-summary/tape-summary"));
+const TapeSummaryResult = lazy(() => import("../pages/tape-summary/tape-summary-result"))
 const UploadScript = lazy(() => import("../pages/UploadScript/UploadScript"));
-
 export const SimpleRoute = [
   {
     path: "/account",
@@ -39,6 +40,10 @@ export const SimpleRoute = [
         element: <Report />,
       },
       {
+        path: SidebarMenu.tapesummary.path,
+        element: <TapeSummary />
+      },
+      {
         path: ActiveRoute.ReportDetails.path,
         element: <ReportView />,
       },
@@ -54,6 +59,10 @@ export const SimpleRoute = [
         path: ActiveRoute.CategoryManager.path,
         element: <CategoryManger />,
       },
+      {
+        path: ActiveRoute.TapeSummaryResult.path,
+        element: <TapeSummaryResult />
+      }
     ],
   },
 ];

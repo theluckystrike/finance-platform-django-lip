@@ -12,7 +12,7 @@ const SimpleHeader = () => {
     const value = e.target.value.toLowerCase();
 
     if (value === '') {
-      setSearchData([]);  // Clear search data if input is empty
+      setSearchData([]);
     } else {
       const res: any = ScriptData.filter((i) =>
         i.title?.toLowerCase().includes(value)

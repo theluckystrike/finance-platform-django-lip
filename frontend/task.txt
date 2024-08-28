@@ -1,0 +1,90 @@
+  
+Login / signup Api
+Upload a Script api
+category add getall getbyid edit delete
+category tree api
+scripts add getall getbyid edit delete
+scripts run and get result chart  and table data
+scripts get by category id
+Reports add getall getbyid edit delete
+Report Details
+Merge two with Reports api
+download scripts result api
+Tape Summary add getall getbyid edit delete
+Schedule Email api
+send 1 to 5 scripts and get all result chart  and table data
+Search by name description  api
+Create a new custom report crud
+user logout api
+user getbyid profile
+
+
+
+
+
+I wanted to give you a quick overview of the backend APIs we'll be implementing for your project. These APIs will handle all the core functionalities your system needs. Here's the list:
+
+1.User Authentication APIs:
+
+-Login API: Authenticates a user and provides a token for session management.
+-Signup API: Registers a new user and returns a success or error message.
+-Logout API: Invalidates the user's session and token.
+-Get User by ID API: Retrieves user profile information based on the user ID.
+
+2.Script Management APIs:
+
+-Upload Script API: Uploads a script file to the server.
+-Add Script API: Adds a new script entry to the database.
+-Get All Scripts API: Retrieves a list of all scripts.
+-Get Script by ID API: Retrieves details of a specific script by its ID.
+-Edit Script API: Updates the details of an existing script.
+-Delete Script API: Removes a script from the database.
+-Run Script API: Executes a script and returns the results, including chart and table data.
+-Get Scripts by Category ID API: Retrieves all scripts belonging to a specific category.
+-Download Script Result API: Downloads the results of a script execution.
+
+3.Category Management APIs:
+
+-Add Category API: Creates a new category.
+-Get All Categories API: Retrieves a list of all categories.
+-Get Category by ID API: Retrieves details of a specific category by its ID.
+-Edit Category API: Updates the details of an existing category.
+-Delete Category API: Removes a category from the database.
+-Category Tree API: Retrieves a hierarchical structure of categories.
+
+4.Reports Management APIs:
+
+-Add Report API: Creates a new report entry.
+-Get All Reports API: Retrieves a list of all reports.
+-Get Report by ID API: Retrieves details of a specific report by its ID.
+-Edit Report API: Updates the details of an existing report.
+-Delete Report API: Removes a report from the database.
+-Merge Two Reports API: Combines the data from two reports into one.
+
+5.Script Execution and Reporting APIs:
+
+Run Multiple Scripts API: Runs 1 to 5 scripts simultaneously and returns all results, including chart and table data.
+
+6.Tape Summary Management APIs:
+
+-Add Tape Summary API: Creates a new tape summary entry.
+-Get All Tape Summaries API: Retrieves a list of all tape summaries.
+-Get Tape Summary by ID API: Retrieves details of a specific tape summary by its ID.
+-Edit Tape Summary API: Updates the details of an existing tape summary.
+-Delete Tape Summary API: Removes a tape summary from the database.
+
+7.Email Scheduling API:
+
+-Schedule Email API: Schedules the sending of emails with specified scripts and their results.
+
+8.Search API:
+
+-Search by Name/Description API: Searches for scripts, reports, or other entities based on their name or description.
+
+9.Custom Report Management APIs:
+
+-Create Custom Report API: Adds a new custom report.
+-Get All Custom Reports API: Retrieves all custom reports.
+-Get Custom Report by ID API: Retrieves details of a specific custom report by its ID.
+-Edit Custom Report API: Updates the details of an existing custom report.
+-Delete Custom Report API: Removes a custom report from the database.
