@@ -1,5 +1,6 @@
 import path from "path";
 import { AuthMenutype, SidebarMenutype } from "./types/MenuTypes";
+ 
 
 export const AuthMenu: AuthMenutype = {
   login: {
@@ -7,12 +8,14 @@ export const AuthMenu: AuthMenutype = {
     path: "",
     icon: "Login",
     hide: false,
+    role:'all'
   },
   signup: {
     name: "Signup",
     path: "signup",
     icon: "Signup",
     hide: false,
+    role:'all'
   },
 };
 
@@ -22,30 +25,39 @@ export const SidebarMenu: SidebarMenutype = {
     path: "home",
     icon: "Home",
     hide: true,
+    role:'all'
+
   },
   upload: {
     name: "Upload",
     path: "upload",
     icon: "Upload",
     hide: false,
+    role:'all'
+
   },
   Allscripts: {
     name: "All scripts",
     path: "allscripts",
     icon: "List",
     hide: false,
+    role:'all'
+
   },
   Report: {
     name: "Reports",
     path: "Report",
     icon: "Report",
     hide: false,
+    role:'all'
+
   },
   tapesummary: {
     name: "Tape Summary",
     path: "tape-summary",
     icon: "Summarize",
-    hide: false,
+    hide:false,
+    role:'Admin'
   },
 };
 

@@ -1,29 +1,51 @@
- 
-
 import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
 import { Categoryarray } from "../../DummyData/TableData";
-import ArrowDown from '../../assest/image/arrow-down.png'
+import ArrowDown from '../../assest/image/arrow-down.png';
+
+// Define validation schema using Yup
+const validationSchema = Yup.object({
+  category: Yup.string().required('Category is required'),
+  outputType: Yup.string().required('Output type is required'),
+  name: Yup.string().required('Script name is required'),
+  file: Yup.mixed().required('File is required'),
+});
 
 const UploadScriptForm = () => {
   const [show, setShow] = useState(false);
-  const [selectVlaue,setSelectValue]=useState('')
+  const [selectValue, setSelectValue] = useState('');
 
   const handleClose = () => setShow(false);
-  const handleShow = () => {
-    setShow(true);
-  };
+  const handleShow = () => setShow(true);
+
+  const formik = useFormik({
+    initialValues: {
+      category: '',
+      outputType: '',
+      name: '',
+      file: null,
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      // Handle form submission
+      // Example: navigate('account/upload');
+    },
+  });
+
   return (
     <>
-      <div className=" UploadScript_main_wrap mt-3">
+      <div className="UploadScript_main_wrap mt-3">
         <h1 className="h1 fw-bold">Upload a Script</h1>
 
         <div className="d-flex justify-content-center">
           <form
             className="w-75"
             style={{ maxWidth: "600px" }}
-            method="post"
+            onSubmit={formik.handleSubmit}
             encType="multipart/form-data"
           >
             <div className="mb-3">
@@ -33,35 +55,39 @@ const UploadScriptForm = () => {
               <div className="row mx-0 p-0">
                 <div className="col-11 m-0 p-0 pe-1">
                   <div className="dropdown">
-                  <div className="arrow_down">
+                    <div className="arrow_down">
                       <img src={ArrowDown} alt="" />
                     </div>
-                    <input type="text" placeholder="All" value={selectVlaue} />
-                    <div className="dropdown-content" style={ {height:'200px',overflow:'auto'}}>
+                    <input
+                      type="text"
+                      placeholder="All"
+                      {...formik.getFieldProps('category')}
+                      readOnly
+                  className={`form-control ${formik.touched.category && formik.errors.category ? 'input-error' : ''}`}
+
+                    />
+                    <div className="dropdown-content" style={{ height: '200px', overflow: 'auto' }}>
                       {Categoryarray.map((item, index) => (
                         <span className="h6" key={index}>
                           {item.name}
-
                           {item.subcategory.map((subitem, subindex) => (
                             <span className="text-muted" key={subindex}>
                               {subitem.name}
-
-                              {subitem.innerCategory.map(
-                                (inneritem, innerindex) => (
-                                  <span
-                                    className="fs-6 hover-span"
-                                    key={innerindex}
-                                    onClick={()=>setSelectValue(inneritem)}
-                                  >
-                                    {inneritem}
-                                  </span>
-                                )
-                              )}
+                              {subitem.innerCategory.map((inneritem, innerindex) => (
+                                <span
+                                  className="fs-6 hover-span"
+                                  key={innerindex}
+                                  onClick={() => formik.setFieldValue('category', inneritem) }
+                                >
+                                  {inneritem}
+                                </span>
+                              ))}
                             </span>
                           ))}
                         </span>
                       ))}
                     </div>
+                  
                   </div>
                 </div>
                 <button
@@ -71,23 +97,36 @@ const UploadScriptForm = () => {
                 >
                   <Icon icon="Add" size="30px" />
                 </button>
+                {formik.touched.category && formik.errors.category ? (
+                  <div className="error-message">{formik.errors.category}</div>
+                ) : null}
               </div>
             </div>
 
             <div className="mb-3">
-              <label htmlFor="output_type" className="form-label">
+              <label htmlFor="outputType" className="form-label">
                 How would you like to view data?
               </label>
               <div className="dropdown">
-              <div className="arrow_down">
-                      <img src={ArrowDown} alt="" />
-                    </div>
-                <input type="text" placeholder="All" />
-                <div className="dropdown-content">
-                  <span className="hover-span">Chart</span>
-                  <span className="hover-span">Table</span>
-                  <span className="hover-span">Chart and Table</span>
+                <div className="arrow_down">
+                  <img src={ArrowDown} alt="" />
                 </div>
+                <input
+                  type="text"
+                  id="outputType"
+               
+                  placeholder="All"
+                  className={`form-control ${formik.touched.outputType && formik.errors.outputType ? 'input-error' : ''}`}
+                  {...formik.getFieldProps('outputType')}
+                />
+                <div className="dropdown-content">
+                  <span className="hover-span" onClick={() => formik.setFieldValue('outputType', 'Chart')}>Chart</span>
+                  <span className="hover-span" onClick={() => formik.setFieldValue('outputType', 'Table')}>Table</span>
+                  <span className="hover-span" onClick={() => formik.setFieldValue('outputType', 'Chart and Table')}>Chart and Table</span>
+                </div>
+                {formik.touched.outputType && formik.errors.outputType ? (
+                  <div className="error-message">{formik.errors.outputType}</div>
+                ) : null}
               </div>
             </div>
 
@@ -98,10 +137,13 @@ const UploadScriptForm = () => {
               <input
                 type="text"
                 id="name"
-                name="name"
-                className="form-control"
-                required
+              
+                className={`form-control ${formik.touched.name && formik.errors.name ? 'input-error' : ''}`}
+                {...formik.getFieldProps('name')}
               />
+              {formik.touched.name && formik.errors.name ? (
+                <div className="error-message">{formik.errors.name}</div>
+              ) : null}
             </div>
 
             <div className="mb-3">
@@ -112,9 +154,12 @@ const UploadScriptForm = () => {
                 type="file"
                 id="file"
                 name="file"
-                className="form-control"
-                required
+                className={`form-control ${formik.touched.file && formik.errors.file ? 'input-error' : ''}`}
+                onChange={(event:any) => formik.setFieldValue('file', event.target.files[0])}
               />
+              {formik.touched.file && formik.errors.file ? (
+                <div className="error-message">{formik.errors.file}</div>
+              ) : null}
             </div>
 
             <div className="mx-auto text-center d-flex justify-content-between">
@@ -122,96 +167,18 @@ const UploadScriptForm = () => {
                 Upload
               </button>
               <button
-                type="submit"
+                type="reset"
                 className="btn btn-light bordered-button px-5"
+                onClick={() => formik.resetForm()}
               >
                 Reset
               </button>
             </div>
           </form>
 
-          <div
-            className="modal fade"
-            id="newCategoryModal"
-            tabIndex={-1}
-            aria-labelledby="newCategoryModalLabel"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog">
-              <div className="modal-content px-3">
-                <form
-                  action="{% url 'create_category' %}"
-                  method="post"
-                  encType="multipart/form-data"
-                >
-                  {/* <div className="modal-header">
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div> */}
-                  <div className="modal-body">
-                    <div className="mb-2">
-                      <label htmlFor="modal-name" className="form-label">
-                        Category name
-                      </label>
-                      <input
-                        type="text"
-                        id="modal-name"
-                        name="name"
-                        className="form-control mb-0"
-                        placeholder="Name"
-                        required
-                      />
-                    </div>
-                    <div className="mb-0">
-                      <div className="dropdown">
-                        <label htmlFor="parent" className="form-label">
-                          Parent category
-                        </label>
-                        <input type="text" placeholder="All" />
-                        <div className="dropdown-content custom-scrollbar">
-                          <span className="hover-span">None</span>
-                          <span className="hover-span">USD</span>
-                          <span className="hover-span">
-                            USD -- Economics
-                          </span>{" "}
-                          <span className="hover-span">USD -- Combo </span>{" "}
-                          <span className="hover-span">
-                            USD -- Benchmark Yeilds
-                          </span>
-                          <span className="hover-span">Tape</span>
-                          <span className="hover-span">Bonds</span>
-                          <span className="hover-span">
-                            Bonds -- Cross Market
-                          </span>
-                          <span className="hover-span">Bonds -- USD Bonds</span>
-                          <span className="hover-span">Bonds -- CAD Bonds</span>
-                          <span className="hover-span">CAD</span>
-                          <span className="hover-span">CAD -- Rendom</span>
-                          <span className="hover-span">
-                            CAD -- Money and Credit
-                          </span>
-                          <span className="hover-span">Breadth</span>
-                          <span className="hover-span">
-                            Breadth -- Breadth 1
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-footer pt-0 border-none d-flex justify-content-between">
-                    <button type="button" className="btn btn-secondary px-3">
-                      Close
-                    </button>
-                    <button type="submit" className="btn btn-dark px-3">
-                      Save
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+          <CategoryModal show={show} handleClose={handleClose} />
         </div>
       </div>
-      <CategoryModal show={show} handleClose={handleClose} />
     </>
   );
 };

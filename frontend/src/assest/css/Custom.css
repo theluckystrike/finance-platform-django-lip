@@ -316,3 +316,28 @@ input:focus {
   right: 10px;
   top: 12px;
 }
+
+
+/* Existing CSS */
+
+/* Add styles for input error */
+.input-error {
+  border: 1px solid red !important;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  animation: vibrate 0.3s ease-in-out;
+}
+
+/* Smooth vibration effect */
+@keyframes vibrate {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-2px); }
+  40%, 80% { transform: translateX(2px); }
+}
+.form-control, .form-select {
+   margin-bottom: 0;}

@@ -4,12 +4,23 @@ import { SidebarMenu } from "../../Menu";
 import Icon from "../ui/icon/Icon";
 import dummyUser from "../../assest/image/logo/user.jpg";
 import { Link, useNavigate } from "react-router-dom";
+import useToast from "../../customHook/toast";
+import { MenuItem } from "../../types/MenuTypes";
+import { GetRole } from "../../customHook/getrole";
 const Sidebar = () => {
+  const admin = GetRole()
   const navigate = useNavigate();
-
+const toast =useToast()
   const changeRoute = (value: String) => {
     navigate(`${value}`);
   };
+
+
+  const logout = ()=>{
+    localStorage.removeItem('login');
+    navigate('/')
+    toast.InfoToast('Logout successful')
+  }
   return (
     <div className="bg-green text-light vh-100 d-flex flex-column">
       <div className="d-flex justify-content-center">
@@ -23,8 +34,10 @@ const Sidebar = () => {
               key={key}
               style={{cursor: 'pointer'}}
               className={`row justify-content-evenly align-items-center ${
-                value?.hide ? "d-none" : ""
-              }`}
+                value?.hide  ? "d-none" : "" 
+              }
+              ${admin !== value?.role && value?.role !== 'all' ? "d-none" : ""}
+              `}
             >
               <div className="col-3">
                 <Icon icon={value.icon} size="20px" color="dark" />
@@ -51,15 +64,17 @@ const Sidebar = () => {
             className="dropdown-menu text-center fw-bold"
             aria-labelledby="dropdownMenuButton"
           >
-            <Link className="dropdown-item" to="#">
+            <span className="dropdown-item" >
               Profile
-            </Link>
-            <Link className="dropdown-item" to="#">
+            </span>
+            <span className="dropdown-item" >
               Settings
-            </Link>
-            <Link className="dropdown-item" to="/">
+            </span>
+<span className="dropdown-item" onClick={logout}>
+
               Sign Out
-            </Link>
+</span>
+     
             <div className="divss"></div>
           </div>
         </div>

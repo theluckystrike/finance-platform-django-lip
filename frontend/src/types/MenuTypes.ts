@@ -3,6 +3,7 @@ export interface MenuItem {
   path: string; 
   icon: string,
   hide: boolean,
+  role:string
 }
 
 // Define the interface for the AuthMenu object
