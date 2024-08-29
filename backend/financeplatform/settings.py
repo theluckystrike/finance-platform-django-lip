@@ -75,8 +75,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'scriptupload',
     'databaseinterface',
+    'olandinvestmentsapi',
     'storages',
     'django_tables2',
     'django_filters',
@@ -113,13 +115,15 @@ SCOUT_NAME = "Finance Platform scout"
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 4 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 days
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # JWT Authentication https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10000,
