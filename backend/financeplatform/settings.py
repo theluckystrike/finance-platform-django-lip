@@ -15,6 +15,7 @@ import django_heroku
 import os
 from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
+from datetime import timedelta
 
 
 MESSAGE_TAGS = {
@@ -75,7 +76,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'scriptupload',
     'databaseinterface',
     'olandinvestmentsapi',
@@ -131,6 +132,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -167,6 +169,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'financeplatform.wsgi.application'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Database
@@ -264,6 +268,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True
+}
 
 
 # Internationalization
