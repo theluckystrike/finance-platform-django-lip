@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import '../../assest/css/Header.css';
 import { ScriptData } from '../../DummyData/TableData';
-import SearchIcon from '../../assest/image/search-icon.svg';
+import SearchIcon from './SearchIcon';
+import Icon from "../ui/icon/Icon";
+ 
 
 const SimpleHeader = () => {
   const [searchData, setSearchData] = useState<any>([]);
@@ -25,7 +27,11 @@ const SimpleHeader = () => {
     <div className='bg-green main-header-conatiner'>
       <div className='search-bar-conatiner'>
 	  <div className="search_icon">
-				<img src={SearchIcon} alt="" />
+				{/* <img src={SearchIcon} alt="" /> */}
+        {/* <SearchIcon/> */}
+
+        <Icon icon="Search" size="35px" />
+        
 			  </div>
         <input 
           type="text" 

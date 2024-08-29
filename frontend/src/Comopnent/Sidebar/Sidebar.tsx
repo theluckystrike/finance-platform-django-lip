@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactComponent as Logo } from "../../assest/svg/logo_text_image_white.svg";
-import { SidebarMenu } from "../../Menu";
+import { ActiveRoute, SidebarMenu } from "../../Menu";
 import Icon from "../ui/icon/Icon";
 import dummyUser from "../../assest/image/logo/user.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -64,10 +64,10 @@ const toast =useToast()
             className="dropdown-menu text-center fw-bold"
             aria-labelledby="dropdownMenuButton"
           >
-            <span className="dropdown-item" >
+            <span className="dropdown-item" onClick={()=>navigate(`/account/${ActiveRoute.UserProfile.path}`)} >
               Profile
             </span>
-            <span className="dropdown-item" >
+            <span className="dropdown-item"  >
               Settings
             </span>
 <span className="dropdown-item" onClick={logout}>

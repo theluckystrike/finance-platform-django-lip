@@ -9,6 +9,7 @@ import { ScriptData } from "../../DummyData/TableData";
 import { useCreateScriptMutation } from "../../Redux/Script"; 
 import { useGetAllProjectQuery } from "../../Redux/Project";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ErrorHandle = () => {
  
@@ -21,9 +22,6 @@ console.log(store,'store');
   const [selectedScripts, setSelectedScripts] = useState([]);
   const [sortedData, setSortedData] = useState<any>([]);
   const [sortValue,setSortValue]=useState('')
-
- 
-
   const handleShort = (value:any)=>{
     setSortValue(value)
     if(value==='Last Created'){
@@ -98,8 +96,8 @@ console.log(store,'store');
               </div>
               <div id="scriptsCheckboxes">
                 { ScriptData.slice(0,5).map((script: any) => (
-                  <a
-                    href={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
+                  <Link
+                    to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"
                     key={script.id}
                   >
@@ -127,7 +125,7 @@ console.log(store,'store');
                         {script.endDate}
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </form>

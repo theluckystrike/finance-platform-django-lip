@@ -9,6 +9,7 @@ import { ScriptData } from "../../DummyData/TableData";
 import { useCreateScriptMutation } from "../../Redux/Script";
 import { useGetAllProjectQuery } from "../../Redux/Project";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const CustomReport = () => {
  
@@ -155,8 +156,8 @@ console.log(store,'store');
               </div>
               <div id="scriptsCheckboxes">
                 {sortedData.length < 0 ?sortedData.reverse():ScriptData.map((script: any) => (
-                  <a
-                    href={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
+                  <Link
+                    to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"
                     key={script.id}
                   >
@@ -189,7 +190,7 @@ console.log(store,'store');
                         {script.endDate}
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </form>

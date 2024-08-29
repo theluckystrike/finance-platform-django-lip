@@ -94,4 +94,9 @@ export const ActiveRoute = {
     path: "tape-summary-results",
     icon: "CategoryManager",
   },
+  UserProfile:{
+    name: "Profile",
+    path: "user-profile",
+    icon: "Profile",
+  }
 };

@@ -2,6 +2,7 @@ import React, { lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";
+import Profile from "../pages/user/Profile";
  
  
 
@@ -73,6 +74,10 @@ export const SimpleRoute = [
       {
         path: SidebarMenu.errorhandling.path,
         element: <ErrorHandling />
+      },
+      {
+        path: ActiveRoute.UserProfile.path,
+        element: <Profile />
       }
     ],
   },

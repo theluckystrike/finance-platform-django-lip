@@ -34,6 +34,15 @@ code {
 .bg-green {
   background-color: var(--green-color) !important;
 }
+.btn-green{
+  background-color: var(--green-color) !important;
+  color: white;
+
+}
+.text-green{
+color: #058b19 !important;
+
+}
 .bg-light-green {
   background-color: var(--light-green-color);
 }
