@@ -59,6 +59,13 @@ export const SidebarMenu: SidebarMenutype = {
     hide:false,
     role:'all'
   },
+  scriptTree:{
+    name: "Script Tree",
+    path: "scriptTree",
+    icon: "AccountTree",
+    hide:false,
+    role:'Admin'
+  },
   errorhandling:{
     name: "Error Handling",
     path: "error-handling",

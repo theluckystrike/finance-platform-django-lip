@@ -19,14 +19,16 @@
 // src/services/apiSlice.js
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { endpoint } from './endpoint';
 
 const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL  }),
+  tagTypes: ['GET', 'Project'],
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_LOCAL_URL  }),
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/login',
+        url: endpoint.login,
         method: 'POST',
         body: credentials,
       }),
@@ -61,9 +63,25 @@ const api = createApi({
       }),
     }),
     
+
+    getuserbytoken: builder.query({
+      query: ({ token, page_no, page_size }) => ({
+        url: endpoint.getuserinfo,
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,  // Ensure the Bearer token is correctly formatted
+        },
+        params: {  // If you need pagination, include these as query parameters
+          page: page_no,
+          size: page_size,
+        },
+      }),
+      providesTags: ['GET']
+    }),
     
+  
   }),
 });
 
-export const { useLoginMutation,useForgotpasswordMutation,useVerifypasswordotpMutation,useChangePasswordMutation } = api;
+export const { useLoginMutation,useForgotpasswordMutation,useGetuserbytokenQuery,useVerifypasswordotpMutation,useChangePasswordMutation } = api;
 export default api;

@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react';
 import '../../assest/css/Profile.css'
 import dummyUser from "../../assest/image/logo/user.jpg";
+import { useGetuserbytokenQuery } from '../../Redux/AuthSlice';
 
 const Profile: React.FC = () => {
 const loginUSer= JSON.parse(localStorage.getItem('login')as any)
 
+const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
 
-
+console.log(data);
 
 
 
@@ -162,7 +164,7 @@ const handleImageChange = (e:any) => {
                       <input
                         type="text"
                         className="form-control"
-                        value={loginUSer.name}
+                        value={data?.username}
                       />
                     </div>
                   </div>
@@ -174,7 +176,7 @@ const handleImageChange = (e:any) => {
                       <input
                         type="text"
                         className="form-control"
-                        value={loginUSer.email}
+                        value={data?.email}
                       />
                     </div>
                   </div>

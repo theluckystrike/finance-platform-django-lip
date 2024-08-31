@@ -10,33 +10,19 @@ import { useCreateScriptMutation } from "../../Redux/Script";
 import { useGetAllProjectQuery } from "../../Redux/Project";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import useSortableData from "../../customHook/useSortable";
 
 const CustomReport = () => {
  
 
   const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
-console.log(data,'data');
+ 
 const store = useSelector((i)=>i)
-console.log(store,'store');
-
-  const [selectedScripts, setSelectedScripts] = useState([]);
-  const [sortedData, setSortedData] = useState<any>([]);
-  const [sortValue,setSortValue]=useState('')
-
  
 
-  const handleShort = (value:any)=>{
-    setSortValue(value)
-    if(value==='Last Created'){
-      const sortedArray =  ScriptData.sort((a: any, b: any) => {
-        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
-      });
-     
-      console.log(sortedArray.reverse() ,'sortedArray');
-      
-      setSortedData(sortedArray );
-    }
-  }
+  const [selectedScripts, setSelectedScripts] = useState([]);
+ 
+ 
  
 
   const [show, setShow] = useState(false);
@@ -68,6 +54,10 @@ console.log(store,'store');
     ).map((checkbox: any) => checkbox.value);
     setSelectedScripts({...selected,...selectedScripts});
   };
+
+
+
+  const { items, requestSort, getClassNamesFor } = useSortableData(ScriptData);
  
   return (
     <>
@@ -80,34 +70,7 @@ console.log(store,'store');
 
 
 
-          <form
-          className=""
           
-          method="post"
-          encType="multipart/form-data"
-        >
-       
-
-       
-          <div className="mt-1 ">
-          
-          <div className="dropdown">
-              <div className="arrow_down">
-                      <img src={ArrowDown} alt="" />
-                    </div>
-                <input type="text" placeholder="Sort by" value={sortValue}   />
-                <div className="dropdown-content">
-                  <span className="hover-span" onClick={()=>handleShort('Last Created')}>Last Created</span>
-                  {/* <span className="hover-span">Last Update</span>
-                  <span className="hover-span">A to z</span>
-                  <span className="hover-span">Z to a</span> */}
-
-                </div>
-              </div>
-             
-          </div>
-          </form>
-
 
 
             <button type="button" className="btn icon-button my-1 mx-2"  >
@@ -138,32 +101,68 @@ console.log(store,'store');
           {132 > -1 ? (
             <form method="post" id="customReportForm">
               <div className="row mb-2 p-2 fw-bold w-100">
-                <div className="col-5">
+                <div className="col-4" >
                   <h5>
                     <input
                       type="checkbox"
                       id="selectAllCheckbox"
                       onChange={toggleSelectAll}
                     />{" "}
+                    <span onClick={() => requestSort('title')}>
+
                     Name
+
+                    <Icon
+									size='10px'
+									className={getClassNamesFor('title')}
+									icon='FilterList'
+                  />
+                  </span>
                   </h5>
                 </div>
-                <div className="col-1 mx-auto text-center">Category</div>
-                <div className="col-2 mx-auto text-center">Sub Category 1</div>
-                <div className="col-2 mx-auto text-center">Sub Category 2</div>
-                <div className="col-1 mx-auto text-center">Created</div>
-                <div className="col-1 mx-auto text-center">Last updated</div>
+
+               
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category1')} >Category
+                <Icon
+									size='10px'
+									className={getClassNamesFor('category1')}
+									icon='FilterList'
+                  />
+
+               
+                </div>
+                <div className="col-2 mx-auto text-center"  onClick={() => requestSort('category2')}>Sub Category 1  <Icon
+									size='10px'
+									className={getClassNamesFor('category2')}
+									icon='FilterList'
+                  />
+</div>
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category3')}>Sub Category 2 <Icon
+									size='10px'
+									className={getClassNamesFor('category3')}
+									icon='FilterList'
+                  /></div>
+                <div className="col-1 mx-auto text-center" onClick={() => requestSort('startDate')}>Created<Icon
+									size='10px'
+									className={getClassNamesFor('startDate')}
+									icon='FilterList'
+                  /></div>
+                <div className="col-1 mx-auto text-center" onClick={() => requestSort('endDate')}>LastUpdated<Icon
+									size='10px'
+									className={getClassNamesFor('endDate')}
+									icon='FilterList'
+                  /></div>
               </div>
               <div id="scriptsCheckboxes">
-                {sortedData.length < 0 ?sortedData.reverse():ScriptData.map((script: any) => (
+                {items.map((script: any) => (
                   <Link
                     to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"
                     key={script.id}
                   >
                     <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                      <div className="col-5">
-                        <span className="fw-bold fs-6">
+                      <div className="col-4">
+                        <span className="fw-bold  ">
                           <input
                             className="chbx"
                             type="checkbox"
@@ -174,7 +173,7 @@ console.log(store,'store');
                           {script.title}
                         </span>
                       </div>
-                      <div className="col-1 mx-auto text-center wrap-word">
+                      <div className="col-2 mx-auto text-center wrap-word">
                         {script.category1}
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
