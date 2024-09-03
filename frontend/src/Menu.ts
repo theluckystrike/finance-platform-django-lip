@@ -5,7 +5,7 @@ import { AuthMenutype, SidebarMenutype } from "./types/MenuTypes";
 export const AuthMenu: AuthMenutype = {
   login: {
     name: "Login",
-    path: "",
+    path: "login",
     icon: "Login",
     hide: false,
     role:'all'

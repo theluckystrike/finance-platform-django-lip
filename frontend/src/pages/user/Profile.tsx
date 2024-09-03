@@ -2,9 +2,10 @@ import React, { useRef, useState } from 'react';
 import '../../assest/css/Profile.css'
 import dummyUser from "../../assest/image/logo/user.jpg";
 import { useGetuserbytokenQuery } from '../../Redux/AuthSlice';
+import { loginUSer } from '../../customHook/getrole';
 
 const Profile: React.FC = () => {
-const loginUSer= JSON.parse(localStorage.getItem('login')as any)
+
 
 const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
 

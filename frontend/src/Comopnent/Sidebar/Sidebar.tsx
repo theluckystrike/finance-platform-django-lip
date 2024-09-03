@@ -67,8 +67,11 @@ const toast =useToast()
             <span className="dropdown-item" onClick={()=>navigate(`/account/${ActiveRoute.UserProfile.path}`)} >
               Profile
             </span>
-            <span className="dropdown-item"  >
-              Settings
+            <span className="dropdown-item"  onClick={()=>{
+
+              window.location.href=`${process.env.REACT_APP_API_LOCAL_URL}admin`
+            }} >
+          Admin Portal
             </span>
 <span className="dropdown-item" onClick={logout}>
 

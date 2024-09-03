@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
 } from "react-router-dom";
 import "./assest/css/Custom.css";
@@ -10,9 +11,14 @@ import { AuthRoute } from "./Routes/SimpleRoutes";
 import { Provider } from "react-redux";
 import store from "./Store";
 import { ToastContainer } from "react-toastify";
+import { SidebarMenu } from "./Menu";
 
 // Create the router instance with all route configurations
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to={`account/${SidebarMenu.upload.path}`} replace />,
+  },
   ...SimpleRoute,
   ...AuthRoute
 ]);
@@ -22,9 +28,7 @@ const rootElement = document.getElementById("root") as HTMLElement;
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <Provider store={store}>
-     
     <ToastContainer />
-      
     <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>

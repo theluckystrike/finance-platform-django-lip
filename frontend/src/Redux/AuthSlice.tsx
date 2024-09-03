@@ -1,23 +1,3 @@
-// import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query';
-// import { login } from '../models'; // Replace with your actual model definition
-
-// export const AuthSlice = createApi({
-//   reducerPath: 'AuthSlice',
-//   baseQuery: fetchBaseQuery({ baseUrl: 'https://clearstub-api.cradle.services/api/user/' }),
-//   endpoints: (builder) => ({
-//     createLogin: builder.mutation<login, login>({
-//       query: (data) => ({
-//         url: '/login',
-//         method: 'POST',
-//         body: data,
-//       }),
-//     }),
-//   }),
-// });
-
-// export const { useCreateLoginMutation } :any= AuthSlice; // Ensure correct export
-// src/services/apiSlice.js
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoint } from './endpoint';
 
@@ -55,7 +35,7 @@ const api = createApi({
         url: '/resetPassword',
         method: 'POST',
         headers: {
-          'x-access-token': token, // No need for `${token}`, unless it's specifically required
+          'x-access-token': token, 
         },
         body: {
           password: newPassword, // Ensure this matches the API endpoint's expected structure
@@ -69,9 +49,9 @@ const api = createApi({
         url: endpoint.getuserinfo,
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,  // Ensure the Bearer token is correctly formatted
-        },
-        params: {  // If you need pagination, include these as query parameters
+          'Authorization': `Bearer ${token}`,
+         },
+        params: {
           page: page_no,
           size: page_size,
         },
@@ -83,5 +63,11 @@ const api = createApi({
   }),
 });
 
-export const { useLoginMutation,useForgotpasswordMutation,useGetuserbytokenQuery,useVerifypasswordotpMutation,useChangePasswordMutation } = api;
+export const { 
+  useLoginMutation,
+  useForgotpasswordMutation,
+  useGetuserbytokenQuery,
+  useVerifypasswordotpMutation,
+  useChangePasswordMutation 
+} = api;
 export default api;

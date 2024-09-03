@@ -5,6 +5,8 @@ import Icon from "../../Comopnent/ui/icon/Icon";
 import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
 import { Categoryarray } from "../../DummyData/TableData";
 import ArrowDown from '../../assest/image/arrow-down.png';
+import { useGetuserbytokenQuery } from "../../Redux/AuthSlice";
+import { loginUSer } from "../../customHook/getrole";
 
 // Define validation schema using Yup
 const validationSchema = Yup.object({
@@ -15,6 +17,9 @@ const validationSchema = Yup.object({
 });
 
 const UploadScriptForm = () => {
+
+
+  const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
   const [show, setShow] = useState(false);
   const [selectValue, setSelectValue] = useState('');
 
