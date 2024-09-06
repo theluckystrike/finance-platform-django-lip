@@ -49,9 +49,9 @@ const RenderTree = (data: any, level = 0) => {
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
               </span>
-              {expandedCategories.includes(item.name) && item.subcategory && (
+              {expandedCategories.includes(item.name) && item.subcategories && (
                 <ul>
-                  {item.subcategory.map((innerItem: any, innerIndex: any) => (
+                  {item.subcategories.map((innerItem: any, innerIndex: any) => (
                     <li key={innerIndex}>
                       <span
                         onClick={() => toggleExpand(innerItem.name)}
@@ -66,16 +66,16 @@ const RenderTree = (data: any, level = 0) => {
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
                       </span>
-                      {expandedCategories.includes(innerItem.name) && innerItem.innerCategory && (
+                      {expandedCategories.includes(innerItem.name) && innerItem.subcategories && (
                         <ul>
-                          {innerItem.innerCategory.map(
+                          {innerItem.subcategories.map(
                             (subinnerItem: any, subinnerIndex: any) => (
                               <li key={subinnerIndex}>
                                 <span
                                   onClick={() => handleShow(subinnerItem)}
                                   style={{ cursor: 'pointer' }}
                                 >
-                                  {subinnerItem}
+                                  {subinnerItem.name}
                                 </span>
                               </li>
                             )
@@ -100,11 +100,11 @@ const RenderTree = (data: any, level = 0) => {
   );
 };
 
-const CategoryTree = () => {
+const CategoryTree = ({categoryFilter}:any) => {
   return (
     <div className="category-tree mx-auto w-25">
       <h3>Category Tree</h3>
-      {RenderTree(Categoryarray2)}
+      {RenderTree(categoryFilter)}
     </div>
   );
 };

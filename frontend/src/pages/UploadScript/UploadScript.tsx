@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Icon from "../../Comopnent/ui/icon/Icon";
@@ -7,6 +7,8 @@ import { Categoryarray } from "../../DummyData/TableData";
 import ArrowDown from '../../assest/image/arrow-down.png';
 import { useGetuserbytokenQuery } from "../../Redux/AuthSlice";
 import { loginUSer } from "../../customHook/getrole";
+import { useGetAllCategoryQuery } from "../../Redux/CategoryQuery";
+ 
 
 // Define validation schema using Yup
 const validationSchema = Yup.object({
@@ -17,6 +19,54 @@ const validationSchema = Yup.object({
 });
 
 const UploadScriptForm = () => {
+  const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUSer.access });
+
+  const categoryData = AllCategory?.categories || [];
+
+
+
+
+const [categoryFilter,setCategoryFilter ]=useState<any>([])
+
+useEffect(() => {
+  const categoryMap: any = {};
+
+  // Initialize categories in the map
+  categoryData.forEach((cat: any) => {
+    categoryMap[cat.id] = { ...cat, subcategories: [] };
+  });
+
+  // Populate the subcategories
+  categoryData.forEach((cat: any) => {
+    if (cat.parent_name === null) {
+      // Root category, do nothing here
+    } else {
+      // Find the parent category and add the current category as a subcategory
+      const parent:any = Object.values(categoryMap).find(
+        (parentCat: any) => parentCat.name === cat.parent_name
+      );
+      if (parent) {
+        parent.subcategories.push(categoryMap[cat.id]);
+      }
+    }
+  });
+
+  // Extract root categories
+  const structuredCategories = Object.values(categoryMap).filter(
+    (cat: any) => cat.parent_name === null
+  );
+
+  setCategoryFilter(structuredCategories);
+
+}, [categoryData]);
+
+
+
+
+
+
+
+
 
 
   const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
@@ -72,25 +122,26 @@ const UploadScriptForm = () => {
 
                     />
                     <div className="dropdown-content" style={{ height: '200px', overflow: 'auto' }}>
-                      {Categoryarray.map((item, index) => (
-                        <span className="h6" key={index}>
-                          {item.name}
-                          {item.subcategory.map((subitem, subindex) => (
-                            <span className="text-muted" key={subindex}>
-                              {subitem.name}
-                              {subitem.innerCategory.map((inneritem, innerindex) => (
-                                <span
-                                  className="fs-6 hover-span"
-                                  key={innerindex}
-                                  onClick={() => formik.setFieldValue('category', inneritem) }
-                                >
-                                  {inneritem}
-                                </span>
-                              ))}
-                            </span>
-                          ))}
-                        </span>
-                      ))}
+                    {categoryFilter.length > 0 && categoryFilter.map((item: any, index: any) => (
+  <span className="h6" key={item.name}  onClick={() => formik.setFieldValue('category', item.name)}>
+    {item.name}
+    {item.subcategories?.map((subitem: any, subindex: any) => (
+      <span className="text-muted" key={subindex}>
+        {subitem.name}
+        {subitem.subcategories?.map((inneritem: any, innerindex: any) => (
+          <span 
+            className="fs-6 hover-span"
+            key={innerindex}
+           
+          >
+            {inneritem.name}
+          </span>
+        ))}
+      </span>
+    ))}
+  </span>
+))}
+
                     </div>
                   
                   </div>
@@ -181,7 +232,7 @@ const UploadScriptForm = () => {
             </div>
           </form>
 
-          <CategoryModal show={show} handleClose={handleClose} />
+          <CategoryModal show={show} handleClose={handleClose} categoryFilter={categoryFilter} />
         </div>
       </div>
     </>
