@@ -3,7 +3,7 @@ from .models import Category ,Script
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    parent = serializers.IntegerField(write_only=True, required=False)
+    parent = serializers.IntegerField(write_only=True, required=False,allow_null=True)
 
     class Meta:
         model = Category
@@ -28,6 +28,27 @@ class CategorySerializer(serializers.ModelSerializer):
             instance.parent_category = parent_category
         instance.save()
         return instance
+
+
+"""class CategorySerializer(serializers.ModelSerializer):
+    parent = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+
+    class Meta:
+        model = Category
+        fields = ("name", "parent")
+
+    def update(self, instance, validated_data):
+        parent_id = validated_data.pop('parent', None)
+        instance.name = validated_data.get('name', instance.name)
+
+        if parent_id == -1:
+            instance.parent_category = None
+        elif parent_id:
+            parent_category = Category.objects.get(id=parent_id)
+            instance.parent_category = parent_category
+        instance.save()
+        return instance"""
+
 
 
 class ScriptSerializer(serializers.ModelSerializer):

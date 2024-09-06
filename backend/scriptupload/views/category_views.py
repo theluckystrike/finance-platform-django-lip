@@ -180,8 +180,7 @@ def get_subcategories(request, categoryid):
             "categories": [{"id": cat.id, "name": cat.name} for cat in categories]
         })"""
 
-
-class UpdateCategoryView(UpdateAPIView):
+"""class UpdateCategoryView(UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
@@ -192,7 +191,9 @@ class UpdateCategoryView(UpdateAPIView):
 
         if serializer.is_valid():
             ob = serializer.save(commit=False)
+
             parent = serializer.validated_data.get("parent", None)
+            
 
             ob_type = ob.get_level()
             if parent == -1:
@@ -214,7 +215,44 @@ class UpdateCategoryView(UpdateAPIView):
                 else:
                     return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
         else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
+
+
+class UpdateCategoryView(UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        category = self.get_object()  # Use self.get_object() to get the instance
+        serializer = self.get_serializer(category, data=request.data)
+
+        if serializer.is_valid():
+            parent = serializer.validated_data.get("parent", None)
+            ob = serializer.validated_data
+
+            ob_type = category.get_level()
+            if parent == -1:
+                if ob_type != 0:
+                    return Response({"error": "Cannot promote category"}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    category.parent_category = None
+                    category.save()
+                    return Response({"success": "Successfully updated"})
+            elif parent == category.id:
+                return Response({"error": "Cannot make category a subcategory of itself"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                parent_cat = get_object_or_404(Category, pk=parent)
+                parent_cat_type = parent_cat.get_level()
+                if (ob_type == 2 and parent_cat_type == 1) or (ob_type == 1 and parent_cat_type == 0):
+                    category.parent_category = parent_cat
+                    category.save()
+                    return Response({"success": "Successfully updated"})
+                else:
+                    return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -294,7 +332,8 @@ class CategoryManagerAPIView(APIView):
     def get(self, request):
         # Prepare the data for the response
         scripts = Script.objects.all()
-        categories = Category.objects.filter(parent_category=None)
+        categories = Category.objects.all()
+        #categories = Category.objects.filter(parent_category=None)
 
         # Serialize the data
         scripts_serializer = ScriptSerializer(scripts, many=True)
@@ -312,3 +351,25 @@ class CategoryManagerAPIView(APIView):
         }
 
         return Response(response_data)
+
+
+"""class CategoryManagerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Prepare the data for the response
+        scripts = Script.objects.all()
+        categories = Category.objects.filter(parent_category=None)
+
+        # Serialize the data
+        scripts_serializer = ScriptSerializer(scripts, many=True)
+        categories_serializer = CategorySerializer(categories, many=True)
+
+        # Construct the response data
+        response_data = {
+            "scripts": scripts_serializer.data,
+            "categories": categories_serializer.data,
+        }
+
+        return Response(response_data)
+"""
