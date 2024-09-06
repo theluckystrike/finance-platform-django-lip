@@ -8,6 +8,7 @@ from olandinvestmentsapi.views import (
     LogoutView,
     UserInfoView,
     ScriptStatusView,
+    ScriptRunView,
     ScriptViewSet
 )
 from rest_framework import routers
@@ -24,4 +25,5 @@ urlpatterns = [
     # Script Views
     path('api/', include(router.urls)),
     path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
+    path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
 ]

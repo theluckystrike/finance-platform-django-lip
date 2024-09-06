@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status, generics
 from rest_framework.response import Response
-from ..serializers import ScriptSerializer
+from ..serializers import ScriptSerializer, ChartDataSerializer, TableDataSerializer
 from scriptupload.models import Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -43,12 +43,12 @@ class ScriptViewSet(ModelViewSet):
         return queryset
 
 
-
-
 class ScriptStatusView(APIView):
     """
     GET request to retrieve the status of a script execution
     """
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         responses={
             200: openapi.Response(
@@ -61,16 +61,23 @@ class ScriptStatusView(APIView):
                             description='Current status of the execution',
                             enum=['success', 'running', 'failure']
                         ),
-                        'error_message': openapi.Schema(type=openapi.TYPE_STRING, description='Execution output or log')
+                        'error_message': openapi.Schema(type=openapi.TYPE_STRING, description='Execution output or log'),
+                        'chart_data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Chart data info'),
+                        'table_data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Table data info')
                     },
                     example={
-                        "status": "failure",
-                        "output": "Syntax error on line 9 '-'"
+                        "status": "success",
+                        "chart_data": {
+                            "id": 20,
+                            "image_file": "http://127.0.0.1:8000/mediafiles/scripts-dev/uploaded%204/chart/output_plot.png",
+                            "created": "2024-09-06T19:52:49.458525Z",
+                            "last_updated": None
+                        }
                     }
                 )
             ),
             404: openapi.Response(
-                description="Execution not found",
+                description="Script not found",
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -91,7 +98,59 @@ class ScriptStatusView(APIView):
             }
             if script.status == 2:
                 resp['error_message'] = script.error_message
-
+            if script.status == 0:
+                # context required to return full URLs
+                if script.has_chart_data:
+                    resp["chart_data"] = ChartDataSerializer(
+                        script.chart_data, context={'request': request}).data
+                if script.has_table_data:
+                    resp["table_data"] = TableDataSerializer(
+                        script.table_data, context={'request': request}).data
             return Response(resp)
+        except Script.DoesNotExist:
+            return Response({'error': 'Script does not exists'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ScriptRunView(APIView):
+    """
+    POST request to run a script
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description="Status retrieved",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Message')
+                    },
+                    example={
+                        "message": "Script added to task queue"
+                    },
+                )
+            ),
+            404: openapi.Response(
+                description="Script not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error')
+                    },
+                    example={
+                        "error": "Script does not exist"
+                    }
+                )
+            ),
+        }
+    )
+    def post(self, request, pk):
+        try:
+            script = Script.objects.get(pk=pk)
+            if script.status == 1:
+                return Response({"message": "Script is already running"})
+            script.run()
+            return Response({"message": "Script added to task queue"})
         except Script.DoesNotExist:
             return Response({'error': 'Script does not exists'}, status=status.HTTP_404_NOT_FOUND)
