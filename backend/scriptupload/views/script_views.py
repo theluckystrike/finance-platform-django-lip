@@ -1,3 +1,17 @@
+# this is start apis import modules
+from rest_framework import status
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from django_rq import get_queue
+from rest_framework.parsers import MultiPartParser, FormParser
+from ..serializers import  ScriptSerializer
+# this is end  apis import modules
+
+
+
+
 import csv
 import django_rq
 from django.utils import timezone
@@ -24,6 +38,7 @@ logger = logging.getLogger('testlogger')
 execution_states = Script.ExecutionStatus
 output_types = Script.OutputDataType
 
+# start web functios of the script sections
 
 @login_required
 def upload_script(request):
@@ -216,3 +231,143 @@ def script_search(request):
 @register.filter
 def output_type_name(script):
     return script.get_output_type_display()
+# end web functios of the script sections
+
+
+# start RestFull design  of the script sections
+class UploadScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, *args, **kwargs):
+        form = ScriptUploadForm(request.data, files=request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            script = form.save(commit=False)
+            if not file.name.endswith((".py", ".ipynb")):
+                return Response({"error": "File must be .py or .ipynb"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if file.name.endswith('.ipynb'):
+                nb_content = nbformat.read(file, as_version=4)
+                exporter = PythonExporter()
+                python_code, _ = exporter.from_notebook_node(nb_content)
+                python_file_name = file.name.replace('.ipynb', '.py')
+                with open(python_file_name, 'w') as output_file:
+                    output_file.write(python_code)
+                new_file = File(open(python_file_name, 'rb'))
+                script.file = new_file
+                if os.path.exists(python_file_name):
+                    os.remove(python_file_name)
+            script.added_by = request.user
+            script.save()
+            logger.info(f"[script upload view] Uploaded script * {script.name} *")
+            return Response({"success": "Script added successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"error": "Form is invalid"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class ScriptListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScriptSerializer
+
+    def get_queryset(self):
+        return Script.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        scripts = self.get_queryset()
+        serializer = self.get_serializer(scripts, many=True)
+        # Convert the script data to table format if necessary
+        scripttable = ScriptTable(scripts)
+        RequestConfig(request).configure(scripttable)
+        return Response({"scripts": serializer.data, "script_table": scripttable.as_html()})
+
+
+
+class ScriptDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScriptSerializer
+    queryset = Script.objects.all()
+    lookup_field = 'name'
+
+    def get(self, request, *args, **kwargs):
+        script = get_object_or_404(Script, name=kwargs['name'])
+        serializer = self.get_serializer(script)
+        file_contents = script.file.read().decode("utf-8") if script.file else ""
+        data = serializer.data
+        data.update({"file_contents": file_contents})
+        return Response(data)
+
+
+class RunScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        script = get_object_or_404(Script, name=kwargs['name'])
+        script.set_status(execution_states.RUNNING)
+        django_rq.get_queue("scripts").enqueue(handover_script, request.user, script)
+        logger.info(f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
+        return Response({"status": "Script is running"}, status=status.HTTP_202_ACCEPTED)
+
+
+class ScriptStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        script = get_object_or_404(Script, pk=kwargs['scriptid'])
+        status = script.status
+        response_data = {"status": script.get_status_display()}
+        if status == execution_states.FAILURE:
+            response_data["error_message"] = script.error_message
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class DeleteScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        script = get_object_or_404(Script, name=kwargs['name'])
+        script.delete()
+        return Response({"status": "Script deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+class EditScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def put(self, request, *args, **kwargs):
+        script = get_object_or_404(Script, name=kwargs['name'])
+        form = ScriptUploadForm(request.data, files=request.FILES, instance=script)
+        if form.is_valid():
+            form.save()
+            return Response({"status": "Script updated successfully"}, status=status.HTTP_200_OK)
+        return Response({"error": "Form is invalid"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangeScriptCategoryIndexView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        new_index = request.data.get("new_index")
+        script = get_object_or_404(Script, pk=kwargs['pk'])
+        script.update_index(int(new_index))
+        return Response({"status": "success"}, status=status.HTTP_200_OK)
+
+class ScriptSearchView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        search_query = request.data.get("script_name", "")
+        results = Script.objects.filter(name__icontains=search_query)
+        data = [
+            {
+                'name': result.name,
+                'url': f"/scripts/view/{result.name}",
+                'category': result.category.name if result.category else "",
+                'parent_category': result.category.parent_category.name if result.category else '',
+                'super_category': result.category.parent_category.parent_category.name if result.category else ''
+            } for result in results
+        ] if results and search_query else "No results"
+        return Response({"results": data}, status=status.HTTP_200_OK)
+
+
+# start RestFull design  of the script sections

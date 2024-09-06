@@ -15,5 +15,4 @@ urlpatterns = [
     path('api/auth/logout/', LogoutView.as_view(), name='token_logout'),
     path('api/auth/user-info/', UserInfoView.as_view(), name='user_info'),
     # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-
 ]

@@ -53,7 +53,8 @@ DEBUG = False if IS_HEROKU else True
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+#SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", '2prrl48h8^2&u*t!q63t+_x5bd1%)ap4u1c31$!@edt&ej7ek^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
