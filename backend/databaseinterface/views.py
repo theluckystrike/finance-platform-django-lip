@@ -163,7 +163,6 @@ class StockExchangeDataViewSet(viewsets.ModelViewSet):
         exchange_name = self.request.query_params.getlist("exchange", None)
         start_date = self.request.query_params.get("start_date", None)
         end_date = self.request.query_params.get("end_date", None)
-        print(exchange_name)
         if exchange_name:
             queryset = queryset.filter(exchange_name__in=exchange_name)
         if start_date and end_date:
