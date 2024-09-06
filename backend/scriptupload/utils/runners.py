@@ -76,9 +76,9 @@ def run_script(script):
     logger.info(
         f"[script runner] Running script * {script.name} *")
     env = setup_patched_env()
-    script.set_status(1)
-
     excStatus = script.ExecutionStatus
+    script.set_status(excStatus.RUNNING)
+
     plt_success = False
     pd_success = False
     error_message = ""
@@ -115,4 +115,5 @@ def run_script(script):
             f"[script runner] Could not find an output for script * {script.name} *")
         script.set_status(excStatus.FAILURE, error_message)
     clear_buffers()
+    logger.info(f"[script runner] Successfully ran script * {script.name} *")
     return success_flag, error_message

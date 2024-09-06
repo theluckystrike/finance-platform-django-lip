@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from django.utils.safestring import mark_safe
 from ..forms import ScriptUploadForm
-from ..utils.utils import handover_script
 from ..models import Script, Category
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
@@ -118,9 +117,7 @@ def run_script_code(request, scriptname):
     """
     script = get_object_or_404(Script, name=scriptname)
     if request.method == "POST":
-        script.set_status(execution_states.RUNNING)
-        django_rq.get_queue("scripts").enqueue(
-            handover_script, request.user, script)
+        script.run()
         logger.info(
             f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
     return redirect(script_page, scriptname)

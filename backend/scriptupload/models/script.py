@@ -13,6 +13,7 @@ from .category import Category
 from .data import TableData, ChartData
 from .filepaths import script_file_path
 from django.urls import reverse
+import django_rq
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -140,8 +141,8 @@ class Script(models.Model):
                 f"[script model] No chart data for script: {self.name}")
             return False
 
-    def update(self):
-        run_script(self)
+    # def update(self):
+    #     run_script(self)
 
     def update_index(self, new_idx):
         """
@@ -231,6 +232,10 @@ class Script(models.Model):
     class Meta:
         verbose_name = "Script"
         verbose_name_plural = "Scripts"
+
+    def run(self):
+        q = django_rq.get_queue("scripts")
+        q.enqueue(run_script, self)
 
 
 script_signals(Script)
