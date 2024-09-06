@@ -326,7 +326,7 @@ class CategoryScriptsView(APIView):
             "categories": [{"id": cat.id, "name": cat.name} for cat in categories]
         })
 
-class CategoryManagerAPIView(APIView):
+"""class CategoryManagerAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -344,10 +344,47 @@ class CategoryManagerAPIView(APIView):
         # form_serializer = NewCategoryFormSerializer()
 
         # Construct the response data
+        for x in categories:
+            cat={
+                "id":x.id,"name":x.name
+            }
         response_data = {
+            "categories":cat,
             "scripts": scripts_serializer.data,
-            "categories": categories_serializer.data,
+            #"categories": categories_serializer.data,
             # "form": form_serializer.data,  # Include this if you need to return form structure or initial data
+        }
+
+        return Response(response_data)
+"""
+
+class CategoryManagerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Retrieve all categories and scripts
+        scripts = Script.objects.all()
+        categories = Category.objects.all()
+
+        # Serialize the data
+        scripts_serializer = ScriptSerializer(scripts, many=True)
+        #categories_serializer = CategorySerializer(categories, many=True)
+
+        # Prepare custom serialization for categories
+        categories_data = []
+        for x in categories:
+            category_data = {
+                "id": x.id,
+                "name": x.name,
+                "parent_name": x.parent_category.name if x.parent_category else None  # Show parent's name or None if no parent
+            }
+            categories_data.append(category_data)  # Append each category to the list
+
+        # Construct the response data
+        response_data = {
+            "categories": categories_data,  # Send the full list of categories
+            "scripts": scripts_serializer.data
+            #"categories": categories_serializer.data,
         }
 
         return Response(response_data)
