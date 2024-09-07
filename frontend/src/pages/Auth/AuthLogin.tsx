@@ -43,14 +43,22 @@ function SignInComponent() {
 
   useEffect(() => {
     if (isSuccess) {
-      handleToast.SuccessToast(` logged in successfully`);
-      navigate(`/account/${SidebarMenu.upload.path}`);
+      // Set login data in localStorage first
       localStorage.setItem("login", JSON.stringify(data));
+  
+      // Then show a success message
+      handleToast.SuccessToast("Logged in successfully");
+  
+      // Finally, navigate to the next page
+      navigate(`/account/${SidebarMenu.upload.path}`);
     }
+  
     if (isError) {
+      // Show error toast if login fails
       handleToast.ErrorToast("Login failed. Please check your credentials.");
     }
-  }, [isSuccess, isError]);
+  }, [data, isSuccess, isError, navigate]);
+  
 
   return (
     <div className="container">

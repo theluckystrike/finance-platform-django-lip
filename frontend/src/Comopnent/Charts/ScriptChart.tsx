@@ -116,6 +116,7 @@ const navigate =useNavigate()
         handleClose={handleClose}
         selected={selected}
         editingCategory={editingCategory} 
+        token={''}
       />
     </>
   );

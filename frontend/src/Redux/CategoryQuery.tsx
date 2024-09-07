@@ -18,8 +18,28 @@ const api = createApi({
       // Optionally, you can add invalidatesTags here if needed
     }),
    
-
-
+    update: builder.mutation({
+      query: ({ token,id, data }) => ({
+        url: `api${endpoint.category}/${id}/update/`,
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: data,
+      }),
+      // Optionally, you can add invalidatesTags here if needed
+    }),
+    remove: builder.mutation({
+      query: ({ token,id }) => ({
+        url: `${endpoint.category}/delete/${id}`,
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        } 
+       
+      }),
+      // Optionally, you can add invalidatesTags here if needed
+    }),
       getAllCategory: builder.query({
       query: ({ token }) => ({
         url: endpoint.category+'/manager/',
@@ -39,6 +59,8 @@ const api = createApi({
 
 export const { 
   useCreateMutation,
+  useUpdateMutation,
+  useRemoveMutation,
   useGetAllCategoryQuery,
 } = api;
 export default api;

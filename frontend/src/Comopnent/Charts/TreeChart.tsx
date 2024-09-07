@@ -3,7 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import { Categoryarray2 } from "../../DummyData/TableData";
 import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
 
-const RenderTree = (data: any, level = 0) => {
+const RenderTree = (data: any,token:any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [show, setShow] = useState(false);
@@ -44,7 +44,7 @@ const RenderTree = (data: any, level = 0) => {
                 <FaEdit
                   onClick={(e: any) => {
                     e.stopPropagation();
-                    startEditing(item.name);
+                    startEditing(item);
                   }}
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
@@ -61,7 +61,7 @@ const RenderTree = (data: any, level = 0) => {
                         <FaEdit
                           onClick={(e: any) => {
                             e.stopPropagation();
-                            startEditing(innerItem.name);
+                            startEditing(innerItem );
                           }}
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
@@ -95,16 +95,17 @@ const RenderTree = (data: any, level = 0) => {
         handleClose={handleClose}
         selected={selected}
         editingCategory={editingCategory} 
+        token={token}
       />
     </>
   );
 };
 
-const CategoryTree = ({categoryFilter}:any) => {
+const CategoryTree = ({categoryFilter,token}:any) => {
   return (
     <div className="category-tree mx-auto w-25">
       <h3>Category Tree</h3>
-      {RenderTree(categoryFilter)}
+      {RenderTree(categoryFilter,token)}
     </div>
   );
 };

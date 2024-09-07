@@ -6,7 +6,7 @@ import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal
 import { Categoryarray } from "../../DummyData/TableData";
 import ArrowDown from '../../assest/image/arrow-down.png';
 import { useGetuserbytokenQuery } from "../../Redux/AuthSlice";
-import { loginUSer } from "../../customHook/getrole";
+// import { loginUSer } from "../../customHook/getrole";
 import { useGetAllCategoryQuery } from "../../Redux/CategoryQuery";
  
 
@@ -19,57 +19,31 @@ const validationSchema = Yup.object({
 });
 
 const UploadScriptForm = () => {
-  const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUSer.access });
-
-  const categoryData = AllCategory?.categories || [];
 
 
 
 
-const [categoryFilter,setCategoryFilter ]=useState<any>([])
 
+
+
+
+const [loginUser, setLoginUser] = useState<any>(null);
+
+// Effect to retrieve loginUser from localStorage on component mount
 useEffect(() => {
-  const categoryMap: any = {};
+  const storedLoginUser = localStorage.getItem("login");
 
-  // Initialize categories in the map
-  categoryData.forEach((cat: any) => {
-    categoryMap[cat.id] = { ...cat, subcategories: [] };
-  });
+  // Check if storedLoginUser is not null before parsing
+  if (storedLoginUser) {
+    setLoginUser(JSON.parse(storedLoginUser)); // Set the loginUser state if it's available
+  }
+}, []);
+const { data: AllCategory, isError } = useGetAllCategoryQuery({token:loginUser?.access, page_no:1, page_size:1000 });
+//  
+  const categoryData = AllCategory?.categories || [];
+  const [categoryFilter,setCategoryFilter ]=useState<any>([])
 
-  // Populate the subcategories
-  categoryData.forEach((cat: any) => {
-    if (cat.parent_name === null) {
-      // Root category, do nothing here
-    } else {
-      // Find the parent category and add the current category as a subcategory
-      const parent:any = Object.values(categoryMap).find(
-        (parentCat: any) => parentCat.name === cat.parent_name
-      );
-      if (parent) {
-        parent.subcategories.push(categoryMap[cat.id]);
-      }
-    }
-  });
-
-  // Extract root categories
-  const structuredCategories = Object.values(categoryMap).filter(
-    (cat: any) => cat.parent_name === null
-  );
-
-  setCategoryFilter(structuredCategories);
-
-}, [categoryData]);
-
-
-
-
-
-
-
-
-
-
-  const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
+  const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUser?.access, page_no:1, page_size:1000 });
   const [show, setShow] = useState(false);
   const [selectValue, setSelectValue] = useState('');
 
@@ -91,6 +65,42 @@ useEffect(() => {
     },
   });
 
+
+
+
+  useEffect(() => {
+    const categoryMap: any = {};
+  
+    // Initialize categories in the map
+    categoryData.forEach((cat: any) => {
+      categoryMap[cat.id] = { ...cat, subcategories: [] };
+    });
+  
+    // Populate the subcategories
+    categoryData.forEach((cat: any) => {
+      if (cat.parent_name === null) {
+        // Root category, do nothing here
+      } else {
+        // Find the parent category and add the current category as a subcategory
+        const parent:any = Object.values(categoryMap).find(
+          (parentCat: any) => parentCat.name === cat.parent_name
+        );
+        if (parent) {
+          parent.subcategories.push(categoryMap[cat.id]);
+        }
+      }
+    });
+  
+    // Extract root categories
+    const structuredCategories = Object.values(categoryMap).filter(
+      (cat: any) => cat.parent_name === null
+    );
+  
+    setCategoryFilter(structuredCategories);
+  
+  }, [categoryData]);
+  
+  
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
