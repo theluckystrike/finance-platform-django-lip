@@ -33,7 +33,12 @@ class ScriptSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    parent_category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), allow_null=True, required=False
+    )
+
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = ["name", "parent_category", "id"]
+        # depth of 2 so that parent categories are returned up to top level
         depth = 2
