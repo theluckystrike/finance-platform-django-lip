@@ -66,6 +66,9 @@ class ScriptSerializer(serializers.ModelSerializer):
         """
         Ensure that the file and output_type are not required on update if they are not provided.
         """
+        """
+        Ensure that the file and output_type are not required on update if they are not provided.
+        """
         if self.instance:
             if 'file' not in data and not self.instance.file:
                 raise serializers.ValidationError({"file": "This field is required."})
