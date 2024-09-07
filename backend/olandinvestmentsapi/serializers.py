@@ -33,19 +33,26 @@ class ScriptSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    parent_category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), allow_null=True, required=False)
+    level = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ["name", "parent_category", "id"]
+        fields = ["name", "parent_category", "id", "level"]
         # depth of 2 so that parent categories are returned up to top level
         depth = 2
 
+    def get_level(self, obj):
+        return obj.get_level()
+
     # https://stackoverflow.com/a/35897731
     # nested self-referential serialization
-    def get_fields(self):
-        fields = super(CategorySerializer, self).get_fields()
-        fields['parent_category'] = CategorySerializer()
-        return fields
+    # does not work with drf-yasg https://github.com/axnsan12/drf-yasg/issues/632
+    # def get_fields(self):
+    #     fields = super().get_fields()
+    #     fields['parent_category'] = CategorySerializer()
+    #     return fields
 
 
 class ReportSerializer(serializers.ModelSerializer):

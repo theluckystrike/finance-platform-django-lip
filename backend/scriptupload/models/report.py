@@ -31,6 +31,8 @@ class Report(models.Model):
     added_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # TODO: Execution status like in Script model
+
     def __str__(self):
         return self.name
 

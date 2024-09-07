@@ -12,6 +12,8 @@ from olandinvestmentsapi.views import (
     ScriptViewSet,
     CategoryViewSet,
     ReportViewSet,
+    ReportStatusView,
+    ReportUpdateView,
     SearchView
 )
 from rest_framework import routers
@@ -35,4 +37,7 @@ urlpatterns = [
     # Categories
     # Search
     path('api/search', SearchView.as_view(), name='search'),
+    # Reports
+    path('api/reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
+    path('api/reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
 ]
