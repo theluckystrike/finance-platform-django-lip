@@ -235,19 +235,37 @@ def output_type_name(script):
 
 
 # start RestFull design  of the script sections
+
+
+
+
 class UploadScriptView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        form = ScriptUploadForm(request.data, files=request.FILES)
-        if form.is_valid():
-            file = form.cleaned_data['file']
-            script = form.save(commit=False)
+        serializer = ScriptSerializer(data=request.data)
+        if serializer.is_valid():
+            # Access validated data
+            validated_data = serializer.validated_data
+
+            # Create the script instance without saving
+            script = Script(
+                name=validated_data.get('name'),
+                category=validated_data.get('category'),
+                output_type=validated_data.get('output_type'),
+                description=validated_data.get('description'),
+                added_by=request.user  # Set the user who uploaded the script
+            )
+
+            # Handle file separately
+            file = request.FILES.get('file')
+
             if not file.name.endswith((".py", ".ipynb")):
                 return Response({"error": "File must be .py or .ipynb"}, status=status.HTTP_400_BAD_REQUEST)
 
             if file.name.endswith('.ipynb'):
+                # Convert notebook (.ipynb) to Python file
                 nb_content = nbformat.read(file, as_version=4)
                 exporter = PythonExporter()
                 python_code, _ = exporter.from_notebook_node(nb_content)
@@ -256,13 +274,21 @@ class UploadScriptView(APIView):
                     output_file.write(python_code)
                 new_file = File(open(python_file_name, 'rb'))
                 script.file = new_file
+
+                # Clean up the temporary Python file
                 if os.path.exists(python_file_name):
                     os.remove(python_file_name)
-            script.added_by = request.user
+            else:
+                script.file = file  # If it's a .py file, use it directly
+
+            # Now save the script
             script.save()
+
             logger.info(f"[script upload view] Uploaded script * {script.name} *")
+
             return Response({"success": "Script added successfully"}, status=status.HTTP_201_CREATED)
-        return Response({"error": "Form is invalid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
