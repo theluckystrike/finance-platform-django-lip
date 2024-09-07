@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from scriptupload.models import Script, ChartData, TableData, Category
+from scriptupload.models import Script, ChartData, TableData, Category, Report
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,3 +42,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["name", "parent_category", "id"]
         # depth of 2 so that parent categories are returned up to top level
         depth = 2
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ["name", "id", "script", "created", "last_updated", "status", "latest_pdf"]
+        depth = 1

@@ -1,8 +1,5 @@
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status, generics
-from rest_framework.response import Response
 from ..serializers import CategorySerializer
 from scriptupload.models import Category
 from drf_yasg.utils import swagger_auto_schema

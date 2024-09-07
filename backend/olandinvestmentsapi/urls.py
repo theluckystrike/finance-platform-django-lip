@@ -10,7 +10,8 @@ from olandinvestmentsapi.views import (
     ScriptStatusView,
     ScriptRunView,
     ScriptViewSet,
-    CategoryViewSet
+    CategoryViewSet,
+    SearchView
 )
 from rest_framework import routers
 
@@ -30,4 +31,6 @@ urlpatterns = [
     path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
     path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
     # Categories
+    # Search
+    path('api/search', SearchView.as_view(), name='search'),
 ]
