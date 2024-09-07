@@ -11,6 +11,7 @@ from olandinvestmentsapi.views import (
     ScriptRunView,
     ScriptViewSet,
     CategoryViewSet,
+    ReportViewSet,
     SearchView
 )
 from rest_framework import routers
@@ -18,6 +19,7 @@ from rest_framework import routers
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('scripts', ScriptViewSet, basename='scripts')
 router.register('categories', CategoryViewSet, basename='categories')
+router.register('reports', ReportViewSet, basename='reports')
 
 urlpatterns = [
     path('api/auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),

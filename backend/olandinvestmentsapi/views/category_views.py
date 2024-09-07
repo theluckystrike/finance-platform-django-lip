@@ -30,11 +30,10 @@ class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by("id")
 
-
     def get_queryset(self):
         queryset = Category.objects.all().order_by("id")
-        parent_category = self.request.query_params.get("parent_category", None)
+        parent_category = self.request.query_params.get(
+            "parent_category", None)
         if parent_category:
             queryset = queryset.filter(parent_category=parent_category)
         return queryset
-

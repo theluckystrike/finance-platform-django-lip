@@ -33,9 +33,6 @@ class ScriptSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    parent_category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), allow_null=True, required=False
-    )
 
     class Meta:
         model = Category
@@ -43,9 +40,24 @@ class CategorySerializer(serializers.ModelSerializer):
         # depth of 2 so that parent categories are returned up to top level
         depth = 2
 
+    # https://stackoverflow.com/a/35897731
+    # nested self-referential serialization
+    def get_fields(self):
+        fields = super(CategorySerializer, self).get_fields()
+        fields['parent_category'] = CategorySerializer()
+        return fields
+
 
 class ReportSerializer(serializers.ModelSerializer):
+    # this will include IDs only
+    scripts = serializers.PrimaryKeyRelatedField(
+        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+    # this gives hyperlinks to each script
+    # scripts = serializers.HyperlinkedRelatedField(
+    #     queryset=Script.objects.all(), allow_null=False, many=True, view_name="scripts-detail")
+
     class Meta:
         model = Report
-        fields = ["name", "id", "script", "created", "last_updated", "status", "latest_pdf"]
+        fields = ["name", "id", "scripts", "created",
+                  "last_updated", "status", "latest_pdf"]
         depth = 1
