@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from scriptupload.models import Script, ChartData, TableData
+from scriptupload.models import Script, ChartData, TableData, Category
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,3 +30,10 @@ class ScriptSerializer(serializers.ModelSerializer):
         fields = ["name", "file", "category", "output_type",
                   "description", "id", "created", "chart_data", "table_data"]
         depth = 1
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+        depth = 2

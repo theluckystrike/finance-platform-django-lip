@@ -17,7 +17,7 @@ from django.utils.decorators import method_decorator
             'category',
             openapi.IN_QUERY,
             description="Filter scripts by category ID",
-            type=openapi.TYPE_STRING
+            type=openapi.TYPE_INTEGER
         )
     ]
 ))
@@ -30,7 +30,7 @@ class ScriptViewSet(ModelViewSet):
     - PATCH (updating)
     - DELETE 
     '''
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = ScriptSerializer
     queryset = Script.objects.all().order_by("-created")
 
