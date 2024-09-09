@@ -181,7 +181,7 @@ def script_edit_page(request, scriptname):
         if edited_content != script_code:
             # encode and save to file
             script.file.save(os.path.basename(script.file.name),
-                            ContentFile(edited_content.encode("utf-8")))
+                             ContentFile(edited_content.encode("utf-8")))
             logger.info(f'[script edit page] Successfully updated code for script * {script.name} *')
         if edited_description != script.description:
             script.description = edited_description
@@ -288,59 +288,6 @@ class UploadScriptView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""class UploadScriptView(APIView):
-    permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
-
-    def post(self, request, *args, **kwargs):
-        serializer = ScriptSerializer(data=request.data)
-        if serializer.is_valid():
-            # Access validated data
-            validated_data = serializer.validated_data
-
-            # Create the script instance without saving
-            script = Script(
-                name=validated_data.get('name'),
-                category=validated_data.get('category'),
-                output_type=validated_data.get('output_type'),
-                description=validated_data.get('description'),
-                added_by=request.user  # Set the user who uploaded the script
-            )
-
-            # Handle file separately
-            file = request.FILES.get('file')
-
-            if not file.name.endswith((".py", ".ipynb")):
-                return Response({"error": "File must be .py or .ipynb"}, status=status.HTTP_400_BAD_REQUEST)
-
-            if file.name.endswith('.ipynb'):
-                # Convert notebook (.ipynb) to Python file
-                nb_content = nbformat.read(file, as_version=4)
-                exporter = PythonExporter()
-                python_code, _ = exporter.from_notebook_node(nb_content)
-                python_file_name = file.name.replace('.ipynb', '.py')
-                with open(python_file_name, 'w') as output_file:
-                    output_file.write(python_code)
-                new_file = File(open(python_file_name, 'rb'))
-                script.file = new_file
-
-                # Clean up the temporary Python file
-                if os.path.exists(python_file_name):
-                    os.remove(python_file_name)
-            else:
-                script.file = file  # If it's a .py file, use it directly
-
-            # Now save the script
-            script.save()
-
-            logger.info(f"[script upload view] Uploaded script * {script.name} *")
-
-            return Response({"success": "Script added successfully"}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-
-
 class ScriptListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ScriptSerializer
@@ -354,8 +301,9 @@ class ScriptListView(generics.ListAPIView):
         # Convert the script data to table format if necessary
         scripttable = ScriptTable(scripts)
         RequestConfig(request).configure(scripttable)
-        return Response({"scripts": serializer.data, "script_table": scripttable.as_html()})
-
+        # Pass the request object to the as_html() method
+        script_table_html = scripttable.as_html(request)
+        return Response({"scripts": serializer.data, "script_table": script_table_html})
 
 
 class ScriptDetailView(generics.RetrieveAPIView):

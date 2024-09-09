@@ -153,7 +153,7 @@ def get_subcategories(request, categoryid):
 
 # rest apis logic
 
-class UpdateCategoryView(UpdateAPIView):
+"""class UpdateCategoryView(UpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
@@ -187,9 +187,45 @@ class UpdateCategoryView(UpdateAPIView):
                     return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+"""
 
+class UpdateCategoryView(UpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
 
+    def update(self, request, *args, **kwargs):
+        category = self.get_object()  # Use self.get_object() to get the instance
+        serializer = self.get_serializer(category, data=request.data, partial=True)  # Use partial=True for partial updates
 
+        if serializer.is_valid():
+            parent = serializer.validated_data.get("parent", None)
+            ob_type = category.get_level()
+
+            if parent is None:
+                # No parent provided, update successfully
+                category.parent_category = None
+                category.save()
+                return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
+
+            if parent == category.id:
+                return Response({"error": "Cannot make category a subcategory of itself"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Handle case where parent is not None
+            try:
+                parent_cat = Category.objects.get(pk=parent)
+                parent_cat_type = parent_cat.get_level()
+
+                if (ob_type == 2 and parent_cat_type == 1) or (ob_type == 1 and parent_cat_type == 0):
+                    category.parent_category = parent_cat
+                    category.save()
+                    return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+            except Category.DoesNotExist:
+                return Response({"error": "Parent category does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CreateCategoryView(generics.CreateAPIView):
     queryset = Category.objects.all()
@@ -261,37 +297,6 @@ class CategoryScriptsView(APIView):
             "categories": [{"id": cat.id, "name": cat.name} for cat in categories]
         })
 
-"""class CategoryManagerAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        # Prepare the data for the response
-        scripts = Script.objects.all()
-        categories = Category.objects.all()
-        #categories = Category.objects.filter(parent_category=None)
-
-        # Serialize the data
-        scripts_serializer = ScriptSerializer(scripts, many=True)
-        categories_serializer = CategorySerializer(categories, many=True)
-
-        # If you want to include form data, you could serialize it here.
-        # For example, if using a form serializer:
-        # form_serializer = NewCategoryFormSerializer()
-
-        # Construct the response data
-        for x in categories:
-            cat={
-                "id":x.id,"name":x.name
-            }
-        response_data = {
-            "categories":cat,
-            "scripts": scripts_serializer.data,
-            #"categories": categories_serializer.data,
-            # "form": form_serializer.data,  # Include this if you need to return form structure or initial data
-        }
-
-        return Response(response_data)
-"""
 
 class CategoryManagerAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -303,7 +308,6 @@ class CategoryManagerAPIView(APIView):
 
         # Serialize the data
         scripts_serializer = ScriptSerializer(scripts, many=True)
-        #categories_serializer = CategorySerializer(categories, many=True)
 
         # Prepare custom serialization for categories
         categories_data = []
@@ -311,7 +315,10 @@ class CategoryManagerAPIView(APIView):
             category_data = {
                 "id": x.id,
                 "name": x.name,
-                "parent_name": x.parent_category.name if x.parent_category else None  # Show parent's name or None if no parent
+                "parent": {
+                    "parent_id": x.parent_category.id if x.parent_category else None,  # Show parent's ID or None if no parent
+                    "parent_name": x.parent_category.name if x.parent_category else None  # Show parent's name or None if no parent
+                }
             }
             categories_data.append(category_data)  # Append each category to the list
 
@@ -319,29 +326,9 @@ class CategoryManagerAPIView(APIView):
         response_data = {
             "categories": categories_data,  # Send the full list of categories
             "scripts": scripts_serializer.data
-            #"categories": categories_serializer.data,
         }
 
         return Response(response_data)
 
 
-"""class CategoryManagerAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        # Prepare the data for the response
-        scripts = Script.objects.all()
-        categories = Category.objects.filter(parent_category=None)
-
-        # Serialize the data
-        scripts_serializer = ScriptSerializer(scripts, many=True)
-        categories_serializer = CategorySerializer(categories, many=True)
-
-        # Construct the response data
-        response_data = {
-            "scripts": scripts_serializer.data,
-            "categories": categories_serializer.data,
-        }
-
-        return Response(response_data)
-"""
