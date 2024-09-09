@@ -321,7 +321,7 @@ class ScriptDetailView(generics.RetrieveAPIView):
         return Response(data)
 
 
-class RunScriptView(APIView):
+"""class RunScriptView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -329,7 +329,34 @@ class RunScriptView(APIView):
         script.set_status(execution_states.RUNNING)
         django_rq.get_queue("scripts").enqueue(handover_script, request.user, script)
         logger.info(f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
-        return Response({"status": "Script is running"}, status=status.HTTP_202_ACCEPTED)
+        return Response({"status": "Script is running" , "script_name": script.name , "Script all data":script}, status=status.HTTP_202_ACCEPTED)
+"""
+
+class RunScriptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # Fetch the script by name
+        script = get_object_or_404(Script, name=kwargs['name'])
+
+        # Set the status of the script to 'RUNNING'
+        script.set_status(execution_states.RUNNING)
+
+        # Enqueue the script to the task queue
+        django_rq.get_queue("scripts").enqueue(handover_script, request.user, script)
+
+        # Log the script action
+        logger.info(f"[task queue] Added script * {script.name} * by user * {request.user.username} * to task queue")
+
+        # Serialize the script data
+        script_serializer = ScriptSerializer(script)
+
+        # Return the script's status, name, and all serialized data
+        return Response({
+            "status": "Script is running",
+            "script_name": script.name,
+            "script_all_data": script_serializer.data  # Include all script data using the serializer
+        }, status=status.HTTP_202_ACCEPTED)
 
 
 class ScriptStatusView(APIView):
