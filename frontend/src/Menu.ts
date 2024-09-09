@@ -64,14 +64,14 @@ export const SidebarMenu: SidebarMenutype = {
     path: "scriptTree",
     icon: "AccountTree",
     hide:false,
-    role:'Admin'
+    role:'all'
   },
   errorhandling:{
     name: "Error Handling",
     path: "error-handling",
     icon: "Error",
     hide:false,
-    role:'Admin'
+    role:'all'
   }
 };
 

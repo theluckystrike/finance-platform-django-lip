@@ -7,16 +7,17 @@ import projectApi from './Redux/Project';
 import Categoryapi from './Redux/CategoryQuery'
 import dashboardApi from './Redux/Dashboard';
 import ScriptApi from './Redux/Script';
+import ScriptSlice from './Redux/Script/ScriptSlice';
 
 export const store = configureStore({
   reducer: {
-    // Add the API reducer to the store
+    
     [api.reducerPath]: api.reducer,
     [projectApi.reducerPath]:projectApi.reducer,
     [dashboardApi.reducerPath]:dashboardApi.reducer,
     [ScriptApi.reducerPath]:ScriptApi.reducer,
     [Categoryapi.reducerPath]:Categoryapi.reducer,
-
+    script:ScriptSlice
 
 
   },
