@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from .filepaths import report_file_path
 from .script import Script
 from ..utils.utils import scripts_to_pdf
+import django_rq
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -36,27 +37,31 @@ class Report(models.Model):
     def __str__(self):
         return self.name
 
-    def update(self, runscripts=False, base_url=None):
-        if self.status != "running":
-            self.status = "running"
-            self.save(update_fields=["status"])
+    def set_status(self, status):
+        self.status = status
+        self.save(update_fields=["status"])
+
+    def _update(self, runscripts=False, base_url=None):
         try:
             pfd_file = scripts_to_pdf(
                 self.scripts.all().order_by("index_in_category"), self.name, base_url)
             self.latest_pdf.save(
                 f"{self.name}.pdf", pfd_file)
             self.last_updated = timezone.now()
-            self.status = "success"
-            self.save(update_fields=["status"])
+            self.set_status("success")
             logger.info(
                 f"[report update] Successfully updated report * {self.name} *")
         except Exception as e:
-            self.status = "failure"
-            self.save(update_fields=["status"])
+            self.set_status("failure")
             logger.error(
                 f"[report update] Failed to update report * {self.name} * with error ->\n{str(e)}")
 
         self.save()
+
+    def update(self, runscripts=False, base_url=None):
+        q = django_rq.get_queue("reports")
+        q.enqueue(self._update, runscripts, base_url)
+        self.set_status('running')
 
     class Meta:
         verbose_name = "Report"
@@ -75,15 +80,15 @@ class ReportEmailTask(models.Model):
 def merge_reports(report1: Report, report2: Report, user: User, name: str):
     logger.debug(
         f"[report merge] Merging reports '{report1.name}' and '{report2.name}'")
+    if report1 == report2:
+        logger.debug(
+            f"[report merge] Cannot merge report '{report1.name}' ({r1c} scripts) with itself")
+        return False
     r1c = report1.scripts.count()
     r2c = report2.scripts.count()
     if r1c == 0 or r2c == 0:
         logger.debug(
             f"[report merge] Reports '{report1.name}' ({r1c} scripts) and '{report2.name}' ({r2c} scripts) cannot be merged")
-        return False
-    if report1 == report2:
-        logger.debug(
-            f"[report merge] Cannot merge report '{report1.name}' ({r1c} scripts) with itself")
         return False
     merged_scripts_list = report1.scripts.all() | report2.scripts.all()
     new_report = Report(added_by=user, name=name)

@@ -80,6 +80,7 @@ def scripts_to_pdf(scripts, title, base_url=None):
 
     builder = PDFBuilder()
     builder.add_title(title)
+    # return builder.to_file()
 
     script_hierarchy, uncatagorised = get_script_hierarchy(scripts)
 
@@ -94,7 +95,6 @@ def scripts_to_pdf(scripts, title, base_url=None):
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
                     script_caption = f'last updated: {script.last_updated.strftime("%d %B %Y at %H:%M")}'
                     if base_url:
-                        print(base_url, script.url)
                         script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
                     if script.output_type == script.OutputDataType.MPL_PYPLT:
                         if script.has_chart_data:

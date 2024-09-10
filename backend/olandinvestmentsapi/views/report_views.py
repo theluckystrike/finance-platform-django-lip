@@ -122,7 +122,7 @@ class ReportUpdateView(APIView):
             report = Report.objects.get(pk=pk)
             if report.status == "running":
                 return Response({"message": "Report is already running"})
-            report.update()
+            report.update(False, f"{request.scheme}://{request.get_host()}")
             return Response({"message": "Report added to task queue"})
         except Report.DoesNotExist:
             return Response({'error': 'Report does not exists'}, status=status.HTTP_404_NOT_FOUND)

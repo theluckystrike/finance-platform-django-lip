@@ -24,12 +24,16 @@ class TableDataSerializer(serializers.ModelSerializer):
 class ScriptSerializer(serializers.ModelSerializer):
     chart_data = ChartDataSerializer(read_only=True)
     table_data = TableDataSerializer(read_only=True)
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Script
         fields = ["name", "file", "category", "output_type",
-                  "description", "id", "created", "chart_data", "table_data"]
+                  "description", "id", "created", "chart_data", "table_data", "status", "last_updated"]
         depth = 1
+
+    def get_status(self, obj):
+        return obj.get_status_display()
 
 
 class CategorySerializer(serializers.ModelSerializer):
