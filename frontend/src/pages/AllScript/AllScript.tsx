@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assest/css/AllScript.css";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
@@ -6,20 +6,39 @@ import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
 import ArrowDown from '../../assest/image/arrow-down.png'
 import { ScriptData } from "../../DummyData/TableData";
-import { useCreateScriptMutation } from "../../Redux/Script";
-import { useGetAllProjectQuery } from "../../Redux/Project";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useSortableData from "../../customHook/useSortable";
+import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
+import { loginUSer } from "../../customHook/getrole";
 
 const CustomReport = () => {
  
-
-  const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
+const dispatch =useDispatch()
  
-const store = useSelector((i)=>i)
- 
+  // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
+ useEffect(()=>{
 
+const  getDAta =async ()=>{
+
+  try {
+  
+    await  dispatch(GetAllScripts({token:loginUSer.access}))
+  
+
+  } catch (error) {
+ console.log(error);
+    
+  }
+}
+
+getDAta()
+  
+ },[])
+const store:any = useSelector((i)=>i)
+ 
+ 
+const allscripts = store?.script?.Scripts?.scripts
   const [selectedScripts, setSelectedScripts] = useState([]);
  
  
@@ -154,11 +173,11 @@ const store = useSelector((i)=>i)
                   /></div>
               </div>
               <div id="scriptsCheckboxes">
-                {items.map((script: any) => (
+                {allscripts.map((script: any,index:any) => (
                   <Link
                     to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"
-                    key={script.id}
+                    key={index}
                   >
                     <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
                       <div className="col-4">
@@ -170,11 +189,11 @@ const store = useSelector((i)=>i)
                             value={script.id}
                             onChange={handleCheckboxChange}
                           />
-                          {script.title}
+                          {script.name}
                         </span>
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
-                        {script.category1}
+                        {script.category}
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
                         {script.category2}
@@ -183,10 +202,10 @@ const store = useSelector((i)=>i)
                         {script.category3}
                       </div>
                       <div className="col-1 mx-auto text-center">
-                        {script.startDate}
+                        11-12-2022
                       </div>
                       <div className="col-1 mx-auto text-center">
-                        {script.endDate}
+                      11-12-2022
                       </div>
                     </div>
                   </Link>
