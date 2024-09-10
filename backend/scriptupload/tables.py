@@ -37,11 +37,23 @@ class ScriptTable(tables.Table):
         else:
             return "-"
 
-    def render_category(self, value, record):
+    '''def render_category(self, value, record):
         if record.category:
             return record.category.parent_category.parent_category.name
         else:
-            return "-"
+            return "-"'''
+
+    def render_category(self, value, record):
+    # Check if the category exists
+        if record.category:
+        # Check if the first-level parent category exists
+            if record.category.parent_category:
+            # Check if the second-level parent category exists
+                if record.category.parent_category.parent_category:
+                    return record.category.parent_category.parent_category.name
+                return record.category.parent_category.name  # If no second-level parent
+            return record.category.name  # If no first-level parent
+        return "-"  # Return "-" if no category exists
 
     def render_view_link(self, value, record):
         return mark_safe('<a href="{}" class="text-decoration-none"> View script </a>'.format(reverse("script", args=(record.name,))))

@@ -26,9 +26,9 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-ALLOWED_HOSTS = ["www.olandinvesmentslimited.com",
-                 "*.olandinvesmentslimited.com"]
-
+ALLOWED_HOSTS = ['localhost:8090','localhost','127.0.0.1','backend-oland-investments.cradle.services','https://www.olandinvesmentslimited.com',
+                 '*.olandinvesmentslimited.com']
+CSRF_TRUSTED_ORIGINS = ['https://backend-oland-investments.cradle.services']
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
 IS_HEROKU = "DYNO" in os.environ
 
@@ -47,20 +47,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Determine if the project should be run in debug mode. If the project is running in Heroku, it should not be in debug
 # mode. If it is running anywhere else, debug mode should be enabled.
 DEBUG = False if IS_HEROKU else True
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = os.environ.get("SECRET_KEY")
-SECRET_KEY = os.environ.get("SECRET_KEY", '2prrl48h8^2&u*t!q63t+_x5bd1%)ap4u1c31$!@edt&ej7ek^')
+SECRET_KEY = os.environ.get("SECRET_KEY","f05fb2$%#wg#4h^83@%5v3owm!(1(ni5ymfe6$!_!(fqe0-5sk")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ["finance-platform-prototype.herokuapp.com",
-                 "127.0.0.1",
-                 "finance-platform-prototype-4ce168540ea9.herokuapp.com"]
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
@@ -86,8 +80,6 @@ INSTALLED_APPS = [
     'django_filters',
     'django_rq',
 ]
-APPEND_SLASH = False
-
 
 # django-rq
 
@@ -132,7 +124,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10000,
 }
-
 
 
 MIDDLEWARE = [
@@ -199,7 +190,7 @@ DATABASES = {
 #         'PORT': '5432',
 #     }
 
-LOGGING = {
+"""LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
@@ -243,6 +234,59 @@ LOGGING = {
     'loggers': {
         'testlogger': {
             'handlers': ['heroku'],
+            'level': 'INFO',
+        },
+        "rq.worker": {
+            "handlers": ["rq_console"],
+            "level": "DEBUG"
+        },
+    }
+}"""
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                       'pathname=%(pathname)s lineno=%(lineno)s ' +
+                       'funcname=%(funcName)s %(message)s'),
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '[%(process)d] APP LOGS @ %(asctime)s [%(levelname)s] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        "rq_console": {
+            "format": "[%(process)d] RQ LOGS @ %(asctime)s [%(levelname)s] %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        # Remove or replace the 'heroku' handler
+        # 'heroku': {
+        #     'level': 'DEBUG',
+        #     'class': "rq.logutils.ColorizingStreamHandler",
+        #     'formatter': 'simple'
+        # },
+        "rq_console": {
+            "level": "DEBUG",
+            "class": "rq.logutils.ColorizingStreamHandler",
+            "formatter": "rq_console",
+            "exclude": ["%(asctime)s"],
+        },
+    },
+    'loggers': {
+        'testlogger': {
+            'handlers': ['console'],  # Use 'console' or another valid handler
             'level': 'INFO',
         },
         "rq.worker": {
