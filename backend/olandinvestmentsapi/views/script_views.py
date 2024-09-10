@@ -8,6 +8,7 @@ from scriptupload.models import Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 
 # decorate list method with custom schema for custom query parameter
@@ -92,7 +93,7 @@ class ScriptStatusView(APIView):
     )
     def get(self, request, pk):
         try:
-            script = Script.objects.get(pk=pk)
+            script = get_object_or_404(Script, pk=pk)
             resp = {
                 "status": script.get_status_display()
             }
@@ -147,7 +148,7 @@ class ScriptRunView(APIView):
     )
     def post(self, request, pk):
         try:
-            script = Script.objects.get(pk=pk)
+            script = get_object_or_404(Script, pk=pk)
             if script.status == 1:
                 return Response({"message": "Script is already running"})
             script.run()

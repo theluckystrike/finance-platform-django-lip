@@ -235,8 +235,9 @@ class Script(models.Model):
 
     def run(self):
         q = django_rq.get_queue("scripts")
-        q.enqueue(run_script, self)
+        job = q.enqueue(run_script, self)
         self.set_status(self.ExecutionStatus.RUNNING)
+        return job
 
 
 script_signals(Script)

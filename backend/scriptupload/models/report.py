@@ -67,6 +67,7 @@ class Report(models.Model):
         if wait:
             while job.get_status(refresh=True) in ["queued", "started"]:
                 time.sleep(5)
+        return job
 
     class Meta:
         verbose_name = "Report"

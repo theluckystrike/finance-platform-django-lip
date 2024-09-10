@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
 from rest_framework.response import Response
 from ..serializers import ScriptSerializer, ReportSerializer
-from scriptupload.models import Report
+from scriptupload.models import Report, merge_reports
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.decorators import method_decorator
@@ -71,7 +72,7 @@ class ReportStatusView(APIView):
     )
     def get(self, request, pk):
         try:
-            report = Report.objects.get(pk=pk)
+            report = get_object_or_404(Report, pk=pk)
             resp = {
                 "status": report.status
             }
@@ -119,7 +120,7 @@ class ReportUpdateView(APIView):
     )
     def post(self, request, pk):
         try:
-            report = Report.objects.get(pk=pk)
+            report = get_object_or_404(Report, pk=pk)
             if report.status == "running":
                 return Response({"message": "Report is already running"})
             report.update(False, f"{request.scheme}://{request.get_host()}")
@@ -129,5 +130,76 @@ class ReportUpdateView(APIView):
 
 
 # merging reports
+
+class MergeReportsView(APIView):
+    '''
+    POST endpoint to merge two reports
+    '''
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['reports', 'name'],
+            properties={
+                'reports': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(
+                        type=openapi.TYPE_INTEGER, description="Report ID"),
+                    description="Array containing exactly two report IDs to be merged"
+                ),
+                'name': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="Name of the new merged report"
+                )
+            },
+            example={
+                "reports": [1, 2],
+                "name": "Merged Report"
+            }
+        ),
+        responses={
+            201: openapi.Response(
+                description="Successfully merged reports",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Message')
+                    },
+                    example={
+                        "message": "Successfully merged reports"
+                    },
+                )
+            ),
+            400: openapi.Response(
+                description="Bad request",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error')
+                    },
+                    example={
+                        "error": "Please provide exactly 2 reports to be merged"
+                    }
+                )
+            ),
+        }
+    )
+    def post(self, request):
+        reports = request.data.get("reports", [])
+        name = request.data.get("name", None)
+        if len(reports) != 2:
+            return Response({"error": "Please provide exactly 2 reports to be merged"}, status=status.HTTP_400_BAD_REQUEST)
+        if reports[0] == reports[1]:
+            return Response({"error": "Cannot merge script with itself"}, status=status.HTTP_400_BAD_REQUEST)
+        if not name:
+            return Response({"error": "Name of the new report must be provided"}, status=status.HTTP_400_BAD_REQUEST)
+        rp1 = get_object_or_404(Report, pk=reports[0])
+        rp2 = get_object_or_404(Report, pk=reports[1])
+        res = merge_reports(rp1, rp2, request.user, name)
+        if res:
+            return Response({"message": "Successfully merged reports"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"error": "Failed to merge reports"}, status=status.HTTP_400_BAD_REQUEST)
 
 # adding new email schedules

@@ -14,6 +14,7 @@ from olandinvestmentsapi.views import (
     ReportViewSet,
     ReportStatusView,
     ReportUpdateView,
+    MergeReportsView,
     SearchView
 )
 from rest_framework import routers
@@ -29,8 +30,6 @@ urlpatterns = [
     path('api/auth/logout', LogoutView.as_view(), name='token_logout'),
     path('api/auth/user-info', UserInfoView.as_view(), name='user_info'),
     # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    # Router urls
-    path('api/', include(router.urls)),
     # Script Views
     path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
     path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
@@ -40,4 +39,8 @@ urlpatterns = [
     # Reports
     path('api/reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
     path('api/reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
+    path('api/reports/merge',
+         MergeReportsView.as_view(), name='merge_reports'),
+    # Router urls
+    path('api/', include(router.urls)),
 ]
