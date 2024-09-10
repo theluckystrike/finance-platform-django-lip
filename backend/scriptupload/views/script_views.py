@@ -288,7 +288,7 @@ class UploadScriptView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ScriptListView(generics.ListAPIView):
+"""class ScriptListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ScriptSerializer
 
@@ -303,7 +303,33 @@ class ScriptListView(generics.ListAPIView):
         RequestConfig(request).configure(scripttable)
         # Pass the request object to the as_html() method
         script_table_html = scripttable.as_html(request)
-        return Response({"scripts": serializer.data, "script_table": script_table_html})
+        return Response({"scripts": serializer.data})
+"""
+
+class ScriptListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScriptSerializer
+
+    def get_queryset(self):
+        return Script.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        # Retrieve all script objects
+        scripts = self.get_queryset()
+
+        # Serialize the script data
+        serializer = self.get_serializer(scripts, many=True)
+
+        # Get all categories
+        categories = Category.objects.filter(parent_category=None)
+        category_data = [{"id": cat.id, "name": cat.name} for cat in categories]
+
+        # Prepare and return the JSON response
+        return Response({
+            "scripts": serializer.data,        # Serialized script data
+            "categories": category_data        # Serialized category data
+        })
+
 
 
 class ScriptDetailView(generics.RetrieveAPIView):
