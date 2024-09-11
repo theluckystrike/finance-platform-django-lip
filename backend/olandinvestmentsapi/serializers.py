@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from scriptupload.models import Script, ChartData, TableData, Category, Report
+from scriptupload.models import Script, ChartData, TableData, Category, Report, ReportEmailTask
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -72,3 +72,9 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = ["name", "id", "scripts", "created",
                   "last_updated", "status", "latest_pdf"]
         depth = 1
+
+
+class ReportEmailTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportEmailTask
+        fields = "__all__"

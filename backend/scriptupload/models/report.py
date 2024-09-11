@@ -82,6 +82,9 @@ class ReportEmailTask(models.Model):
     def __str__(self):
         return f"{self.report.name}-{self.day}"
 
+    class Meta:
+        unique_together = ["report", "email", "day"]
+
 
 def merge_reports(report1: Report, report2: Report, user: User, name: str):
     logger.debug(

@@ -15,6 +15,7 @@ from olandinvestmentsapi.views import (
     ReportStatusView,
     ReportUpdateView,
     MergeReportsView,
+    ReportEmailTaskViewSet,
     SearchView
 )
 from rest_framework import routers
@@ -22,6 +23,7 @@ from rest_framework import routers
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('scripts', ScriptViewSet, basename='scripts')
 router.register('categories', CategoryViewSet, basename='categories')
+router.register('reports/schedules', ReportEmailTaskViewSet, basename='report-schedules')
 router.register('reports', ReportViewSet, basename='reports')
 
 urlpatterns = [

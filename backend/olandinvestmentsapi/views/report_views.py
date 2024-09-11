@@ -4,8 +4,8 @@ from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
 from rest_framework.response import Response
-from ..serializers import ScriptSerializer, ReportSerializer
-from scriptupload.models import Report, merge_reports
+from ..serializers import ScriptSerializer, ReportSerializer, ReportEmailTaskSerializer
+from scriptupload.models import Report, merge_reports, ReportEmailTask
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.decorators import method_decorator
@@ -129,8 +129,6 @@ class ReportUpdateView(APIView):
             return Response({'error': 'Report does not exists'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# merging reports
-
 class MergeReportsView(APIView):
     '''
     POST endpoint to merge two reports
@@ -202,4 +200,8 @@ class MergeReportsView(APIView):
         else:
             return Response({"error": "Failed to merge reports"}, status=status.HTTP_400_BAD_REQUEST)
 
-# adding new email schedules
+
+class ReportEmailTaskViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = ReportEmailTask.objects.all()
+    serializer_class = ReportEmailTaskSerializer
