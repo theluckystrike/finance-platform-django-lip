@@ -75,9 +75,19 @@ class Report(models.Model):
 
 
 class ReportEmailTask(models.Model):
+    DAY_CHOICES = (
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+        ('7', 'Sunday'),
+        ('*', 'Every Day'),
+    )
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     email = models.EmailField(max_length=254)
-    day = models.CharField(max_length=1)
+    day = models.CharField(max_length=1, choices=DAY_CHOICES)
 
     def __str__(self):
         return f"{self.report.name}-{self.day}"
