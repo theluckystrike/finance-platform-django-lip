@@ -202,6 +202,14 @@ class MergeReportsView(APIView):
 
 
 class ReportEmailTaskViewSet(ModelViewSet):
+    '''
+    All of the base methods for handling report email tasks including:
+    - GET
+    - POST (creation)
+    - PUT
+    - PATCH (updating)
+    - DELETE 
+    '''
     permission_classes = [IsAuthenticated]
     queryset = ReportEmailTask.objects.all()
     serializer_class = ReportEmailTaskSerializer
