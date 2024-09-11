@@ -21,6 +21,7 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Script
         fields = ["name", "table_data"]
+        ref_name = 'ScriptDataSerializer'
 
     def get_table_data(self, obj):
         if obj.has_table_data:
