@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status, generics
 from rest_framework.response import Response
-from ..serializers import CategorySerializer, ScriptSerializer
+from ..serializers import CategorySerializer, ScriptSerializer, ReportSerializer
 from scriptupload.models import Category, Script, Report
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -117,6 +117,8 @@ class SearchView(APIView):
             scripts, many=True, context={'request': request}).data
 
         reports = Report.objects.filter(name__icontains=search_str)
+        reports_data = ReportSerializer(
+            reports, many=True, context={'request': request}).data
 
         categories = Category.objects.filter(name__icontains=search_str)
         categories_data = CategorySerializer(
@@ -124,6 +126,7 @@ class SearchView(APIView):
 
         resp = {
             "scripts": scripts_data,
-            "categories": categories_data
+            "categories": categories_data,
+            "reports": reports_data
         }
         return Response(resp)
