@@ -1,12 +1,14 @@
 import { FC, useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
+import { useRemoveMutation, useUpdateMutation } from "../../../../Redux/CategoryQuery";
 
 interface NewCategoryModalProps {
   show: boolean;
   handleClose: () => void;
   selected: string;
-  editingCategory: string | null;
+  editingCategory: any | null;
+  token:any
 }
 
 const NewCategoryModal: FC<NewCategoryModalProps> = ({
@@ -14,15 +16,21 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   selected,
   handleClose,
   editingCategory,
+  token
 }) => {
   const navigate = useNavigate();
+  const [update, update_res] =
+  useUpdateMutation();
+  const [remove, delete_res] =
+  useRemoveMutation();
   const [categoryName, setCategoryName] = useState(selected);
   const [parentCategory, setParentCategory] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+console.log(editingCategory);
 
   useEffect(() => {
     if (editingCategory) {
-      setCategoryName(editingCategory);
+      setCategoryName(editingCategory.name);
       setIsEditing(true);
     } else {
       setCategoryName("");
@@ -31,17 +39,17 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   }, [editingCategory, selected]);
 
   const handleSave = () => {
-    console.log(
-      "Saving category:",
-      categoryName,
-      "Parent Category:",
-      parentCategory
-    );
-    handleClose();
+    console.log(token);
+    
+    update({token:token.access,id:editingCategory.id, data:{
+      name:categoryName
+    } })
+    // handleClose();
   };
 
   const handleDelete = () => {
-    console.log("Deleting category:", categoryName);
+    
+    remove({token:token.access,id:editingCategory.id  })
     handleClose();
   };
 

@@ -3,7 +3,7 @@ import React from 'react';
 import SimpleLayout from '../Layout/SimpleLayout';
 import { AuthMenu } from '../Menu';
 import AuthLogin from '../pages/Auth/AuthLogin';
-import { AppRoute } from '../types/RouteTypes';
+import { AppRoute } from '../types/RouteTypes'; 
  
 // Import other components and routes as needed
 

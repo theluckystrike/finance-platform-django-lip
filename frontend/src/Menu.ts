@@ -5,7 +5,7 @@ import { AuthMenutype, SidebarMenutype } from "./types/MenuTypes";
 export const AuthMenu: AuthMenutype = {
   login: {
     name: "Login",
-    path: "",
+    path: "login",
     icon: "Login",
     hide: false,
     role:'all'
@@ -59,12 +59,19 @@ export const SidebarMenu: SidebarMenutype = {
     hide:false,
     role:'all'
   },
+  scriptTree:{
+    name: "Script Tree",
+    path: "scriptTree",
+    icon: "AccountTree",
+    hide:false,
+    role:'all'
+  },
   errorhandling:{
     name: "Error Handling",
     path: "error-handling",
     icon: "Error",
     hide:false,
-    role:'Admin'
+    role:'all'
   }
 };
 

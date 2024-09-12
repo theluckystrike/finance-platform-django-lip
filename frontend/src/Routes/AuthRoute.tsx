@@ -2,7 +2,8 @@ import React, { lazy } from "react";
 import AuthGuard from "../Layout/AuthGuard";
 import AuthLayout from "../Layout/AuthLayout";
 import { ActiveRoute, SidebarMenu } from "../Menu";
-import Profile from "../pages/user/Profile";
+ 
+ 
  
  
 
@@ -18,6 +19,8 @@ const TapeSummaryResult = lazy(() => import("../pages/tape-summary/tape-summary-
 const UploadScript = lazy(() => import("../pages/UploadScript/UploadScript"));
 const CategoryManger = lazy(() => import("../pages/UploadScript/CategoryManger"));
 const ErrorHandling = lazy(() => import("../pages/ErrorHandling/ErrorHandle"));
+const Profile = lazy(() => import("../pages/user/Profile"));
+const ScriptTree = lazy(() => import("../pages/AllScript/ScriptTree"));
 
 
 
@@ -78,6 +81,11 @@ export const SimpleRoute = [
       {
         path: ActiveRoute.UserProfile.path,
         element: <Profile />
+      },
+      {
+        path: SidebarMenu.scriptTree.path,
+        element: <ScriptTree />,
+
       }
     ],
   },

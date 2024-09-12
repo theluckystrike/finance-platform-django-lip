@@ -1,5 +1,5 @@
  
-
+export const loginUSer= JSON.parse(localStorage.getItem('login')as any)
 
 
  export const GetRole  = ()=>{
@@ -10,5 +10,4 @@
 return 'all'
     }
  
-    
 }

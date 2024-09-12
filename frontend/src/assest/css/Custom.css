@@ -119,7 +119,7 @@ input:focus {
 
 .dropdown-content span {
   color: black;
-  padding: 8px 6px;
+  padding:4px 6px;
   text-decoration: none;
   display: block;
   font-weight: 500;

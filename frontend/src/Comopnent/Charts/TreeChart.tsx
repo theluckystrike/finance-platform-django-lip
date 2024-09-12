@@ -3,7 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import { Categoryarray2 } from "../../DummyData/TableData";
 import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
 
-const RenderTree = (data: any, level = 0) => {
+const RenderTree = (data: any,token:any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [show, setShow] = useState(false);
@@ -44,14 +44,14 @@ const RenderTree = (data: any, level = 0) => {
                 <FaEdit
                   onClick={(e: any) => {
                     e.stopPropagation();
-                    startEditing(item.name);
+                    startEditing(item);
                   }}
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
               </span>
-              {expandedCategories.includes(item.name) && item.subcategory && (
+              {expandedCategories.includes(item.name) && item.subcategories && (
                 <ul>
-                  {item.subcategory.map((innerItem: any, innerIndex: any) => (
+                  {item.subcategories.map((innerItem: any, innerIndex: any) => (
                     <li key={innerIndex}>
                       <span
                         onClick={() => toggleExpand(innerItem.name)}
@@ -61,21 +61,21 @@ const RenderTree = (data: any, level = 0) => {
                         <FaEdit
                           onClick={(e: any) => {
                             e.stopPropagation();
-                            startEditing(innerItem.name);
+                            startEditing(innerItem );
                           }}
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
                       </span>
-                      {expandedCategories.includes(innerItem.name) && innerItem.innerCategory && (
+                      {expandedCategories.includes(innerItem.name) && innerItem.subcategories && (
                         <ul>
-                          {innerItem.innerCategory.map(
+                          {innerItem.subcategories.map(
                             (subinnerItem: any, subinnerIndex: any) => (
                               <li key={subinnerIndex}>
                                 <span
                                   onClick={() => handleShow(subinnerItem)}
                                   style={{ cursor: 'pointer' }}
                                 >
-                                  {subinnerItem}
+                                  {subinnerItem.name}
                                 </span>
                               </li>
                             )
@@ -95,16 +95,17 @@ const RenderTree = (data: any, level = 0) => {
         handleClose={handleClose}
         selected={selected}
         editingCategory={editingCategory} 
+        token={token}
       />
     </>
   );
 };
 
-const CategoryTree = () => {
+const CategoryTree = ({categoryFilter,token}:any) => {
   return (
     <div className="category-tree mx-auto w-25">
       <h3>Category Tree</h3>
-      {RenderTree(Categoryarray2)}
+      {RenderTree(categoryFilter,token)}
     </div>
   );
 };

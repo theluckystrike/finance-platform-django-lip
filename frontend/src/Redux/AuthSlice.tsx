@@ -1,32 +1,14 @@
-// import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query';
-// import { login } from '../models'; // Replace with your actual model definition
-
-// export const AuthSlice = createApi({
-//   reducerPath: 'AuthSlice',
-//   baseQuery: fetchBaseQuery({ baseUrl: 'https://clearstub-api.cradle.services/api/user/' }),
-//   endpoints: (builder) => ({
-//     createLogin: builder.mutation<login, login>({
-//       query: (data) => ({
-//         url: '/login',
-//         method: 'POST',
-//         body: data,
-//       }),
-//     }),
-//   }),
-// });
-
-// export const { useCreateLoginMutation } :any= AuthSlice; // Ensure correct export
-// src/services/apiSlice.js
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { endpoint } from './endpoint';
 
 const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL  }),
+  tagTypes: ['GET', 'Project'],
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_LOCAL_URL  }),
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/login',
+        url: endpoint.auth+'/login/',
         method: 'POST',
         body: credentials,
       }),
@@ -53,17 +35,50 @@ const api = createApi({
         url: '/resetPassword',
         method: 'POST',
         headers: {
-          'x-access-token': token, // No need for `${token}`, unless it's specifically required
+          'x-access-token': token, 
         },
         body: {
           password: newPassword, // Ensure this matches the API endpoint's expected structure
         },
+       
       }),
     }),
+    refreshtoken: builder.mutation({
+      query: ({ token, page_no, page_size }) => ({
+        url: endpoint.auth+'refresh-token/',
+        method: 'POST',
+        body: {
+          refresh: token, // Ensure this matches the API endpoint's expected structure
+        },
+      }),
+      
+    }),
+
+    getuserbytoken: builder.query({
+      query: ({ token, page_no, page_size }) => ({
+        url: endpoint.auth+'user-info/',
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+         },
+        params: {
+          page: page_no,
+          size: page_size,
+        },
+      }),
+      providesTags: ['GET']
+    }),
     
-    
+  
   }),
 });
 
-export const { useLoginMutation,useForgotpasswordMutation,useVerifypasswordotpMutation,useChangePasswordMutation } = api;
+export const { 
+  useLoginMutation,
+  useForgotpasswordMutation,
+  useGetuserbytokenQuery,
+  useRefreshtokenMutation,
+  useVerifypasswordotpMutation,
+  useChangePasswordMutation 
+} = api;
 export default api;

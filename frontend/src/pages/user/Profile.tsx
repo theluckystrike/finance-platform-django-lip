@@ -1,11 +1,35 @@
-import React from 'react';
-import './Profile.css'
+import React, { useRef, useState } from 'react';
+import '../../assest/css/Profile.css'
 import dummyUser from "../../assest/image/logo/user.jpg";
+import { useGetuserbytokenQuery } from '../../Redux/AuthSlice';
+import { loginUSer } from '../../customHook/getrole';
 
 const Profile: React.FC = () => {
-const loginUSer= JSON.parse(localStorage.getItem('login')as any)
 
 
+const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
+
+console.log(data);
+
+
+
+const [selectedImage, setSelectedImage] = useState(null);
+const fileInputRef :any= useRef(null);
+
+const handleImageClick = () => {
+  fileInputRef.current.click();
+};
+
+const handleImageChange = (e:any) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader:any = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
   return (
     <div>
       <div className=" m-5 ">
@@ -14,23 +38,33 @@ const loginUSer= JSON.parse(localStorage.getItem('login')as any)
             <div className="col-lg-4">
               <div className="card">
                 <div className="card-body">
-                  <div className="d-flex flex-column align-items-center text-center">
-                    <img
-                      src={dummyUser}
-                      alt="Admin"
-                      className="rounded-circle p-1 bg-green"
-                      width="110"
-                    />
+                <div className="d-flex flex-column align-items-center text-center">
+      <img
+        src={selectedImage || dummyUser}
+        alt="Admin"
+        className="rounded-circle p-1 bg-green"
+        width="110"
+        height="110"
+        onClick={handleImageClick}
+        style={{ cursor: 'pointer'   }}
+      />
 
- 
-                    <div className="mt-3">
-                      <h4>{loginUSer.name}</h4>
-                      <p className="text-secondary mb-1">Full Stack Developer</p>
-                      <p className="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
-                      {/* <button className="btn btn-green">Follow</button>
-                      <button className="btn btn-outline-green">Message</button> */}
-                    </div>
-                  </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept="image/*"
+        onChange={handleImageChange}
+      />
+
+      <div className="mt-3">
+        <h4>{loginUSer.name}</h4>
+        <p className="text-secondary mb-1">Full Stack Developer</p>
+        <p className="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
+        {/* <button className="btn btn-green">Follow</button>
+        <button className="btn btn-outline-green">Message</button> */}
+      </div>
+    </div>
                   <hr className="my-4" />
                   <ul className="list-group list-group-flush">
                   
@@ -131,7 +165,7 @@ const loginUSer= JSON.parse(localStorage.getItem('login')as any)
                       <input
                         type="text"
                         className="form-control"
-                        value={loginUSer.name}
+                        value={data?.username}
                       />
                     </div>
                   </div>
@@ -143,7 +177,7 @@ const loginUSer= JSON.parse(localStorage.getItem('login')as any)
                       <input
                         type="text"
                         className="form-control"
-                        value={loginUSer.email}
+                        value={data?.email}
                       />
                     </div>
                   </div>
