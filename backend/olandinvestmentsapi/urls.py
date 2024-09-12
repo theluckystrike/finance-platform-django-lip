@@ -15,14 +15,17 @@ from olandinvestmentsapi.views import (
     ReportViewSet,
     ReportStatusView,
     ReportUpdateView,
+    MergeReportsView,
+    ReportEmailTaskViewSet,
     SearchView
 )
 from rest_framework import routers
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('scripts', views.ScriptViewSet, basename='scripts')
-router.register('categories', views.CategoryViewSet, basename='categories')
-router.register('reports', views.ReportViewSet, basename='reports')
+router.register('scripts', ScriptViewSet, basename='scripts')
+router.register('categories', CategoryViewSet, basename='categories')
+router.register('reports/schedules', ReportEmailTaskViewSet, basename='report-schedules')
+router.register('reports', ReportViewSet, basename='reports')
 
 urlpatterns = [
     path('api/auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -30,8 +33,6 @@ urlpatterns = [
     path('api/auth/logout', LogoutView.as_view(), name='token_logout'),
     path('api/auth/user-info', UserInfoView.as_view(), name='user_info'),
     # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    # Router urls
-    path('api/', include(router.urls)),
     # Script Views
     path('api/scripts/<int:pk>/status', views.ScriptStatusView.as_view(), name='script_status'),
     path('api/scripts/<int:pk>/run', views.ScriptRunView.as_view(), name='script_run'),
@@ -39,6 +40,11 @@ urlpatterns = [
     # Search
     path('api/search', views.SearchView.as_view(), name='search'),
     # Reports
-    path('api/reports/<int:pk>/status', views.ReportStatusView.as_view(), name='report_status'),
-    path('api/reports/<int:pk>/update', views.ReportUpdateView.as_view(), name='report_update'),
+    path('api/reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
+    path('api/reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
+    path('api/reports/merge',
+         MergeReportsView.as_view(), name='merge_reports'),
+    # Router urls
+    path('api/', include(router.urls)),
+
 ]

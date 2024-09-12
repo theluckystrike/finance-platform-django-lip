@@ -89,8 +89,8 @@ class PDFBuilder:
             scaled_height = self.pdf.height - 50
             scale_factor = scaled_height / image.height
             scaled_width = scale_factor * image.width
-
-        img = Image(image, width=scaled_width, height=scaled_height)
+        img = Image(image.open(), width=scaled_width, height=scaled_height)
+        image.close()
         image_flow.append(img)
         if caption:
             caption_text = self._caption(caption)

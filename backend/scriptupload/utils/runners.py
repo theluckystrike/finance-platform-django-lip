@@ -77,7 +77,6 @@ def run_script(script):
         f"[script runner] Running script * {script.name} *")
     env = setup_patched_env()
     excStatus = script.ExecutionStatus
-    script.set_status(excStatus.RUNNING)
 
     plt_success = False
     pd_success = False

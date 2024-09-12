@@ -82,7 +82,7 @@ class Script(models.Model):
             table_data = TableData(script=self)
             table_data.csv_data.save(filename, file)
             self.table_data = table_data
-            # table_data.set_last_updated()
+            table_data.set_last_updated()
             self.save()
         else:
             self.table_data.csv_data.save(filename, file)
@@ -95,7 +95,7 @@ class Script(models.Model):
         if not self.has_chart_data:
             chart_data = ChartData(script=self)
             chart_data.image_file.save(filename, file)
-            # chart_data.set_last_updated()
+            chart_data.set_last_updated()
             self.chart_data = chart_data
             self.save()
         else:
@@ -235,7 +235,9 @@ class Script(models.Model):
 
     def run(self):
         q = django_rq.get_queue("scripts")
-        q.enqueue(run_script, self)
+        job = q.enqueue(run_script, self)
+        self.set_status(self.ExecutionStatus.RUNNING)
+        return job
 
 
 script_signals(Script)

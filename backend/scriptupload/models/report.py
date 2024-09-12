@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from .filepaths import report_file_path
 from .script import Script
 from ..utils.utils import scripts_to_pdf
+import django_rq
+import time
 
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
@@ -36,27 +38,36 @@ class Report(models.Model):
     def __str__(self):
         return self.name
 
-    def update(self, runscripts=False, base_url=None):
-        if self.status != "running":
-            self.status = "running"
-            self.save(update_fields=["status"])
+    def set_status(self, status):
+        self.status = status
+        self.save(update_fields=["status"])
+
+    def _update(self, runscripts=False, base_url=None):
         try:
             pfd_file = scripts_to_pdf(
                 self.scripts.all().order_by("index_in_category"), self.name, base_url)
             self.latest_pdf.save(
                 f"{self.name}.pdf", pfd_file)
             self.last_updated = timezone.now()
-            self.status = "success"
-            self.save(update_fields=["status"])
+            self.set_status("success")
             logger.info(
                 f"[report update] Successfully updated report * {self.name} *")
         except Exception as e:
-            self.status = "failure"
-            self.save(update_fields=["status"])
+            self.set_status("failure")
             logger.error(
                 f"[report update] Failed to update report * {self.name} * with error ->\n{str(e)}")
 
         self.save()
+
+    def update(self, runscripts=False, base_url=None, wait=False):
+        q = django_rq.get_queue("reports")
+        job = q.enqueue(self._update, runscripts, base_url)
+        self.set_status('running')
+        # possible values are queued, started, deferred, finished, stopped, scheduled, canceled and failed
+        if wait:
+            while job.get_status(refresh=True) in ["queued", "started"]:
+                time.sleep(5)
+        return job
 
     class Meta:
         verbose_name = "Report"
@@ -64,12 +75,25 @@ class Report(models.Model):
 
 
 class ReportEmailTask(models.Model):
+    DAY_CHOICES = (
+        ('1', 'Monday'),
+        ('2', 'Tuesday'),
+        ('3', 'Wednesday'),
+        ('4', 'Thursday'),
+        ('5', 'Friday'),
+        ('6', 'Saturday'),
+        ('7', 'Sunday'),
+        ('*', 'Every Day'),
+    )
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     email = models.EmailField(max_length=254)
-    day = models.CharField(max_length=1)
+    day = models.CharField(max_length=1, choices=DAY_CHOICES)
 
     def __str__(self):
         return f"{self.report.name}-{self.day}"
+
+    class Meta:
+        unique_together = ["report", "email", "day"]
 
 
 def merge_reports(report1: Report, report2: Report, user: User, name: str):
