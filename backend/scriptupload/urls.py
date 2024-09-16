@@ -49,35 +49,4 @@ urlpatterns = [
     path('manage-categories/', views.category_manager_page, name="manage_categories"),
     path('manage-categories/update/<pk>/', views.update_category, name="update_category"),
     path('manage-categories/delete/<pk>/', views.delete_category, name="delete_category"),
-
-    # start apis path of category sections
-    # API endpoint to update a category
-    path('api/category/<int:pk>/update/', views.UpdateCategoryView.as_view(), name='update-category'),
-    path('category/create/', views.CreateCategoryView.as_view(), name='create_category'),
-    path('category/delete/<int:pk>/', views.DeleteCategoryView.as_view(), name='delete_category'),
-    path('category/report/<int:categoryid>/', views.GenerateCategoryReportView.as_view(), name='generate_category_report'),
-    path('category/subcategories/<int:categoryid>/', views.GetSubcategoriesView.as_view(), name='get_subcategories'),
-    path('category/scripts/<str:categoryname>/', views.CategoryScriptsView.as_view(), name='category_scripts'),
-    path('category/manager/', views.CategoryManagerAPIView.as_view(), name='category_manager_api'),
-    # end apis path of category sections ==============================================
-
-    # start apis path of script sections +++++++++++++++++++++++++++++++++++++++
-    path('scripts/upload/', views.UploadScriptView.as_view(), name='upload_script'),
-    # URL for listing all scripts
-    path('scripts/', views.ScriptListView.as_view(), name='script_list'),
-    # URL for viewing a specific script's details
-    path('scripts/view/<str:name>/', views.ScriptDetailView.as_view(), name='script_detail'),
-    # URL for running a script
-    path('scripts/run/<str:name>/', views.RunScriptView.as_view(), name='run_script'),
-    # URL for getting the status of a script
-    path('scripts/status/<int:scriptid>/', views.ScriptStatusView.as_view(), name='script_status'),
-    # URL for deleting a script
-    path('scripts/delete/<str:name>/', views.DeleteScriptView.as_view(), name='delete_script'),
-    # URL for editing a script
-    path('scripts/edit/<str:name>/', views.EditScriptView.as_view(), name='edit_script'),
-    # URL for changing a script's category index
-    path('scripts/change-category-index/<int:pk>/', views.ChangeScriptCategoryIndexView.as_view(), name='change_script_category_index'),
-    # URL for searching scripts
-    path('scripts/search/', views.ScriptSearchView.as_view(), name='script_search'),
-    # end apis path of script sections ++++++++++++++++++++++++++++++++++++++++++++++++++++
 ]

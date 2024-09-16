@@ -1,18 +1,4 @@
-# rest api modules
-from rest_framework import status, viewsets, generics
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-#from .models import Category, Script
-#from ..models import Category, Script
-#from .serializers import CategorySerializer,ScriptSerializer
-from ..serializers import CategorySerializer, ScriptSerializer
-from rest_framework.views import APIView
-from rest_framework.generics import UpdateAPIView
-
-# end rest apis
-
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
@@ -26,9 +12,9 @@ from django_tables2 import RequestConfig
 import logging
 
 
-
 # this is web logic functions
 logger = logging.getLogger('testlogger')
+
 
 @login_required
 def category_page(request, categoryname):
@@ -111,7 +97,8 @@ def delete_category(request, pk):
     if request.method == "DELETE":
         cname = category.name
         category.delete()
-        logger.info(f"[category views] Deleted category '{cname}' with ID={pk}")
+        logger.info(
+            f"[category views] Deleted category '{cname}' with ID={pk}")
 
     referer = request.META.get('HTTP_REFERER')
     if referer:
@@ -146,189 +133,3 @@ def get_subcategories(request, categoryid):
     subcats = Category.objects.filter(
         parent_category=get_object_or_404(Category, pk=categoryid))
     return JsonResponse({"subcategories": [{'name': cat.name, 'id': cat.id} for cat in subcats]}, safe=False)
-
-# end web logic
-
-
-
-# rest apis logic
-
-"""class UpdateCategoryView(UpdateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-
-    def update(self, request, *args, **kwargs):
-        category = self.get_object()  # Use self.get_object() to get the instance
-        serializer = self.get_serializer(category, data=request.data)
-
-        if serializer.is_valid():
-            parent = serializer.validated_data.get("parent", None)
-            ob = serializer.validated_data
-
-            ob_type = category.get_level()
-            if parent == -1:
-                if ob_type != 0:
-                    return Response({"error": "Cannot promote category"}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    category.parent_category = None
-                    category.save()
-                    return Response({"success": "Successfully updated"})
-            elif parent == category.id:
-                return Response({"error": "Cannot make category a subcategory of itself"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                parent_cat = get_object_or_404(Category, pk=parent)
-                parent_cat_type = parent_cat.get_level()
-                if (ob_type == 2 and parent_cat_type == 1) or (ob_type == 1 and parent_cat_type == 0):
-                    category.parent_category = parent_cat
-                    category.save()
-                    return Response({"success": "Successfully updated"})
-                else:
-                    return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-
-class UpdateCategoryView(UpdateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-
-    def update(self, request, *args, **kwargs):
-        category = self.get_object()  # Use self.get_object() to get the instance
-        serializer = self.get_serializer(category, data=request.data, partial=True)  # Use partial=True for partial updates
-
-        if serializer.is_valid():
-            parent = serializer.validated_data.get("parent", None)
-            ob_type = category.get_level()
-
-            if parent is None:
-                # No parent provided, update successfully
-                category.parent_category = None
-                category.save()
-                return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
-
-            if parent == category.id:
-                return Response({"error": "Cannot make category a subcategory of itself"}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Handle case where parent is not None
-            try:
-                parent_cat = Category.objects.get(pk=parent)
-                parent_cat_type = parent_cat.get_level()
-
-                if (ob_type == 2 and parent_cat_type == 1) or (ob_type == 1 and parent_cat_type == 0):
-                    category.parent_category = parent_cat
-                    category.save()
-                    return Response({"success": "Successfully updated"}, status=status.HTTP_200_OK)
-                else:
-                    return Response({"error": "Not allowed"}, status=status.HTTP_400_BAD_REQUEST)
-            except Category.DoesNotExist:
-                return Response({"error": "Parent category does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class CreateCategoryView(generics.CreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response({"message": "New category added successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DeleteCategoryView(generics.DestroyAPIView):
-    queryset = Category.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def destroy(self, request, pk, *args, **kwargs):
-        category = get_object_or_404(Category, pk=pk)
-        self.perform_destroy(category)
-        return Response({"message": f"Deleted category '{category.name}'"}, status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-class GenerateCategoryReportView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, categoryid):
-        category = get_object_or_404(Category, pk=categoryid)
-        scripts = category.script_set.all().order_by("index_in_category")
-        if scripts.exists():
-            pdf_response = scripts_to_httpresponse(scripts, categoryname=category.name)
-            if pdf_response:
-                return pdf_response
-            else:
-                return Response({"error": "Failed to create report"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response({"message": "The selected category contains no scripts"}, status=status.HTTP_200_OK)
-
-
-
-class GetSubcategoriesView(generics.ListAPIView):
-    serializer_class = CategorySerializer  # Assuming you're returning a list of categories
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, categoryid, *args, **kwargs):
-        category = get_object_or_404(Category, pk=categoryid)
-        subcategories = Category.objects.filter(parent_category=category)
-        return Response({"subcategories": [{'name': cat.name, 'id': cat.id} for cat in subcategories]})
-
-
-
-
-class CategoryScriptsView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, categoryname):
-        category = get_object_or_404(Category, name=categoryname)
-        scripts = Script.objects.filter(category=category).order_by("index_in_category")
-        serializer = ScriptSerializer(scripts, many=True)
-
-        categories = Category.objects.filter(parent_category=None)
-
-        return Response({
-            "scripts": serializer.data,
-            "category": categoryname,
-            "categories": [{"id": cat.id, "name": cat.name} for cat in categories]
-        })
-
-
-class CategoryManagerAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        # Retrieve all categories and scripts
-        scripts = Script.objects.all()
-        categories = Category.objects.all()
-
-        # Serialize the data
-        scripts_serializer = ScriptSerializer(scripts, many=True)
-
-        # Prepare custom serialization for categories
-        categories_data = []
-        for x in categories:
-            category_data = {
-                "id": x.id,
-                "name": x.name,
-                "parent": {
-                    "parent_id": x.parent_category.id if x.parent_category else None,  # Show parent's ID or None if no parent
-                    "parent_name": x.parent_category.name if x.parent_category else None  # Show parent's name or None if no parent
-                }
-            }
-            categories_data.append(category_data)  # Append each category to the list
-
-        # Construct the response data
-        response_data = {
-            "categories": categories_data,  # Send the full list of categories
-            "scripts": scripts_serializer.data
-        }
-
-        return Response(response_data)
-
-
-
