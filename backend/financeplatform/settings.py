@@ -26,7 +26,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-ALLOWED_HOSTS = ['localhost:8090','localhost','127.0.0.1','backend-oland-investments.cradle.services','https://www.olandinvesmentslimited.com',
+ALLOWED_HOSTS = ['localhost:8090', 'localhost', '127.0.0.1', 'backend-oland-investments.cradle.services', 'https://www.olandinvesmentslimited.com',
                  '*.olandinvesmentslimited.com']
 CSRF_TRUSTED_ORIGINS = ['https://backend-oland-investments.cradle.services']
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
@@ -51,7 +51,7 @@ DEBUG = False if IS_HEROKU else True
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY","f05fb2$%#wg#4h^83@%5v3owm!(1(ni5ymfe6$!_!(fqe0-5sk")
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 

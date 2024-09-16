@@ -2,13 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
-from rest_framework import status, generics
+from rest_framework import status
 from rest_framework.response import Response
-from ..serializers import ScriptSerializer, ReportSerializer, ReportEmailTaskSerializer
+from ..serializers import ReportSerializer, ReportEmailTaskSerializer
 from scriptupload.models import Report, merge_reports, ReportEmailTask
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.utils.decorators import method_decorator
 
 
 class ReportViewSet(ModelViewSet):

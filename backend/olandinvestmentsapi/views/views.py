@@ -1,13 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import status, generics
 from rest_framework.response import Response
 from ..serializers import CategorySerializer, ScriptSerializer, ReportSerializer
 from scriptupload.models import Category, Script, Report
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.utils.decorators import method_decorator
 
 
 class SearchView(APIView):

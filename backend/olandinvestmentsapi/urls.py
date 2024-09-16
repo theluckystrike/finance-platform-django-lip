@@ -1,4 +1,3 @@
-from . import  views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -34,11 +33,11 @@ urlpatterns = [
     path('api/auth/user-info', UserInfoView.as_view(), name='user_info'),
     # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     # Script Views
-    path('api/scripts/<int:pk>/status', views.ScriptStatusView.as_view(), name='script_status'),
-    path('api/scripts/<int:pk>/run', views.ScriptRunView.as_view(), name='script_run'),
+    path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
+    path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
     # Categories
     # Search
-    path('api/search', views.SearchView.as_view(), name='search'),
+    path('api/search', SearchView.as_view(), name='search'),
     # Reports
     path('api/reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
     path('api/reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
