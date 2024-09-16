@@ -17,6 +17,8 @@ import time
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
 logger = logging.getLogger('testlogger')
 
+scriptExcStatus = Script.ExecutionStatus
+
 
 class Report(models.Model):
     """
@@ -44,6 +46,9 @@ class Report(models.Model):
 
     def _update(self, runscripts=False, base_url=None):
         try:
+            while any(s.status == scriptExcStatus.RUNNING for s in self.scripts.all()):
+                time.sleep(5)
+                self.refresh_from_db()
             pfd_file = scripts_to_pdf(
                 self.scripts.all().order_by("index_in_category"), self.name, base_url)
             self.latest_pdf.save(
@@ -61,8 +66,11 @@ class Report(models.Model):
 
     def update(self, runscripts=False, base_url=None, wait=False):
         q = django_rq.get_queue("reports")
-        job = q.enqueue(self._update, runscripts, base_url)
         self.set_status('running')
+        if runscripts:
+            for script in self.scripts.all():
+                script.run()
+        job = q.enqueue(self._update, runscripts, base_url)
         # possible values are queued, started, deferred, finished, stopped, scheduled, canceled and failed
         if wait:
             while job.get_status(refresh=True) in ["queued", "started"]:
