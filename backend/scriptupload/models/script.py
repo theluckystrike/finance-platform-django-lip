@@ -1,5 +1,6 @@
 import logging
 from django.db import models
+import django_rq
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings

@@ -3,7 +3,6 @@ General utility functions for the scriptupload app.
 """
 
 
-from .runners import run_script
 from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from django.utils import timezone
@@ -147,6 +146,22 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     )
     # close buffer and return http response
     return response
+
+
+def handover_script(user, script):
+    if user is None:
+        username = "None"
+    else:
+        username = user.username
+    logger.info(
+        f"[script handover] Running script * {script.name} * for user * {username} *")
+    success, message = run_script(script)
+    if success:
+        logger.info(
+            f"[script handover] Script * {script.name} * run by user * {username} * SUCCESS")
+    else:
+        logger.info(
+            f"[script handover] Script * {script.name} * run by user * {username} * FAILURE")
 
 
 def handover_report(user, report, run_scripts=False, base_url=None):
