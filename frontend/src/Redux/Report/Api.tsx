@@ -26,56 +26,6 @@ export const CreateScript = async (data: any) => {
 };
 
 
-export const GetScriptByID = async (data: any) => {
-  const {token,id } = data;
-
-  try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_LOCAL_URL}${endpoint.scripts}/${id}`,
-      { headers }
-    );
- 
-
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-
-
-export const DeleteScriptByID = async (data: any) => {
-  const {token,id } = data;
-
-  try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.delete(
-      `${process.env.REACT_APP_API_LOCAL_URL}${endpoint.scripts}/${id}`,
-      { headers }
-    );
- 
-
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
 
 export const GetAllScript = async (data: any) => {
   const {token } = data;

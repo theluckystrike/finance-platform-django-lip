@@ -1,12 +1,36 @@
+Deep sir , script section , this APIs create by Nick
+this apis is Post script and used Post method
+https://backend-oland-investments.cradle.services/api/scripts
+name (text)
+file (file)
+category (int)
+output_type (text used this plt,pd,pd plt)
+description (text)
 
-it might be worthwhile to start implementing a few of the new front end
+this apis is Get script and used Get method
+https://backend-oland-investments.cradle.services/api/scripts/2
 
+this apis is Put script and used Put method
+https://backend-oland-investments.cradle.services/api/scripts/2
+name (text)
+file (file)
+category (int)
+output_type (text used this plt,pd,pd plt)
+description (text)
 
+this apis is Patch script and used Patch method
+https://backend-oland-investments.cradle.services/api/scripts/2
+name (text) or
+file (file) or
+category (int) or
+output_type (text used this plt,pd,pd plt) or
+description (text) 
 
-- error handling - I want to have a separate tab that only users with admin rights can view which displays any scripts that are running with errors
+this apis is Delete script and used Delete method
+https://backend-oland-investments.cradle.services/api/scripts/2
 
+this apis is Get script check status and used Get method
+https://backend-oland-investments.cradle.services/api/scripts/2/status
 
-
-- I want to add a tab on the side bar titled ‘tape summary ‘ which once selected can display a summary of various models already running on the site. The idea is that if I wanted to pick say 5 scripts - get the results from those scripts and displays them all on one place. If you look at the script ‘tape summary ‘ it begins to try and complete this task. I would like the model summary to be able to display both a graph and a table on the same tab
-- I want to be able to sort scripts on the main page by there column headers
-- i want to be able to click through the script tree and select scripts.
+this apis is Post script run  and used Post method
+http://127.0.0.1:8000/api/scripts/2/run

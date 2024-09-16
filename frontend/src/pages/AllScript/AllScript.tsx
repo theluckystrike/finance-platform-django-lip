@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import useSortableData from "../../customHook/useSortable";
 import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
 import { loginUSer } from "../../customHook/getrole";
+import DateFormatter from "../../customHook/useTImeformnt";
 
 const CustomReport = () => {
  
@@ -37,8 +38,9 @@ getDAta()
  },[])
 const store:any = useSelector((i)=>i)
  
+ console.log(store,'store?');
  
-const allscripts = store?.script?.Scripts?.scripts
+const allscripts = store?.script?.Scripts?.results
   const [selectedScripts, setSelectedScripts] = useState([]);
  
  
@@ -76,7 +78,7 @@ const allscripts = store?.script?.Scripts?.scripts
 
 
 
-  const { items, requestSort, getClassNamesFor } = useSortableData(ScriptData);
+  const { items, requestSort, getClassNamesFor } = useSortableData(allscripts);
  
   return (
     <>
@@ -127,13 +129,13 @@ const allscripts = store?.script?.Scripts?.scripts
                       id="selectAllCheckbox"
                       onChange={toggleSelectAll}
                     />{" "}
-                    <span onClick={() => requestSort('title')}>
+                    <span onClick={() => requestSort('name')}>
 
                     Name
 
                     <Icon
 									size='10px'
-									className={getClassNamesFor('title')}
+									className={getClassNamesFor('name')}
 									icon='FilterList'
                   />
                   </span>
@@ -141,10 +143,10 @@ const allscripts = store?.script?.Scripts?.scripts
                 </div>
 
                
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category1')} >Category
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('description')} >Description
                 <Icon
 									size='10px'
-									className={getClassNamesFor('category1')}
+									className={getClassNamesFor('description')}
 									icon='FilterList'
                   />
 
@@ -156,26 +158,22 @@ const allscripts = store?.script?.Scripts?.scripts
 									icon='FilterList'
                   />
 </div>
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category3')}>Sub Category 2 <Icon
-									size='10px'
-									className={getClassNamesFor('category3')}
-									icon='FilterList'
-                  /></div>
-                <div className="col-1 mx-auto text-center" onClick={() => requestSort('startDate')}>Created<Icon
+                
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('startDate')}>Created<Icon
 									size='10px'
 									className={getClassNamesFor('startDate')}
 									icon='FilterList'
                   /></div>
-                <div className="col-1 mx-auto text-center" onClick={() => requestSort('endDate')}>LastUpdated<Icon
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('endDate')}>LastUpdated<Icon
 									size='10px'
 									className={getClassNamesFor('endDate')}
 									icon='FilterList'
                   /></div>
               </div>
               <div id="scriptsCheckboxes">
-                {allscripts.map((script: any,index:any) => (
+                {items?.map((script: any,index:any) => (
                   <Link
-                    to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
+                    to={`/account/ScriptDetails/${script.id}`}
                     className="text-decoration-none text-black"
                     key={index}
                   >
@@ -193,19 +191,16 @@ const allscripts = store?.script?.Scripts?.scripts
                         </span>
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
-                        {script.category}
+                        {script.description}
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
-                        {script.category2}
+                        {script?.category?.name}
                       </div>
-                      <div className="col-2 mx-auto text-center wrap-word">
-                        {script.category3}
+                      <div className="col-2 mx-auto text-center">
+                      <DateFormatter isoString={script.created}/>
                       </div>
-                      <div className="col-1 mx-auto text-center">
-                        11-12-2022
-                      </div>
-                      <div className="col-1 mx-auto text-center">
-                      11-12-2022
+                      <div className="col-2 mx-auto text-center">
+                      <DateFormatter isoString={script.created}/>
                       </div>
                     </div>
                   </Link>

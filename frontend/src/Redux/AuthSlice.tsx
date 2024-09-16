@@ -8,7 +8,7 @@ const api = createApi({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: endpoint.auth+'/login/',
+        url: endpoint.auth+'login',
         method: 'POST',
         body: credentials,
       }),
@@ -45,18 +45,30 @@ const api = createApi({
     }),
     refreshtoken: builder.mutation({
       query: ({ token, page_no, page_size }) => ({
-        url: endpoint.auth+'refresh-token/',
+        url: endpoint.auth+'refresh-token',
         method: 'POST',
         body: {
-          refresh: token, // Ensure this matches the API endpoint's expected structure
+          refresh: token,  
         },
       }),
       
     }),
-
+    signout: builder.mutation({
+      query: ({ token }) => ({
+        url: endpoint.auth+'logout',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token.access}`,
+         },
+        body: {
+          refresh: token.refresh,  
+        },
+      }),
+      
+    }),
     getuserbytoken: builder.query({
       query: ({ token, page_no, page_size }) => ({
-        url: endpoint.auth+'user-info/',
+        url: endpoint.auth+'user-info',
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,6 +90,7 @@ export const {
   useForgotpasswordMutation,
   useGetuserbytokenQuery,
   useRefreshtokenMutation,
+  useSignoutMutation,
   useVerifypasswordotpMutation,
   useChangePasswordMutation 
 } = api;

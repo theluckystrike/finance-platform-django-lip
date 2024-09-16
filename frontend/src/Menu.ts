@@ -83,7 +83,7 @@ export const ActiveRoute = {
   },
   ScriptDetails: {
     name: "ScriptDetails",
-    path: "ScriptDetails",
+    path: "ScriptDetails/:id",
     icon: "Script",
   },
   ScriptEdit: {

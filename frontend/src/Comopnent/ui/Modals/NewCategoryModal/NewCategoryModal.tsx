@@ -2,19 +2,22 @@ import { FC, useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { useRemoveMutation, useUpdateMutation } from "../../../../Redux/CategoryQuery";
+import { log } from "console";
 
 interface NewCategoryModalProps {
   show: boolean;
   handleClose: () => void;
   selected: string;
   editingCategory: any | null;
-  token:any
+  token:any;
+  data:any;
 }
 
 const NewCategoryModal: FC<NewCategoryModalProps> = ({
   show,
   selected,
   handleClose,
+  data,
   editingCategory,
   token
 }) => {
@@ -39,7 +42,7 @@ console.log(editingCategory);
   }, [editingCategory, selected]);
 
   const handleSave = () => {
-    console.log(token);
+    
     
     update({token:token.access,id:editingCategory.id, data:{
       name:categoryName
@@ -82,29 +85,41 @@ console.log(editingCategory);
                   required
                 />
               </div>
-              <div className="col-12 m-0">
-                <label htmlFor="parentCategory" className="form-label">
-                  Parent Category
-                </label>
-                <select
-                  id="parentCategory"
-                  name="parentCategory"
-                  className="form-select m-0"
-                  value={parentCategory}
-                  onChange={(e) => setParentCategory(e.target.value)}
-                  required
-                >
-                  <option value="" disabled>
-                    All
-                  </option>
-                  {/* Populate this dynamically from your data */}
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-                  <option value="Bonds">Bonds</option>
-                  <option value="CAD">CAD</option>
-                  <option value="Breadth">Breadth</option>
-                </select>
-              </div>
+              <div className="col-12">
+                  <label htmlFor="parent_category" className="form-label">
+                    parent_category Category
+                  </label>
+
+                  <div className="dropdown">
+                    <input
+                      type="text"
+                      placeholder="All"
+                      // value={formik.values.parent_categoryName}
+                      readOnly
+                    />
+                    <div
+                      className="dropdown-content"
+                      style={{ height: "200px", overflow: "auto" }}
+                    >
+                      {data.length > 0 &&
+                        data.map((item: any, index: any) => (
+                          <span className="h6  " key={item.name}>
+                            <span
+                              className="hover-span "
+                              // onClick={() =>
+                              //  { formik.setFieldValue("parent_category", item.id)
+                              //   formik.setFieldValue("parent_categoryName", item.name)
+                              //  }
+                              // }
+                            >
+                              {item.name}
+                            </span>
+                          
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </div>
               <div className="col-12 row justify-content-evenly m-0">
                 <label
                   style={{ height: "33px" }}

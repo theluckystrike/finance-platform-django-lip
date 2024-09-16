@@ -31,7 +31,9 @@ const fileRef:any = useRef(null)
   }, []);
 
   const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 });
-  const categoryData = AllCategory?.categories || [];
+  const categoryData = AllCategory?.results || [];
+  console.log(AllCategory,'AllCategory');
+  
   const handleToast = useToast();
   
   const [categoryFilter, setCategoryFilter] = useState<any>([]);
@@ -75,9 +77,9 @@ fileRef.current.value=''
       categoryMap[cat.id] = { ...cat, subcategories: [] };
     });
     categoryData.forEach((cat: any) => {
-      if (cat.parent.parent_name !== null) {
+      if (cat?.parent_category !== null) {
         const parent:any = Object.values(categoryMap).find(
-          (parentCat: any) => parentCat.name === cat.parent.parent_name
+          (parentCat: any) => parentCat.name === cat?.parent_category
         );
         if (parent) {
           parent.subcategories.push(categoryMap[cat.id]);
@@ -85,7 +87,7 @@ fileRef.current.value=''
       }
     });
     const structuredCategories = Object.values(categoryMap).filter(
-      (cat: any) => cat.parent.parent_name === null
+      (cat: any) => cat?.parent_category === null
     );
  
     
@@ -121,26 +123,12 @@ fileRef.current.value=''
                       className={`form-control ${formik.touched.category && formik.errors.category ? 'input-error' : ''}`}
                     />
                     <div className="dropdown-content" style={{ height: '200px', overflow: 'auto' }}>
-                      {categoryFilter.length > 0 && categoryFilter.map((item: any, index: any) => (
-                        <span className="h6" key={item.name} onClick={() => {
+                      {categoryData.length > 0 && categoryData.map((item: any, index: any) => (
+                        <span className="h6 hover-span" key={item.name} onClick={() => {
                           formik.setFieldValue("parentName", item.name)
                           formik.setFieldValue('category', item.id)}}>
                           {item.name}
-                          {item.subcategories?.map((subitem: any, subindex: any) => (
-                            <span className="text-muted" key={subindex} onClick={() => {
-                              formik.setFieldValue("parentName", subitem.name)
-                              formik.setFieldValue('category', subitem.id)}}>
-                              {subitem.name}
-                              {subitem.subcategories?.map((inneritem: any, innerindex: any) => (
-                                <span className="fs-6 hover-span" key={innerindex}
-                                onClick={() => {
-                                  formik.setFieldValue("parentName", inneritem.name)
-                                  formik.setFieldValue('category', inneritem.id)}}>
-                                  {inneritem.name}
-                                </span>
-                              ))}
-                            </span>
-                          ))}
+                         
                         </span>
                       ))}
                     </div>
@@ -223,7 +211,7 @@ fileRef.current.value=''
             </div>
           </form>
 
-          <CategoryModal show={show} handleClose={handleClose} categoryFilter={categoryFilter} />
+          <CategoryModal show={show} handleClose={handleClose} categoryFilter={categoryData} />
         </div>
       </div>
     </>

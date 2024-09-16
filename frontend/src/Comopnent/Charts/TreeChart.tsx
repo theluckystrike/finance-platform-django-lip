@@ -95,6 +95,7 @@ const RenderTree = (data: any,token:any, level = 0) => {
         handleClose={handleClose}
         selected={selected}
         editingCategory={editingCategory} 
+        data={data}
         token={token}
       />
     </>

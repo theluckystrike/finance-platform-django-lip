@@ -22,7 +22,7 @@ const CategoryManger = () => {
   
   const Navigate =useNavigate()
   const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUser.access });
-  const categoryData = AllCategory?.categories || [];
+  const categoryData =  AllCategory?.results || [];
 
 
 
@@ -73,7 +73,7 @@ useEffect(() => {
          <div className="d-flex justify-content-start flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 text-center">
        <button className='btn mb-3' onClick={()=>Navigate(-1)}><Icon icon='ArrowBack'size='45px'  color="dark"/></button> <h3 className="h1 fw-bold">Category manager</h3>
       </div>
-        <OrgChartTree categoryFilter={categoryFilter} token={loginUser}/>
+        <OrgChartTree categoryFilter={categoryData} token={loginUser}/>
     </div>
   )
 }

@@ -117,6 +117,7 @@ const navigate =useNavigate()
         selected={selected}
         editingCategory={editingCategory} 
         token={''}
+        data={''}
       />
     </>
   );

@@ -1,4 +1,5 @@
 export const endpoint =  {
 auth:'api/auth/',
-category:'/category'
+category:'/api/categories',
+scripts:'api/scripts'
 }

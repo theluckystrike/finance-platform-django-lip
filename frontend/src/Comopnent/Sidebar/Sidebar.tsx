@@ -6,7 +6,8 @@ import dummyUser from "../../assest/image/logo/user.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import useToast from "../../customHook/toast";
 import { MenuItem } from "../../types/MenuTypes";
-import { GetRole } from "../../customHook/getrole";
+import { GetRole, loginUSer } from "../../customHook/getrole";
+import { useSignoutMutation } from "../../Redux/AuthSlice";
 const Sidebar = () => {
   const admin = GetRole()
   const navigate = useNavigate();
@@ -15,8 +16,9 @@ const toast =useToast()
     navigate(`${value}`);
   };
 
-
-  const logout = ()=>{
+  const [signout, Res] = useSignoutMutation();
+  const logout = async()=>{
+ await signout({token:loginUSer})
     localStorage.removeItem('login');
     navigate('/')
     toast.InfoToast('Logout successful')
@@ -68,9 +70,8 @@ const toast =useToast()
               Profile
             </span>
             <span className="dropdown-item"  onClick={()=>{
-
               window.location.href=`${process.env.REACT_APP_API_LOCAL_URL}admin`
-            }} >
+            }}>
           Admin Portal
             </span>
 <span className="dropdown-item" onClick={logout}>

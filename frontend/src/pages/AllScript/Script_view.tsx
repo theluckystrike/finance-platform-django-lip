@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assest/css/AllScript.css";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import LineChart from "../../Comopnent/Charts/LineChart";
 import ScatterLineChart from "../../Comopnent/Charts/LineScatter";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ChartTable from "../../Comopnent/Table/ChartTable";
 import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
+import { useDispatch, useSelector } from "react-redux";
+import { GetScriptByIDs } from "../../Redux/Script/ScriptSlice";
+import { tokenToString } from "typescript";
+import { loginUSer } from "../../customHook/getrole";
+import DateFormatter from "../../customHook/useTImeformnt";
+import DeleteModal from "../../Comopnent/ui/Modals/DeleteModal/DeleteModal";
 
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
@@ -16,13 +22,23 @@ const Components: any = {
 const ScriptView = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch =useDispatch();
   // Get the search parameters from the URL
-  const searchParams = new URLSearchParams(location.search);
+const {id} =useParams()
 
-  // Retrieve the value of the 'chartname' parameter
-  const chartName: any = searchParams.get("chartname") || <div></div>;
+ 
 
-  const Reanding = Components[chartName];
+  useEffect(()=>{
+    dispatch(GetScriptByIDs({id:id,token:loginUSer.access}))
+  },[])
+
+  const store:any = useSelector((i)=>i)
+ 
+  
+  const ScriptData = store?.script?.Script 
+ 
+
+ 
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -44,9 +60,10 @@ const ScriptView = () => {
           <div>
             <h1 className="h1">
               {" "}
-              Gold Relative Strength <span id="headerInfo">(132)</span>{" "}
+              {ScriptData.name}
+               {/* <span id="headerInfo">(132)</span>{" "} */}
             </h1>
-            <h6 className="ps-1">Last update {dateOnly}</h6>
+            <h6 className="ps-1">Last update <DateFormatter isoString={ScriptData.created}/></h6>
           </div>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button
@@ -61,7 +78,7 @@ const ScriptView = () => {
               <Icon icon="PlayArrow" size="20px" />
               <span>Play</span>
             </button>
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button type="button" onClick={handleShow} className="btn icon-button my-1 mx-2">
               <Icon icon="Delete" size="20px" />
 
               <span>Delete</span>
@@ -154,14 +171,15 @@ const ScriptView = () => {
               margin: "0px auto",
             }}
           >
-            <Reanding />
-            <Reanding />
-            <Reanding />
+            <LineChart />
+            
           </div>
         )}
       </div>
 
-      <FilterModal show={show} handleClose={handleClose} />
+      {/* <FilterModal show={show} handleClose={handleClose} /> */}
+
+      <DeleteModal show={show} token={loginUSer.access} data={ScriptData} handleClose={handleClose}/>
     </>
   );
 };

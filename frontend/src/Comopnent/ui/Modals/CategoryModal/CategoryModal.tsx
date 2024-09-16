@@ -27,7 +27,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
     useCreateMutation();
   const [refreshtoken, Res] = useRefreshtokenMutation();
 
-  console.log(categoryFilter);
+  
 
   const navigate = useNavigate();
   const [selectValue, setSelectValue] = useState("");
@@ -37,14 +37,16 @@ const CategoryModal: FC<CategoryModalProps> = ({
   const formik = useFormik({
     initialValues: {
       name: "",
-      parent: "",
-      parentName:""
+      parent_category: "",
+      parent_categoryName:""
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Category name is required"),
     }),
     onSubmit: (values) => {
       // Handle form submission
+      console.log(values,'hhhhh');
+      
       create({ token: loginUSer.access, data: values }); // Call mutation with form values
       handleClose();
     },
@@ -60,7 +62,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
         // console.log('Calling refresh token...');
         // refreshtoken({
         //   token: loginUSer.refresh,
-        //   page_no: 1,
+        //   page_no: 1,name,parent_category_category
         //   page_size: 1000,
         // })
         // console.log('Refresh token data:');
@@ -114,15 +116,15 @@ const CategoryModal: FC<CategoryModalProps> = ({
                 </div>
 
                 <div className="col-12">
-                  <label htmlFor="parent" className="form-label">
-                    Parent Category
+                  <label htmlFor="parent_category" className="form-label">
+                    parent_category Category
                   </label>
 
                   <div className="dropdown">
                     <input
                       type="text"
                       placeholder="All"
-                      value={formik.values.parentName}
+                      value={formik.values.parent_categoryName}
                       readOnly
                     />
                     <div
@@ -135,48 +137,14 @@ const CategoryModal: FC<CategoryModalProps> = ({
                             <span
                               className="hover-span "
                               onClick={() =>
-                               { formik.setFieldValue("parent", item.id)
-                                formik.setFieldValue("parentName", item.name)
+                               { formik.setFieldValue("parent_category", item.id)
+                                formik.setFieldValue("parent_categoryName", item.name)
                                }
                               }
                             >
                               {item.name}
                             </span>
-                            {item.subcategories?.map(
-                              (subitem: any, subindex: any) => (
-                                <span
-                                  className="text-muted hover-span"
-                                  key={subindex}
-                                >
-                                  <span
-                                    className="hover-span  text-muted"
-                                    onClick={() =>
-                                      { formik.setFieldValue("parent", subitem.id)
-                                        formik.setFieldValue("parentName", subitem.name)
-                                       }
-                                    }
-                                  >
-                                    {subitem.name}
-                                  </span>
-                                  {subitem.subcategories?.map(
-                                    (inneritem: any, innerindex: any) => (
-                                      <span className="fs-6 " key={innerindex}>
-                                        <span
-                                          className="hover-span  text-mute"
-                                          onClick={() =>
-                                            { formik.setFieldValue("parent", inneritem.id)
-                                              formik.setFieldValue("parentName", inneritem.name)
-                                             }
-                                          }
-                                        >
-                                          {inneritem.name}
-                                        </span>
-                                      </span>
-                                    )
-                                  )}
-                                </span>
-                              )
-                            )}
+                          
                           </span>
                         ))}
                     </div>
