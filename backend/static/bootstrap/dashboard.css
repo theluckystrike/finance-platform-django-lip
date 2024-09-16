@@ -1,0 +1,218 @@
+/**
+This file contains styles for the page, and is what makes it look good.
+
+each blob beginning with a period represents a class, and those without a period represent an ID. These are how the
+project knows where these styles should be applied.
+ */
+:root {
+    --light-green: #EAFFEA;
+    --pale-green: #17AA1712;
+    --pale-cream: #F7FCF7;
+    --very-dark-green: #011C05;
+}
+body {
+  font-size: .875rem;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  height: calc(100vh - 48px);
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: bold;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #727272;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+.dropdown-toggle { outline: 0; }
+
+.btn-toggle {
+  padding: .25rem .5rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, .65);
+  background-color: transparent;
+}
+.btn-toggle:hover,
+.btn-toggle:focus {
+  color: rgba(0, 0, 0, .85);
+  /* background-color: #d2f4ea; */
+}
+
+.btn-toggle::before {
+  width: 1.25em;
+  line-height: 0;
+  transition: transform .35s ease;
+  transform-origin: .5em 50%;
+}
+
+.btn-toggle[aria-expanded="true"] {
+  color: rgba(0, 0, 0, .85);
+}
+
+.btn-toggle-nav a {
+  padding: .1875rem .5rem;
+  margin-top: .125rem;
+  margin-left: 1.25rem;
+}
+.form-control, .form-select{
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--very-dark-green);
+}
+
+.form-label {
+    color: #011C05;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.btn-dark{
+    background-color: var(--very-dark-green);
+    border-color: var(--very-dark-green);
+}
+
+
+.icon-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s ease;
+}
+
+.icon-button svg {
+    stroke-width: 3;
+    transition: stroke 0.3s ease;
+}
+
+.icon-button span {
+    position: absolute;
+    top: 43px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.icon-button:hover svg {
+    /* stroke: white; */
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
+}
+.icon-button:hover i {
+    /* color: white; */
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
+}
+.icon-button:hover {
+    background-color: transparent; 
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+  opacity: 0.8; /* Slightly fade the icon on hover */
+}
+
+.nav-pills .nav-item .nav-link{
+  color: black;
+  }
+.nav-pills .nav-item .active{
+  background-color: var(--very-dark-green);
+  color: white;
+} 
+
+.btn-secondary {
+    background-color: white;
+    border: 2px solid var(--very-dark-green);
+    color: black
+}
+/* back button on category manage page and script code edit page */
+.back-button {
+        height: 24px;
+        width: 24px;
+        stroke-width: 3px;
+        color: black;
+    }

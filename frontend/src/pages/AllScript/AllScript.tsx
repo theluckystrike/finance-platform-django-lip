@@ -1,0 +1,229 @@
+import React, { useEffect, useState } from "react";
+import "../../assest/css/AllScript.css";
+import Icon from "../../Comopnent/ui/icon/Icon";
+import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
+import { ActiveRoute } from "../../Menu";
+import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
+import ArrowDown from '../../assest/image/arrow-down.png'
+import { ScriptData } from "../../DummyData/TableData";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import useSortableData from "../../customHook/useSortable";
+import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
+import { loginUSer } from "../../customHook/getrole";
+
+const CustomReport = () => {
+ 
+const dispatch =useDispatch()
+ 
+  // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
+ useEffect(()=>{
+
+const  getDAta =async ()=>{
+
+  try {
+  
+    await  dispatch(GetAllScripts({token:loginUSer.access}))
+  
+
+  } catch (error) {
+ console.log(error);
+    
+  }
+}
+
+getDAta()
+  
+ },[])
+const store:any = useSelector((i)=>i)
+ 
+ 
+const allscripts = store?.script?.Scripts?.scripts
+  const [selectedScripts, setSelectedScripts] = useState([]);
+ 
+ 
+ 
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+  };
+  const [Saveshow, setSaveShow] = useState(false);
+  const handleSaveClose = () => setSaveShow(false);
+  const handleSaveShow = () => {
+    setSaveShow(true);
+  };
+
+  const toggleSelectAll = (event: any) => {
+    const checkboxes = document.querySelectorAll(
+      '#scriptsCheckboxes input[type="checkbox"]'
+    );
+    checkboxes.forEach(
+      (checkbox: any) => (checkbox.checked = event.target.checked)
+    );
+    handleCheckboxChange();
+  };
+
+  const handleCheckboxChange = () => {
+    const selected: any = Array.from(
+      document.querySelectorAll(
+        '#scriptsCheckboxes input[type="checkbox"]:checked'
+      )
+    ).map((checkbox: any) => checkbox.value);
+    setSelectedScripts({...selected,...selectedScripts});
+  };
+
+
+
+  const { items, requestSort, getClassNamesFor } = useSortableData(ScriptData);
+ 
+  return (
+    <>
+      <div className="mx-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+          <h1 className="h1">
+            All scripts <span id="headerInfo">(132)</span>
+          </h1>
+          <div className="btn-toolbar mb-2 mb-md-0">
+
+
+
+          
+
+
+            <button type="button" className="btn icon-button my-1 mx-2"  >
+              <Icon icon="AddBusiness" size="20px" />
+              <span >Home</span>
+            </button>
+            <button onClick={handleShow} className="btn icon-button my-1 mx-2">
+              <Icon icon="Filter" size="20px" />
+              <span>Filter</span>
+            </button>
+            <button onClick={handleSaveShow} type="button" className="btn icon-button my-1 mx-2">
+              <Icon icon="Save" size="20px" />
+
+              <span>Save</span>
+            </button>
+            <button
+              type="submit"
+              form="customReportForm"
+              className="btn icon-button my-1 mx-2 disabled"
+            >
+              <Icon icon="Download" size="20px" />
+
+              <span>Download</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          {132 > -1 ? (
+            <form method="post" id="customReportForm">
+              <div className="row mb-2 p-2 fw-bold w-100">
+                <div className="col-4" >
+                  <h5>
+                    <input
+                      type="checkbox"
+                      id="selectAllCheckbox"
+                      onChange={toggleSelectAll}
+                    />{" "}
+                    <span onClick={() => requestSort('title')}>
+
+                    Name
+
+                    <Icon
+									size='10px'
+									className={getClassNamesFor('title')}
+									icon='FilterList'
+                  />
+                  </span>
+                  </h5>
+                </div>
+
+               
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category1')} >Category
+                <Icon
+									size='10px'
+									className={getClassNamesFor('category1')}
+									icon='FilterList'
+                  />
+
+               
+                </div>
+                <div className="col-2 mx-auto text-center"  onClick={() => requestSort('category2')}>Sub Category 1  <Icon
+									size='10px'
+									className={getClassNamesFor('category2')}
+									icon='FilterList'
+                  />
+</div>
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('category3')}>Sub Category 2 <Icon
+									size='10px'
+									className={getClassNamesFor('category3')}
+									icon='FilterList'
+                  /></div>
+                <div className="col-1 mx-auto text-center" onClick={() => requestSort('startDate')}>Created<Icon
+									size='10px'
+									className={getClassNamesFor('startDate')}
+									icon='FilterList'
+                  /></div>
+                <div className="col-1 mx-auto text-center" onClick={() => requestSort('endDate')}>LastUpdated<Icon
+									size='10px'
+									className={getClassNamesFor('endDate')}
+									icon='FilterList'
+                  /></div>
+              </div>
+              <div id="scriptsCheckboxes">
+                {allscripts.map((script: any,index:any) => (
+                  <Link
+                    to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
+                    className="text-decoration-none text-black"
+                    key={index}
+                  >
+                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
+                      <div className="col-4">
+                        <span className="fw-bold  ">
+                          <input
+                            className="chbx"
+                            type="checkbox"
+                            name="scripts"
+                            value={script.id}
+                            onChange={handleCheckboxChange}
+                          />
+                          {script.name}
+                        </span>
+                      </div>
+                      <div className="col-2 mx-auto text-center wrap-word">
+                        {script.category}
+                      </div>
+                      <div className="col-2 mx-auto text-center wrap-word">
+                        {script.category2}
+                      </div>
+                      <div className="col-2 mx-auto text-center wrap-word">
+                        {script.category3}
+                      </div>
+                      <div className="col-1 mx-auto text-center">
+                        11-12-2022
+                      </div>
+                      <div className="col-1 mx-auto text-center">
+                      11-12-2022
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </form>
+          ) : (
+            <span className="text-large">
+              Upload scripts to generate reports with them
+            </span>
+          )}
+        </div>
+      </div>
+
+      <FilterModal show={show} handleClose={handleClose} />
+      <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
+    </>
+  );
+};
+
+export default CustomReport;

@@ -1,0 +1,80 @@
+#headerInfo {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.wrap-word {
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.table-card {
+  border: 1px solid rgba(0, 0, 0, 0.083);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.table-card:hover {
+  -webkit-box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+  box-shadow: 10px 10px 9px -9px rgba(0, 0, 0, 0.4);
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 2rem;
+  padding: 0.1rem;
+  border: 0.15rem solid rgb(0, 0, 0);
+  border-radius: 0.3rem;
+  margin-right: 0.5em;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  clip-path: polygon(28% 38%, 41% 53%, 75% 24%, 86% 38%, 40% 78%, 15% 50%);
+  transform: scale(0);
+  background-color: rgb(0, 0, 0);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+  background-color: white;
+}
+input[type="checkbox"]:checked {
+  background-color: black;
+}
+
+input[type="checkbox"]:hover {
+  color: black;
+}
+
+.toggle-item {
+  display: inline-block;
+  padding: 10px 20px;
+  position: relative;
+  cursor: pointer;
+  color: grey;
+}
+
+.toggle-item.active {
+  color: black; /* Optional: Active text color */
+}
+
+.slider {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  border-radius: 25px;
+  height: 6px;
+  width: 27%; /* Adjust this to match the width of the spans */
+  background-color: #00ad06; /* Color of the border */
+  transition: transform 0.3s ease-in-out; /* Smooth sliding effect */
+}

@@ -1,0 +1,12 @@
+
+it might be worthwhile to start implementing a few of the new front end
+
+
+
+- error handling - I want to have a separate tab that only users with admin rights can view which displays any scripts that are running with errors
+
+
+
+- I want to add a tab on the side bar titled ‘tape summary ‘ which once selected can display a summary of various models already running on the site. The idea is that if I wanted to pick say 5 scripts - get the results from those scripts and displays them all on one place. If you look at the script ‘tape summary ‘ it begins to try and complete this task. I would like the model summary to be able to display both a graph and a table on the same tab
+- I want to be able to sort scripts on the main page by there column headers
+- i want to be able to click through the script tree and select scripts.

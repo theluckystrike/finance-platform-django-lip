@@ -1,0 +1,36 @@
+.sidebar-menu{
+width: 100%;
+list-style: none;
+padding: 0px;
+ 
+ 
+}
+.sidebar-menu >li {
+    text-align: center;
+    background: white;
+    color: black;
+    margin: 10px auto;
+    border-radius: 7px;
+    width: 85%;
+    height: 35px;
+}
+ .user-profile-logo{
+
+    border: 1px solid gray;
+    /* overflow: hidden; */
+    border-radius: 50%;
+    
+ }
+ .dropdown-menu{
+    inset: auto auto 10px -85% !important;
+    position: relative;
+ }
+ .divss{
+    position: absolute;
+    left: 46%;
+    bottom: -7px;
+    transform: rotate(45deg);
+    background-color: white;
+    width: 15px;
+    height: 15px;
+ }
