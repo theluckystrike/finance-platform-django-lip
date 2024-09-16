@@ -90,6 +90,19 @@ class ReportUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'run_scripts': openapi.Schema(
+                    type=openapi.TYPE_BOOLEAN,
+                    description="Whether to run scripts in this report before making the PDF",
+                    default=True
+                )
+            },
+            example={
+                "run_scripts": False
+            }
+        ),
         responses={
             200: openapi.Response(
                 description="Status retrieved",
@@ -122,7 +135,7 @@ class ReportUpdateView(APIView):
             report = get_object_or_404(Report, pk=pk)
             if report.status == "running":
                 return Response({"message": "Report is already running"})
-            report.update(True, f"{request.scheme}://{request.get_host()}")
+            report.update(request.data.get("run_scripts", True), f"{request.scheme}://{request.get_host()}")
             return Response({"message": "Report added to task queue"})
         except Report.DoesNotExist:
             return Response({'error': 'Report does not exists'}, status=status.HTTP_404_NOT_FOUND)
