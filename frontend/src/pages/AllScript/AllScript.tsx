@@ -78,7 +78,7 @@ const allscripts = store?.script?.Scripts?.results
 
 
 
-  const { items, requestSort, getClassNamesFor } = useSortableData(allscripts);
+  const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
  
   return (
     <>
