@@ -12,38 +12,34 @@ import useSortableData from "../../customHook/useSortable";
 import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
 import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
+import Loader from "../../Comopnent/ui/Loader";
 
 const CustomReport = () => {
  
 const dispatch =useDispatch()
  
   // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
- useEffect(()=>{
 
-const  getDAta =async ()=>{
-
-  try {
-  
-    await  dispatch(GetAllScripts({token:loginUSer.access}))
-  
-
-  } catch (error) {
- console.log(error);
-    
-  }
-}
-
-getDAta()
-  
- },[])
 const store:any = useSelector((i)=>i)
  
- console.log(store,'store?');
+ const {loading}=store?.script
+ const allscripts = store?.script?.Scripts?.results
+ const [selectedScripts, setSelectedScripts] = useState([]);
  
-const allscripts = store?.script?.Scripts?.results
-  const [selectedScripts, setSelectedScripts] = useState([]);
  
- 
+  useEffect(()=>{
+if (allscripts === undefined) {
+  
+  const  getDAta =async ()=>{
+    try {
+      await  dispatch(GetAllScripts({token:loginUSer.access}))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  getDAta()
+}
+       },[])
  
 
   const [show, setShow] = useState(false);
@@ -81,18 +77,14 @@ const allscripts = store?.script?.Scripts?.results
   const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
  
   return (
-    <>
+    <> 
+    
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h1">
             All scripts <span id="headerInfo">(132)</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
-
-
-
-          
-
 
             <button type="button" className="btn icon-button my-1 mx-2"  >
               <Icon icon="AddBusiness" size="20px" />
@@ -119,7 +111,7 @@ const allscripts = store?.script?.Scripts?.results
           </div>
         </div>
         <div>
-          {132 > -1 ? (
+          {!loading ? (
             <form method="post" id="customReportForm">
               <div className="row mb-2 p-2 fw-bold w-100">
                 <div className="col-4" >
@@ -200,7 +192,7 @@ const allscripts = store?.script?.Scripts?.results
                       <DateFormatter isoString={script.created}/>
                       </div>
                       <div className="col-2 mx-auto text-center">
-                      <DateFormatter isoString={script.created}/>
+                      <DateFormatter isoString={script.last_updated}/>
                       </div>
                     </div>
                   </Link>
@@ -209,7 +201,7 @@ const allscripts = store?.script?.Scripts?.results
             </form>
           ) : (
             <span className="text-large">
-              Upload scripts to generate reports with them
+               <Loader/>
             </span>
           )}
         </div>

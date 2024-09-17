@@ -9,11 +9,13 @@ import ChartTable from "../../Comopnent/Table/ChartTable";
 import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
 import { useDispatch, useSelector } from "react-redux";
-import { GetScriptByIDs } from "../../Redux/Script/ScriptSlice";
+import { GetScriptByIDs, setLoading } from "../../Redux/Script/ScriptSlice";
 import { tokenToString } from "typescript";
 import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import DeleteModal from "../../Comopnent/ui/Modals/DeleteModal/DeleteModal";
+import Loader from "../../Comopnent/ui/Loader";
+import CsvTable from "../../Comopnent/TableData/CsvTable";
 
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
@@ -29,7 +31,13 @@ const {id} =useParams()
  
 
   useEffect(()=>{
-    dispatch(GetScriptByIDs({id:id,token:loginUSer.access}))
+    dispatch(setLoading(true));
+    const getScript= async()=>{
+
+      await  dispatch(GetScriptByIDs({id:id,token:loginUSer.access}))
+      dispatch(setLoading(false));
+    }
+    getScript()
   },[])
 
   const store:any = useSelector((i)=>i)
@@ -37,7 +45,7 @@ const {id} =useParams()
   
   const ScriptData = store?.script?.Script 
  
-
+  const {loading}=store?.script
  
 
   const [show, setShow] = useState(false);
@@ -63,7 +71,7 @@ const {id} =useParams()
               {ScriptData.name}
                {/* <span id="headerInfo">(132)</span>{" "} */}
             </h1>
-            <h6 className="ps-1">Last update <DateFormatter isoString={ScriptData.created}/></h6>
+            <h6 className="ps-1">Last update <DateFormatter isoString={ScriptData.last_updated}/></h6>
           </div>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button
@@ -99,11 +107,11 @@ const {id} =useParams()
               <div className="tooltip-text">
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Created:</h6>
-                  <p>July 1,2024,4:43pm</p>
+                  <p> <DateFormatter isoString={ScriptData.created}/>  </p>
                 </div>
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Last Run:</h6>
-                  <p>July 9,2024,8:53am</p>
+                  <p> <DateFormatter isoString={ScriptData.last_updated}/>  </p>
                 </div>
 
 {/* tooltip two */}
@@ -147,7 +155,6 @@ const {id} =useParams()
 
             {/* {activeComponet=== 'chart'   &&  <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
                     <Icon icon='TableRows' size='20px'/>
-
                         <span>Table</span>
                     </button>} */}
           </div>
@@ -164,17 +171,24 @@ const {id} =useParams()
             <ChartTable />
           </div>
         )}
-        {activeComponet === "chart" && (
-          <div
-            style={{
-              width: "80%",
-              margin: "0px auto",
-            }}
-          >
-            <LineChart />
-            
-          </div>
-        )}
+        {true
+        // ScriptData?.output_type === "plt" || ScriptData?.output_type === "pd plt"  
+        &&  !loading ?(
+          // <div
+          //   style={{
+          //     width: "80%",
+          //     margin: "0px auto",
+          //   }}
+          // >
+          //   {/* <LineChart /> */}
+          //   <img src={ScriptData?.chart_data?.image_file} alt="" width="100%" />
+          // </div>
+
+          <CsvTable ScriptData={ScriptData}/>
+        )
+      :
+      <Loader/>
+      }
       </div>
 
       {/* <FilterModal show={show} handleClose={handleClose} /> */}

@@ -13,7 +13,7 @@ export const CreateScript = async (data: any) => {
 
     // Make the POST request with headers
     const response = await axios.post(
-      `${process.env.REACT_APP_API_LOCAL_URL}scripts/upload/`,
+      `${process.env.REACT_APP_API_URL}scripts/upload/`,
       formData,
       { headers }
     );
@@ -39,7 +39,7 @@ export const GetAllScript = async (data: any) => {
 
     // Make the POST request with headers
     const response = await axios.get(
-      `${process.env.REACT_APP_API_LOCAL_URL}${endpoint.scripts}`,
+      `${process.env.REACT_APP_API_URL}${endpoint.scripts}`,
       { headers }
     );
  
@@ -64,7 +64,7 @@ export const RunScript = async (data: any) => {
 
     // Make the POST request with headers
     const response = await axios.get(
-      `${process.env.REACT_APP_API_LOCAL_URL}scripts/`,
+      `${process.env.REACT_APP_API_URL}scripts/`,
       { headers }
     );
 

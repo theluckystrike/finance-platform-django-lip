@@ -3,7 +3,7 @@ import { endpoint } from './endpoint';
 
 const api = createApi({
   reducerPath: 'Categoryapi',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_LOCAL_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   tagTypes: ['GET', 'Category'],
   endpoints: (builder) => ({
     create: builder.mutation({

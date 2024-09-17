@@ -1,16 +1,14 @@
 import React from 'react';
 
-
 const DateFormatter = ({ isoString }) => {
-  const formattedDate = new Date(isoString).toLocaleDateString();
+  // Format the date and time based on the locale
+  const formattedDateTime = new Date(isoString).toLocaleString();
 
   return (
-<>
-
-      {formattedDate}
-</>
-    )
-  
+    <>
+      {formattedDateTime}
+    </>
+  );
 };
 
-export default DateFormatter
+export default DateFormatter;

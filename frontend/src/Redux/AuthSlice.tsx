@@ -4,7 +4,7 @@ import { endpoint } from './endpoint';
 const api = createApi({
   reducerPath: 'api',
   tagTypes: ['GET', 'Project'],
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_LOCAL_URL  }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL  }),
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({

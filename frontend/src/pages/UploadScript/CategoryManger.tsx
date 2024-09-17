@@ -36,12 +36,12 @@ useEffect(() => {
   });
   // Populate the subcategories
   categoryData.forEach((cat: any) => {
-    if (cat.parent_name === null) {
+    if (cat.parent_category === null) {
       // Root category, do nothing here
     } else {
       // Find the parent category and add the current category as a subcategory
       const parent:any = Object.values(categoryMap).find(
-        (parentCat: any) => parentCat.name === cat.parent_name
+        (parentCat: any) => parentCat.id === cat.parent_category
       );
       if (parent) {
         parent.subcategories.push(categoryMap[cat.id]);
@@ -51,8 +51,9 @@ useEffect(() => {
 
   // Extract root categories
   const structuredCategories = Object.values(categoryMap).filter(
-    (cat: any) => cat.parent_name === null
+    (cat: any) => cat.parent_category === null
   );
+ console.log(categoryData,'categoryData');
  
 
   setCategoryFilter(structuredCategories);
@@ -73,7 +74,7 @@ useEffect(() => {
          <div className="d-flex justify-content-start flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 text-center">
        <button className='btn mb-3' onClick={()=>Navigate(-1)}><Icon icon='ArrowBack'size='45px'  color="dark"/></button> <h3 className="h1 fw-bold">Category manager</h3>
       </div>
-        <OrgChartTree categoryFilter={categoryData} token={loginUser}/>
+        <OrgChartTree categoryFilter={categoryFilter} token={loginUser}/>
     </div>
   )
 }

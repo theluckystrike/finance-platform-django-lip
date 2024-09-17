@@ -40,7 +40,9 @@ const ScriptSlice = createSlice({
   name: 'ScriptSlice',
   initialState,
   reducers: {
-   
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -92,5 +94,6 @@ const ScriptSlice = createSlice({
 });
 
  
+export const { setLoading } = ScriptSlice.actions;
 
 export default ScriptSlice.reducer;

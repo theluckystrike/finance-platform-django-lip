@@ -70,7 +70,7 @@ const toast =useToast()
               Profile
             </span>
             <span className="dropdown-item"  onClick={()=>{
-              window.location.href=`${process.env.REACT_APP_API_LOCAL_URL}admin`
+              window.location.href=`${process.env.REACT_APP_API_URL}admin`
             }}>
           Admin Portal
             </span>
