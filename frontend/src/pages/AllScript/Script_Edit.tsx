@@ -22,21 +22,33 @@ const ScriptEdit = () => {
   const objectRef:any = useRef(null);
 
   const handleGetFile = () => {
-    // Access the object element via the ref
-    if (objectRef.current) {
-      const file = objectRef.current.data;
-      console.log(objectRef.current,'objectRef.current'); // or use the file value as needed
 
-      if (file) {
-        fetch(file)
-          .then((response) => response.text())
-          .then((data) => {
-            console.log("File content:", data); // Here is where you get the content of the file
-          })
-          .catch((error) => console.error("Error fetching file:", error));
+    const url = ScriptData?.file; // Replace with your file URL
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        setCode(xhr.responseText); // File content
       }
-    }
-    }
+    };
+    xhr.send();
+  }
+    // // Access the object element via the ref
+    // if (objectRef.current) {
+    //   const file = objectRef.current.data;
+    //   //console.log(objectRef.current,'objectRef.current'); // or use the file value as needed
+
+    //   if (file) {
+    //     fetch(file)
+    //       .then((response) => response.text())
+    //       .then((data) => {
+    //         //console.log("File content:", data); // Here is where you get the content of the file
+    //       })
+    //       .catch((error) => console.error("Error fetching file:", error));
+    //   }
+    // }
+    // }
  
   useEffect(() => {
     // Fetch the code from the provided URL
@@ -81,10 +93,10 @@ const ScriptEdit = () => {
               name="Code"
               className="form-control"
             /> */}
-   <object data={ScriptData?.file} ref={objectRef} type="text/plain" style={{ width: '100%', height:  '600px',background:'white' }}>
+   {/* <object data={ScriptData?.file} ref={objectRef} type="text/plain" style={{ width: '100%', height:  '600px',background:'white' }}>
         <p>Your browser does not support displaying .py files.</p>
-      </object>
-              {/* <CodeEdit /> */}
+      </object> */}
+              <CodeEdit code={code} setCode={setCode}/>
             </div>
 
             <div className="mx-auto text-center">

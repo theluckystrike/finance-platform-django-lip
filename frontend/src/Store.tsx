@@ -8,6 +8,7 @@ import Categoryapi from './Redux/CategoryQuery'
 import dashboardApi from './Redux/Dashboard';
 import ScriptApi from './Redux/Script';
 import ScriptSlice from './Redux/Script/ScriptSlice';
+import ReportSlice from './Redux/Report/Slice';
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +18,9 @@ export const store = configureStore({
     [dashboardApi.reducerPath]:dashboardApi.reducer,
     [ScriptApi.reducerPath]:ScriptApi.reducer,
     [Categoryapi.reducerPath]:Categoryapi.reducer,
-    script:ScriptSlice
+    script:ScriptSlice,
+    report:ReportSlice
+
 
 
   },

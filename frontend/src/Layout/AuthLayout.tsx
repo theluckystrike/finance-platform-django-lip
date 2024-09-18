@@ -16,7 +16,7 @@ const AuthLayout = () => {
 		   <div className="col-2 p-0 ">
 			   <Sidebar/>
 	       </div>
-         <div className="col-10 vh-100 overflow-auto p-0">
+         <div className="col-10 vh-100 overflow-auto p-0"  >
          <div className="header-fixed">
           <SimpleHeader />
          </div>

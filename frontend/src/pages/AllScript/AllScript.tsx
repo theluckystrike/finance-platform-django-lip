@@ -25,21 +25,30 @@ const store:any = useSelector((i)=>i)
  const {loading}=store?.script
  const allscripts = store?.script?.Scripts?.results
  const [selectedScripts, setSelectedScripts] = useState([]);
+ //console.log(allscripts);
  
+ const [loginUser, setLoginUser] = useState<any>(null);
  
+   // Effect to retrieve loginUser from localStorage on component mount
+   useEffect(() => {
+     const storedLoginUser = localStorage.getItem("login");
+     if (storedLoginUser) {
+       setLoginUser(JSON.parse(storedLoginUser));
+     }
+   }, []);
   useEffect(()=>{
-if (allscripts === undefined) {
+ 
   
   const  getDAta =async ()=>{
     try {
-      await  dispatch(GetAllScripts({token:loginUSer.access}))
+      await  dispatch(GetAllScripts({token:loginUser?.access}))
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
   getDAta()
-}
-       },[])
+ 
+       },[loginUser])
  
 
   const [show, setShow] = useState(false);
@@ -81,8 +90,8 @@ if (allscripts === undefined) {
     
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-          <h1 className="h1">
-            All scripts <span id="headerInfo">(132)</span>
+          <h1 className="h2">
+            All scripts <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
 
@@ -144,21 +153,21 @@ if (allscripts === undefined) {
 
                
                 </div>
-                <div className="col-2 mx-auto text-center"  onClick={() => requestSort('category2')}>Sub Category 1  <Icon
+                <div className="col-2 mx-auto text-center"  onClick={() => requestSort('category.name')}>Category<Icon
 									size='10px'
-									className={getClassNamesFor('category2')}
+									className={getClassNamesFor('category.name')}
 									icon='FilterList'
                   />
 </div>
                 
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('startDate')}>Created<Icon
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('created')}>Created<Icon
 									size='10px'
-									className={getClassNamesFor('startDate')}
+									className={getClassNamesFor('created')}
 									icon='FilterList'
                   /></div>
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('endDate')}>LastUpdated<Icon
+                <div className="col-2 mx-auto text-center" onClick={() => requestSort('last_updated')}>LastUpdated<Icon
 									size='10px'
-									className={getClassNamesFor('endDate')}
+									className={getClassNamesFor('last_updated')}
 									icon='FilterList'
                   /></div>
               </div>

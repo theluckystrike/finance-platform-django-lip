@@ -20,7 +20,7 @@ export const CreateScript = async (data: any) => {
 
     return response;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -45,7 +45,7 @@ export const GetScriptByID = async (data: any) => {
 
     return response;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -71,7 +71,7 @@ export const DeleteScriptByID = async (data: any) => {
 
     return response;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -96,14 +96,14 @@ export const GetAllScript = async (data: any) => {
 
     return response;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
 
 
 export const RunScript = async (data: any) => {
-  const {token } = data;
+  const {token,id} = data;
 
   try {
     // Set up headers with the Bearer token
@@ -113,14 +113,14 @@ export const RunScript = async (data: any) => {
     };
 
     // Make the POST request with headers
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}scripts/`,
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}${endpoint.scripts}/${id}/run`,{},
       { headers }
     );
 
     return response;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };

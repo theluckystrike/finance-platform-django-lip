@@ -9,13 +9,14 @@ import ChartTable from "../../Comopnent/Table/ChartTable";
 import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
 import { useDispatch, useSelector } from "react-redux";
-import { GetScriptByIDs, setLoading } from "../../Redux/Script/ScriptSlice";
+import { GetScriptByIDs, RunScripts, setLoading } from "../../Redux/Script/ScriptSlice";
 import { tokenToString } from "typescript";
 import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import DeleteModal from "../../Comopnent/ui/Modals/DeleteModal/DeleteModal";
 import Loader from "../../Comopnent/ui/Loader";
 import CsvTable from "../../Comopnent/TableData/CsvTable";
+import { object } from "yup";
 
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
@@ -28,17 +29,25 @@ const ScriptView = () => {
   // Get the search parameters from the URL
 const {id} =useParams()
 
+const [loginUser, setLoginUser] = useState<any>(null);
  
+// Effect to retrieve loginUser from localStorage on component mount
+useEffect(() => {
+  const storedLoginUser = localStorage.getItem("login");
+  if (storedLoginUser) {
+    setLoginUser(JSON.parse(storedLoginUser));
+  }
+}, []);
 
   useEffect(()=>{
     dispatch(setLoading(true));
     const getScript= async()=>{
 
-      await  dispatch(GetScriptByIDs({id:id,token:loginUSer.access}))
+      await  dispatch(GetScriptByIDs({id:id,token:loginUser?.access}))
       dispatch(setLoading(false));
     }
     getScript()
-  },[])
+  },[loginUser])
 
   const store:any = useSelector((i)=>i)
  
@@ -49,6 +58,7 @@ const {id} =useParams()
  
 
   const [show, setShow] = useState(false);
+ 
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
@@ -61,16 +71,30 @@ const {id} =useParams()
   const editScript = () => {
     navigate(`/account/${ActiveRoute.ScriptEdit.path}`);
   };
+
+  const [changeView,setChangeView]=useState(false)
+
+  const runScript =()=>{
+    dispatch(setLoading(true))
+    try {
+      setTimeout(() => {
+        dispatch(RunScripts({id:id,token:loginUser?.access}))
+      }, 200);
+    } catch (error) {
+      console.warn(error);
+      
+    }
+  }
   return (
     <>
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3 pb-2 mb-3">
           <div>
-            <h1 className="h1">
+            <h2 className="h2">
               {" "}
               {ScriptData.name}
                {/* <span id="headerInfo">(132)</span>{" "} */}
-            </h1>
+            </h2>
             <h6 className="ps-1">Last update <DateFormatter isoString={ScriptData.last_updated}/></h6>
           </div>
           <div className="btn-toolbar mb-2 mb-md-0">
@@ -82,7 +106,7 @@ const {id} =useParams()
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
-            <button onClick={handleShow} className="btn icon-button my-1 mx-2">
+            <button onClick={runScript} className="btn icon-button my-1 mx-2">
               <Icon icon="PlayArrow" size="20px" />
               <span>Play</span>
             </button>
@@ -91,6 +115,11 @@ const {id} =useParams()
 
               <span>Delete</span>
             </button>
+           { ScriptData?.output_type === "pd plt" && <button onClick={()=>setChangeView(!changeView)} type="button" className="btn icon-button my-1 mx-2">
+              <Icon icon={changeView ?'InsertChart': 'TableView'} size="20px" />
+
+              <span>{changeView ? 'Chart':'Table'}</span>
+            </button>}
             {/* <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
                     <Icon icon='Info' size='20px'/>
 
@@ -114,16 +143,15 @@ const {id} =useParams()
                   <p> <DateFormatter isoString={ScriptData.last_updated}/>  </p>
                 </div>
 
-{/* tooltip two */}
-
-                {/* <div>
+                {/* tooltip two */}
+                 <div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>ID (for API)</h6>
-                    <p>224</p>
+                    <p>{ScriptData.id}</p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Category:</h6>
-                    <p>breadth--Breadth 1--general2</p>
+                    <p>{ScriptData.category?.name}</p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Uploaded: </h6>
@@ -131,67 +159,47 @@ const {id} =useParams()
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Last Updated: </h6>
-                    <p>April 28,2024,10:01 am.</p>
+                    <p><DateFormatter isoString={ScriptData.last_updated}/></p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Output data type: </h6>
                     <p>Chart(Using matplotlib.pyplot.savefig())</p>
                   </div>
-                </div> */}
+                </div>  
               </div>
             </button>
-            {activeComponet === "table" && (
-              <button
-                type="submit"
-                form="customReportForm"
-                onClick={() => setActivecomponet("chart")}
-                className="btn icon-button my-1 mx-2  "
-              >
-                <Icon icon="InsertChart" size="20px" />
-
-                <span>Chart</span>
-              </button>
-            )}
-
-            {/* {activeComponet=== 'chart'   &&  <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
-                    <Icon icon='TableRows' size='20px'/>
-                        <span>Table</span>
-                    </button>} */}
+             
           </div>
         </div>
         <div></div>
         <PresentPastToggle />
-        {activeComponet === "table" && (
+         
+
+      {loading?<Loader/> :  <div>
+  {
+ScriptData?.output_type === "plt" || ScriptData?.output_type === "pd plt" && changeView === false  ? 
+       ( 
           <div
             style={{
-              width: "90%",
+              width: "80%",
               margin: "0px auto",
             }}
           >
-            <ChartTable />
+            {/* <LineChart /> */}
+            <img src={ScriptData?.chart_data?.image_file} alt="" width="100%" />
           </div>
-        )}
-        {true
-        // ScriptData?.output_type === "plt" || ScriptData?.output_type === "pd plt"  
-        &&  !loading ?(
-          // <div
-          //   style={{
-          //     width: "80%",
-          //     margin: "0px auto",
-          //   }}
-          // >
-          //   {/* <LineChart /> */}
-          //   <img src={ScriptData?.chart_data?.image_file} alt="" width="100%" />
-          // </div>
+        ) 
+       : 
+  
 
-          <CsvTable ScriptData={ScriptData}/>
-        )
-      :
-      <Loader/>
-      }
+  <CsvTable csvUrl={ScriptData?.table_data?.csv_data}/>
+       } 
+        </div>}
+
+
+
       </div>
-
-      {/* <FilterModal show={show} handleClose={handleClose} /> */}
+ 
 
       <DeleteModal show={show} token={loginUSer.access} data={ScriptData} handleClose={handleClose}/>
     </>

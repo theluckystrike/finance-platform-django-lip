@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateScript, GetAllScript} from "./Api";
+import { Createreport, GetAllreport, GetreportByID, Updatereport} from "./Api";
 
 const initialState:any = {
-  Scripts: [],
-  Script: [],
+  reports: [],
+  report: [],
   Active_Role: '',
   page: 1,
   loading: false,
@@ -11,10 +11,10 @@ const initialState:any = {
 };
 
 const AsyncFunctionThunk = (name:any, apiFunction:any) => {
-  return createAsyncThunk(`Script/${name}`, async (data, { rejectWithValue }) => {
+  return createAsyncThunk(`report/${name}`, async (data, { rejectWithValue }) => {
     try {
       const response = await apiFunction(data);
-      console.log(response.data, "dada");
+   
       return response.data;
     } catch (error:any) {
 
@@ -30,45 +30,67 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
   });
 };
  
-export const CreateScripts:any = AsyncFunctionThunk('CreateScript', CreateScript);
-export const GetAllScripts:any = AsyncFunctionThunk('GetAllScripts', GetAllScript);
- 
+export const Createreports:any = AsyncFunctionThunk('Createreport', Createreport); 
+export const Updatereports:any = AsyncFunctionThunk('Updatereports', Updatereport);
+export const GetAllreports:any = AsyncFunctionThunk('GetAllreports', GetAllreport);
+export const GetreportByIDs:any = AsyncFunctionThunk('GetreportByIDs', GetreportByID);
 
 
-const ScriptSlice = createSlice({
-  name: 'ScriptSlice',
+const reportSlice = createSlice({
+  name: 'reportSlice',
   initialState,
   reducers: {
    
   },
   extraReducers: (builder) => {
     builder
-      .addCase(CreateScripts.fulfilled, (state, action) => {
-        state.Script = action.payload;
+      .addCase(Createreports.fulfilled, (state, action) => {
+        state.report = action.payload;
         state.loading = false;
       })
-      .addCase(CreateScripts.pending, (state) => {
+      .addCase(Createreports.pending, (state) => {
         state.loading = true;
       })
-      .addCase(CreateScripts.rejected, (state, action) => {
+      .addCase(Createreports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(GetAllScripts.fulfilled, (state, action) => {
-        state.Scripts = action.payload;
+      .addCase(GetAllreports.fulfilled, (state, action) => {
+        state.reports = action.payload;
         state.loading = false;
       })
-      .addCase(GetAllScripts.pending, (state) => {
+      .addCase(GetAllreports.pending, (state) => {
         state.loading = true;
       })
-      .addCase(GetAllScripts.rejected, (state, action) => {
+      .addCase(GetAllreports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-
+      .addCase(GetreportByIDs.fulfilled, (state, action) => {
+        state.report = action.payload;
+        state.loading = false;
+      })
+      .addCase(GetreportByIDs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(GetreportByIDs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(Updatereports.fulfilled, (state, action) => {
+        state.report = action.payload;
+        state.loading = false;
+      })
+      .addCase(Updatereports.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(Updatereports.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 
  
 
-export default ScriptSlice.reducer;
+export default reportSlice.reducer;

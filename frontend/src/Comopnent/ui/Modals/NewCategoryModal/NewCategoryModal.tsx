@@ -29,7 +29,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   const [categoryName, setCategoryName] = useState(selected);
   const [parentCategory, setParentCategory] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-console.log(editingCategory);
+////console.log(editingCategory);
 
   useEffect(() => {
     if (editingCategory) {

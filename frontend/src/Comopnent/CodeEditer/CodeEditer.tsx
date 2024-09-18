@@ -1,24 +1,7 @@
 import React, { useState } from "react";
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
-export default function CodeEdit() {
-  const [code, setCode] = useState(`from flask import Flask, render_template
-
-app = Flask(__name__)
-
-# Dummy page route
-@app.route('/dummy')
-def dummy_page():
-    return render_template('dummy.html')
-
-# Main route
-@app.route('/')
-def home():
-    return "Welcome to the Home Page!"
-
-if __name__ == '__main__':
-    app.run(debug=True)
-`);
+export default function CodeEdit({code,setCode}:any) {
   
   const [language, setLanguage] = useState("python");
 

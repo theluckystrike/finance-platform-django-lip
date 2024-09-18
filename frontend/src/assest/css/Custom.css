@@ -358,3 +358,37 @@ input:focus {
     align-items: center;
     height: 80vh;
    }
+
+
+   /* CsvDisplay.css */
+
+.TableData {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse; /* Ensures borders don't double up */
+}
+
+.TableData th, .TableData td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.TableData th {
+  background-color: #f4f4f4;
+  width: 150px; /* Set a fixed width for columns */
+}
+
+.TableData tr {
+  background-color: #fff;
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.TableData tr:hover {
+  background-color: #f9f9f9; /* Change color on hover */
+}
+
+.css-13cymwt-control{
+  border: #000 2px solid !important;
+  margin-bottom: 20px !important;
+}

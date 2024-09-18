@@ -9,7 +9,7 @@ const Profile: React.FC = () => {
 
 const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
 
-console.log(data);
+//console.log(data);
 
 
 

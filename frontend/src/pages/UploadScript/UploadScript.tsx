@@ -32,7 +32,7 @@ const fileRef:any = useRef(null)
 
   const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 });
   const categoryData = AllCategory?.results || [];
-  console.log(AllCategory,'AllCategory');
+ 
   
   const handleToast = useToast();
   

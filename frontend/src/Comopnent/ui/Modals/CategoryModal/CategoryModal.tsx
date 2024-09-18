@@ -45,7 +45,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
     }),
     onSubmit: (values) => {
       // Handle form submission
-      console.log(values,'hhhhh');
+      ////console.log(values,'hhhhh');
       
       create({ token: loginUSer.access, data: values }); // Call mutation with form values
       handleClose();
@@ -59,22 +59,22 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
     if (isError) {
       if ((error as any)?.data) {
-        // console.log('Calling refresh token...');
+        // ////console.log('Calling refresh token...');
         // refreshtoken({
         //   token: loginUSer.refresh,
         //   page_no: 1,name,parent_category_category
         //   page_size: 1000,
         // })
-        // console.log('Refresh token data:');
+        // ////console.log('Refresh token data:');
         handleToast.ErrorToast(
           "Token is invalid or expired. Please login again."
         );
         navigate("/login");
         localStorage.removeItem("login");
         const apiError = (error as any).data as { detail?: string };
-        console.log("Error:", apiError.detail || "An unknown error occurred");
+        ////console.log("Error:", apiError.detail || "An unknown error occurred");
       } else {
-        console.log("An unknown error occurred.");
+        ////console.log("An unknown error occurred.");
       }
     }
   }, [isSuccess, isError, error, data]);

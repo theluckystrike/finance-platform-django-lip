@@ -23,11 +23,7 @@ const CategoryManger = () => {
   const Navigate =useNavigate()
   const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUser.access });
   const categoryData =  AllCategory?.results || [];
-
-
-
-
-const [categoryFilter,setCategoryFilter ]=useState<any>([])
+  const [categoryFilter,setCategoryFilter ]=useState<any>([])
 useEffect(() => {
   const categoryMap: any = {};
   // Initialize categories in the map
@@ -53,21 +49,12 @@ useEffect(() => {
   const structuredCategories = Object.values(categoryMap).filter(
     (cat: any) => cat.parent_category === null
   );
- console.log(categoryData,'categoryData');
+ //console.log(categoryData,'categoryData');
  
 
   setCategoryFilter(structuredCategories);
 
 }, [categoryData]);
-
-
-
-
-
-
-
-
-
 
   return (
     <div className='m-4'>

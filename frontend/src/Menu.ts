@@ -78,7 +78,7 @@ export const SidebarMenu: SidebarMenutype = {
 export const ActiveRoute = {
   ReportDetails: {
     name: "ReportDetails",
-    path: "ReportDetails",
+    path: "ReportDetails/:id",
     icon: "Report",
   },
   ScriptDetails: {

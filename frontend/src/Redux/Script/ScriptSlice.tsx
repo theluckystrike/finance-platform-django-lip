@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateScript, DeleteScriptByID, GetAllScript, GetScriptByID} from "./ScriptApi";
+import { CreateScript, DeleteScriptByID, GetAllScript, GetScriptByID, RunScript} from "./ScriptApi";
 
 const initialState:any = {
   Scripts: [],
@@ -14,7 +14,7 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
   return createAsyncThunk(`Script/${name}`, async (data, { rejectWithValue }) => {
     try {
       const response = await apiFunction(data);
-      console.log(response.data, "dada");
+      //console.log(response.data, "dada");
       return response.data;
     } catch (error:any) {
 
@@ -33,6 +33,7 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
 export const CreateScripts:any = AsyncFunctionThunk('CreateScript', CreateScript);
 export const GetAllScripts:any = AsyncFunctionThunk('GetAllScripts', GetAllScript);
 export const GetScriptByIDs:any = AsyncFunctionThunk('GetScriptByIDs', GetScriptByID);
+export const RunScripts:any = AsyncFunctionThunk('RunScripts', RunScript);
 export const DeleteScriptByIDs:any = AsyncFunctionThunk('DeleteScriptByIDs',DeleteScriptByID)
 
 
@@ -76,6 +77,17 @@ const ScriptSlice = createSlice({
         state.loading = true;
       })
       .addCase(GetScriptByIDs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(RunScripts.fulfilled, (state, action) => {
+        // state.Script = action.payload;
+        state.loading = false;
+      })
+      .addCase(RunScripts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(RunScripts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
