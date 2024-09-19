@@ -11,9 +11,7 @@ import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
 
 const Report = () => {
-  const [category, setCategory] = useState("-1");
-  const [subCategory, setSubCategory] = useState("-1");
-  const [subSubCategory, setSubSubCategory] = useState("-1");
+ 
 
   const dispatch = useDispatch();
 
@@ -22,9 +20,7 @@ const Report = () => {
   const store: any = useSelector((i) => i);
 
   const { loading } = store?.report;
-  const allreport = store?.report?.reports?.results;
-  const [selectedreport, setSelectedreport] = useState([]);
-  //console.log(allreport);
+  const allreport = store?.report?.reports?.results; 
   const { items, requestSort, getClassNamesFor } = useSortableData(allreport || []);
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -61,15 +57,15 @@ const Report = () => {
     
  
         <div className="btn-toolbar mb-2 mb-md-0">
-        <button
+        {/* <button
             onClick={handleShow}
             type="button"
             className="btn icon-button my-1 mx-2"
           >
             <Icon icon="Add" size="20px" />
             <span>Create</span>
-          </button>
-          <button
+          </button>*/}
+          <button 
             onClick={handleShow}
             type="button"
             className="btn icon-button my-1 mx-2"

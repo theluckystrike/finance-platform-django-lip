@@ -1,13 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assest/css/AllScript.css";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
 import { ScriptData, TapeSummaryData } from "../../DummyData/TableData";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
+import DateFormatter from "../../customHook/useTImeformnt";
 
 const TapeSummary: React.FC = () => {
-  const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
+
+
+
+
+
+
+  const dispatch =useDispatch()
+ 
+  // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
+
+const store:any = useSelector((i)=>i)
+ 
+const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
+ const {loading}=store?.script
+ const allscripts = store?.script?.Scripts?.results
+ 
+ console.log(allscripts);
+ 
+ const [loginUser, setLoginUser] = useState<any>(null);
+ 
+   // Effect to retrieve loginUser from localStorage on component mount
+   useEffect(() => {
+     const storedLoginUser = localStorage.getItem("login");
+     if (storedLoginUser) {
+       setLoginUser(JSON.parse(storedLoginUser));
+     }
+   }, []);
+  useEffect(()=>{
+ 
+  
+  const  getDAta =async ()=>{
+    try {
+      await  dispatch(GetAllScripts({token:loginUser?.access}))
+    } catch (error) {
+      //console.log(error);
+    }
+  }
+  getDAta()
+ 
+       },[loginUser])
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const [show, setShow] = useState(false);
   const [saveShow, setSaveShow] = useState(false);
   const navigate = useNavigate();
@@ -79,7 +142,7 @@ const TapeSummary: React.FC = () => {
                 <div className="col-2 mx-auto text-center">Last updated</div>
               </div>
               <div id="scriptsCheckboxes">
-                {TapeSummaryData.map((script: any) => (
+                {allscripts && allscripts.map((script: any) => (
                   <div
                     className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green"
                     key={script.id}
@@ -90,22 +153,24 @@ const TapeSummary: React.FC = () => {
                           className="chbx"
                           type="checkbox"
                           name="scripts"
-                          value={script.id}
+                          value={script?.id}
                           onChange={handleCheckboxChange}
                         />
-                        {script.title}
+                        {script?.name}
                       </span>
                     </div>
                   
                     <div className="col-2 mx-auto text-center wrap-word">
-                      {script.category}
+                      {script?.category?.name}
                     </div>
                     <div className="col-2 mx-auto text-center wrap-word">
-                      {script.category}
+                    <DateFormatter isoString={script.created}/>
+    
                     </div>
                  
                     <div className="col-2 mx-auto text-center">
-                      {script.lastUpdated}
+                    <DateFormatter isoString={script.last_updated}/>
+                     
                     </div>
                   </div>
                 ))}

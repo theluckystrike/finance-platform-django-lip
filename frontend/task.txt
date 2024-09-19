@@ -1,36 +1,11 @@
-Deep sir , script section , this APIs create by Nick
-this apis is Post script and used Post method
-https://backend-oland-investments.cradle.services/api/scripts
-name (text)
-file (file)
-category (int)
-output_type (text used this plt,pd,pd plt)
-description (text)
+For the All Scripts page, I will add query parameters to the url so that you can filter by category. The”Save” button should just make a new report with the scripts that are selected by the user, there is already an endpoint for this.
 
-this apis is Get script and used Get method
-https://backend-oland-investments.cradle.services/api/scripts/2
+For editing Script Files, you can simply use a PATCH request to the /api/scripts/{id} endpoint to update the file with a new, edited one
 
-this apis is Put script and used Put method
-https://backend-oland-investments.cradle.services/api/scripts/2
-name (text)
-file (file)
-category (int)
-output_type (text used this plt,pd,pd plt)
-description (text)
+On the script details page there is no need for past and present at the moment as far I know. We have not implemented that and don’t need it
 
-this apis is Patch script and used Patch method
-https://backend-oland-investments.cradle.services/api/scripts/2
-name (text) or
-file (file) or
-category (int) or
-output_type (text used this plt,pd,pd plt) or
-description (text) 
+On the report detail page you already have all of the API endpoints you need. For updating use /api/reports{id}/update. For view latest you should be linking to the report’s latest_pdf field which is a let field provided by a GET request to /api/reports{id}. These are all in the documentation and already implemented
 
-this apis is Delete script and used Delete method
-https://backend-oland-investments.cradle.services/api/scripts/2
+For Tape summary I still need to discuss this with Jeffrey
 
-this apis is Get script check status and used Get method
-https://backend-oland-investments.cradle.services/api/scripts/2/status
-
-this apis is Post script run  and used Post method
-http://127.0.0.1:8000/api/scripts/2/run
+I will provide an endpoint for proving a category tree too

@@ -13,6 +13,7 @@ import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
 import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import Loader from "../../Comopnent/ui/Loader";
+import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
 
 const CustomReport = () => {
  
@@ -52,6 +53,7 @@ const store:any = useSelector((i)=>i)
  
 
   const [show, setShow] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
@@ -103,7 +105,7 @@ const store:any = useSelector((i)=>i)
               <Icon icon="Filter" size="20px" />
               <span>Filter</span>
             </button>
-            <button onClick={handleSaveShow} type="button" className="btn icon-button my-1 mx-2">
+            <button onClick={()=>setShowReport(true)} type="button" className="btn icon-button my-1 mx-2">
               <Icon icon="Save" size="20px" />
 
               <span>Save</span>
@@ -124,7 +126,7 @@ const store:any = useSelector((i)=>i)
             <form method="post" id="customReportForm">
               <div className="row mb-2 p-2 fw-bold w-100">
                 <div className="col-4" >
-                  <h5>
+                  <h6>
                     <input
                       type="checkbox"
                       id="selectAllCheckbox"
@@ -140,7 +142,7 @@ const store:any = useSelector((i)=>i)
 									icon='FilterList'
                   />
                   </span>
-                  </h5>
+                  </h6>
                 </div>
 
                
@@ -218,6 +220,7 @@ const store:any = useSelector((i)=>i)
 
       <FilterModal show={show} handleClose={handleClose} />
       <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
+      <CreateReports show={showReport} handleClose={( )=>setShowReport(false)} />
     </>
   );
 };

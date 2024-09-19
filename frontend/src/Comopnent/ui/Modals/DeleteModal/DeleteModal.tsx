@@ -9,25 +9,22 @@ import { DeleteScriptByIDs } from "../../../../Redux/Script/ScriptSlice";
 interface DeleteModalProps {
   show: boolean;
   handleClose: () => void;
- 
- 
   token:any;
   data:any;
 }
 
 const DeleteModal: FC<DeleteModalProps> = ({
   show,
- 
   handleClose,
   data,
- 
   token
 }) => {
+
   const navigate = useNavigate();
   const dispatch=useDispatch()
+
   const handleDelete = () => {
     dispatch(DeleteScriptByIDs({token,id:data.id}))
-  
     handleClose();
   };
 
@@ -49,8 +46,6 @@ const DeleteModal: FC<DeleteModalProps> = ({
           <div className="mb-3">
             <div className="row mx-0 px-3">
               <div className="col-12 m-0">
- 
-              
               </div>
               <div className="col-12  ">
                   {/* <label htmlFor="parent_category" className="form-label" style={{

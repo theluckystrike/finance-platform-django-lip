@@ -11,6 +11,7 @@ import { GetreportByIDs, Updatereports } from "../../Redux/Report/Slice";
 import DateFormatter from "../../customHook/useTImeformnt";
 import useToast from "../../customHook/toast";
 import Loader from "../../Comopnent/ui/Loader";
+import DeleteModal from "./ReportDelete";
  
 
 const ReportViwe = () => {
@@ -55,6 +56,7 @@ useEffect(() => {
  })
  
   const [show, setShow] = useState(false);
+  const [Deleteshow, setDeleteShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -76,6 +78,22 @@ useEffect(() => {
 
     handleToast.SuccessToast(`Update Report successfully`);
   }
+
+
+  const removeScript = async(val:any)=>{
+  const reduceArray = reportData.scripts.filter((i:any)=>i !== val)
+    await  dispatch(Updatereports({
+      values:{
+        "name": reportData.name,
+        scripts:[...reduceArray
+        ]
+      },
+      token:loginUser.access,
+      id:id
+    }))
+    handleToast.SuccessToast(`Remove Script successfully`);
+
+  }
   return (
     <>
       <div className="mx-5 py-3">
@@ -96,7 +114,7 @@ useEffect(() => {
               <Icon icon="RemoveRedEye" size="20px" />
               <span>View Latest</span>
             </button>
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button type="button" className="btn icon-button my-1 mx-2" onClick={()=>setDeleteShow(true)}>
               <Icon icon="Delete" size="20px" />
               <span>Delete</span>
             </button>
@@ -169,13 +187,14 @@ useEffect(() => {
               </div>
               <div id="reportsCheckboxes">
                 {filteredScripts ? ( filteredScripts.map((report: any) => (
-                  <Link
+              
+                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
+                      <div className="col-5">
+                        <Link
                     to={`/account/ScriptDetails/${report.id}`}
                     className="text-decoration-none text-black"
                     key={report.id}
                   >
-                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                      <div className="col-5">
                         <span className="fw-bold fs-6">
                           <input
                             className="chbx"
@@ -186,6 +205,8 @@ useEffect(() => {
                           />
                           {report.name}
                         </span>
+
+                      </Link>
                       </div> 
                        <div className="col-2 mx-auto text-center wrap-word">
                         {report.Description}
@@ -199,6 +220,7 @@ useEffect(() => {
                       </div>
                       <div className="col-1 mx-auto text-center">
                         <div
+                        onClick={()=>removeScript(report.id)}
                           className="bg-danger p-1 ms-auto"
                           style={{
                             width: "27px",
@@ -210,7 +232,7 @@ useEffect(() => {
                         </div>
                       </div>
                     </div>
-                  </Link>
+                
                 ))):
                 
                 <Loader/>
@@ -225,6 +247,7 @@ useEffect(() => {
         </div>
       </div>
       <ScheduleEmailModal show={show} handleClose={handleClose} />
+      <DeleteModal show={Deleteshow} handleClose={()=>setDeleteShow(false)} data={reportData}  token={loginUser?.access}/>
     </>
   );
 };

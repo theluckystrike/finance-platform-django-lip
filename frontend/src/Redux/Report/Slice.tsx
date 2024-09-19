@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createreport, GetAllreport, GetreportByID, Updatereport} from "./Api";
+import { Createreport, Createreportschedules, DeleteReportsByID, GetAllreport, GetreportByID, Updatereport} from "./Api";
 
 const initialState:any = {
   reports: [],
@@ -14,16 +14,11 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
   return createAsyncThunk(`report/${name}`, async (data, { rejectWithValue }) => {
     try {
       const response = await apiFunction(data);
-   
       return response.data;
     } catch (error:any) {
-
-
       if (error.response && error.response.data) {
-
         return rejectWithValue(error.response.data);
       }
-
       return rejectWithValue({ error: error.message });
       throw error;
     }
@@ -34,7 +29,8 @@ export const Createreports:any = AsyncFunctionThunk('Createreport', Createreport
 export const Updatereports:any = AsyncFunctionThunk('Updatereports', Updatereport);
 export const GetAllreports:any = AsyncFunctionThunk('GetAllreports', GetAllreport);
 export const GetreportByIDs:any = AsyncFunctionThunk('GetreportByIDs', GetreportByID);
-
+export const Createschedules:any = AsyncFunctionThunk('Createschedules', Createreportschedules);
+export const DeleteReportsByIDs:any = AsyncFunctionThunk('DeleteReportsByIDs',DeleteReportsByID)
 
 const reportSlice = createSlice({
   name: 'reportSlice',
@@ -85,6 +81,17 @@ const reportSlice = createSlice({
         state.loading = true;
       })
       .addCase(Updatereports.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(DeleteReportsByIDs.fulfilled, (state, action) => {
+        state.Script = action.payload;
+        state.loading = false;
+      })
+      .addCase(DeleteReportsByIDs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(DeleteReportsByIDs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

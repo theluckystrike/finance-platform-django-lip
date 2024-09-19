@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { Categoryarray2, ScriptData } from "../../DummyData/TableData";
+import { Categoryarray2 } from "../../DummyData/TableData";
 import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
-import { useNavigate } from "react-router-dom";
-import { ActiveRoute } from "../../Menu";
 
-const RenderTree = (data: any, level = 0) => {
+const RenderTree = (data: any,token:any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [show, setShow] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
-
-const navigate =useNavigate()
 
   const handleClose = () => {
     setShow(false);
@@ -45,59 +41,42 @@ const navigate =useNavigate()
                 style={{ cursor: 'pointer' }}
               >
                 {item.name}
-                {/* <FaEdit
+                <FaEdit
                   onClick={(e: any) => {
                     e.stopPropagation();
-                    startEditing(item.name);
+                    startEditing(item);
                   }}
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
-                /> */}
+                />
               </span>
-              {expandedCategories.includes(item.name) && item.subcategory && (
+              {expandedCategories.includes(item.name) && item.subcategories && (
                 <ul>
-                  {item.subcategory.map((innerItem: any, innerIndex: any) => (
+                  {item.subcategories.map((innerItem: any, innerIndex: any) => (
                     <li key={innerIndex}>
                       <span
                         onClick={() => toggleExpand(innerItem.name)}
                         style={{ cursor: 'pointer' }}
                       >
                         {innerItem.name}
-                        {/* <FaEdit
+                        <FaEdit
                           onClick={(e: any) => {
                             e.stopPropagation();
-                            startEditing(innerItem.name);
+                            startEditing(innerItem );
                           }}
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
-                        /> */}
+                        />
                       </span>
-                      {expandedCategories.includes(innerItem.name) && innerItem.innerCategory && (
+                      {expandedCategories.includes(innerItem.name) && innerItem.subcategories && (
                         <ul>
-                          {innerItem.innerCategory.map(
+                          {innerItem.subcategories.map(
                             (subinnerItem: any, subinnerIndex: any) => (
                               <li key={subinnerIndex}>
                                 <span
-                                onClick={() => toggleExpand(subinnerItem)}
-                                  // onClick={() => handleShow(subinnerItem)}
+                                  onClick={() => handleShow(subinnerItem)}
                                   style={{ cursor: 'pointer' }}
                                 >
-                                  {subinnerItem}
+                                  {subinnerItem.name}
                                 </span>
-                                {expandedCategories.includes(subinnerItem) && subinnerItem && (
-                        <ul>
-                          {ScriptData.slice(0,5).map(
-                            (scriptItem: any, scriptItemIndex: any) => (
-                              <li key={scriptItemIndex} style={{width:'200%'}}>
-                                <span
-                                  onClick={() => navigate(`/account/${ActiveRoute.ScriptDetails.path}?chartname=${scriptItem.chart}`)}
-                                  style={{ cursor: 'pointer' }}
-                                >
-                                  {scriptItem.title}
-                                </span>
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      )}
                               </li>
                             )
                           )}
@@ -116,20 +95,21 @@ const navigate =useNavigate()
         handleClose={handleClose}
         selected={selected}
         editingCategory={editingCategory} 
-        token={''}
-        data={''}
+        data={data}
+        token={token}
       />
     </>
   );
 };
 
-const ScriptChart = () => {
+const ScriptTree = ({categoryFilter,token}:any) => {
   return (
     <div className="category-tree mx-auto w-25">
-      <h3>Script Tree</h3>
-      {RenderTree(Categoryarray2)}
+      <h3>Scripts Tree</h3>
+      {RenderTree(categoryFilter,token)}
     </div>
   );
 };
 
-export default ScriptChart;
+export default ScriptTree;
+ 

@@ -1,27 +1,41 @@
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../assest/css/Header.css';
 import { ScriptData } from '../../DummyData/TableData';
 import SearchIcon from './SearchIcon';
 import Icon from "../ui/icon/Icon";
+import { useSearchScriptMutation } from '../../Redux/Script';
+import { loginUSer } from '../../customHook/getrole';
+import { Link } from 'react-router-dom';
+import Loader from '../ui/Loader';
  
 
 const SimpleHeader = () => {
   const [searchData, setSearchData] = useState<any>([]);
+  const [search,setSearch]=useState('')
+  const [searchScript, { isLoading, isSuccess, isError, data }] = useSearchScriptMutation();
+  console.log(data,'searchData');
+  
+  const handleSearch =async (e: any) => {
+  const value=e.target.value.toLowerCase()
 
-  const handleSearch = (e: any) => {
-    const value = e.target.value.toLowerCase();
-
-    if (value === '') {
-      setSearchData([]);
-    } else {
-      const res: any = ScriptData.filter((i) =>
-        i.title?.toLowerCase().includes(value)
-      );
-      setSearchData(res);
+  setSearch(value)
+  if (value === '') {
+    setSearchData([]);
+  } else {
+      await searchScript({value:value,token:loginUSer.access})
     }
+  
+   
   };
+
+  useEffect(()=>{
+    if (data) {
+    
+      setSearchData(data?.scripts);
+     }
+  },[data])
 
   return (
     <div className='bg-green main-header-conatiner'>
@@ -40,20 +54,26 @@ const SimpleHeader = () => {
           onChange={handleSearch} 
         />
 
-        {searchData.length > 0 && (
+        {searchData.length > 0    && (
           <div 
             className="dropdown-content" 
             style={{
               display: 'block', 
               maxWidth: '70%',
+              maxHeight:'40vh',
+              overflow:'auto',
               top: '60px'
             }}
           >
-            {searchData.map((item: any, index: any) => (
-              <span className="hover-span" key={index}>
-                {item?.title}
-              </span>
-            ))}
+            {isLoading ? <Loader/>: (searchData && searchData.map((item: any, index: any) => (
+              <Link  key={index} style={{textDecoration:'none'}}
+              to={`/account/ScriptDetails/${item.id}`}>
+
+              <span className="hover-span" >
+                {item?.name}
+              </span> 
+              </Link>
+            )))}
           </div>
         )}
       </div> 

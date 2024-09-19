@@ -121,3 +121,52 @@ export const Runreport = async (data: any) => {
     throw error;
   }
 };
+
+export const Createreportschedules = async (data: any) => {
+  const { values, token } = data;
+console.log(values ,'values');
+
+  try {
+    // Set up headers with the Bearer token
+    const headers = {
+ 
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make the POST request with headers
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}${endpoint.reportschedules}`,
+      values,
+      { headers }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+
+export const DeleteReportsByID = async (data: any) => {
+  const {token,id } = data;
+
+  try {
+    // Set up headers with the Bearer token
+    const headers = {
+      "Content-Type": "multipart/form-data",
+      
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make the POST request with headers
+    const response = await axios.delete(
+      `${process.env.REACT_APP_API_URL}${endpoint.reportschedules}/${id}`,
+      { headers }
+    );
+    return response;
+  } catch (error) {
+    //console.log(error);
+    throw error;
+  }
+};

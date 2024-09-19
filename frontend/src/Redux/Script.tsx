@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { endpoint } from "./endpoint";
 
 const ScriptApi = createApi({
     reducerPath: 'ScriptApi',
@@ -25,7 +26,7 @@ const ScriptApi = createApi({
                 url: `getall?page_no=${page_no}&page_size=${page_size}`,
                 method: 'GET',
                 headers: {
-                    'x-access-token': token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             }),
@@ -50,14 +51,14 @@ const ScriptApi = createApi({
         }),
 
         // search
-        searchScript:builder.query({
-            query:({token,name})=>({
+        searchScript:builder.mutation({
+            query:({token,value})=>({
                 
-                url: `search?Name=${name}`,
+                url: `${endpoint.search}${value}`,
                 method: 'GET',
                 headers: {
-                    'x-access-token': token,
-                    'Content-Type': 'application/json', // Ensure proper content type
+                    'Authorization': `Bearer ${token}`,
+                    
                 },
                
                 
@@ -84,7 +85,7 @@ const ScriptApi = createApi({
 export const { useCreateScriptMutation,
                useGetAllScriptQuery,
                useRemoveScriptMutation,
-               useSearchScriptQuery,
+               useSearchScriptMutation,
                useUpdateScriptMutation
             } = ScriptApi;
 export default ScriptApi;
