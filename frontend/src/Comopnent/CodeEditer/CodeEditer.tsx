@@ -11,20 +11,20 @@ export default function CodeEdit({code,setCode}:any) {
 
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
+      {/* <div style={{ marginBottom: '10px' }}>
         <label htmlFor="language-select" style={{ marginRight: '10px' }}>Select Language:</label>
         <select id="language-select" value={language} onChange={handleLanguageChange}>
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
           <option value="java">Java</option>
-          {/* Add more languages as needed */}
+ 
         </select>
-      </div>
+      </div> */}
 
       <CodeEditor
         value={code}
-        language={language}
-        placeholder={`Please enter ${language} code.`}
+        language='python'
+        placeholder={`Please enter python code.`}
         onChange={(evn:any) => setCode(evn.target.value)}
         padding={15}
         minHeight={300}

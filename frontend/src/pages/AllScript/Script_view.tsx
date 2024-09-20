@@ -44,8 +44,11 @@ const ScriptView = () => {
   useEffect(() => {
     dispatch(setLoading(true));
     const getScript = async () => {
-      await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
-      dispatch(setLoading(false));
+      if (loginUser?.access) {
+        await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+        dispatch(setLoading(false));
+      }
+      
     };
     getScript();
   }, [loginUser]);
@@ -87,7 +90,7 @@ const ScriptView = () => {
     <>
       <div className="mx-4">
         <div className="row justify-content-between flex-wrap flex-md-nowrap  px-3 pt-3 pb-2 mb-3">
-          <div className="col-md-9">
+          <div className="col-md-8">
             <h2 className="h2">
               {" "}
               {ScriptData.name}
@@ -97,7 +100,7 @@ const ScriptView = () => {
               Last update <DateFormatter isoString={ScriptData.last_updated} />
             </h6>
           </div>
-          <div className="col-md-3 btn-toolbar mb-2 mb-md-0">
+          <div className="col-md-4 btn-toolbar mb-2 mb-md-0">
             <button
               onClick={editScript}
               type="button"
@@ -221,7 +224,7 @@ const ScriptView = () => {
 
       <DeleteModal
         show={show}
-        token={loginUSer.access}
+        token={loginUSer?.access}
         data={ScriptData}
         handleClose={handleClose}
       />

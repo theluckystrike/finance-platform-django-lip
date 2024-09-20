@@ -125,13 +125,27 @@ const store:any = useSelector((i)=>i)
           {!loading ? (
             <form method="post" id="customReportForm">
               <div className="row mb-2 p-2 fw-bold w-100">
-                <div className="col-4" >
+              <div className="col-1" >
                   <h6>
-                    <input
+                    {/* <input
                       type="checkbox"
                       id="selectAllCheckbox"
                       onChange={toggleSelectAll}
-                    />{" "}
+                    />{" "} */}
+                    <span  >
+Sr no.
+
+                    
+                  </span>
+                  </h6>
+                </div>
+                <div className="col-4" >
+                  <h6>
+                    {/* <input
+                      type="checkbox"
+                      id="selectAllCheckbox"
+                      onChange={toggleSelectAll}
+                    />{" "} */}
                     <span onClick={() => requestSort('name')}>
 
                     Name
@@ -155,7 +169,7 @@ const store:any = useSelector((i)=>i)
 
                
                 </div>
-                <div className="col-2 mx-auto text-center"  onClick={() => requestSort('category.name')}>Category<Icon
+                <div className="col-1 mx-auto text-center"  onClick={() => requestSort('category.name')}>Category<Icon
 									size='10px'
 									className={getClassNamesFor('category.name')}
 									icon='FilterList'
@@ -181,22 +195,28 @@ const store:any = useSelector((i)=>i)
                     key={index}
                   >
                     <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
+                   < div className="col-1">
+                        <span className="fw-bold  ">
+                      
+                          {index+1}
+                        </span>
+                      </div>
                       <div className="col-4">
                         <span className="fw-bold  ">
-                          <input
+                          {/* <input
                             className="chbx"
                             type="checkbox"
                             name="scripts"
                             value={script.id}
                             onChange={handleCheckboxChange}
-                          />
+                          /> */}
                           {script.name}
                         </span>
                       </div>
                       <div className="col-2 mx-auto text-center wrap-word">
                         {script.description}
                       </div>
-                      <div className="col-2 mx-auto text-center wrap-word">
+                      <div className="col-1 mx-auto text-center wrap-word">
                         {script?.category?.name}
                       </div>
                       <div className="col-2 mx-auto text-center">

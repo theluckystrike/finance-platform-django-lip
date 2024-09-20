@@ -25,7 +25,9 @@ const DeleteModal: FC<DeleteModalProps> = ({
   const dispatch=useDispatch()
   const handleDelete = () => {
     dispatch(DeleteReportsByIDs({token,id:data.id}))
+    
     handleClose();
+    navigate(-1)
   };
 
   return (

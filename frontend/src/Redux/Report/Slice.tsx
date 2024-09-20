@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createreport, Createreportschedules, DeleteReportsByID, GetAllreport, GetreportByID, Updatereport} from "./Api";
+import { Createreport, Createreportschedules, DeleteReportsByID, GetAllreport, GetreportByID, mergereport, Updatereport, UpdateReports} from "./Api";
 
 const initialState:any = {
   reports: [],
@@ -30,13 +30,16 @@ export const Updatereports:any = AsyncFunctionThunk('Updatereports', Updaterepor
 export const GetAllreports:any = AsyncFunctionThunk('GetAllreports', GetAllreport);
 export const GetreportByIDs:any = AsyncFunctionThunk('GetreportByIDs', GetreportByID);
 export const Createschedules:any = AsyncFunctionThunk('Createschedules', Createreportschedules);
-export const DeleteReportsByIDs:any = AsyncFunctionThunk('DeleteReportsByIDs',DeleteReportsByID)
-
+export const DeleteReportsByIDs:any = AsyncFunctionThunk('DeleteReportsByIDs',DeleteReportsByID);
+export const UpdateReportss:any = AsyncFunctionThunk('UpdateReportss',UpdateReports)
+export const mergereports:any = AsyncFunctionThunk('mergereports',mergereport)
+ 
+ 
 const reportSlice = createSlice({
   name: 'reportSlice',
   initialState,
   reducers: {
-   
+    UpdateReportss
   },
   extraReducers: (builder) => {
     builder
@@ -92,6 +95,28 @@ const reportSlice = createSlice({
         state.loading = true;
       })
       .addCase(DeleteReportsByIDs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(UpdateReportss.fulfilled, (state, action) => {
+        // state.Script = action.payload;
+        state.loading = false;
+      })
+      .addCase(UpdateReportss.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(UpdateReportss.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(mergereports.fulfilled, (state, action) => {
+        // state.Script = action.payload;
+        state.loading = false;
+      })
+      .addCase(mergereports.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(mergereports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

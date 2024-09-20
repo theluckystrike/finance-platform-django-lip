@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useSortableData from "../../customHook/useSortable";
 import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
+import DateFormatter from "../../customHook/useTImeformnt";
 
 const Report = () => {
  
@@ -44,6 +45,7 @@ const Report = () => {
  
 
   const [show, setShow] = useState(false);
+  const [mergeshow, setShowmerges] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
@@ -66,7 +68,7 @@ const Report = () => {
             <span>Create</span>
           </button>*/}
           <button 
-            onClick={handleShow}
+            onClick={()=>setShowmerges(true)}
             type="button"
             className="btn icon-button my-1 mx-2"
           >
@@ -105,10 +107,12 @@ const Report = () => {
                     </div>
 
                     <div className="col-2 mx-auto text-center">
-                      {script.created}
+                    <DateFormatter isoString={script.created}/>
+                      
                     </div>
                     <div className="col-2 mx-auto text-center">
-                      {script.last_updated}
+                    <DateFormatter isoString={script.last_updated}/>
+ 
                     </div>
                   </div>
                 </Link>
@@ -121,7 +125,7 @@ const Report = () => {
       </div>
       <CreateReports show={show} handleClose={handleClose} />
 
-      {/* <MergeReports show={show} handleClose={handleClose} /> */}
+      <MergeReports show={mergeshow} handleClose={()=>setShowmerges(false)}  allreport={allreport}/>
     </div>
   );
 };

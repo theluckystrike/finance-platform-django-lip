@@ -3,12 +3,11 @@ import { endpoint } from "../endpoint";
 
 export const Createreport = async (data: any) => {
   const { values, token } = data;
-//console.log(values.scripts,'values');
+  //console.log(values.scripts,'values');
 
   try {
     // Set up headers with the Bearer token
     const headers = {
- 
       Authorization: `Bearer ${token}`,
     };
 
@@ -16,8 +15,8 @@ export const Createreport = async (data: any) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}${endpoint.reports}`,
       {
-        name:values.name,
-        scripts:[...values.scripts]
+        name: values.name,
+        scripts: [...values.scripts],
       },
       { headers }
     );
@@ -28,10 +27,37 @@ export const Createreport = async (data: any) => {
     throw error;
   }
 };
+
+
+
+
+export const mergereport = async (data: any) => {
+  const { values, token } = data;
+  //console.log(values.scripts,'values');
+
+  try {
+    // Set up headers with the Bearer token
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make the POST request with headers
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}${endpoint.reports}/merge`,values,     
+      { headers }
+    );
+
+    return response;
+  } catch (error) {
+    //console.log(error);
+    throw error;
+  }
+};
+
+
+
 export const Updatereport = async (data: any) => {
-  const { values, token ,id} = data;
- 
- 
+  const { values, token, id } = data;
 
   try {
     const headers = {
@@ -39,7 +65,7 @@ export const Updatereport = async (data: any) => {
     };
     const response = await axios.put(
       `${process.env.REACT_APP_API_URL}${endpoint.reports}/${id}`,
-        values,
+      values,
       { headers }
     );
 
@@ -51,7 +77,7 @@ export const Updatereport = async (data: any) => {
 };
 
 export const GetreportByID = async (data: any) => {
-  const {token,id } = data;
+  const { token, id } = data;
 
   try {
     // Set up headers with the Bearer token
@@ -65,7 +91,6 @@ export const GetreportByID = async (data: any) => {
       `${process.env.REACT_APP_API_URL}${endpoint.reports}/${id}`,
       { headers }
     );
- 
 
     return response;
   } catch (error) {
@@ -75,7 +100,7 @@ export const GetreportByID = async (data: any) => {
 };
 
 export const GetAllreport = async (data: any) => {
-  const {token} = data;
+  const { token } = data;
 
   try {
     // Set up headers with the Bearer token
@@ -89,7 +114,6 @@ export const GetAllreport = async (data: any) => {
       `${process.env.REACT_APP_API_URL}${endpoint.reports}?page=1`,
       { headers }
     );
- 
 
     return response;
   } catch (error) {
@@ -98,9 +122,8 @@ export const GetAllreport = async (data: any) => {
   }
 };
 
-
 export const Runreport = async (data: any) => {
-  const {token } = data;
+  const { token } = data;
 
   try {
     // Set up headers with the Bearer token
@@ -124,12 +147,11 @@ export const Runreport = async (data: any) => {
 
 export const Createreportschedules = async (data: any) => {
   const { values, token } = data;
-console.log(values ,'values');
+  console.log(values, "values");
 
   try {
     // Set up headers with the Bearer token
     const headers = {
- 
       Authorization: `Bearer ${token}`,
     };
 
@@ -147,23 +169,47 @@ console.log(values ,'values');
   }
 };
 
-
 export const DeleteReportsByID = async (data: any) => {
-  const {token,id } = data;
+  const { token, id } = data;
 
   try {
     // Set up headers with the Bearer token
     const headers = {
       "Content-Type": "multipart/form-data",
-      
+
       Authorization: `Bearer ${token}`,
     };
 
     // Make the POST request with headers
     const response = await axios.delete(
-      `${process.env.REACT_APP_API_URL}${endpoint.reportschedules}/${id}`,
+      `${process.env.REACT_APP_API_URL}${endpoint.reports}/${id}`,
       { headers }
     );
+    return response;
+  } catch (error) {
+    //console.log(error);
+    throw error;
+  }
+};
+
+export const UpdateReports = async (data: any) => {
+  const { token, id } = data;
+
+  try {
+    // Set up headers with the Bearer token
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make the POST request with headers
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}${endpoint.reports}/${id}/update`,
+      {
+        run_scripts: false,
+      },
+      { headers }
+    );
+
     return response;
   } catch (error) {
     //console.log(error);

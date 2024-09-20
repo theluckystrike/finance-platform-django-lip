@@ -6,6 +6,7 @@ import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
 const RenderTree = (data: any,token:any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
+  const [selectedPERnt, setSelectedPREnt] = useState("");
   const [show, setShow] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
 
@@ -25,8 +26,10 @@ const RenderTree = (data: any,token:any, level = 0) => {
     );
   };
 
-  const startEditing = (name: string) => {
+  const startEditing = (name: any,value:any) => {
     setEditingCategory(name);
+    setSelectedPREnt(value);
+    
     handleShow(name);
   };
 
@@ -44,7 +47,7 @@ const RenderTree = (data: any,token:any, level = 0) => {
                 <FaEdit
                   onClick={(e: any) => {
                     e.stopPropagation();
-                    startEditing(item);
+                    startEditing(item,{name:'',id:''});
                   }}
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
@@ -61,7 +64,7 @@ const RenderTree = (data: any,token:any, level = 0) => {
                         <FaEdit
                           onClick={(e: any) => {
                             e.stopPropagation();
-                            startEditing(innerItem );
+                            startEditing(innerItem,item );
                           }}
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
@@ -72,7 +75,7 @@ const RenderTree = (data: any,token:any, level = 0) => {
                             (subinnerItem: any, subinnerIndex: any) => (
                               <li key={subinnerIndex}>
                                 <span
-                                  onClick={() => handleShow(subinnerItem)}
+                                  onClick={() => startEditing({name:subinnerItem.name},innerItem )}
                                   style={{ cursor: 'pointer' }}
                                 >
                                   {subinnerItem.name}
@@ -94,6 +97,7 @@ const RenderTree = (data: any,token:any, level = 0) => {
         show={show}
         handleClose={handleClose}
         selected={selected}
+        selectedPERnt={selectedPERnt}
         editingCategory={editingCategory} 
         data={data}
         token={token}
@@ -102,14 +106,13 @@ const RenderTree = (data: any,token:any, level = 0) => {
   );
 };
 
-const ScriptTree = ({categoryFilter,token}:any) => {
+const CategoryTree = ({categoryFilter,token}:any) => {
   return (
     <div className="category-tree mx-auto w-25">
-      <h3>Scripts Tree</h3>
+      <h3>Script Tree</h3>
       {RenderTree(categoryFilter,token)}
     </div>
   );
 };
 
-export default ScriptTree;
- 
+export default CategoryTree;

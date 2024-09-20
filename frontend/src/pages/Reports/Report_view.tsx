@@ -7,14 +7,25 @@ import { ActiveRoute } from "../../Menu";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { GetAllScripts, setLoading } from "../../Redux/Script/ScriptSlice";
-import { GetreportByIDs, Updatereports } from "../../Redux/Report/Slice";
+import { GetreportByIDs, Updatereports, UpdateReportss } from "../../Redux/Report/Slice";
 import DateFormatter from "../../customHook/useTImeformnt";
 import useToast from "../../customHook/toast";
 import Loader from "../../Comopnent/ui/Loader";
 import DeleteModal from "./ReportDelete";
- 
+import { Viewer,Worker } from '@react-pdf-viewer/core';
+
+// Plugins
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+
+// Import styles
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+// Create new plugin instance
+
 
 const ReportViwe = () => {
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
   // Get the search parameters from the URL
 const {id} =useParams()
 const dispatch=useDispatch()
@@ -44,7 +55,8 @@ useEffect(() => {
   const reportData = store?.report?.report;
   const allscripts = store?.script?.Scripts?.results || [];
   const { loading } = store?.report;
-  
+ 
+
   // Safeguard against undefined or null values for reportData.scripts
   const filteredScripts = allscripts.filter((script: any) => {
     return Array.isArray(reportData?.scripts) && reportData.scripts.includes(script.id);
@@ -94,6 +106,25 @@ useEffect(() => {
     handleToast.SuccessToast(`Remove Script successfully`);
 
   }
+
+  const openPdfInNewTab = (url:any) => {
+    window.open(url, '_blank');
+  };
+
+
+
+  const updateRepost =async ()=>{
+  const res =await  dispatch(UpdateReportss({token:loginUser.access,
+      id:id}))
+
+
+
+      console.log(res);
+      if (res.payload) {
+        handleToast.SuccessToast(res.payload.message)
+      }
+      
+  }
   return (
     <>
       <div className="mx-5 py-3">
@@ -110,7 +141,7 @@ useEffect(() => {
               <Icon icon="CalendarToday" size="20px" />
               <span>Schedule Email</span>
             </button>
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button type="button" onClick={()=>openPdfInNewTab(reportData?.latest_pdf)} className="btn icon-button my-1 mx-2">
               <Icon icon="RemoveRedEye" size="20px" />
               <span>View Latest</span>
             </button>
@@ -118,7 +149,7 @@ useEffect(() => {
               <Icon icon="Delete" size="20px" />
               <span>Delete</span>
             </button>
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button type="button" className="btn icon-button my-1 mx-2" onClick={updateRepost}>
               <Icon icon="SystemUpdateAlt" size="20px" />
 
               <span>Update</span>
@@ -166,7 +197,7 @@ useEffect(() => {
           </div>
         </form>
         <div>
-          {132 > -1 ? (
+          {! loading? (
             <form method="post" id="customReportForm">
               <div className="row mb-2 p-2 fw-bold w-100">
                 <div className="col-5">
@@ -240,11 +271,12 @@ useEffect(() => {
               </div>
             </form>
           ) : (
-            <span className="text-large">
-              Upload reports to generate reports with them
-            </span>
+            <Loader/>
           )}
         </div>
+       
+
+        
       </div>
       <ScheduleEmailModal show={show} handleClose={handleClose} />
       <DeleteModal show={Deleteshow} handleClose={()=>setDeleteShow(false)} data={reportData}  token={loginUser?.access}/>

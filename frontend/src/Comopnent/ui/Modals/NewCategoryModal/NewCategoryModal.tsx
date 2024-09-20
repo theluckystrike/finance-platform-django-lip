@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { useRemoveMutation, useUpdateMutation } from "../../../../Redux/CategoryQuery";
 import { log } from "console";
+import useToast from "../../../../customHook/toast";
 
 interface NewCategoryModalProps {
   show: boolean;
@@ -11,6 +12,7 @@ interface NewCategoryModalProps {
   editingCategory: any | null;
   token:any;
   data:any;
+  selectedPERnt:any;
 }
 
 const NewCategoryModal: FC<NewCategoryModalProps> = ({
@@ -19,21 +21,26 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   handleClose,
   data,
   editingCategory,
-  token
+  token,
+  selectedPERnt
 }) => {
   const navigate = useNavigate();
   const [update, update_res] =
   useUpdateMutation();
   const [remove, delete_res] =
   useRemoveMutation();
+
+ const handleToast=useToast()
+  
   const [categoryName, setCategoryName] = useState(selected);
-  const [parentCategory, setParentCategory] = useState("");
+  const [parentCategory, setParentCategory] = useState(selectedPERnt);
   const [isEditing, setIsEditing] = useState(false);
 ////console.log(editingCategory);
 
   useEffect(() => {
     if (editingCategory) {
       setCategoryName(editingCategory.name);
+      setParentCategory(selectedPERnt)
       setIsEditing(true);
     } else {
       setCategoryName("");
@@ -41,18 +48,21 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
     }
   }, [editingCategory, selected]);
 
-  const handleSave = () => {
-    
-    
-    update({token:token.access,id:editingCategory.id, data:{
-      name:categoryName
+  const handleSave = async() => {
+   await update({token:token.access,id:editingCategory.id, data:{
+      name:categoryName,
+      parent_category:parentCategory.id
     } })
-    // handleClose();
+
+    handleToast.SuccessToast(`Category updated successfully`);
+
+    handleClose();
   };
 
-  const handleDelete = () => {
-    
-    remove({token:token.access,id:editingCategory.id  })
+  const handleDelete =async () => {
+  await  remove({token:token.access,id:editingCategory.id  })
+  handleToast.SuccessToast(`Category delete successfully`);
+
     handleClose();
   };
 
@@ -94,23 +104,32 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                     <input
                       type="text"
                       placeholder="All"
-                      // value={formik.values.parent_categoryName}
+                      value={parentCategory.name}
                       readOnly
                     />
                     <div
                       className="dropdown-content"
                       style={{ height: "200px", overflow: "auto" }}
                     >
+                       <span className="h6  "  >
+                            <span
+                              className="hover-span text-muted"
+                              onClick={() =>
+                                setParentCategory({name:'',id:''})
+                              }
+                            >
+                             Null
+                            </span>
+                           
+                          </span>
                       {data.length > 0 &&
                         data.map((item: any, index: any) => (
                           <span className="h6  " key={item.name}>
                             <span
                               className="hover-span "
-                              // onClick={() =>
-                              //  { formik.setFieldValue("parent_category", item.id)
-                              //   formik.setFieldValue("parent_categoryName", item.name)
-                              //  }
-                              // }
+                              onClick={() =>
+                                setParentCategory(item)
+                              }
                             >
                               {item.name}
                             </span>

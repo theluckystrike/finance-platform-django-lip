@@ -1,3 +1,34 @@
+Jeffery reply:
+
+checked the cradle version. Looks great and seems to run pretty smooth.
+
+
+
+on the tape tape summary. I want to be able to as follows
+
+
+
+1) select a group of scripts already on the website
+2) add some additional code to the scripts so that they produce a table which can transmit some information based on given criteria
+3) display the script on the tab along with the information based on the criteria in step 2
+4) display a chart at the top of the page which is based upon the summation of the various critera from all scripts included only on the tape summary tab.
+
+
+
+so, for example. You pick 5 scripts to appear on tht tab. The critiera of each of the 5 scripts can be a value which is equal to -1,0 or 1. On a given day all 5 scripts are generating a value of 1. Therefor the chart above the scripts plots a 5 on that day. the next day the sum might be 3, then the chart plots a 3 and so on. Overtime you generate a time series from the results of your criteria.
+
+i understand. for now lets focus on getting the craddle in to production. It looks like the scripts still are not populating. once we have the new production version and the tape summary we can do a debrief regarding next steps. but pls do not spend anytime on anything besides that.
+
+
+
+
+
+
+
+
+
+
+
 For the All Scripts page, I will add query parameters to the url so that you can filter by category. The”Save” button should just make a new report with the scripts that are selected by the user, there is already an endpoint for this.
 
 For editing Script Files, you can simply use a PATCH request to the /api/scripts/{id} endpoint to update the file with a new, edited one

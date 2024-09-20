@@ -25,6 +25,31 @@ export const CreateScript = async (data: any) => {
   }
 };
 
+export const UpdateScript = async (data: any) => {
+  const { formData, token, scriptId } = data;
+
+  try {
+    // Set up headers with the Bearer token
+    const headers = {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make the PATCH request with headers
+    const response = await axios.patch(
+      `${process.env.REACT_APP_API_URL}scripts/upload/${scriptId}/`,
+      formData,
+      { headers }
+    );
+
+    return response;
+  } catch (error) {
+    //console.log(error);
+    throw error;
+  }
+};
+
+
 
 export const GetScriptByID = async (data: any) => {
   const {token,id } = data;
