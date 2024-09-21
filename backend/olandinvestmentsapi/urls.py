@@ -11,6 +11,7 @@ from olandinvestmentsapi.views import (
     ScriptRunView,
     ScriptViewSet,
     CategoryViewSet,
+    CategoryTreeView,
     ReportViewSet,
     ReportStatusView,
     ReportUpdateView,
@@ -36,6 +37,7 @@ urlpatterns = [
     path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
     path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
     # Categories
+    path('api/categories/tree', CategoryTreeView.as_view(), name='category_tree'),
     # Search
     path('api/search', SearchView.as_view(), name='search'),
     # Reports
