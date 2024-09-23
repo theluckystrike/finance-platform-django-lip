@@ -1,8 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
-import { useRemoveMutation, useUpdateMutation } from "../../../../Redux/CategoryQuery";
-import { log } from "console";
 import { useDispatch } from "react-redux";
 import { DeleteScriptByIDs } from "../../../../Redux/Script/ScriptSlice";
 
