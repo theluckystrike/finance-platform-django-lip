@@ -15,9 +15,9 @@ const ErrorHandle = () => {
  
 
   const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
-//console.log(data,'data');
+
 const store = useSelector((i)=>i)
-//console.log(store,'store');
+
 
   const [selectedScripts, setSelectedScripts] = useState([]);
   const [sortedData, setSortedData] = useState<any>([]);
@@ -28,8 +28,7 @@ const store = useSelector((i)=>i)
       const sortedArray =  ScriptData.sort((a: any, b: any) => {
         return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       });
-     
-      //console.log(sortedArray.reverse() ,'sortedArray');
+
       
       setSortedData(sortedArray );
     }

@@ -26,7 +26,7 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
  const {loading}=store?.script
  const allscripts = store?.script?.Scripts?.results
  
- console.log(allscripts);
+ 
  
  const [loginUser, setLoginUser] = useState<any>(null);
  
@@ -45,7 +45,7 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
       try {
         await  dispatch(GetAllScripts({token:loginUser?.access}))
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       }
     }
     getDAta()

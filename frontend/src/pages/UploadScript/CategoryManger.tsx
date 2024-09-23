@@ -49,7 +49,7 @@ useEffect(() => {
   const structuredCategories = Object.values(categoryMap).filter(
     (cat: any) => cat.parent_category === null
   );
- //console.log(categoryData,'categoryData');
+ 
  
 
   setCategoryFilter(structuredCategories);

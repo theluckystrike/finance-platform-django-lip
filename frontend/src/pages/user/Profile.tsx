@@ -11,7 +11,7 @@ const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.acce
   skip: !loginUSer, // Skip query execution if loginUser is null
 });
 
-//console.log(data);
+ 
 
 
 

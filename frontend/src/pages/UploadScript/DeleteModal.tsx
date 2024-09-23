@@ -28,7 +28,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
   
   const handleToast=useToast()
   const handleDelete =async () => {
-    // console.log({token:token.access,id:data});
+ 
     
   await  remove({token:token.access,id:data?.id  })
   handleToast.SuccessToast(`Category delete successfully`);

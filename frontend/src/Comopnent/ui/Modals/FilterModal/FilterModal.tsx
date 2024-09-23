@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
 import ArrowDown from "../../../../assest/image/arrow-down.png";
 import { useGetAllCategoryQuery } from "../../../../Redux/CategoryQuery";
- 
 import { GetScriptbyCategorys } from "../../../../Redux/Script/ScriptSlice";
 import { useDispatch } from "react-redux";
 
@@ -48,7 +47,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
     },
     validationSchema,
     onSubmit:async (values) => {
-      console.log("Form values:", values);
+
 
    await   dispatch(
         GetScriptbyCategorys({

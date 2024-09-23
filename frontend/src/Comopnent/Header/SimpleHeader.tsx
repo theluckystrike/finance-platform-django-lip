@@ -12,10 +12,7 @@ import Loader from '../ui/Loader';
 
 const SimpleHeader = () => {
   const [searchData, setSearchData] = useState<any>([]);
-
   const [searchScript, { isLoading,  data }]:any = useSearchScriptMutation();
- 
-  
   const handleSearch =async (e: any) => {
   const value=e.target.value.toLowerCase()
 
@@ -24,9 +21,7 @@ const SimpleHeader = () => {
     setSearchData([]);
   } else {
       await searchScript({value:value,token:loginUSer.access})
-    }
-  
-   
+    } 
   };
 
   useEffect(()=>{
@@ -67,7 +62,6 @@ const SimpleHeader = () => {
             {isLoading ? <Loader/>: (searchData && searchData.map((item: any, index: any) => (
               <Link  key={index} style={{textDecoration:'none'}}
               to={`/account/ScriptDetails/${item.id}`}>
-
               <span className="hover-span" >
                 {item?.name}
               </span> 

@@ -36,7 +36,7 @@ const Report = () => {
         try {
           await dispatch(GetAllreports({ token: loginUser?.access }));
         } catch (error) {
-          //console.log(error);
+          console.log(error);
       }
     };
     getDAta();

@@ -18,17 +18,14 @@ import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports"
 const CustomReport = () => {
  
 const dispatch =useDispatch()
- 
-  // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
-
 const store:any = useSelector((i)=>i)
  
  const {loading}=store?.script
- console.log(store?.script?.Scripts?.count,'store?.script?.Scripts');
+
  
  const allscripts = store?.script?.Scripts?.results
  const [selectedScripts, setSelectedScripts] = useState([]);
- //console.log(allscripts);
+
  
  const [loginUser, setLoginUser] = useState<any>(null);
  
@@ -47,7 +44,7 @@ const store:any = useSelector((i)=>i)
       try {
         await  dispatch(GetAllScripts({token:loginUser?.access}))
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       }
   }
   getDAta()

@@ -116,10 +116,6 @@ useEffect(() => {
   const updateRepost =async ()=>{
   const res =await  dispatch(UpdateReportss({token:loginUser.access,
       id:id}))
-
-
-
-      console.log(res);
       if (res.payload) {
         handleToast.SuccessToast(res.payload.message)
       }

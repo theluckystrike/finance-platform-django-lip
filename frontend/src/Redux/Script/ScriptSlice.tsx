@@ -14,7 +14,7 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
   return createAsyncThunk(`Script/${name}`, async (data, { rejectWithValue }) => {
     try {
       const response = await apiFunction(data);
-      //console.log(response.data, "dada");
+
       return response.data;
     } catch (error:any) {
 

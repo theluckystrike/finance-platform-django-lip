@@ -38,7 +38,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
         try {
           await dispatch(GetAllScripts({ token: loginUser?.access }));
         } catch (error) {
-          ////console.log(error);
+     console.log(error);
         }
       };
       getDAta();
@@ -59,9 +59,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
   // Handle form submission
   const handleSubmit = (values: any) => {
-    // Handle form submission here
-    ////console.log(JSON.stringify(values));
-    // Example: dispatch action to create report
+ 
     dispatch(Createreports({values:values,token:loginUser.access}));
 
     handleClose(); // Close modal after submission
