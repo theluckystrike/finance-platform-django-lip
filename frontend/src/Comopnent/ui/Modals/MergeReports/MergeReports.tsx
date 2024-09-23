@@ -33,14 +33,17 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
   }, []);
 
   useEffect(() => {
-    const getDAta = async () => {
-      try {
-        await dispatch(GetAllScripts({ token: loginUser?.access }));
-      } catch (error) {
-        ////console.log(error);
-      }
-    };
-    getDAta();
+    if(loginUser){
+
+      const getDAta = async () => {
+        try {
+          await dispatch(GetAllScripts({ token: loginUser?.access }));
+        } catch (error) {
+          ////console.log(error);
+        }
+      };
+      getDAta();
+    }
   }, [loginUser, dispatch]);
 
   // Convert scripts to options for react-select

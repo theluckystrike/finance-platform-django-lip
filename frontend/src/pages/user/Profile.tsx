@@ -7,7 +7,9 @@ import { loginUSer } from '../../customHook/getrole';
 const Profile: React.FC = () => {
 
 
-const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 });
+const { data, error, isLoading } = useGetuserbytokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 },{
+  skip: !loginUSer, // Skip query execution if loginUser is null
+});
 
 //console.log(data);
 

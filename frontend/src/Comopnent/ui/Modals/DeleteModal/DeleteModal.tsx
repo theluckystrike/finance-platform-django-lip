@@ -54,7 +54,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
                    Delete {data.name} script 
                   </label> */}
                   <h4>Delete Script</h4>
-      <p>Are you sure you want to delete {data.name} script?</p>
+      <p>Are you sure you want to delete {data?.name} script?</p>
 
                
                 </div>

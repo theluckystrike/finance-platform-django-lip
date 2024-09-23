@@ -24,6 +24,8 @@ const dispatch =useDispatch()
 const store:any = useSelector((i)=>i)
  
  const {loading}=store?.script
+ console.log(store?.script?.Scripts?.count,'store?.script?.Scripts');
+ 
  const allscripts = store?.script?.Scripts?.results
  const [selectedScripts, setSelectedScripts] = useState([]);
  //console.log(allscripts);
@@ -39,15 +41,17 @@ const store:any = useSelector((i)=>i)
    }, []);
   useEffect(()=>{
  
-  
-  const  getDAta =async ()=>{
-    try {
-      await  dispatch(GetAllScripts({token:loginUser?.access}))
-    } catch (error) {
-      //console.log(error);
-    }
+  if(!loginUser === null){
+
+    const  getDAta =async ()=>{
+      try {
+        await  dispatch(GetAllScripts({token:loginUser?.access}))
+      } catch (error) {
+        //console.log(error);
+      }
   }
   getDAta()
+    }
  
        },[loginUser])
  
@@ -60,29 +64,9 @@ const store:any = useSelector((i)=>i)
   };
   const [Saveshow, setSaveShow] = useState(false);
   const handleSaveClose = () => setSaveShow(false);
-  const handleSaveShow = () => {
-    setSaveShow(true);
-  };
+ 
 
-  const toggleSelectAll = (event: any) => {
-    const checkboxes = document.querySelectorAll(
-      '#scriptsCheckboxes input[type="checkbox"]'
-    );
-    checkboxes.forEach(
-      (checkbox: any) => (checkbox.checked = event.target.checked)
-    );
-    handleCheckboxChange();
-  };
-
-  const handleCheckboxChange = () => {
-    const selected: any = Array.from(
-      document.querySelectorAll(
-        '#scriptsCheckboxes input[type="checkbox"]:checked'
-      )
-    ).map((checkbox: any) => checkbox.value);
-    setSelectedScripts({...selected,...selectedScripts});
-  };
-
+ 
 
 
   const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
@@ -133,9 +117,7 @@ const store:any = useSelector((i)=>i)
                       onChange={toggleSelectAll}
                     />{" "} */}
                     <span  >
-Sr no.
-
-                    
+Sr no.                    
                   </span>
                   </h6>
                 </div>
@@ -188,7 +170,7 @@ Sr no.
                   /></div>
               </div>
               <div id="scriptsCheckboxes">
-                {items?.map((script: any,index:any) => (
+                {items.length > 0 ? items?.map((script: any,index:any) => (
                   <Link
                     to={`/account/ScriptDetails/${script.id}`}
                     className="text-decoration-none text-black"
@@ -227,7 +209,16 @@ Sr no.
                       </div>
                     </div>
                   </Link>
-                ))}
+                ))
+              :  <div>
+
+{
+store?.script?.Scripts?.count === 0 ? <p>no scripts found</p>
+:<Loader/>
+}
+
+                </div>
+              }
               </div>
             </form>
           ) : (

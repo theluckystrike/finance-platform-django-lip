@@ -41,13 +41,13 @@ useEffect(() => {
 
   useEffect(()=>{
     dispatch(setLoading(true));
-    const getreport= async()=>{
+ if(loginUser){   const getreport= async()=>{
 
       await  dispatch(GetreportByIDs({id:id,token:loginUser?.access}))
       await  dispatch(GetAllScripts({token:loginUser?.access}))
       dispatch(setLoading(false));
     }
-    getreport()
+    getreport()}
   },[loginUser])
 
 

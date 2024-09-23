@@ -1,0 +1,99 @@
+import { FC, useState, useEffect } from "react";
+import Modal from "react-bootstrap/Modal";
+import { useNavigate } from "react-router-dom";
+ 
+import { log } from "console";
+import { useDispatch } from "react-redux";
+import { useRemoveMutation } from "../../Redux/CategoryQuery";
+import useToast from "../../customHook/toast";
+ 
+interface DeleteModalProps {
+  show: boolean;
+  handleClose: () => void;
+  token:any;
+  data:any;
+}
+
+const DeleteModal: FC<DeleteModalProps> = ({
+  show,
+  handleClose,
+  data,
+  token
+}) => {
+
+  const navigate = useNavigate();
+  const dispatch=useDispatch()
+  const [remove, delete_res] = useRemoveMutation();
+ 
+  
+  const handleToast=useToast()
+  const handleDelete =async () => {
+    // console.log({token:token.access,id:data});
+    
+  await  remove({token:token.access,id:data?.id  })
+  handleToast.SuccessToast(`Category delete successfully`);
+    handleClose();
+  };
+
+  return (
+    <Modal
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      show={show}
+      onHide={handleClose}
+    >
+    <Modal.Body
+        className="bg-light-green"
+        style={{ borderRadius: "25px", overflow: "hidden" }}
+      >  
+      
+   
+   
+          <div className="mb-3">
+            <div className="row mx-0 px-3">
+              <div className="col-12 m-0">
+              </div>
+              <div className="col-12  ">
+                 
+                  <h4>Delete Category</h4>
+      <p>Are you sure you want to delete {data.name} category?</p>
+
+               
+                </div>
+              <div className="col-12 row justify-content-evenly m-0">
+                <label
+                  style={{ height: "33px" }}
+                  htmlFor="category"
+                  className="invisible"
+                >
+                  Actions
+                </label>
+               
+                  <button
+                    onClick={handleDelete}
+                    className="btn btn-danger col-3 px-3 fw-bold"
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                
+                <button
+                  onClick={handleClose}
+                  className="btn btn-light border border-2 border-dark col-3 px-3 fw-bold"
+                  type="button"
+                >
+                  Close
+                </button>
+            
+              </div>
+            </div>
+          </div>
+      
+            
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default DeleteModal;

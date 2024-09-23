@@ -137,7 +137,7 @@ const store = useSelector((i)=>i)
         </div>
       </div>
 
-      <FilterModal show={show} handleClose={handleClose} />
+ 
       <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
     </>
   );

@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import store from "./Store";
 import { ToastContainer } from "react-toastify";
 import { SidebarMenu } from "./Menu";
+ 
 
 // Create the router instance with all route configurations
 const router = createBrowserRouter([
@@ -27,10 +28,13 @@ const rootElement = document.getElementById("root") as HTMLElement;
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
+
+
     <Provider store={store}>
     <ToastContainer />
     <RouterProvider router={router} />
     </Provider>
+ 
   </React.StrictMode>
 );
 

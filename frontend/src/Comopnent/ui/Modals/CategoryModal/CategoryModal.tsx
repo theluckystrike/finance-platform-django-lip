@@ -67,11 +67,10 @@ const CategoryModal: FC<CategoryModalProps> = ({
         // })
         // ////console.log('Refresh token data:');
         handleToast.ErrorToast(
-          "Token is invalid or expired. Please login again."
+          "Please login again."
         );
-        navigate("/login");
-        localStorage.removeItem("login");
-        const apiError = (error as any).data as { detail?: string };
+  
+         
         ////console.log("Error:", apiError.detail || "An unknown error occurred");
       } else {
         ////console.log("An unknown error occurred.");
@@ -117,7 +116,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
                 <div className="col-12">
                   <label htmlFor="parent_category" className="form-label">
-                    parent_category Category
+                    Parent Category
                   </label>
 
                   <div className="dropdown">

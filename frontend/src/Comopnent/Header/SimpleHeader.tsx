@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import '../../assest/css/Header.css';
-import { ScriptData } from '../../DummyData/TableData';
-import SearchIcon from './SearchIcon';
+ 
 import Icon from "../ui/icon/Icon";
 import { useSearchScriptMutation } from '../../Redux/Script';
 import { loginUSer } from '../../customHook/getrole';
@@ -13,14 +12,14 @@ import Loader from '../ui/Loader';
 
 const SimpleHeader = () => {
   const [searchData, setSearchData] = useState<any>([]);
-  const [search,setSearch]=useState('')
-  const [searchScript, { isLoading, isSuccess, isError, data }] = useSearchScriptMutation();
-  console.log(data,'searchData');
+
+  const [searchScript, { isLoading,  data }]:any = useSearchScriptMutation();
+ 
   
   const handleSearch =async (e: any) => {
   const value=e.target.value.toLowerCase()
 
-  setSearch(value)
+
   if (value === '') {
     setSearchData([]);
   } else {

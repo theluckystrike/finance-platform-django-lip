@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';const useToast = () => {
   const showToast = (message: string, options?: ToastOptions) => {
     toast(message, {
       position: 'top-right', // Use string values directly
-      autoClose: 3000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

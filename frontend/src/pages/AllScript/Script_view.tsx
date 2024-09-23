@@ -28,9 +28,7 @@ const ScriptView = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // Get the search parameters from the URL
   const { id } = useParams();
-
   const [loginUser, setLoginUser] = useState<any>(null);
 
   // Effect to retrieve loginUser from localStorage on component mount
@@ -128,17 +126,12 @@ const ScriptView = () => {
                 type="button"
                 className="btn icon-button my-1 mx-2"
               >
-                <Icon
-                  icon={changeView ? "InsertChart" : "TableView"}
-                  size="20px"
-                />
-
+                <Icon icon={changeView ? "InsertChart" : "TableView"} size="20px"/>
                 <span>{changeView ? "Chart" : "Table"}</span>
               </button>
             )}
             {/* <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
                     <Icon icon='Info' size='20px'/>
-
                         <span>Info</span>
                     </button> */}
             <button
@@ -233,3 +226,4 @@ const ScriptView = () => {
 };
 
 export default ScriptView;
+ 

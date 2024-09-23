@@ -30,14 +30,17 @@ const Report = () => {
     }
   }, []);
   useEffect(() => {
-    const getDAta = async () => {
-      try {
-        await dispatch(GetAllreports({ token: loginUser?.access }));
-      } catch (error) {
-        //console.log(error);
+    if(loginUser){
+
+      const getDAta = async () => {
+        try {
+          await dispatch(GetAllreports({ token: loginUser?.access }));
+        } catch (error) {
+          //console.log(error);
       }
     };
     getDAta();
+  }
   }, [loginUser]);
 
  
@@ -123,7 +126,7 @@ const Report = () => {
          <Loader/>
         )}
       </div>
-      <CreateReports show={show} handleClose={handleClose} />
+   
 
       <MergeReports show={mergeshow} handleClose={()=>setShowmerges(false)}  allreport={allreport}/>
     </div>

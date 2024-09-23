@@ -21,7 +21,7 @@ const validationSchema = Yup.object({
 const UploadScriptForm = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
-const fileRef:any = useRef(null)
+  const fileRef:any = useRef(null)
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -30,7 +30,15 @@ const fileRef:any = useRef(null)
     }
   }, []);
 
-  const { data: AllCategory, isError } = useGetAllCategoryQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 });
+  const { data: AllCategory, isError } = useGetAllCategoryQuery(
+    { token: loginUser?.access, page_no: 1, page_size: 1000 },
+    {
+      skip: !loginUser, // Skip query execution if loginUser is null
+    }
+  );
+
+ 
+
   const categoryData = AllCategory?.results || [];
  
   
@@ -38,7 +46,10 @@ const fileRef:any = useRef(null)
   
   const [categoryFilter, setCategoryFilter] = useState<any>([]);
 
-  const { data, error, isLoading } = useGetuserbytokenQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 });
+  const { data, error, isLoading } = useGetuserbytokenQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 },
+    {
+      skip: !loginUser, // Skip query execution if loginUser is null
+    });
   const [show, setShow] = useState(false);
   const [selectValue, setSelectValue] = useState('');
 
@@ -51,7 +62,7 @@ const fileRef:any = useRef(null)
       output_type: '',
       name: '',
       file: null,
-      description:'sadasd',
+      description:'',
       parentName:''
     },
     validationSchema,

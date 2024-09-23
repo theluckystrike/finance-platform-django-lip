@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateScript, DeleteScriptByID, GetAllScript, GetScriptByID, RunScript, UpdateScript} from "./ScriptApi";
+import { CreateScript, DeleteScriptByID, GetAllScript, GetScriptbyCategory, GetScriptByID, RunScript, UpdateScript} from "./ScriptApi";
 
 const initialState:any = {
   Scripts: [],
@@ -36,6 +36,10 @@ export const GetScriptByIDs:any = AsyncFunctionThunk('GetScriptByIDs', GetScript
 export const RunScripts:any = AsyncFunctionThunk('RunScripts', RunScript);
 export const DeleteScriptByIDs:any = AsyncFunctionThunk('DeleteScriptByIDs',DeleteScriptByID)
 export const UpdateScripts:any = AsyncFunctionThunk('UpdateScripts',UpdateScript)
+export const GetScriptbyCategorys:any = AsyncFunctionThunk('GetScriptbyCategorys',GetScriptbyCategory)
+
+
+
 
 
 
@@ -68,6 +72,17 @@ const ScriptSlice = createSlice({
         state.loading = true;
       })
       .addCase(GetAllScripts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetScriptbyCategorys.fulfilled, (state, action) => {
+        state.Scripts = action.payload;
+        state.loading = false;
+      })
+      .addCase(GetScriptbyCategorys.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(GetScriptbyCategorys.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

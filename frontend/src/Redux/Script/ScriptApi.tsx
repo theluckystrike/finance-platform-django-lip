@@ -1,151 +1,90 @@
-import axios from "axios";
-import { endpoint } from "../endpoint";
+// src/api/scriptsApi.js
+import axiosInstance from '../APInterceptors';
+import { endpoint } from '../endpoint';
 
-export const CreateScript = async (data: any) => {
-  const { formData, token } = data;
+// Create Script
+export const CreateScript = async (data:any) => {
+  const { formData } = data;
 
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}scripts/upload/`,
-      formData,
-      { headers }
-    );
-
+    const response = await axiosInstance.post(endpoint.scripts, formData);
     return response;
   } catch (error) {
-    //console.log(error);
     throw error;
   }
 };
 
-export const UpdateScript = async (data: any) => {
-  const { formData, token, scriptId } = data;
+// Update Script
+export const UpdateScript = async (data:any) => {
+  const { formData, scriptId } = data;
 
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the PATCH request with headers
-    const response = await axios.patch(
-      `${process.env.REACT_APP_API_URL}scripts/upload/${scriptId}/`,
-      formData,
-      { headers }
+    const response = await axiosInstance.patch(
+      `scripts/upload/${scriptId}/`,
+      formData
     );
-
     return response;
   } catch (error) {
-    //console.log(error);
     throw error;
   }
 };
 
-
-
-export const GetScriptByID = async (data: any) => {
-  const {token,id } = data;
+// Get Script by ID
+export const GetScriptByID = async (data:any) => {
+  const { id } = data;
 
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}${endpoint.scripts}/${id}`,
-      { headers }
-    );
- 
-
+    const response = await axiosInstance.get(`${endpoint.scripts}/${id}`);
     return response;
   } catch (error) {
-    //console.log(error);
     throw error;
   }
 };
 
-
-
-export const DeleteScriptByID = async (data: any) => {
-  const {token,id } = data;
+// Delete Script by ID
+export const DeleteScriptByID = async (data:any) => {
+  const { id } = data;
 
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.delete(
-      `${process.env.REACT_APP_API_URL}${endpoint.scripts}/${id}`,
-      { headers }
-    );
- 
-
+    const response = await axiosInstance.delete(`${endpoint.scripts}/${id}`);
     return response;
   } catch (error) {
-    //console.log(error);
     throw error;
   }
 };
 
-
-export const GetAllScript = async (data: any) => {
-  const {token } = data;
-
+// Get All Scripts
+export const GetAllScript = async () => {
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}${endpoint.scripts}`,
-      { headers }
-    );
- 
-
+    const response = await axiosInstance.get(endpoint.scripts);
     return response;
   } catch (error) {
-    //console.log(error);
     throw error;
   }
 };
 
-
-export const RunScript = async (data: any) => {
-  const {token,id} = data;
+// Get Scripts by Category
+export const GetScriptbyCategory = async (data:any) => {
+  const { value } = data;
 
   try {
-    // Set up headers with the Bearer token
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    };
-
-    // Make the POST request with headers
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}${endpoint.scripts}/${id}/run`,{},
-      { headers }
+    const response = await axiosInstance.get(
+      `${endpoint.scripts}?category=${value}`
     );
-
     return response;
   } catch (error) {
-    //console.log(error);
+    throw error;
+  }
+};
+
+// Run Script
+export const RunScript = async (data:any) => {
+  const { id } = data;
+
+  try {
+    const response = await axiosInstance.post(`${endpoint.scripts}/${id}/run`);
+    return response;
+  } catch (error) {
     throw error;
   }
 };

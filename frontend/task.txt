@@ -1,42 +1,27 @@
-Jeffery reply:
-
-checked the cradle version. Looks great and seems to run pretty smooth.
+ Hi,
 
 
 
-on the tape tape summary. I want to be able to as follows
-
-
-
-1) select a group of scripts already on the website
-2) add some additional code to the scripts so that they produce a table which can transmit some information based on given criteria
-3) display the script on the tab along with the information based on the criteria in step 2
-4) display a chart at the top of the page which is based upon the summation of the various critera from all scripts included only on the tape summary tab.
-
-
-
-so, for example. You pick 5 scripts to appear on tht tab. The critiera of each of the 5 scripts can be a value which is equal to -1,0 or 1. On a given day all 5 scripts are generating a value of 1. Therefor the chart above the scripts plots a 5 on that day. the next day the sum might be 3, then the chart plots a 3 and so on. Overtime you generate a time series from the results of your criteria.
-
-i understand. for now lets focus on getting the craddle in to production. It looks like the scripts still are not populating. once we have the new production version and the tape summary we can do a debrief regarding next steps. but pls do not spend anytime on anything besides that.
+The /api/scripts endpoint already has a query parameter for filtering scripts by their category - 
+this is outlined in the documentation. So you can use something like /api/scripts?category=11 to filter for scripts whose category has ID 11.
 
 
 
 
+I have also added the endpoint GET /api/categories/tree which will return a JSON formatted tree of all the categories
+ on the website by their ID. If you are storing the categories on the front end with keyval or something similar then you should be 
+ able to easily find the names and other data of the categories using their IDs from the tree. Let me know if this format is ok for you.
 
 
 
+In terms of the Tape Summary, I think we will need to implement that later on the front end. It will require some new code and 
+logic on the back end to make it possible.
 
 
 
+I will also add the raw chart data to the chart_data field of Scripts in the API so that you can use it to plot the chart with a front end
+library and not an image. It will probably be in CSV format. I will let you know once I finish that.
 
-For the All Scripts page, I will add query parameters to the url so that you can filter by category. The”Save” button should just make a new report with the scripts that are selected by the user, there is already an endpoint for this.
 
-For editing Script Files, you can simply use a PATCH request to the /api/scripts/{id} endpoint to update the file with a new, edited one
 
-On the script details page there is no need for past and present at the moment as far I know. We have not implemented that and don’t need it
-
-On the report detail page you already have all of the API endpoints you need. For updating use /api/reports{id}/update. For view latest you should be linking to the report’s latest_pdf field which is a let field provided by a GET request to /api/reports{id}. These are all in the documentation and already implemented
-
-For Tape summary I still need to discuss this with Jeffrey
-
-I will provide an endpoint for proving a category tree too
+For now you should be able to add the filtering to the All Scripts page by category using the API.

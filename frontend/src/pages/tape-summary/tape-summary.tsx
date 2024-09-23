@@ -39,15 +39,17 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
    }, []);
   useEffect(()=>{
  
-  
-  const  getDAta =async ()=>{
-    try {
-      await  dispatch(GetAllScripts({token:loginUser?.access}))
-    } catch (error) {
-      //console.log(error);
+  if(loginUser){
+
+    const  getDAta =async ()=>{
+      try {
+        await  dispatch(GetAllScripts({token:loginUser?.access}))
+      } catch (error) {
+        //console.log(error);
+      }
     }
+    getDAta()
   }
-  getDAta()
  
        },[loginUser])
  
@@ -184,7 +186,7 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
         </div>
       </div>
 
-      <FilterModal show={show} handleClose={() => setShow(false)} />
+ 
       <SaveModal show={saveShow} handleClose={() => setSaveShow(false)} />
     </>
   );
