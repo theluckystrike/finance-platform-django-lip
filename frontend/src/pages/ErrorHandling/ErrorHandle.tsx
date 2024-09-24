@@ -6,7 +6,7 @@ import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
 import ArrowDown from '../../assest/image/arrow-down.png'
 import { ScriptData } from "../../DummyData/TableData";
-import { useCreateScriptMutation } from "../../Redux/Script"; 
+ 
 import { useGetAllProjectQuery } from "../../Redux/Project";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";

@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
 import ArrowDown from '../../assest/image/arrow-down.png';
-import { useGetuserbytokenQuery } from "../../Redux/AuthSlice";
+import { useGetUserByTokenQuery } from "../../Redux/AuthSlice";
 import { useGetAllCategoryQuery } from "../../Redux/CategoryQuery";
 import { useDispatch } from "react-redux";
 import { CreateScripts } from "../../Redux/Script/ScriptSlice";
@@ -46,7 +46,7 @@ const UploadScriptForm = () => {
   
   const [categoryFilter, setCategoryFilter] = useState<any>([]);
 
-  const { data, error, isLoading } = useGetuserbytokenQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 },
+  const { data, error, isLoading } = useGetUserByTokenQuery({ token: loginUser?.access, page_no: 1, page_size: 1000 },
     {
       skip: !loginUser, // Skip query execution if loginUser is null
     });
@@ -82,28 +82,28 @@ fileRef.current.value=''
     },
   });
 
-  useEffect(() => {
-    const categoryMap: any = {};
-    categoryData.forEach((cat: any) => {
-      categoryMap[cat.id] = { ...cat, subcategories: [] };
-    });
-    categoryData.forEach((cat: any) => {
-      if (cat?.parent_category !== null) {
-        const parent:any = Object.values(categoryMap).find(
-          (parentCat: any) => parentCat.name === cat?.parent_category
-        );
-        if (parent) {
-          parent.subcategories.push(categoryMap[cat.id]);
-        }
-      }
-    });
-    const structuredCategories = Object.values(categoryMap).filter(
-      (cat: any) => cat?.parent_category === null
-    );
+  // useEffect(() => {
+  //   const categoryMap: any = {};
+  //   categoryData.forEach((cat: any) => {
+  //     categoryMap[cat.id] = { ...cat, subcategories: [] };
+  //   });
+  //   categoryData.forEach((cat: any) => {
+  //     if (cat?.parent_category !== null) {
+  //       const parent:any = Object.values(categoryMap).find(
+  //         (parentCat: any) => parentCat.name === cat?.parent_category
+  //       );
+  //       if (parent) {
+  //         parent.subcategories.push(categoryMap[cat.id]);
+  //       }
+  //     }
+  //   });
+  //   const structuredCategories = Object.values(categoryMap).filter(
+  //     (cat: any) => cat?.parent_category === null
+  //   );
  
     
-    setCategoryFilter(structuredCategories);
-  }, [categoryData]);
+  //   setCategoryFilter(structuredCategories);
+  // }, [categoryData]);
 
   return (
     <>

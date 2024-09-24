@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { loginUSer } from "../../../../customHook/getrole";
 
-import { useRefreshtokenMutation } from "../../../../Redux/AuthSlice";
+import { useRefreshTokenMutation } from "../../../../Redux/AuthSlice";
 import useToast from "../../../../customHook/toast";
 import { useSelector } from "react-redux";
 
@@ -25,7 +25,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 }) => {
   const [create, { isLoading, isSuccess, isError, error, data }] =
     useCreateMutation();
-  const [refreshtoken, Res] = useRefreshtokenMutation();
+  const [refreshtoken, Res] = useRefreshTokenMutation();
 
   
 

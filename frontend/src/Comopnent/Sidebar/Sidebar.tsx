@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useToast from "../../customHook/toast";
 import { MenuItem } from "../../types/MenuTypes";
 import { GetRole, loginUSer } from "../../customHook/getrole";
-import { useSignoutMutation } from "../../Redux/AuthSlice";
+import { useSignOutMutation } from "../../Redux/AuthSlice";
 const Sidebar = () => {
   const admin = GetRole()
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const toast =useToast()
     navigate(`${value}`);
   };
 
-  const [signout, Res] = useSignoutMutation();
+  const [signout, Res] = useSignOutMutation();
   const logout = async()=>{
  await signout({token:loginUSer})
     localStorage.removeItem('login');
