@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import Modal from "react-bootstrap/Modal";
 import ArrowDown from "../../../../assest/image/arrow-down.png";
 import { useGetAllCategoryQuery } from "../../../../Redux/CategoryQuery";
-import { GetScriptbyCategorys } from "../../../../Redux/Script/ScriptSlice";
+import { GetAllScripts, GetScriptbyCategorys } from "../../../../Redux/Script/ScriptSlice";
 import { useDispatch } from "react-redux";
 
 interface FilterModalProps {
@@ -59,7 +59,10 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
       handleClose(); // Close modal on form submission
     },
   });
-
+  const reset = async() =>{ 
+    await  dispatch(GetAllScripts({token:loginUser?.access}))
+    handleClose()
+  };
   return (
     <Modal
       size="lg"
@@ -171,7 +174,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                 </label>
 
                 <button
-                  onClick={handleClose}
+                  onClick={reset}
                   style={{
                     width: "45%",
                   }}
