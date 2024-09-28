@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllScripts } from "../../../../Redux/Script/ScriptSlice";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { ErrorMessage, useFormik } from 'formik';
 import * as Yup from "yup";
 import Select, { MultiValue } from "react-select";
 import { Createreports } from "../../../../Redux/Report/Slice";
@@ -13,16 +13,46 @@ interface ScriptOption {
   label: string;
 }
 
+// Define the type for Formik values
+interface FormValues {
+  name: string;
+  scripts: string[]; // 'scripts' is an array of strings (ids)
+}
+
 interface CreateReportsProps {
   show: boolean;
   handleClose: () => void;
+  selectedScripts: any;
 }
 
-const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
+const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScripts }) => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
+console.log(selectedScripts,'selectedScripts');
+
+  
+
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    scripts: Yup.array().of(Yup.string()).min(1, "At least one script must be selected"),
+  });
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      name: "",
+      scripts: selectedScripts
+    },
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values,'values');
+      
+      // dispatch(Createreports({ values, token: loginUser.access }));
+      // handleClose(); // Close modal after submission
+    },
+  });
 
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -32,16 +62,15 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
   }, []);
 
   useEffect(() => {
-    if(loginUser){
-
-      const getDAta = async () => {
+    if (loginUser) {
+      const getData = async () => {
         try {
           await dispatch(GetAllScripts({ token: loginUser?.access }));
         } catch (error) {
-     console.log(error);
+          console.log(error);
         }
       };
-      getDAta();
+      getData();
     }
   }, [loginUser, dispatch]);
 
@@ -50,20 +79,6 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
     value: script.id,
     label: script.name,
   }));
-
-  // Form validation schema
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    scripts: Yup.array().of(Yup.string()).min(1, "At least one script must be selected")
-  });
-
-  // Handle form submission
-  const handleSubmit = (values: any) => {
- 
-    dispatch(Createreports({values:values,token:loginUser.access}));
-
-    handleClose(); // Close modal after submission
-  };
 
   return (
     <Modal
@@ -77,72 +92,69 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose }) => {
         className="bg-light-green"
         style={{
           borderRadius: "25px",
-          overflow: "hidden",
         }}
       >
         <h5>Create Reports</h5>
 
-        <Formik
-          initialValues={{ name: '', scripts: [] }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ setFieldValue, values }) => (
-            <Form>
-              <div className="mb-3">
-                <div className="row mx-0 px-3">
-                  <div className="col-12 m-0">
-                    <label htmlFor="name" className="form-label">
-                      Name
-                    </label>
-                    <Field
-                      id="name"
-                      name="name"
-                      className="form-control m-0"
-                      required
-                    />
-                    <ErrorMessage name="name" component="div" className="text-danger" />
-                  </div>
-
-                  <div className="col-12">
-                    <label htmlFor="scripts" className="form-label">
-                      Scripts
-                    </label>
-                    <Select
-                      id="scripts"
-                      name="scripts"
-                      isMulti
-                      options={scriptOptions}
-                      onChange={(selectedOptions: MultiValue<ScriptOption> | null) => {
-                        const values = selectedOptions ? selectedOptions.map((option) => option.value) : [];
-                        setFieldValue("scripts", values);
-                      }}
-                      // value={scriptOptions.filter((option) => values.scripts.includes(option.value))}
-                      placeholder="Select Scripts"
-                    />
-                    <ErrorMessage name="scripts" component="div" className="text-danger" />
-                  </div>
-
-                  <div className="col-12 row justify-content-evenly m-0">
-                    <button
-                      onClick={handleClose}
-                      className="btn btn-dark col-5 px-3 fw-bold"
-                      type="button"
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn btn-dark col-5 px-3 fw-bold"
-                    >
-                      Create
-                    </button>
-                  </div>
-                </div>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="mb-3">
+            <div className="row mx-0 px-3">
+              <div className="col-12 m-0">
+                <label htmlFor="name" className="form-label">
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  className="form-control m-0"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+            
               </div>
-            </Form>
-          )}
-        </Formik>
+
+              <div className="col-12">
+                <label htmlFor="scripts" className="form-label">
+                  Scripts
+                </label>
+                <Select
+                  id="scripts"
+                  name="scripts"
+                  isMulti
+                  options={scriptOptions}
+                  onChange={(selectedOptions: MultiValue<ScriptOption> | null) => {
+                    const values = selectedOptions
+                      ? selectedOptions.map((option) => option.value)
+                      : [];
+                    formik.setFieldValue("scripts", values);
+                  }}
+                  value={scriptOptions.filter((option: ScriptOption) =>
+                    formik.values.scripts.includes(option.value)
+                  )}
+                  placeholder="Select Scripts"
+                />
+            
+              </div>
+
+              <div className="col-12 row justify-content-evenly m-0">
+                <button
+                  onClick={handleClose}
+                  className="btn btn-dark col-5 px-3 fw-bold"
+                  type="button"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-dark col-5 px-3 fw-bold"
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
       </Modal.Body>
     </Modal>
   );

@@ -24,7 +24,7 @@ const store:any = useSelector((i)=>i)
 
  
  const allscripts = store?.script?.Scripts?.results
- const [selectedScripts, setSelectedScripts] = useState([]);
+ const [selectedScripts, setSelectedScripts] = useState<any>([]);
 
  
  const [loginUser, setLoginUser] = useState<any>(null);
@@ -55,18 +55,40 @@ const store:any = useSelector((i)=>i)
 
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
-  const handleClose = () => setShow(false);
+  const handleClose = async() =>{ setShow(false)
+    await  dispatch(GetAllScripts({token:loginUser?.access}))
+  };
   const handleShow = () => {
     setShow(true);
   };
   const [Saveshow, setSaveShow] = useState(false);
   const handleSaveClose = () => setSaveShow(false);
  
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      // Select all scripts
+      const allScriptIds:any = items.map((script: any) => script.id);
+      setSelectedScripts(allScriptIds);
+    } else {
+      // Deselect all scripts
+      setSelectedScripts([]);
+    }
+  };
 
- 
 
+  const handleCheckboxChange = (id: any) => {
+    if (selectedScripts.includes(id)) {
+      setSelectedScripts(selectedScripts.filter((scriptId:any) => scriptId !== id));
+    } else {
+      setSelectedScripts([...selectedScripts, id]);
+    }
+  };
+   // Check if all scripts are selected
+   const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
+   const isAllSelected = selectedScripts.length === items.length;
 
-  const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
+console.log(isAllSelected,selectedScripts,'aersgfstsrt');
+
  
   return (
     <> 
@@ -104,120 +126,114 @@ const store:any = useSelector((i)=>i)
         </div>
         <div>
           {!loading ? (
-            <form method="post" id="customReportForm">
-              <div className="row mb-2 p-2 fw-bold w-100">
-              <div className="col-1" >
-                  <h6>
-                    {/* <input
-                      type="checkbox"
-                      id="selectAllCheckbox"
-                      onChange={toggleSelectAll}
-                    />{" "} */}
-                    <span  >
-Sr no.                    
-                  </span>
-                  </h6>
-                </div>
-                <div className="col-4" >
-                  <h6>
-                    {/* <input
-                      type="checkbox"
-                      id="selectAllCheckbox"
-                      onChange={toggleSelectAll}
-                    />{" "} */}
-                    <span onClick={() => requestSort('name')}>
+    <div style={{overflow: 'auto'}} id="customReportForm" >
+    <table className="table" style={{minWidth:'1000px'}}>
+      <thead>
+        <tr className="fw-bold mb-2 p-2">
+          <th scope="col" className="col-1">
+          <input
+                        type="checkbox"
+                        id="selectAllCheckbox"
+                        checked={isAllSelected}
+                        onChange={handleSelectAll}
+                      />
+          </th>
+          <th scope="col" className="col-4" onClick={() => requestSort('name')}>
+            <h6>
+              <span>Name</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('name')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('description')}>
+            <h6>
+              <span>Description</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('description')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-1 text-center mx-auto" onClick={() => requestSort('category.name')}>
+            <h6>
+              <span>Category</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('category.name')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('created')}>
+            <h6>
+              <span>Created</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('created')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('last_updated')}>
+            <h6>
+              <span>Last Updated</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('last_updated')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="scriptsCheckboxes">
+        {items.length > 0 ? (
+          items.map((script: any, index: any) => (
+                <>
+            <tr key={index} className="table-card rounded-3 bg-light-green mb-2 p-3" style={{borderRadius:'10px'}}>
+              <td className="col-1">
+              <input
+                              type="checkbox"
+                              checked={selectedScripts.includes(script.id)}
+                              onChange={() => handleCheckboxChange(script.id)}
+                            />
+              </td>
+              <td className="col-4">
+                <Link to={`/account/ScriptDetails/${script.id}`} className="text-decoration-none text-black">
+                  <span className="fw-bold">{script.name}</span>
+                </Link>
+              </td>
+              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
+              <td className="col-1 text-center wrap-word mx-auto">{script?.category?.name}</td>
+              <td className="col-2 text-center mx-auto">
+                <DateFormatter isoString={script.created} />
+              </td>
+              <td className="col-2 text-center mx-auto">
+                <DateFormatter isoString={script.last_updated} />
+              </td>
+            </tr>
+            <tr style={{height:'10px'}}>
 
-                    Name
+            </tr>
+            </>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={6}>
+              {store?.script?.Scripts?.count === 0 ? <p>No scripts found</p> : <Loader />}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  
 
-                    <Icon
-									size='10px'
-									className={getClassNamesFor('name')}
-									icon='FilterList'
-                  />
-                  </span>
-                  </h6>
-                </div>
-
-               
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('description')} >Description
-                <Icon
-									size='10px'
-									className={getClassNamesFor('description')}
-									icon='FilterList'
-                  />
-
-               
-                </div>
-                <div className="col-1 mx-auto text-center"  onClick={() => requestSort('category.name')}>Category<Icon
-									size='10px'
-									className={getClassNamesFor('category.name')}
-									icon='FilterList'
-                  />
-</div>
-                
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('created')}>Created<Icon
-									size='10px'
-									className={getClassNamesFor('created')}
-									icon='FilterList'
-                  /></div>
-                <div className="col-2 mx-auto text-center" onClick={() => requestSort('last_updated')}>LastUpdated<Icon
-									size='10px'
-									className={getClassNamesFor('last_updated')}
-									icon='FilterList'
-                  /></div>
-              </div>
-              <div id="scriptsCheckboxes">
-                {items.length > 0 ? items?.map((script: any,index:any) => (
-                  <Link
-                    to={`/account/ScriptDetails/${script.id}`}
-                    className="text-decoration-none text-black"
-                    key={index}
-                  >
-                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                   < div className="col-1">
-                        <span className="fw-bold  ">
-                      
-                          {index+1}
-                        </span>
-                      </div>
-                      <div className="col-4">
-                        <span className="fw-bold  ">
-                          {/* <input
-                            className="chbx"
-                            type="checkbox"
-                            name="scripts"
-                            value={script.id}
-                            onChange={handleCheckboxChange}
-                          /> */}
-                          {script.name}
-                        </span>
-                      </div>
-                      <div className="col-2 mx-auto text-center wrap-word">
-                        {script.description}
-                      </div>
-                      <div className="col-1 mx-auto text-center wrap-word">
-                        {script?.category?.name}
-                      </div>
-                      <div className="col-2 mx-auto text-center">
-                      <DateFormatter isoString={script.created}/>
-                      </div>
-                      <div className="col-2 mx-auto text-center">
-                      <DateFormatter isoString={script.last_updated}/>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              :  <div>
-
-{
-store?.script?.Scripts?.count === 0 ? <p>no scripts found</p>
-:<Loader/>
-}
-
-                </div>
-              }
-              </div>
-            </form>
+         
           ) : (
             <span className="text-large">
                <Loader/>
@@ -228,7 +244,7 @@ store?.script?.Scripts?.count === 0 ? <p>no scripts found</p>
 
       <FilterModal show={show} handleClose={handleClose} />
       <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
-      <CreateReports show={showReport} handleClose={( )=>setShowReport(false)} />
+      <CreateReports show={showReport} handleClose={( )=>setShowReport(false)} selectedScripts={selectedScripts} />
     </>
   );
 };

@@ -5,16 +5,9 @@ import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
 import { loginUSer } from '../../customHook/getrole';
 
 const Profile: React.FC = () => {
-
-
 const { data, error, isLoading } = useGetUserByTokenQuery({ token:loginUSer.access, page_no:1, page_size:1000 },{
   skip: !loginUSer, // Skip query execution if loginUser is null
 });
-
- 
-
-
-
 const [selectedImage, setSelectedImage] = useState(null);
 const fileInputRef :any= useRef(null);
 

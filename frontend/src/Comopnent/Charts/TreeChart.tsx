@@ -134,7 +134,7 @@ const RenderTree = (data: any, token: any, level = 0) => {
 
 const CategoryTree = ({ categoryFilter, token }: any) => {
   return (
-    <div className="category-tree mx-auto w-25">
+    <div className="category-tree mx-auto col-3">
       <h3>Category Tree</h3>
       {RenderTree(categoryFilter, token)}
     </div>

@@ -1,6 +1,7 @@
 // src/api/axiosInstance.js
 import axios from 'axios';
 import { toast, ToastOptions, ToastPosition, TypeOptions } from 'react-toastify';
+import { endpoint } from './endpoint';
  
 // Create an Axios instance
 const axiosInstance = axios.create({
@@ -16,7 +17,11 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token?.access}`;
     }
-    config.headers['Content-Type'] = 'multipart/form-data';
+    if (config.url === endpoint.reports ) {
+      config.headers['Content-Type'] = 'application/json';  // For Createreport
+    } else {
+      config.headers['Content-Type'] = 'multipart/form-data';  // For others
+    }
     return config;
   },
   (error) => {

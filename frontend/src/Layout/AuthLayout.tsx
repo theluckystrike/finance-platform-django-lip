@@ -13,10 +13,10 @@ const AuthLayout = () => {
 
   return (
     <div className="row m-0 p-0" >
-		   <div className="col-2 p-0 ">
+		   <div className="col-md-2 d-md-flex d-none p-0 ">
 			   <Sidebar/>
 	       </div>
-         <div className="col-10 vh-100 overflow-auto p-0"  >
+         <div className="col-sm-12 col-md-10 vh-100 overflow-auto p-0"  >
          <div className="header-fixed">
           <SimpleHeader />
          </div>

@@ -120,7 +120,7 @@ fileRef.current.value=''
             <div className="mb-3">
               <label htmlFor="category" className="form-label">Category</label>
               <div className="row mx-0 p-0">
-                <div className="col-11 m-0 p-0 pe-1">
+                <div className="col-10 col-sm-10 col-md-11 m-0 p-0 pe-1">
                   <div className="dropdown">
                     <div className="arrow_down">
                       <img src={ArrowDown} alt="" />
@@ -146,7 +146,7 @@ fileRef.current.value=''
                   </div>
                 </div>
                 <button
-                  className="btn btn-dark col col-1 p-0 justify-content-center"
+                  className="btn btn-dark col-2 col-sm-2 col-md-1 p-0 justify-content-center"
                   type="button"
                   onClick={handleShow}
                 >
@@ -210,11 +210,11 @@ fileRef.current.value=''
               ) : null}
             </div>
 
-            <div className="mx-auto text-center d-flex justify-content-between">
-              <button type="submit" className="btn btn-dark px-5">Upload</button>
+            <div className="mx-auto text-center d-flex justify-content-between row ">
+              <button type="submit" className="btn btn-dark my-1 first-line:col-12 col-sm-12 col-md-5">Upload</button>
               <button
                 type="reset"
-                className="btn btn-light bordered-button px-5"
+                className="btn btn-light bordered-button my-1  col-12 col-sm-12 col-md-5"
                 onClick={() => formik.resetForm()}
               >
                 Reset

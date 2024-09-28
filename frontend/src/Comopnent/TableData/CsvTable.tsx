@@ -28,8 +28,8 @@ const CsvDisplay = ({ csvUrl }: any) => {
   }, [csvUrl]);
 
   return (
-    <div>
-      <table className="TableData">
+    <div style={{overflow: 'auto'}}>
+      <table className="TableData" style={{minWidth:'800px'}}>
         <thead>
           <tr>
             {headers.map((header, index) => (

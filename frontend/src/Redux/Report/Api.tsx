@@ -1,18 +1,17 @@
 // src/api/reportsApi.js
+import axios from 'axios';
 import axiosInstance from '../APInterceptors'; // Adjust the import path if necessary
 import { endpoint } from '../endpoint';
 
 // Create Report
 export const Createreport = async (data:any) => {
   const { values } = data;
+ 
 
   try {
     const response = await axiosInstance.post(
       endpoint.reports,
-      {
-        name: values.name,
-        scripts: [...values.scripts],
-      }
+      values
     );
     return response;
   } catch (error) {

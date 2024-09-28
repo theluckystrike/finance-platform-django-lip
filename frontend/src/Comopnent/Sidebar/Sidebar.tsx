@@ -24,7 +24,7 @@ const toast =useToast()
     toast.InfoToast('Logout successful')
   }
   return (
-    <div className="bg-green text-light vh-100 d-flex flex-column">
+    <div className="bg-green text-light vh-100 d-flex flex-column w-100" >
       <div className="d-flex justify-content-center">
         <Logo className="icon" width={160} height={70} />
       </div>
@@ -75,7 +75,6 @@ const toast =useToast()
           Admin Portal
             </span>
 <span className="dropdown-item" onClick={logout}>
-
               Sign Out
 </span>
      

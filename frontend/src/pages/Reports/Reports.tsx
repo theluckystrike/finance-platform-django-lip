@@ -12,14 +12,9 @@ import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports"
 import DateFormatter from "../../customHook/useTImeformnt";
 
 const Report = () => {
- 
-
   const dispatch = useDispatch();
-
   const [loginUser, setLoginUser] = useState<any>(null);
-
   const store: any = useSelector((i) => i);
-
   const { loading } = store?.report;
   const allreport = store?.report?.reports?.results; 
   const { items, requestSort, getClassNamesFor } = useSortableData(allreport || []);
@@ -82,46 +77,53 @@ const Report = () => {
       </div>
       <div>
         {items.length > 0 ? (
-          <form method="post" id="customReportForm">
-            <div className="row mb-2 p-2 fw-bold w-100">
-            <div className="col-1">
+          <div style={{overflow: 'auto'}} id="customReportForm" >
+    <table className="table" style={{minWidth:'1000px'}}>
+          <thead>
+            <tr className="fw-bold mb-2 p-2">
+              <th scope="col" className="col-1">
                 <h5>Sr no.</h5>
-              </div>
-              <div className="col-7">
+              </th>
+              <th scope="col" className="col-7">
                 <h5>Report Name</h5>
-              </div>
+              </th>
+              <th scope="col" className="col-2 text-center mx-auto">
+                Created
+              </th>
+              <th scope="col" className="col-2 text-center mx-auto">
+                Last Updated
+              </th>
+            </tr>
+          </thead>
+          <tbody id="scriptsCheckboxes">
+            {items.map((script: any, index: any) => (
+                  <>
+              <tr key={script.id} className="table-card rounded-3 bg-light-green mb-2 p-3">
+                <td className="col-1 fw-bold fs-6">{index + 1}</td>
+                <td className="col-7 fw-bold fs-6">
+                  <Link
+                    to={`/account/ReportDetails/${script.id}`}
+                    className="text-decoration-none text-black"
+                    >
+                    {script.name}
+                  </Link>
+                </td>
+                <td className="col-2 text-center mx-auto">
+                  <DateFormatter isoString={script.created} />
+                </td>
+                <td className="col-2 text-center mx-auto">
+                  <DateFormatter isoString={script.last_updated} />
+                </td>
+              </tr>
+              <tr style={{height:'10px'}}>
 
-              <div className="col-2 mx-auto text-center">Created</div>
-              <div className="col-2 mx-auto text-center">Last updated</div>
-            </div>
-            <div id="scriptsCheckboxes">
-              {items.map((script: any,index:any) => (
-                <Link
-                  to={`/account/ReportDetails/${script.id}`}
-                  className="text-decoration-none text-black"
-                  key={script.id}
-                >
-                  <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                  <div className="col-1">
-                      <span className="fw-bold fs-6">{index+1}</span>
-                    </div>
-                    <div className="col-7">
-                      <span className="fw-bold fs-6">{script.name}</span>
-                    </div>
-
-                    <div className="col-2 mx-auto text-center">
-                    <DateFormatter isoString={script.created}/>
-                      
-                    </div>
-                    <div className="col-2 mx-auto text-center">
-                    <DateFormatter isoString={script.last_updated}/>
- 
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </form>
+              </tr>
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
         ) : (
          <Loader/>
         )}

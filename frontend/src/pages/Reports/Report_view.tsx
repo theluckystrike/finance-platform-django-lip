@@ -194,78 +194,93 @@ useEffect(() => {
         </form>
         <div>
           {! loading? (
-            <form method="post" id="customReportForm">
-              <div className="row mb-2 p-2 fw-bold w-100">
-                <div className="col-5">
-                  <h5>
-                    <input
-                      type="checkbox"
-                      id="selectAllCheckbox"
-                       
-                    />{" "}
-                    Name
-                  </h5>
-                </div>
-            
-                <div className="col-2 mx-auto text-center">Description</div>
-                <div className="col-2 mx-auto text-center">Category</div>
-                <div className="col-2 mx-auto text-center">Created</div>
-                <div className="col-1 mx-auto text-center">Remove</div>
-              </div>
-              <div id="reportsCheckboxes">
-                {filteredScripts ? ( filteredScripts.map((report: any) => (
-              
-                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                      <div className="col-5">
-                        <Link
-                    to={`/account/ScriptDetails/${report.id}`}
-                    className="text-decoration-none text-black"
-                    key={report.id}
-                  >
-                        <span className="fw-bold fs-6">
-                          <input
-                            className="chbx"
-                            type="checkbox"
-                            name="reports"
-                            value={report.id}
-                 
-                          />
-                          {report.name}
-                        </span>
+           <div id="customReportForm" style={{overflow: 'auto'}}>
+           <table className="table   w-100" style={{minWidth:'1000px'}}>
+             <thead>
+               <tr className="fw-bold mb-2 p-2">
+                 <th scope="col" className="col-5">
+                   <h5>
+                     <input
+                       type="checkbox"
+                       id="selectAllCheckbox"
+                     />{" "}
+                     Name
+                   </h5>
+                 </th>
+                 <th scope="col" className="col-2 text-center mx-auto">
+                   Description
+                 </th>
+                 <th scope="col" className="col-2 text-center mx-auto">
+                   Category
+                 </th>
+                 <th scope="col" className="col-2 text-center mx-auto">
+                   Created
+                 </th>
+                 <th scope="col" className="col-1 text-center mx-auto">
+                   Remove
+                 </th>
+               </tr>
+             </thead>
+             <tbody id="reportsCheckboxes">
+               {filteredScripts ? (
+                 filteredScripts.map((report: any) => (
+                   <>
+                   <tr key={report.id} className="table-card rounded-3 bg-light-green mb-2 p-3">
+                     <td className="col-5">
+                       <Link
+                         to={`/account/ScriptDetails/${report.id}`}
+                         className="text-decoration-none text-black"
+                       >
+                         <span className="fw-bold fs-6">
+                           <input
+                             className="chbx"
+                             type="checkbox"
+                             name="reports"
+                             value={report.id}
+                           />
+                           {report.name}
+                         </span>
+                       </Link>
+                     </td>
+                     <td className="col-2 text-center mx-auto wrap-word">
+                       {report.Description}
+                     </td>
+                     <td className="col-2 text-center mx-auto wrap-word">
+                       {report?.category?.name}
+                     </td>
+                     <td className="col-2 text-center mx-auto">
+                       <DateFormatter isoString={report.created} />
+                     </td>
+                     <td className="col-1 text-center mx-auto">
+                       <div
+                         onClick={() => removeScript(report.id)}
+                         className="bg-danger p-1 ms-auto"
+                         style={{
+                           width: "27px",
+                           borderRadius: "50%",
+                           color: "white",
+                         }}
+                       >
+                         -
+                       </div>
+                     </td>
+                   </tr>
+                  <tr style={{height:'10px'}}>
 
-                      </Link>
-                      </div> 
-                       <div className="col-2 mx-auto text-center wrap-word">
-                        {report.Description}
-                      </div>
-                      <div className="col-2 mx-auto text-center wrap-word">
-                        {report?.category?.name}
-                      </div>
-                    
-                      <div className="col-2 mx-auto text-center">
-                      <DateFormatter isoString={report.created}/>
-                      </div>
-                      <div className="col-1 mx-auto text-center">
-                        <div
-                        onClick={()=>removeScript(report.id)}
-                          className="bg-danger p-1 ms-auto"
-                          style={{
-                            width: "27px",
-                            borderRadius: "50%",
-                            color: "white",
-                          }}
-                        >
-                          -
-                        </div>
-                      </div>
-                    </div>
-                
-                ))):
-                
-                <Loader/>
-                }
-              </div>
-            </form>
+                  </tr>
+                  </>
+                 ))
+               ) : (
+                 <tr>
+                   <td colSpan={5}>
+                     <Loader />
+                   </td>
+                 </tr>
+               )}
+             </tbody>
+           </table>
+         </div>
+         
           ) : (
             <Loader/>
           )}
