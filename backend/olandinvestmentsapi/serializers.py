@@ -4,9 +4,10 @@ from scriptupload.models import Script, ChartData, TableData, Category, Report, 
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
-        fields = ["url", "username", "email", "groups"]
+        fields = ["username", "email", "groups"]
 
 
 class ChartDataSerializer(serializers.ModelSerializer):

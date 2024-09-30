@@ -27,7 +27,7 @@ MESSAGE_TAGS = {
 }
 
 ALLOWED_HOSTS = ['localhost:8090', 'localhost', '127.0.0.1', 'backend-oland-investments.cradle.services', 'https://www.olandinvesmentslimited.com',
-                 '*.olandinvesmentslimited.com']
+                 '*.olandinvesmentslimited.com', 'https://finance-platform-prototype-4ce168540ea9.herokuapp.com']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",

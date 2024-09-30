@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
 from scriptupload.models import Script
+from rest_framework.authentication import TokenAuthentication
 
 
 class OHLCViewSet(viewsets.ModelViewSet):
@@ -36,6 +37,7 @@ class OHLCViewSet(viewsets.ModelViewSet):
         )
 
     serializer_class = OHLCSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -63,6 +65,7 @@ class IndexActionViewSet(viewsets.ModelViewSet):
         )
 
     serializer_class = IndexActionSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -93,6 +96,7 @@ class IndexConstituentViewSet(viewsets.ModelViewSet):
         )
 
     serializer_class = IndexConstituentSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -125,6 +129,7 @@ class RateViewSet(viewsets.ModelViewSet):
 
     queryset = Rate.objects.all().order_by("date")
     serializer_class = RateSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -156,6 +161,7 @@ class StockExchangeDataViewSet(viewsets.ModelViewSet):
 
     queryset = StockExchangeData.objects.all().order_by("date")
     serializer_class = StockExchangeDataSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -183,6 +189,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ScriptTableDataRetrieveView(generics.RetrieveAPIView):
     queryset = Script.objects.all()
     serializer_class = ScriptSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "id"
 
@@ -192,6 +199,7 @@ class BlackRockXEGDataViewSet(viewsets.ModelViewSet):
     queryset = BlackRockIndexData.objects.all().filter(
         indexticker="XEG").order_by("date")
     serializer_class = BlackRockIndexDataSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
@@ -217,6 +225,7 @@ class BlackRockXDGDataViewSet(viewsets.ModelViewSet):
     queryset = BlackRockIndexData.objects.all().filter(
         indexticker="XDG").order_by("date")
     serializer_class = BlackRockIndexDataSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
