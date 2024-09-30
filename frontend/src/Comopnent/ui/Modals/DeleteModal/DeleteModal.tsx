@@ -27,9 +27,10 @@ const DeleteModal: FC<DeleteModalProps> = ({
   };
 
   return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
+<Modal
+        size="lg"
+        fullscreen="md-down" 
+        aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
@@ -67,7 +68,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
                
                   <button
                     onClick={handleDelete}
-                    className="btn btn-danger col-3 px-3 fw-bold"
+                    className="btn btn-danger col-12 col-sm-12 col-md-6 col-lg-3 px-3 my-1 fw-bold"
                     type="button"
                   >
                     Delete
@@ -75,7 +76,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
                 
                 <button
                   onClick={handleClose}
-                  className="btn btn-light border border-2 border-dark col-3 px-3 fw-bold"
+                  className="btn btn-light border border-2 border-dark col-12 col-sm-12 col-md-6 col-lg-3 px-3 my-1 fw-bold"
                   type="button"
                 >
                   Close

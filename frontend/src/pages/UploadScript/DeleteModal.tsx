@@ -36,9 +36,10 @@ const DeleteModal: FC<DeleteModalProps> = ({
   };
 
   return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
+<Modal
+        size="lg"
+        fullscreen="md-down" 
+        aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}

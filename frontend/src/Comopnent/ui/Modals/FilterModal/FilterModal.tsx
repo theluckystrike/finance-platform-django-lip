@@ -64,9 +64,10 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
     handleClose()
   };
   return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
+<Modal
+        size="lg"
+        fullscreen="md-down" 
+        aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
@@ -88,7 +89,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
         >
           <div className="mb-3">
             <div className="row mx-0 px-5">
-              <div className="col-12 m-0 p-0 pe-1">
+              <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
                 <label htmlFor="category" className="form-label">
                   Category
                 </label>
@@ -132,7 +133,56 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                   </div>
                 </div>
               </div>
-              <div className="col-6 m-0 p-0 my-2">
+
+              
+                <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
+                  <label htmlFor="category" className="form-label">
+                    Sub-Category
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    className="form-select m-0"
+                    required
+                  >
+                    <option value="" disabled selected>
+                      All
+                    </option>
+                    <option value="Returns">Returns</option>
+                    <option value="USD">USD</option>
+
+                    <option value="Bonds">Bonds</option>
+
+                    <option value="CAD">CAD</option>
+
+                    <option value="Breadth">Breadth</option>
+                  </select>
+                </div>
+                <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1 ">
+                  <label htmlFor="category" className="form-label">
+                    Sub-Category 2
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    className="form-select m-0"
+                    required
+                  >
+                    <option value="" disabled selected>
+                      All
+                    </option>
+                    <option value="Returns">Returns</option>
+                    <option value="USD">USD</option>
+
+                    <option value="Bonds">Bonds</option>
+
+                    <option value="CAD">CAD</option>
+
+                    <option value="Breadth">Breadth</option>
+                  </select>
+                </div>
+
+              <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
                 <label htmlFor="category" className="form-label">
                   Add Script
                 </label>
@@ -165,10 +215,10 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                 </div>
               </div>
 
-              <div className="col-6 row m-0 p-0 my-2">
+              <div className="col-12 row m-0 p-0 my-2">
                 <label
                   htmlFor="category"
-                  className="form-label col-12 invisible"
+                  className="form-label col-12  invisible"
                 >
                   Last Updated
                 </label>
@@ -178,7 +228,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                   style={{
                     width: "45%",
                   }}
-                  className="btn form-control btn-light  border-2px col-5 mx-auto fw-bold"
+                  className="btn form-control btn-light  border-2px col-12 col-sm-12 col-md-5 mx-auto fw-bold"
                   type="button"
                 >
                   Reset
@@ -187,7 +237,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                   style={{
                     width: "45%",
                   }}
-                  className="btn form-control  btn-dark col-5 mx-auto fw-bold"
+                  className="btn form-control  btn-dark col-12 col-sm-12 col-md-5 mx-auto fw-bold"
                   type="submit"
                 >
                   Apply

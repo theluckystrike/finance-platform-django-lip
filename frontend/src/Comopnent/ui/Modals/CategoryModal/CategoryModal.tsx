@@ -73,6 +73,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
     <>
       <Modal
         size="lg"
+        fullscreen="md-down" 
         aria-labelledby="contained-modal-title-vcenter"
         centered
         show={show}

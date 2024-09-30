@@ -403,3 +403,8 @@ input:focus {
   border: #000 2px solid !important;
   margin-bottom: 20px !important;
 }
+
+.modal-fullscreen-md-down .modal-content {
+  height: 45% !important;
+ 
+}

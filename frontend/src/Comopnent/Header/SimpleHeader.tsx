@@ -54,9 +54,6 @@ const SimpleHeader = () => {
 </div>
       <div className='col-sm-10 col-10 col-md-12   search-bar-conatiner'>
 	  <div className="search_icon">
-				{/* <img src={SearchIcon} alt="" /> */}
-        {/* <SearchIcon/> */}
-
         <Icon icon="Search" size="35px" />
         
 			  </div>
@@ -78,7 +75,7 @@ const SimpleHeader = () => {
               top: '60px'
             }}
           >
-            {isLoading ? <Loader/>: (searchData && searchData.map((item: any, index: any) => (
+            {isLoading ? <Loader/> : (searchData && searchData.map((item: any, index: any) => (
               <Link  key={index} style={{textDecoration:'none'}}
               to={`/account/ScriptDetails/${item.id}`}>
               <span className="hover-span" >
