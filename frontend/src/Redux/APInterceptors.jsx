@@ -35,19 +35,18 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log(error,'-=-=-=-=-=-=-=-');
+ 
     
     // You can handle global errors here (e.g., logging out user on 401)
     if (error.response && error.response.status === 401) {
-      toast('message', {
-        position: 'top-right', // Use string values directly
+      toast('Your session has expired. Please log in again.', {
+        position: 'top-right',
         autoClose: 4000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-      
       });
   
      

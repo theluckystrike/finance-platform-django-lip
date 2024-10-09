@@ -18,15 +18,10 @@ import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports"
 const CustomReport = () => {
  
 const dispatch =useDispatch()
-const store:any = useSelector((i)=>i)
- 
+ const store:any = useSelector((i)=>i)
  const {loading}=store?.script
-
- 
  const allscripts = store?.script?.Scripts?.results
  const [selectedScripts, setSelectedScripts] = useState<any>([]);
-
- 
  const [loginUser, setLoginUser] = useState<any>(null);
  
    // Effect to retrieve loginUser from localStorage on component mount
@@ -86,8 +81,8 @@ const store:any = useSelector((i)=>i)
    // Check if all scripts are selected
    const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
    const isAllSelected = selectedScripts.length === items.length;
-
-console.log(isAllSelected,selectedScripts,'aersgfstsrt');
+ 
+ 
 
  
   return (
@@ -148,22 +143,33 @@ console.log(isAllSelected,selectedScripts,'aersgfstsrt');
               />
             </h6>
           </th>
-          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('description')}>
-            <h6>
-              <span>Description</span>
-              <Icon
-                size="10px"
-                className={getClassNamesFor('description')}
-                icon="FilterList"
-              />
-            </h6>
-          </th>
+        
           <th scope="col" className="col-1 text-center mx-auto" onClick={() => requestSort('category.name')}>
             <h6>
               <span>Category</span>
               <Icon
                 size="10px"
                 className={getClassNamesFor('category.name')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('sub category 1 ')}>
+            <h6>
+              <span>Sub Category 1 </span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('sub category 1 ')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('sub category 1 ')}>
+            <h6>
+              <span>Sub Category 2 </span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('sub category 1 ')}
                 icon="FilterList"
               />
             </h6>
@@ -207,8 +213,10 @@ console.log(isAllSelected,selectedScripts,'aersgfstsrt');
                   <span className="fw-bold">{script.name}</span>
                 </Link>
               </td>
-              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
               <td className="col-1 text-center wrap-word mx-auto">{script?.category?.name}</td>
+
+              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
+              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
               <td className="col-2 text-center mx-auto">
                 <DateFormatter isoString={script.created} />
               </td>

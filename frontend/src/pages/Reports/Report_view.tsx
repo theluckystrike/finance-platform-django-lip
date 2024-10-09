@@ -25,12 +25,12 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 
 const ReportViwe = () => {
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+const defaultLayoutPluginInstance = defaultLayoutPlugin();
   // Get the search parameters from the URL
 const {id} =useParams()
 const dispatch=useDispatch()
 const [loginUser, setLoginUser] = useState<any>(null);
- const handleToast =useToast()
+const handleToast =useToast()
 // Effect to retrieve loginUser from localStorage on component mount
 useEffect(() => {
   const storedLoginUser = localStorage.getItem("login");

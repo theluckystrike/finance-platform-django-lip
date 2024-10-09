@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+      import React, { useEffect, useState } from 'react'
 import ScriptChart from '../../Comopnent/Charts/ScriptChart'
 import { useNavigate } from 'react-router-dom'
 import Icon from '../../Comopnent/ui/icon/Icon'

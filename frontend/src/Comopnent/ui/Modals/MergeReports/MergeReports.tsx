@@ -137,7 +137,8 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
                       type="submit"
                       className="btn btn-dark col-5 px-3 fw-bold"
                     >
-                      Create
+                      Create               
+
                     </button>
                   </div>
                 </div>

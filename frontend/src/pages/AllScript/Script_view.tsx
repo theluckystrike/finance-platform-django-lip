@@ -54,6 +54,7 @@ const ScriptView = () => {
   const store: any = useSelector((i) => i);
 
   const ScriptData = store?.script?.Script;
+console.log(ScriptData,'ScriptData');
 
   const { loading } = store?.script;
 
