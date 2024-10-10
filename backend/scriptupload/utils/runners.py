@@ -10,6 +10,7 @@ from io import BytesIO
 from django.core.files import File
 import logging
 
+from scriptupload.utils.plotting import MpltToPlotly
 logger = logging.getLogger('testlogger')
 
 
@@ -92,6 +93,10 @@ def run_script(script):
         script.set_status(excStatus.FAILURE,  exc_str)
         return False, exc_str
     if mpl_plt_buffer:
+        fig = plt.gcf()
+        converter = MpltToPlotly(fig)
+        converter.crawl_fig()
+        script.save_plotly_config(converter.json)
         script.save_chart("output_plot.png", File(mpl_plt_buffer))
         script.set_last_updated()
         script.set_status(excStatus.SUCCESS)

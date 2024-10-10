@@ -14,7 +14,6 @@ from .category import Category
 from .data import TableData, ChartData
 from .filepaths import script_file_path
 from django.urls import reverse
-import django_rq
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -88,6 +87,17 @@ class Script(models.Model):
         else:
             self.table_data.csv_data.save(filename, file)
 
+    def save_plotly_config(self, config):
+        if not self.has_chart_data:
+            chart_data = ChartData(script=self)
+            chart_data.plotly_config = config
+            chart_data.set_last_updated()
+            chart_data.save()
+        else:
+            self.chart_data.plotly_config = config
+            self.chart_data.set_last_updated()
+            self.chart_data.save()
+
     def save_chart(self, filename: str, file):
         if not filename.endswith(".png"):
             logger.error(
@@ -142,8 +152,16 @@ class Script(models.Model):
                 f"[script model] No chart data for script: {self.name}")
             return False
 
-    # def update(self):
-    #     run_script(self)
+    @property
+    def has_plotly_config(self):
+        try:
+            return self.chart_data.plotly_config is not None
+        # catch exception if chart_data does not exist
+        except ChartData.DoesNotExist:
+            logging.debug(
+                f"[script model] No plotly config for script: {self.name}")
+            return False
+
 
     def update_index(self, new_idx):
         """

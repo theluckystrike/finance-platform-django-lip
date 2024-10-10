@@ -38,6 +38,7 @@ class ChartData(models.Model):
     last_updated = models.DateTimeField(blank=True, null=True)
     script = models.OneToOneField(
         'Script', on_delete=models.CASCADE, related_name="chart_data", null=True, blank=True)
+    plotly_config = models.JSONField(blank=True, null=True)
 
     def set_last_updated(self):
         self.last_updated = timezone.now()

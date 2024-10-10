@@ -1,6 +1,6 @@
 from matplotlib.colors import to_hex, to_rgba
 import numpy as np
-from .utils import (
+from .helpers import (
     get_subplot_grid_dimensions,
     get_marker_name_from_path,
     line_style_verbose_names
@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import plotly.matplotlylib.mpltools as mpltls
 import matplotlib
 import plotly
+import json
 
 
 class MpltToPlotly:
@@ -292,3 +293,7 @@ class MpltToPlotly:
                 self.x_ct += 1
                 self.current_mpl_ax = subplot['ysibs'][0]
                 self.crawl_ax(subplot['ysibs'][0], ysib=True)
+
+    @property
+    def json(self):
+        return json.loads(self.fig.to_json())
