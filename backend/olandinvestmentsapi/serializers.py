@@ -22,24 +22,7 @@ class TableDataSerializer(serializers.ModelSerializer):
         exclude = ["script"]
 
 
-class ScriptSerializer(serializers.ModelSerializer):
-    chart_data = ChartDataSerializer(read_only=True)
-    table_data = TableDataSerializer(read_only=True)
-    status = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Script
-        fields = ["name", "file", "category", "output_type",
-                  "description", "id", "created", "chart_data", "table_data", "status", "last_updated"]
-        depth = 1
-
-    def get_status(self, obj):
-        return obj.get_status_display()
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    parent_category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), allow_null=True, required=False)
+class DeepCategorySerializer(serializers.ModelSerializer):
     level = serializers.SerializerMethodField()
 
     class Meta:
@@ -51,6 +34,19 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_level(self, obj):
         return obj.get_level()
 
+
+class CategorySerializer(serializers.ModelSerializer):
+    parent_category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), allow_null=True, required=False)
+    level = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ["name", "parent_category", "id", "level"]
+
+    def get_level(self, obj):
+        return obj.get_level()
+
     # https://stackoverflow.com/a/35897731
     # nested self-referential serialization
     # does not work with drf-yasg https://github.com/axnsan12/drf-yasg/issues/632
@@ -58,6 +54,22 @@ class CategorySerializer(serializers.ModelSerializer):
     #     fields = super().get_fields()
     #     fields['parent_category'] = CategorySerializer()
     #     return fields
+
+
+class ScriptSerializer(serializers.ModelSerializer):
+    chart_data = ChartDataSerializer(read_only=True)
+    table_data = TableDataSerializer(read_only=True)
+    status = serializers.SerializerMethodField()
+    category = DeepCategorySerializer()
+
+    class Meta:
+        model = Script
+        fields = ["name", "file", "category", "output_type",
+                  "description", "id", "created", "chart_data", "table_data", "status", "last_updated"]
+        depth = 1
+
+    def get_status(self, obj):
+        return obj.get_status_display()
 
 
 class ReportSerializer(serializers.ModelSerializer):

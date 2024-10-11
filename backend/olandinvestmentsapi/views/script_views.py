@@ -9,6 +9,9 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
+import logging
+
+logger = logging.getLogger('testlogger')
 
 
 # decorate list method with custom schema for custom query parameter
@@ -17,9 +20,28 @@ from django.shortcuts import get_object_or_404
         openapi.Parameter(
             'category',
             openapi.IN_QUERY,
-            description="Filter scripts by category ID",
+            description="Filter scripts by parent category ID",
             type=openapi.TYPE_INTEGER
-        )
+        ),
+        openapi.Parameter(
+            'subcategory1',
+            openapi.IN_QUERY,
+            description="Filter scripts by subcategory ID",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            'subcategory2',
+            openapi.IN_QUERY,
+            description="Filter scripts by sub-subcategory ID",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            'status',
+            openapi.IN_QUERY,
+            description="Filter scripts by status",
+            type=openapi.TYPE_STRING,
+            enum=['success', 'failure', 'running']
+        ),
     ]
 ))
 class ScriptViewSet(ModelViewSet):
@@ -36,11 +58,26 @@ class ScriptViewSet(ModelViewSet):
     queryset = Script.objects.all().order_by("-created")
 
     def get_queryset(self):
-        queryset = Script.objects.all().order_by("-created")
-        # category query param
+        queryset = super().get_queryset()
         cat = self.request.query_params.get("category", None)
+        subcat = self.request.query_params.get("subcategory1", None)
+        subsubcat = self.request.query_params.get("subcategory2", None)
+        status = self.request.query_params.get("status", None)
         if cat:
-            queryset = queryset.filter(category=cat)
+            queryset = queryset.filter(
+                category__parent_category__parent_category=cat)
+        if subcat:
+            queryset = queryset.filter(category__parent_category=subcat)
+        if subsubcat:
+            queryset = queryset.filter(category=subsubcat)
+        if status:
+            if status in Script.ExecutionStatus.labels:
+                queryset = queryset.filter(
+                    status=next(value for value, label in Script.ExecutionStatus.choices if status == label))
+            else:
+                logger.warning(
+                    f"[ScriptViewSet] Requested invalid script status query param {status}")
+
         return queryset
 
 
