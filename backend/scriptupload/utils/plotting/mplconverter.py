@@ -18,7 +18,7 @@ class MpltToPlotly:
     '''
     def __init__(self, fig: matplotlib.figure.Figure) -> None:
         self.mplfig = fig
-        self.layout = get_subplot_grid_dimensions(fig)
+        # self.layout = get_subplot_grid_dimensions(fig)
         self.subplots = self.get_subplots(fig)
         self.fig = go.Figure()
 

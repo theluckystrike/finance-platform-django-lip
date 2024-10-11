@@ -17,10 +17,19 @@ logger = logging.getLogger('testlogger')
 plt.switch_backend("agg")
 ORIGINAL_PLT_SAVE = plt.savefig
 mpl_plt_buffer = None
+mpl_plotly_json = None
 
 
 def custom_savefig(*args, **kwargs):
-    global mpl_plt_buffer
+    global mpl_plt_buffer, mpl_plotly_json
+    try:
+        fig = plt.gcf()
+        converter = MpltToPlotly(fig)
+        converter.crawl_fig()
+        mpl_plotly_json = converter.json
+    except Exception as e:
+        logger.error(
+            f"[plotly script runner] Failed to convert matplotlib plot to plotly JSON with error -> {e}")
     if args and isinstance(args[0], str):
         buffer = BytesIO()
         ORIGINAL_PLT_SAVE(buffer, format='png', dpi=300)
@@ -68,9 +77,10 @@ def setup_patched_env():
 
 
 def clear_buffers():
-    global pandas_csv_buffer, mpl_plt_buffer
+    global pandas_csv_buffer, mpl_plt_buffer, mpl_plotly_json
     pandas_csv_buffer = None
     mpl_plt_buffer = None
+    mpl_plotly_json = None
 
 
 def run_script(script):
@@ -93,22 +103,17 @@ def run_script(script):
         script.set_status(excStatus.FAILURE,  exc_str)
         return False, exc_str
     if mpl_plt_buffer:
-        try:
-            fig = plt.gcf()
-            converter = MpltToPlotly(fig)
-            converter.crawl_fig()
-            script.save_plotly_config(converter.json)
-            logger.info(
-                f"[plotly script runner] Successfully converted matplotlib plot to plotly JSON for script * {script.name} *")
-        except Exception as e:
-            logger.error(
-                f"[plotly script runner] Failed to convert matplotlib plot to plotly for script * {script.name} * with error -> \n{e}")
         script.save_chart("output_plot.png", File(mpl_plt_buffer))
         script.set_last_updated()
         script.set_status(excStatus.SUCCESS)
         logger.info(
             f"[matplotlib-pyplot script runner] Successfully captured chart for script * {script.name} *")
         plt_success = True
+
+    if mpl_plotly_json:
+        script.save_plotly_config(mpl_plotly_json)
+        logger.info(
+            f"[plotly script runner] Successfully converted matplotlib plot to plotly JSON for script * {script.name} *")
 
     if pandas_csv_buffer:
         script.save_table("output_table.csv", File(pandas_csv_buffer))
