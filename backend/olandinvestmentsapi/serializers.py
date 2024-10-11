@@ -55,6 +55,19 @@ class CategorySerializer(serializers.ModelSerializer):
     #     return fields
 
 
+class ScriptSerializerLite(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+    category = DeepCategorySerializer()
+
+    class Meta:
+        model = Script
+        fields = ["name", "file", "category", "output_type",
+                  "description", "id", "created", "status", "last_updated"]
+
+    def get_status(self, obj):
+        return obj.get_status_display()
+
+
 class ScriptSerializer(serializers.ModelSerializer):
     chart_data = ChartDataSerializer(read_only=True)
     table_data = TableDataSerializer(read_only=True)

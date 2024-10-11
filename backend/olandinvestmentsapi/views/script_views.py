@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
-from ..serializers import ScriptSerializer, ChartDataSerializer, TableDataSerializer
+from ..serializers import ScriptSerializer, ChartDataSerializer, TableDataSerializer, ScriptSerializerLite
 from scriptupload.models import Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -79,6 +79,9 @@ class ScriptViewSet(ModelViewSet):
                     f"[ScriptViewSet] Requested invalid script status query param {status}")
 
         return queryset
+
+    def get_serializer_class(self):
+        return super().get_serializer_class() if self.action != 'list' else ScriptSerializerLite
 
 
 class ScriptStatusView(APIView):
