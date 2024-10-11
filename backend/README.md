@@ -20,6 +20,7 @@ And the frontend uses the following:
 - [Feather](https://feathericons.com)
 - [HTMX](https://htmx.org)
 - [Django Templates](https://docs.djangoproject.com/en/4.2/topics/templates/)
+- [Plotly](https://github.com/plotly/plotly.py) and [matplotlib](https://github.com/matplotlib/matplotlib) for visualisation
 
 ## Setup
 

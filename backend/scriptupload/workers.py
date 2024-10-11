@@ -15,9 +15,9 @@ class SimpleJobWorker(SimpleWorker):
             if len(job.args) > 0:
                 if isinstance(job.args[0], Script):
                     script = job.args[0]
-                    script.status = "failure"
-                    script.error_message = "Please try again"
-                    script.save(update_fields=['status', 'error_message'])
+                    script.set_status(excStatus.FAILURE, "Please try again")
+                    # script.error_message = "Please try again"
+                    # script.save(update_fields=['error_message'])
                 elif isinstance(job.args[0], Report):
                     report = job.args[0]
                     report.status = "failure"
