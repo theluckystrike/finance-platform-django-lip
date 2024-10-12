@@ -54,7 +54,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
       category1: "",
       parentName2: "",
       category2: "",
-      number:'',
+      number:1,
     },
     validationSchema,
     onSubmit:async (values) => {
