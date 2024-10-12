@@ -51,7 +51,7 @@ const dispatch =useDispatch()
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const handleClose = async() =>{ setShow(false)
-    await  dispatch(GetAllScripts({token:loginUser?.access}))
+   
   };
   const handleShow = () => {
     setShow(true);
@@ -213,10 +213,13 @@ const dispatch =useDispatch()
                   <span className="fw-bold">{script.name}</span>
                 </Link>
               </td>
-              <td className="col-1 text-center wrap-word mx-auto">{script?.category?.name}</td>
+              <td className="col-1 text-center wrap-word mx-auto">
+                
+              {script.category?.parent_category?.parent_category?.name}
+                </td>
 
-              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
-              <td className="col-2 text-center wrap-word mx-auto">{script.description}</td>
+              <td className="col-2 text-center wrap-word mx-auto">{script.category?.parent_category?.name}</td>
+              <td className="col-2 text-center wrap-word mx-auto">{script?.category?.name}</td>
               <td className="col-2 text-center mx-auto">
                 <DateFormatter isoString={script.created} />
               </td>

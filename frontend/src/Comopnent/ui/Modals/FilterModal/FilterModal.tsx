@@ -33,6 +33,12 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
     skip: !loginUser, // Skip query execution if loginUser is null
   });
   const categoryData = AllCategory?.results || [];
+ 
+  const [Categorylist,setCategorylist]=useState([])
+  const [subCategory1,setSubcategory1]=useState([])
+  const [subCategory2,setSubcategory2]=useState([])
+  
+
   // Define the form validation schema using Yup
   const validationSchema = Yup.object({
     parentName: Yup.string().required("Parent category is required"),
@@ -44,15 +50,20 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
     initialValues: {
       parentName: "",
       category: "",
+      parentName1: "",
+      category1: "",
+      parentName2: "",
+      category2: "",
+      number:'',
     },
     validationSchema,
     onSubmit:async (values) => {
 
 
-   await   dispatch(
+   await dispatch(
         GetScriptbyCategorys({
           token: loginUser?.access,
-          value: values?.category,
+          value: values ,
         })
       );
       // Handle form submission logic here
@@ -63,6 +74,23 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
     await  dispatch(GetAllScripts({token:loginUser?.access}))
     handleClose()
   };
+
+
+  useEffect(()=>{
+    const  Cate = categoryData.filter((i:any)=>i?.parent_category === null)
+    console.log(Cate,'subCate');
+    setCategorylist(Cate)
+    if(formik.values.parentName !== '' ){
+    const  subCate = categoryData.filter((i:any)=>i?.parent_category === formik.values.category)
+    console.log(subCate,'subCate');
+    setSubcategory1(subCate)
+    }
+   if(formik.values.parentName1 !== '' ){
+      const  subCate2 = categoryData.filter((i:any)=>i?.parent_category === formik.values.category1)
+      console.log(subCate2,'subdsdrtfCate');
+      setSubcategory2(subCate2)
+      }
+  },[formik.values.parentName,formik.values.parentName1,categoryData])
   return (
 <Modal
         size="lg"
@@ -115,10 +143,10 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                   )}
                   <div
                     className="dropdown-content"
-                    style={{ height: "200px", overflow: "auto" }}
+                    style={{ maxHeight: "200px", overflow: "auto" }}
                   >
-                    {categoryData.length > 0 &&
-                      categoryData.map((item: any, index: any) => (
+                    {Categorylist.length > 0 &&
+                      Categorylist.map((item: any, index: any) => (
                         <span
                           className="h6 hover-span"
                           key={item.id}
@@ -134,53 +162,112 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                 </div>
               </div>
 
-              
-                <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
-                  <label htmlFor="category" className="form-label">
-                    Sub-Category
-                  </label>
-                  <select
-                    id="category"
-                    name="category"
-                    className="form-select m-0"
-                    required
+              <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
+                <label htmlFor="sub category 1" className="form-label">
+                Sub Category 1
+                </label>
+                <div className="dropdown">
+                  <div className="arrow_down">
+                    <img src={ArrowDown} alt="Arrow down" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="All"
+                    value={formik.values.parentName1}
+                    readOnly
+                    className={`form-control ${
+                      formik.touched.parentName1 && formik.errors.parentName1
+                        ? "input-error"
+                        : ""
+                    }`}
+                  />
+                  {formik.touched.parentName1 && formik.errors.parentName1 && (
+                    <div className="text-danger">
+                      {formik.errors.parentName1}
+                    </div>
+                  )}
+                  <div
+                    className="dropdown-content"
+                    style={{ maxHeight: "200px", overflow: "auto" }}
                   >
-                    <option value="" disabled selected>
-                      All
-                    </option>
-                    <option value="Returns">Returns</option>
-                    <option value="USD">USD</option>
+                    {subCategory1.length > 0 ?
+                      subCategory1.map((item: any, index: any) => (
+                        <span
+                          className="h6 hover-span"
+                          key={item.id}
+                          onClick={() => {
+                            formik.setFieldValue("parentName1", item.name);
+                            formik.setFieldValue("category1", item.id);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                      ))
+                    :
 
-                    <option value="Bonds">Bonds</option>
-
-                    <option value="CAD">CAD</option>
-
-                    <option value="Breadth">Breadth</option>
-                  </select>
+                    <span
+                          className="h6 hover-span"
+                         
+                           
+                        >
+                      Please select a category first.
+                        </span>
+                    }
+                  </div>
                 </div>
-                <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1 ">
-                  <label htmlFor="category" className="form-label">
-                    Sub-Category 2
-                  </label>
-                  <select
-                    id="category"
-                    name="category"
-                    className="form-select m-0"
-                    required
+              </div>
+
+              <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
+                <label htmlFor="sub category 2" className="form-label">
+                Sub Category 2
+                </label>
+                <div className="dropdown">
+                  <div className="arrow_down">
+                    <img src={ArrowDown} alt="Arrow down" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="All"
+                    value={formik.values.parentName2}
+                    readOnly
+                    className={`form-control ${
+                      formik.touched.parentName2 && formik.errors.parentName2
+                        ? "input-error"
+                        : ""
+                    }`}
+                  />
+                  {formik.touched.parentName2 && formik.errors.parentName2 && (
+                    <div className="text-danger">
+                      {formik.errors.parentName2}
+                    </div>
+                  )}
+                  <div
+                    className="dropdown-content"
+                    style={{ maxHeight: "200px", overflow: "auto" }}
                   >
-                    <option value="" disabled selected>
-                      All
-                    </option>
-                    <option value="Returns">Returns</option>
-                    <option value="USD">USD</option>
-
-                    <option value="Bonds">Bonds</option>
-
-                    <option value="CAD">CAD</option>
-
-                    <option value="Breadth">Breadth</option>
-                  </select>
+                    {subCategory2.length > 0 ?
+                      subCategory2.map((item: any, index: any) => (
+                        <span
+                          className="h6 hover-span"
+                          key={item.id}
+                          onClick={() => {
+                            formik.setFieldValue("parentName2", item.name);
+                            formik.setFieldValue("category2", item.id);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                      ))
+                    :
+                    <span
+                    className="h6 hover-span " >
+              Please select a category and Subcategory 1 first.
+                  </span>
+                    
+                    }
+                  </div>
                 </div>
+              </div>
 
               <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
                 <label htmlFor="category" className="form-label">
@@ -193,25 +280,26 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                   <input
                     type="text"
                     placeholder="All"
-                    value={formik.values.category}
-                    onChange={formik.handleChange}
+                    value={formik.values.number}
+                   
                     readOnly
                     className={`form-control ${
-                      formik.touched.category && formik.errors.category
+                      formik.touched.number && formik.errors.number
                         ? "input-error"
                         : ""
                     }`}
                   />
-                  {formik.touched.category && formik.errors.category && (
-                    <div className="text-danger">{formik.errors.category}</div>
+                  {formik.touched.number && formik.errors.number && (
+                    <div className="text-danger">{formik.errors.number}</div>
                   )}
-                  <div className="dropdown-content">
-                    <span>Returns</span>
-                    <span>USD</span>
-                    <span>Bonds</span>
-                    <span>CAD</span>
-                    <span>Breadth</span>
-                  </div>
+                 <div className="dropdown-content">
+  {[...Array(10)].map((_, index) => (
+    <span key={index}  onClick={() => {
+      formik.setFieldValue("number", index + 1);
+      
+    }}>{index + 1}</span>
+  ))}
+</div>
                 </div>
               </div>
 

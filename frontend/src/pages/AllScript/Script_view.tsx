@@ -74,6 +74,7 @@ console.log(ScriptData,'ScriptData');
   };
 
   const [changeView, setChangeView] = useState(false);
+  const [changeChartView, setChangeChartView] = useState(false);
 
   const runScript = () => {
     dispatch(setLoading(true));
@@ -129,6 +130,17 @@ console.log(ScriptData,'ScriptData');
               >
                 <Icon icon={changeView ? "InsertChart" : "TableView"} size="20px"/>
                 <span>{changeView ? "Chart" : "Table"}</span>
+              </button>
+            )}
+
+{true && (
+              <button
+                onClick={() => setChangeChartView(!changeChartView)}
+                type="button"
+                className="btn icon-button my-1 mx-2"
+              >
+                <Icon icon={changeChartView ? "AreaChart" : "AddChart"} size="20px"/>
+                <span>{changeChartView ? "Static view" : "Plotly view"}</span>
               </button>
             )}
             {/* <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">

@@ -208,11 +208,21 @@ useEffect(() => {
                    </h5>
                  </th>
                  <th scope="col" className="col-2 text-center mx-auto">
-                   Description
-                 </th>
-                 <th scope="col" className="col-2 text-center mx-auto">
                    Category
                  </th>
+                 <th scope="col" className="col-2 text-center mx-auto" >
+            <h6>
+              <span>Sub Category 1 </span>
+               
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto"  >
+            <h6>
+              <span>Sub Category 2 </span>
+              
+            </h6>
+          </th>
+                 
                  <th scope="col" className="col-2 text-center mx-auto">
                    Created
                  </th>
@@ -243,11 +253,11 @@ useEffect(() => {
                        </Link>
                      </td>
                      <td className="col-2 text-center mx-auto wrap-word">
-                       {report.Description}
-                     </td>
-                     <td className="col-2 text-center mx-auto wrap-word">
                        {report?.category?.name}
                      </td>
+                     <td className="col-2 text-center wrap-word mx-auto">{report.category?.parent_category?.name}</td>
+              <td className="col-2 text-center wrap-word mx-auto">{report.category?.parent_category?.parent_category?.name}</td>
+             
                      <td className="col-2 text-center mx-auto">
                        <DateFormatter isoString={report.created} />
                      </td>

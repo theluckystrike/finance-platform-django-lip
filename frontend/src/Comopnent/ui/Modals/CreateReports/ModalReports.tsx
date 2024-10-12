@@ -120,21 +120,39 @@ console.log(selectedScripts,'selectedScripts');
                   Scripts
                 </label>
                 <Select
-                  id="scripts"
-                  name="scripts"
-                  isMulti
-                  options={scriptOptions}
-                  onChange={(selectedOptions: MultiValue<ScriptOption> | null) => {
-                    const values = selectedOptions
-                      ? selectedOptions.map((option) => option.value)
-                      : [];
-                    formik.setFieldValue("scripts", values);
-                  }}
-                  value={scriptOptions.filter((option: ScriptOption) =>
-                    formik.values.scripts.includes(option.value)
-                  )}
-                  placeholder="Select Scripts"
-                />
+  id="scripts"
+  styles={{
+    valueContainer: (provided) => ({
+      ...provided,
+      maxHeight: '100px', // Set max height for the selected values container
+      overflowY: 'auto',  // Add scroll when content exceeds max height
+    }),
+    control: (provided) => ({
+      ...provided,
+      maxHeight: '150px', // Set max height for the entire control
+      overflowY: 'auto',  // Add scroll when options exceed height
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999, // Ensure dropdown is visible over other content
+    }),
+  }}
+  name="scripts"
+  isMulti
+  options={scriptOptions}
+  onChange={(selectedOptions: MultiValue<ScriptOption> | null) => {
+    const values = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
+    formik.setFieldValue("scripts", values);
+  }}
+  value={scriptOptions.filter((option: ScriptOption) =>
+    formik.values.scripts.includes(option.value)
+  )}
+  placeholder="Select Scripts"
+/>
+
+
             
               </div>
 
