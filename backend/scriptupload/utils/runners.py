@@ -94,6 +94,16 @@ def run_script(script):
     error_message = ""
 
     try:
+        # Not safe for production, options include:
+        # - RestrictedPython and preloading imports for safe packages https://github.com/zopefoundation/RestrictedPython
+        # - Using a Docker container (will not work with Heroku)
+        # - Using a VM (will not work with Heroku) https://github.com/vmware/pyvmomi
+        # - PyPy sandboxing https://doc.pypy.org/en/latest/sandbox.html
+        # - seccomp and setrlimit this is interesting https://github.com/healeycodes/untrusted-python, https://github.com/khamidou/minival
+        #     - could execute this in the RQ worker before running a script so that the process is
+        #       restricted
+        #     - will only run on linux
+        #     - use ast package to get imports from script and set them up
         exec(script.file.read(), env)
     except:
         exc_info = sys.exc_info()
