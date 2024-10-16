@@ -408,3 +408,12 @@ input:focus {
   height: 45% !important;
  
 }
+
+.js-plotly-plot .plotly .modebar {
+  position: absolute;
+  top: 0px;
+  left: 70px !important;
+}
+.annotation-text{
+  font-size: 10px !important;
+}

@@ -19,12 +19,14 @@ import DeleteModal from "../../Comopnent/ui/Modals/DeleteModal/DeleteModal";
 import Loader from "../../Comopnent/ui/Loader";
 import CsvTable from "../../Comopnent/TableData/CsvTable";
 import { object } from "yup";
+import StockMultiChartPlot from "./Ploty_Chart";
 
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
 };
 const ScriptView = () => {
+  const [dynmicView,setDynmicView]=useState(true)
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,6 +57,8 @@ const ScriptView = () => {
 
   const ScriptData = store?.script?.Script;
 console.log(ScriptData,'ScriptData');
+
+
 
   const { loading } = store?.script;
 
@@ -133,14 +137,14 @@ console.log(ScriptData,'ScriptData');
               </button>
             )}
 
-{true && (
+{ScriptData?.output_type !== "pd" && (
               <button
-                onClick={() => setChangeChartView(!changeChartView)}
+                onClick={() => setDynmicView(!dynmicView)}
                 type="button"
                 className="btn icon-button my-1 mx-2"
               >
-                <Icon icon={changeChartView ? "AreaChart" : "AddChart"} size="20px"/>
-                <span>{changeChartView ? "Static view" : "Plotly view"}</span>
+                <Icon icon={!dynmicView ? "AreaChart" : "AddChart"} size="20px"/>
+                <span>{!dynmicView ? "Static view" : "Plotly view"}</span>
               </button>
             )}
             {/* <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
@@ -208,19 +212,31 @@ console.log(ScriptData,'ScriptData');
           <div>
             {ScriptData?.output_type === "plt" ||
             (ScriptData?.output_type === "pd plt" && changeView === false) ? (
-              <div
+              <>
+             {dynmicView ? <div
                 style={{
                   width: "80%",
-                  margin: "0px auto",
+                  margin:'0 auto'
                 }}
               >
                 {/* <LineChart /> */}
                 <img
                   src={ScriptData?.chart_data?.image_file}
-                  alt=""
+                  alt="" 
                   width="100%"
                 />
-              </div>
+        
+
+              </div>:
+            
+            
+            <div   >
+
+              {ScriptData?.chart_data.plotly_config.data && <StockMultiChartPlot data={ScriptData?.chart_data.plotly_config.data} layout={ScriptData?.chart_data.plotly_config.layout}/> }
+ </div>
+            
+          }
+          </>
             ) : (
               <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
             )}
