@@ -215,7 +215,7 @@ console.log(ScriptData,'ScriptData');
               <>
              {dynmicView ? <div
                 style={{
-                  width: "80%",
+                  width: "100%",
                   margin:'0 auto'
                 }}
               >
