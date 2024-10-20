@@ -7,6 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from django.utils import timezone
 from .pdf import PDFBuilder
+import pandas as pd
+from datetime import datetime
 # from django.apps import apps
 
 
@@ -146,3 +148,37 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     )
     # close buffer and return http response
     return response
+
+
+def is_date(datestr: str) -> bool:
+    if not isinstance(datestr, str):
+        return False
+    try:
+        # parse(s, fuzzy=False)
+        return bool(datetime.strptime(datestr, "%Y-%m-%d"))
+    except ValueError:
+        return False
+    except Exception as e:
+        print(e)
+        return False
+
+
+def csv_to_meta_dict(filepath: str) -> dict[str]:
+    meta = {"columns": []}
+    # read and convert to native python types
+    df = pd.read_csv(filepath).astype('object')
+    for col in df.columns:
+        c = {"name": col, "size": df[col].__len__()}
+        if all(is_date(x) for x in df[col]):
+            c['type'] = 'date'
+        elif isinstance(df[col].iloc[0], float):
+            c['type'] = 'float'
+        elif isinstance(df[col].iloc[0], int):
+            c['type'] = 'int'
+        elif isinstance(df[col].iloc[0], str):
+            c['type'] = 'string'
+        else:
+            print(type(df[col].iloc[0]))
+            c['type'] = 'unknown'
+        meta['columns'].append(c)
+    return meta
