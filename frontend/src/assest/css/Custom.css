@@ -411,7 +411,7 @@ input:focus {
 
 .js-plotly-plot .plotly .modebar {
   position: absolute;
-  top: 0px !important;
+  top: -10px !important;
   left: 120px !important;
 }
 .annotation-text{

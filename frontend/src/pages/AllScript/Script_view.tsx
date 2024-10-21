@@ -94,7 +94,7 @@ console.log(ScriptData,'ScriptData');
     <>
       <div className="mx-4">
         <div className="row justify-content-between flex-wrap flex-md-nowrap  px-3 pt-3 pb-2 mb-3">
-          <div className="col-md-8">
+          <div className="col-md-7">
             <h2 className="h2">
               {" "}
               {ScriptData.name}
@@ -104,7 +104,7 @@ console.log(ScriptData,'ScriptData');
               Last update <DateFormatter isoString={ScriptData.last_updated} />
             </h6>
           </div>
-          <div className="col-md-4 btn-toolbar mb-2 mb-md-0">
+          <div className="col-md-5 btn-toolbar mb-2 mb-md-0">
             <button
               onClick={editScript}
               type="button"
