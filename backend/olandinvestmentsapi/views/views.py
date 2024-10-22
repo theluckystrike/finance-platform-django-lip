@@ -33,55 +33,144 @@ class SearchView(APIView):
                         "scripts": [
                             {
                                 "name": "uploaded 4",
-                                "file": "http://127.0.0.1:8000/mediafiles/scripts-dev/uploaded%204/apple.py",
                                 "category": {
-                                    "id": 2,
                                     "name": "Economics",
-                                    "parent_category": 11
+                                    "parent_category": {
+                                        "id": 11,
+                                        "name": "USD2",
+                                        "parent_category": None
+                                    },
+                                    "id": 2,
+                                    "level": 1
                                 },
-                                "output_type": "plt",
-                                "description": None,
                                 "id": 344,
-                                "created": "2024-09-06T18:05:51.379058Z",
-                                "chart_data": {
-                                    "id": 20,
-                                    "image_file": "http://127.0.0.1:8000/mediafiles/scripts-dev/uploaded%204/chart/output_plot.png",
-                                    "created": "2024-09-06T19:52:49.458525Z",
-                                    "last_updated": None
+                                "url": "http://hostserver.com/api/scripts/344"
+                            },
+                            {
+                                "name": "apple",
+                                "category": {
+                                    "name": "api",
+                                    "parent_category": {
+                                        "id": 44,
+                                        "name": "GBP",
+                                        "parent_category": {
+                                            "id": 11,
+                                            "name": "USD2",
+                                            "parent_category": None
+                                        }
+                                    },
+                                    "id": 58,
+                                    "level": 2
                                 },
-                                "table_data": None
+                                "id": 345,
+                                "url": "http://hostserver.com/api/scripts/345"
                             }
                         ],
                         "categories": [
                             {
                                 "name": "Income savings",
-                                "parent_category": 2,
-                                "id": 9
+                                "parent_category": {
+                                    "id": 2,
+                                    "name": "Economics",
+                                    "parent_category": {
+                                        "id": 11,
+                                        "name": "USD2",
+                                        "parent_category": None
+                                    }
+                                },
+                                "id": 9,
+                                "level": 2
                             },
                             {
                                 "name": "CAD",
                                 "parent_category": None,
-                                "id": 46
+                                "id": 46,
+                                "level": 0
                             },
                             {
                                 "name": "API category",
                                 "parent_category": None,
-                                "id": 54
+                                "id": 54,
+                                "level": 0
                             },
                             {
                                 "name": "API category child 2",
                                 "parent_category": None,
-                                "id": 55
+                                "id": 55,
+                                "level": 0
                             },
                             {
                                 "name": "API category child2",
                                 "parent_category": None,
-                                "id": 56
+                                "id": 56,
+                                "level": 0
                             },
                             {
                                 "name": "API category child4",
-                                "parent_category": 11,
-                                "id": 57
+                                "parent_category": {
+                                    "id": 11,
+                                    "name": "USD2",
+                                    "parent_category": None
+                                },
+                                "id": 57,
+                                "level": 1
+                            },
+                            {
+                                "name": "api",
+                                "parent_category": {
+                                    "id": 44,
+                                    "name": "GBP",
+                                    "parent_category": {
+                                        "id": 11,
+                                        "name": "USD2",
+                                        "parent_category": None
+                                    }
+                                },
+                                "id": 58,
+                                "level": 2
+                            },
+                            {
+                                "name": "another category",
+                                "parent_category": None,
+                                "id": 60,
+                                "level": 0
+                            }
+                        ],
+                        "reports": [
+                            {
+                                "name": "API category child4",
+                                "id": 32,
+                                "url": "http://hostserver.com/api/reports/32"
+                            },
+                            {
+                                "name": "API report",
+                                "id": 33,
+                                "url": "http://hostserver.com/api/reports/33"
+                            },
+                            {
+                                "name": "API report 2",
+                                "id": 34,
+                                "url": "http://hostserver.com/api/reports/34"
+                            },
+                            {
+                                "name": "API report 3",
+                                "id": 35,
+                                "url": "http://hostserver.com/api/reports/35"
+                            },
+                            {
+                                "name": "API report 5",
+                                "id": 36,
+                                "url": "http://hostserver.com/api/reports/36"
+                            },
+                            {
+                                "name": "API report 7",
+                                "id": 37,
+                                "url": "http://hostserver.com/api/reports/37"
+                            },
+                            {
+                                "name": "merged from api",
+                                "id": 39,
+                                "url": "http://hostserver.com/api/reports/39"
                             }
                         ]
                     }
