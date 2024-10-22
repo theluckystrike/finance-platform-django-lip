@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..serializers import CategorySerializer, ScriptSerializer, ReportSerializer
+from ..serializers import DeepCategorySerializer, ScriptSearchSerializer, ReportSearchSerializer
 from scriptupload.models import Category, Script, Report
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -110,15 +110,15 @@ class SearchView(APIView):
             return Response({"error": "No search query provided"}, status=404)
 
         scripts = Script.objects.filter(name__icontains=search_str)
-        scripts_data = ScriptSerializer(
+        scripts_data = ScriptSearchSerializer(
             scripts, many=True, context={'request': request}).data
 
         reports = Report.objects.filter(name__icontains=search_str)
-        reports_data = ReportSerializer(
+        reports_data = ReportSearchSerializer(
             reports, many=True, context={'request': request}).data
 
         categories = Category.objects.filter(name__icontains=search_str)
-        categories_data = CategorySerializer(
+        categories_data = DeepCategorySerializer(
             categories, many=True, context={'request': request}).data
 
         resp = {

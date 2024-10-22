@@ -68,6 +68,23 @@ class ScriptSerializerLite(serializers.ModelSerializer):
         return obj.get_status_display()
 
 
+class ScriptSearchSerializer(serializers.HyperlinkedModelSerializer):
+    category = DeepCategorySerializer()
+    url = serializers.HyperlinkedIdentityField(view_name="scripts-detail")
+
+    class Meta:
+        model = Script
+        fields = ["name", "category", "id", "url"]
+
+
+class ReportSearchSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="reports-detail")
+
+    class Meta:
+        model = Script
+        fields = ["name", "id", "url"]
+
+
 class ScriptSerializer(serializers.ModelSerializer):
     chart_data = ChartDataSerializer(read_only=True)
     table_data = TableDataSerializer(read_only=True)
