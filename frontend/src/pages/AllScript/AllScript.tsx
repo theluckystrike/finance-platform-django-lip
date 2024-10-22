@@ -14,6 +14,10 @@ import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
+import PaginationButtons, {
+	dataPagination,
+	PER_COUNT,
+} from "../../Comopnent/ui/PaginationButtons";
 
 const CustomReport = () => {
  
@@ -37,7 +41,10 @@ const dispatch =useDispatch()
 
     const  getDAta =async ()=>{
       try {
-        await  dispatch(GetAllScripts({token:loginUser?.access}))
+        if (allscripts.length !> 0 ) {
+          
+          await  dispatch(GetAllScripts({token:loginUser?.access}))
+        }
       } catch (error) {
         console.log(error);
       }
@@ -81,7 +88,8 @@ const dispatch =useDispatch()
    // Check if all scripts are selected
    const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
    const isAllSelected = selectedScripts.length === items.length;
- 
+   const [currentPage, setCurrentPage] = useState(1);
+   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
  
 
  
@@ -122,6 +130,16 @@ const dispatch =useDispatch()
         <div>
           {!loading ? (
     <div style={{overflow: 'auto'}} id="customReportForm" >
+<div className="py-2">
+<PaginationButtons
+								data={items}
+								label='Scripts'
+								setCurrentPage={setCurrentPage}
+								currentPage={currentPage}
+								perPage={perPage}
+								setPerPage={setPerPage}
+                />
+                </div>
     <table className="table" style={{minWidth:'1000px'}}>
       <thead>
         <tr className="fw-bold mb-2 p-2">
@@ -186,7 +204,7 @@ const dispatch =useDispatch()
           </th>
           <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('last_updated')}>
             <h6>
-              <span>Last Updated</span>
+              <span>Updated</span>
               <Icon
                 size="10px"
                 className={getClassNamesFor('last_updated')}
@@ -198,7 +216,7 @@ const dispatch =useDispatch()
       </thead>
       <tbody id="scriptsCheckboxes">
         {items.length > 0 ? (
-          items.map((script: any, index: any) => (
+          dataPagination(items, currentPage, perPage).map((script: any, index: any) => (
                 <>
             <tr key={index} className="table-card rounded-3 bg-light-green mb-2 p-3" style={{borderRadius:'10px'}}>
               <td className="col-1">
@@ -239,8 +257,10 @@ const dispatch =useDispatch()
             </td>
           </tr>
         )}
-      </tbody>
-    </table>
+</tbody>
+</table>
+
+
   </div>
   
 
@@ -250,8 +270,11 @@ const dispatch =useDispatch()
                <Loader/>
             </span>
           )}
-        </div>
+     
+                </div>
       </div>
+
+     
 
       <FilterModal show={show} handleClose={handleClose} />
       <SaveModal show={Saveshow} handleClose={handleSaveClose}/>

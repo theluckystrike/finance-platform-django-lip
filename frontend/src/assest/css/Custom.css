@@ -418,3 +418,14 @@ input:focus {
   font-size: 15px !important;
 }
  
+
+.active>.page-link, .page-link.active {
+  z-index: 3;
+  color: white !important;
+  background-color: var(--green-color) !important;
+  border-color:var(--green-color) !important;
+}
+.page-link {
+  padding:3px 7px;
+  color: black !important;
+}

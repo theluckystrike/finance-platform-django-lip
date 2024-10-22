@@ -4,10 +4,14 @@ import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
 import { ScriptData, TapeSummaryData } from "../../DummyData/TableData";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
 import DateFormatter from "../../customHook/useTImeformnt";
+import Loader from "../../Comopnent/ui/Loader";
+import PaginationButtons, { dataPagination, PER_COUNT } from "../../Comopnent/ui/PaginationButtons";
+import Icon from "../../Comopnent/ui/icon/Icon";
+import useSortableData from "../../customHook/useSortable";
 
 const TapeSummary: React.FC = () => {
 
@@ -72,7 +76,10 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
 
 
 
-
+       const [currentPage, setCurrentPage] = useState(1);
+       const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
+     
+    
   const [show, setShow] = useState(false);
   const [saveShow, setSaveShow] = useState(false);
   const navigate = useNavigate();
@@ -106,13 +113,26 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
       navigate(`/account/${ActiveRoute.TapeSummaryResult.path}?${query}`);
     }
   };
+  const { items, requestSort, getClassNamesFor } = useSortableData(allscripts || []);
+  const isAllSelected = selectedScripts.length === items.length;
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      // Select all scripts
+      const allScriptIds:any = items.map((script: any) => script.id);
+      setSelectedScripts(allScriptIds);
+    } else {
+      // Deselect all scripts
+      setSelectedScripts([]);
+    }
+  };
 
   return (
     <>
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h1">
-            Tape Summary <span id="headerInfo">(132)</span>
+            Tape Summary <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button
@@ -126,61 +146,146 @@ const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
           </div>
         </div>
         <div>
-          {132 > -1 ? (
-            <form method="post" id="customReportForm">
-              <div className="row mb-2 p-2 fw-bold w-100">
-                <div className="col-6">
-                  <h5>
-                    <input
-                      type="checkbox"
-                      id="selectAllCheckbox"
-                      onChange={toggleSelectAll}
-                    />{" "}
-                    Name
-                  </h5>
+        {!loading ? (
+    <div style={{overflow: 'auto'}} id="customReportForm" >
+<div className="py-2">
+<PaginationButtons
+								data={items}
+								label='Scripts'
+								setCurrentPage={setCurrentPage}
+								currentPage={currentPage}
+								perPage={perPage}
+								setPerPage={setPerPage}
+                />
                 </div>
-                <div className="col-2 mx-auto text-center">Category</div>
-                <div className="col-2 mx-auto text-center">Created</div>
-                <div className="col-2 mx-auto text-center">Last updated</div>
-              </div>
-              <div id="scriptsCheckboxes">
-                {allscripts && allscripts.map((script: any) => (
-                  <div
-                    className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green"
-                    key={script.id}
-                  >
-                    <div className="col-6">
-                      <span className="fw-bold fs-6">
-                        <input
-                          className="chbx"
-                          type="checkbox"
-                          name="scripts"
-                          value={script?.id}
-                          onChange={handleCheckboxChange}
-                        />
-                        {script?.name}
-                      </span>
-                    </div>
-                  
-                    <div className="col-2 mx-auto text-center wrap-word">
-                      {script?.category?.name}
-                    </div>
-                    <div className="col-2 mx-auto text-center wrap-word">
-                    <DateFormatter isoString={script.created}/>
-    
-                    </div>
-                 
-                    <div className="col-2 mx-auto text-center">
-                    <DateFormatter isoString={script.last_updated}/>
-                     
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </form>
+    <table className="table" style={{minWidth:'1000px'}}>
+      <thead>
+        <tr className="fw-bold mb-2 p-2">
+          <th scope="col" className="col-1">
+          <input
+                        type="checkbox"
+                        id="selectAllCheckbox"
+                        checked={isAllSelected}
+                        onChange={handleSelectAll}
+                      />
+          </th>
+          <th scope="col" className="col-4" onClick={() => requestSort('name')}>
+            <h6>
+              <span>Name</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('name')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+        
+          <th scope="col" className="col-1 text-center mx-auto" onClick={() => requestSort('category.name')}>
+            <h6>
+              <span>Category</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('category.name')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('sub category 1 ')}>
+            <h6>
+              <span>Sub Category 1 </span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('sub category 1 ')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('sub category 1 ')}>
+            <h6>
+              <span>Sub Category 2 </span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('sub category 1 ')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('created')}>
+            <h6>
+              <span>Created</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('created')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+          <th scope="col" className="col-2 text-center mx-auto" onClick={() => requestSort('last_updated')}>
+            <h6>
+              <span>Updated</span>
+              <Icon
+                size="10px"
+                className={getClassNamesFor('last_updated')}
+                icon="FilterList"
+              />
+            </h6>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="scriptsCheckboxes">
+        {items.length > 0 ? (
+          dataPagination(items, currentPage, perPage).map((script: any, index: any) => (
+                <>
+            <tr key={index} className="table-card rounded-3 bg-light-green mb-2 p-3" style={{borderRadius:'10px'}}>
+              <td className="col-1">
+              <input
+                              type="checkbox"
+                              checked={selectedScripts.includes(script.id)}
+                              onChange={() => handleCheckboxChange(script.id)}
+                            />
+              </td>
+              <td className="col-4">
+                <Link to={`/account/ScriptDetails/${script.id}`} className="text-decoration-none text-black">
+                  <span className="fw-bold">{script.name}</span>
+                </Link>
+              </td>
+              <td className="col-1 text-center wrap-word mx-auto">
+                
+              {script.category?.parent_category?.parent_category?.name}
+                </td>
+
+              <td className="col-2 text-center wrap-word mx-auto">{script.category?.parent_category?.name}</td>
+              <td className="col-2 text-center wrap-word mx-auto">{script?.category?.name}</td>
+              <td className="col-2 text-center mx-auto">
+                <DateFormatter isoString={script.created} />
+              </td>
+              <td className="col-2 text-center mx-auto">
+                <DateFormatter isoString={script.last_updated} />
+              </td>
+            </tr>
+            <tr style={{height:'10px'}}>
+
+            </tr>
+            </>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={6}>
+              {store?.script?.Scripts?.count === 0 ? <p>No scripts found</p> : <Loader />}
+            </td>
+          </tr>
+        )}
+</tbody>
+</table>
+
+
+  </div>
+  
+
+         
           ) : (
             <span className="text-large">
-              Upload scripts to generate reports with them
+               <Loader/>
             </span>
           )}
         </div>

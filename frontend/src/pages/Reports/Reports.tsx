@@ -10,6 +10,7 @@ import useSortableData from "../../customHook/useSortable";
 import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
 import DateFormatter from "../../customHook/useTImeformnt";
+import PaginationButtons, { dataPagination, PER_COUNT } from "../../Comopnent/ui/PaginationButtons";
 
 const Report = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,8 @@ const Report = () => {
   }, [loginUser]);
 
  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
  
 
@@ -78,6 +81,16 @@ const Report = () => {
       <div>
         {items.length > 0 ? (
           <div style={{overflow: 'auto'}} id="customReportForm" >
+            <div className="py-2">
+<PaginationButtons
+								data={items}
+								label='Reports'
+								setCurrentPage={setCurrentPage}
+								currentPage={currentPage}
+								perPage={perPage}
+								setPerPage={setPerPage}
+                />
+                </div>
     <table className="table" style={{minWidth:'1000px'}}>
           <thead>
             <tr className="fw-bold mb-2 p-2">
@@ -96,7 +109,7 @@ const Report = () => {
             </tr>
           </thead>
           <tbody id="scriptsCheckboxes">
-            {items.map((script: any, index: any) => (
+            {items &&  dataPagination(items, currentPage, perPage).map((script: any, index: any) => (
                   <>
               <tr key={script.id} className="table-card rounded-3 bg-light-green mb-2 p-3">
                 <td className="col-1 fw-bold fs-6">{index + 1}</td>
