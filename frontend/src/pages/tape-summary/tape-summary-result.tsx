@@ -7,7 +7,7 @@ import TapeSummaryResltTable from "../../Comopnent/Table/tapeSummaryResultTable"
 import { ActiveRoute } from "../../Menu";
 import { TapeSummaryData } from "../../DummyData/TableData";
 
-const Components: any = { 
+const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
 };
@@ -24,12 +24,18 @@ const TapeSummaryResult: React.FC = () => {
   );
 
   const [activeComponent, setActiveComponent] = useState("chart");
-  const [expandedAccordion, setExpandedAccordion] = useState<string | null>('0');
+  const [expandedAccordion, setExpandedAccordion] = useState<string | null>(
+    "0"
+  );
 
   useEffect(() => {
     // Effect to restore the last opened chart when component mounts or activeComponent changes
-    if (activeComponent === "chart" && expandedAccordion === null && selectedData.length > 0) {
-      setExpandedAccordion('0'); // or any default value or logic to set a meaningful default
+    if (
+      activeComponent === "chart" &&
+      expandedAccordion === null &&
+      selectedData.length > 0
+    ) {
+      setExpandedAccordion("0"); // or any default value or logic to set a meaningful default
     }
   }, [activeComponent, selectedData]);
 
@@ -64,23 +70,29 @@ const TapeSummaryResult: React.FC = () => {
                 setActiveComponent("chart");
                 // Preserve the last opened chart when switching to chart view
                 if (expandedAccordion === null && selectedData.length > 0) {
-                  setExpandedAccordion('0'); // or set the default logic here
+                  setExpandedAccordion("0"); // or set the default logic here
                 }
               }}
-              className={`toggle-item ${activeComponent === "chart" ? "active" : ""}`}
+              className={`toggle-item ${
+                activeComponent === "chart" ? "active" : ""
+              }`}
             >
-              <h5> Chart</h5> 
+              <h5> Chart</h5>
             </span>
             <span
               onClick={() => setActiveComponent("table")}
-              className={`toggle-item ${activeComponent === "table" ? "active" : ""}`}
+              className={`toggle-item ${
+                activeComponent === "table" ? "active" : ""
+              }`}
             >
               <h5>Table</h5>
             </span>
             <div
               className="slider"
               style={{
-                transform: `translateX(${activeComponent === "chart" ? "78%" : "220%"})`,
+                transform: `translateX(${
+                  activeComponent === "chart" ? "78%" : "220%"
+                })`,
               }}
             ></div>
           </div>
@@ -88,21 +100,24 @@ const TapeSummaryResult: React.FC = () => {
 
         {activeComponent === "table" && expandedAccordion !== null && (
           <div style={{ width: "85%", margin: "0px auto" }}>
-            {selectedData.map((data: any, index: number) => (
-              expandedAccordion === index.toString() && (
-                <TapeSummaryResltTable
-                  key={data.id}
-                  TableData={data.tableData}
-                />
-              )
-            ))}
+            {selectedData.map(
+              (data: any, index: number) =>
+                expandedAccordion === index.toString() && (
+                  <TapeSummaryResltTable
+                    key={data.id}
+                    TableData={data.tableData}
+                  />
+                )
+            )}
           </div>
         )}
 
         {activeComponent === "chart" && (
           <Accordion
             activeKey={expandedAccordion}
-            onSelect={(eventKey) => setExpandedAccordion(eventKey as string || null)}
+            onSelect={(eventKey) =>
+              setExpandedAccordion((eventKey as string) || null)
+            }
           >
             {selectedData.map((data: any, index: any) => {
               const ChartComponent = Components[data.chartType];

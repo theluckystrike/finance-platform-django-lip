@@ -1,165 +1,176 @@
-import React, { FC } from 'react';
-import PropTypes from 'prop-types';
-import { CardFooter, } from 'react-bootstrap';
-import Pagination, { PaginationItem } from './pagination/Pagination';
-import Select from './SelectPagibation';
-import Option from './Option';
+import React, { FC } from "react";
+import PropTypes from "prop-types";
+import { CardFooter } from "react-bootstrap";
+import Pagination, { PaginationItem } from "./pagination/Pagination";
+import Select from "./SelectPagibation";
+import Option from "./Option";
 
 export const PER_COUNT = {
-	3: 3,
-	5: 5,
-	10: 10,
-	25: 25,
-	50: 50,
+  3: 3,
+  5: 5,
+  10: 10,
+  25: 25,
+  50: 50,
 };
 
-export const dataPagination = (data: any[], currentPage: number, perPage: number) =>
-	data.filter(
-		(i, index) => index + 1 > (currentPage - 1) * perPage && index + 1 <= currentPage * perPage,
-	);
+export const dataPagination = (
+  data: any[],
+  currentPage: number,
+  perPage: number
+) =>
+  data.filter(
+    (i, index) =>
+      index + 1 > (currentPage - 1) * perPage &&
+      index + 1 <= currentPage * perPage
+  );
 
 interface IPaginationButtonsProps {
-	setCurrentPage(...args: unknown[]): unknown;
-	currentPage: number;
-	perPage: number;
-	setPerPage(...args: unknown[]): unknown;
-	data: unknown[];
-	label?: string;
+  setCurrentPage(...args: unknown[]): unknown;
+  currentPage: number;
+  perPage: number;
+  setPerPage(...args: unknown[]): unknown;
+  data: unknown[];
+  label?: string;
 }
 const PaginationButtons: FC<IPaginationButtonsProps> = ({
-	setCurrentPage,
-	currentPage,
-	perPage,
-	setPerPage,
-	data,
-	label,
+  setCurrentPage,
+  currentPage,
+  perPage,
+  setPerPage,
+  data,
+  label,
 }) => {
-	const totalItems = data.length;
-	const totalPage = Math.ceil(totalItems / perPage);
+  const totalItems = data.length;
+  const totalPage = Math.ceil(totalItems / perPage);
 
-	const pagination = () => {
-		let items = [];
+  const pagination = () => {
+    let items = [];
 
-		let i = currentPage - 1;
-		while (i >= currentPage - 1 && i > 0) {
-			items.push(
-				<PaginationItem key={i} onClick={() => setCurrentPage(currentPage - 1)}>
-					{i}
-				</PaginationItem>,
-			);
+    let i = currentPage - 1;
+    while (i >= currentPage - 1 && i > 0) {
+      items.push(
+        <PaginationItem key={i} onClick={() => setCurrentPage(currentPage - 1)}>
+          {i}
+        </PaginationItem>
+      );
 
-			i -= 1;
-		}
+      i -= 1;
+    }
 
-		items = items.reverse();
+    items = items.reverse();
 
-		items.push(
-			<PaginationItem key={currentPage} isActive onClick={() => setCurrentPage(currentPage)}>
-				{currentPage}
-			</PaginationItem>,
-		);
+    items.push(
+      <PaginationItem
+        key={currentPage}
+        isActive
+        onClick={() => setCurrentPage(currentPage)}
+      >
+        {currentPage}
+      </PaginationItem>
+    );
 
-		i = currentPage + 1;
-		while (i <= currentPage + 1 && i <= totalPage) {
-			items.push(
-				<PaginationItem key={i} onClick={() => setCurrentPage(currentPage + 1)}>
-					{i}
-				</PaginationItem>,
-			);
+    i = currentPage + 1;
+    while (i <= currentPage + 1 && i <= totalPage) {
+      items.push(
+        <PaginationItem key={i} onClick={() => setCurrentPage(currentPage + 1)}>
+          {i}
+        </PaginationItem>
+      );
 
-			i += 1;
-		}
+      i += 1;
+    }
 
-		return items;
-	};
+    return items;
+  };
 
-	const getInfo = () => {
-		const start = perPage * (currentPage - 1) + 1;
+  const getInfo = () => {
+    const start = perPage * (currentPage - 1) + 1;
 
-		const end = perPage * currentPage;
+    const end = perPage * currentPage;
 
-		return (
-			<span className='pagination__desc'>
-				Showing {start} to {end > totalItems ? totalItems : end} of {totalItems} {label}
-			</span>
-		);
-	};
+    return (
+      <span className="pagination__desc">
+        Showing {start} to {end > totalItems ? totalItems : end} of {totalItems}{" "}
+        {label}
+      </span>
+    );
+  };
 
-	return (
-		<CardFooter className='row w-100'>
-			<div className='col-sm-12 col-md-6 col-lg-7'>
-				<span className='text-muted'>{getInfo()}</span>
-			</div>
+  return (
+    <CardFooter className="row w-100">
+      <div className="col-sm-12 col-md-6 col-lg-7">
+        <span className="text-muted">{getInfo()}</span>
+      </div>
 
-			<div className='d-flex justify-content-end col-sm-12 col-md-6 col-lg-5' >
-				{totalPage > 1 && (
-					// @ts-ignore
-					<Pagination ariaLabel={label}>
-						<PaginationItem
-							isFirst
-							isDisabled={!(currentPage - 1 > 0)}
-							onClick={() => setCurrentPage(1)}
-						/>
-						<PaginationItem
-							isPrev
-							isDisabled={!(currentPage - 1 > 0)}
-							onClick={() => setCurrentPage(currentPage - 1)}
-						/>
-						{currentPage - 1 > 1 && (
-							<PaginationItem onClick={() => setCurrentPage(currentPage - 2)}>
-						...
-							</PaginationItem>
-						)}
-						{pagination()}
-						{currentPage + 1 < totalPage && (
-							<PaginationItem onClick={() => setCurrentPage(currentPage + 2)}>
-									...
-							</PaginationItem>
-						)}
-						<PaginationItem
-							isNext
-							isDisabled={!(currentPage + 1 <= totalPage)}
-							onClick={() => setCurrentPage(currentPage + 1)}
-						/>
-						<PaginationItem
-							isLast
-							isDisabled={!(currentPage + 1 <= totalPage)}
-							onClick={() => setCurrentPage(totalPage)}
-						/>
-					</Pagination>
-				)}
+      <div className="d-flex justify-content-end col-sm-12 col-md-6 col-lg-5">
+        {totalPage > 1 && (
+          // @ts-ignore
+          <Pagination ariaLabel={label}>
+            <PaginationItem
+              isFirst
+              isDisabled={!(currentPage - 1 > 0)}
+              onClick={() => setCurrentPage(1)}
+            />
+            <PaginationItem
+              isPrev
+              isDisabled={!(currentPage - 1 > 0)}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            />
+            {currentPage - 1 > 1 && (
+              <PaginationItem onClick={() => setCurrentPage(currentPage - 2)}>
+                ...
+              </PaginationItem>
+            )}
+            {pagination()}
+            {currentPage + 1 < totalPage && (
+              <PaginationItem onClick={() => setCurrentPage(currentPage + 2)}>
+                ...
+              </PaginationItem>
+            )}
+            <PaginationItem
+              isNext
+              isDisabled={!(currentPage + 1 <= totalPage)}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            />
+            <PaginationItem
+              isLast
+              isDisabled={!(currentPage + 1 <= totalPage)}
+              onClick={() => setCurrentPage(totalPage)}
+            />
+          </Pagination>
+        )}
 
-				<Select
-									// size='sm'
-									style={{    width: '67px',
-										padding:' 0px 0px 0px 12px'}}
-					ariaLabel='Per'
-					onChange={(e: { target: { value: string } }) => {
-						setPerPage(parseInt(e.target.value, 10));
-						setCurrentPage(1);
-					}}
-					value={perPage.toString()}>
-					{Object.keys(PER_COUNT).map((i) => (
-						<Option key={i} value={i}>
-							{i}
-						</Option>
-					))}
-				</Select>
-			</div>
-		</CardFooter>
-	);
+        <Select
+          // size='sm'
+          style={{ width: "67px", padding: " 0px 0px 0px 12px" }}
+          ariaLabel="Per"
+          onChange={(e: { target: { value: string } }) => {
+            setPerPage(parseInt(e.target.value, 10));
+            setCurrentPage(1);
+          }}
+          value={perPage.toString()}
+        >
+          {Object.keys(PER_COUNT).map((i) => (
+            <Option key={i} value={i}>
+              {i}
+            </Option>
+          ))}
+        </Select>
+      </div>
+    </CardFooter>
+  );
 };
 PaginationButtons.propTypes = {
-	setCurrentPage: PropTypes.func.isRequired,
-	currentPage: PropTypes.number.isRequired,
-	perPage: PropTypes.number.isRequired,
-	setPerPage: PropTypes.func.isRequired,
-	// eslint-disable-next-line react/forbid-prop-types
-	data: PropTypes.array.isRequired,
-	label: PropTypes.string,
+  setCurrentPage: PropTypes.func.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  perPage: PropTypes.number.isRequired,
+  setPerPage: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  data: PropTypes.array.isRequired,
+  label: PropTypes.string,
 };
 PaginationButtons.defaultProps = {
-	label: 'items',
+  label: "items",
 };
 
 export default PaginationButtons;

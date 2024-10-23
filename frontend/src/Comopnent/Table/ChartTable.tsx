@@ -3,9 +3,6 @@ import "../../assest/css/AllScript.css";
 import { Tabledata } from "../../DummyData/TableData";
 
 const ChartTable = () => {
-
-
-
   const scrollRef = useRef<HTMLDivElement>(null);
   let isDown = false;
   let startX: number;

@@ -10,15 +10,20 @@ import useSortableData from "../../customHook/useSortable";
 import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
 import DateFormatter from "../../customHook/useTImeformnt";
-import PaginationButtons, { dataPagination, PER_COUNT } from "../../Comopnent/ui/PaginationButtons";
+import PaginationButtons, {
+  dataPagination,
+  PER_COUNT,
+} from "../../Comopnent/ui/PaginationButtons";
 
 const Report = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const store: any = useSelector((i) => i);
   const { loading } = store?.report;
-  const allreport = store?.report?.reports?.results; 
-  const { items, requestSort, getClassNamesFor } = useSortableData(allreport || []);
+  const allreport = store?.report?.reports?.results;
+  const { items, requestSort, getClassNamesFor } = useSortableData(
+    allreport || []
+  );
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
     if (storedLoginUser) {
@@ -26,24 +31,20 @@ const Report = () => {
     }
   }, []);
   useEffect(() => {
-    if(loginUser){
-
+    if (loginUser) {
       const getDAta = async () => {
         try {
           await dispatch(GetAllreports({ token: loginUser?.access }));
         } catch (error) {
           console.log(error);
-      }
-    };
-    getDAta();
-  }
+        }
+      };
+      getDAta();
+    }
   }, [loginUser]);
 
- 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
-
- 
+  const [perPage, setPerPage] = useState<number>(PER_COUNT["10"]);
 
   const [show, setShow] = useState(false);
   const [mergeshow, setShowmerges] = useState(false);
@@ -56,11 +57,9 @@ const Report = () => {
     <div className="mx-4">
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
         <h1 className="h1 fw-bold">Reports </h1>
- 
-    
- 
+
         <div className="btn-toolbar mb-2 mb-md-0">
-        {/* <button
+          {/* <button
             onClick={handleShow}
             type="button"
             className="btn icon-button my-1 mx-2"
@@ -68,8 +67,8 @@ const Report = () => {
             <Icon icon="Add" size="20px" />
             <span>Create</span>
           </button>*/}
-          <button 
-            onClick={()=>setShowmerges(true)}
+          <button
+            onClick={() => setShowmerges(true)}
             type="button"
             className="btn icon-button my-1 mx-2"
           >
@@ -80,70 +79,76 @@ const Report = () => {
       </div>
       <div>
         {items.length > 0 ? (
-          <div style={{overflow: 'auto'}} id="customReportForm" >
+          <div style={{ overflow: "auto" }} id="customReportForm">
             <div className="py-2">
-<PaginationButtons
-								data={items}
-								label='Reports'
-								setCurrentPage={setCurrentPage}
-								currentPage={currentPage}
-								perPage={perPage}
-								setPerPage={setPerPage}
-                />
-                </div>
-    <table className="table" style={{minWidth:'1000px'}}>
-          <thead>
-            <tr className="fw-bold mb-2 p-2">
-              <th scope="col" className="col-1">
-                <h5>Sr no.</h5>
-              </th>
-              <th scope="col" className="col-7">
-                <h5>Report Name</h5>
-              </th>
-              <th scope="col" className="col-2 text-center mx-auto">
-                Created
-              </th>
-              <th scope="col" className="col-2 text-center mx-auto">
-                Last Updated
-              </th>
-            </tr>
-          </thead>
-          <tbody id="scriptsCheckboxes">
-            {items &&  dataPagination(items, currentPage, perPage).map((script: any, index: any) => (
-                  <>
-              <tr key={script.id} className="table-card rounded-3 bg-light-green mb-2 p-3">
-                <td className="col-1 fw-bold fs-6">{index + 1}</td>
-                <td className="col-7 fw-bold fs-6">
-                  <Link
-                    to={`/account/ReportDetails/${script.id}`}
-                    className="text-decoration-none text-black"
-                    >
-                    {script.name}
-                  </Link>
-                </td>
-                <td className="col-2 text-center mx-auto">
-                  <DateFormatter isoString={script.created} />
-                </td>
-                <td className="col-2 text-center mx-auto">
-                  <DateFormatter isoString={script.last_updated} />
-                </td>
-              </tr>
-              <tr style={{height:'10px'}}>
-
-              </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
+              <PaginationButtons
+                data={items}
+                label="Reports"
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                perPage={perPage}
+                setPerPage={setPerPage}
+              />
+            </div>
+            <table className="table" style={{ minWidth: "1000px" }}>
+              <thead>
+                <tr className="fw-bold mb-2 p-2">
+                  <th scope="col" className="col-1">
+                    <h5>Sr no.</h5>
+                  </th>
+                  <th scope="col" className="col-7">
+                    <h5>Report Name</h5>
+                  </th>
+                  <th scope="col" className="col-2 text-center mx-auto">
+                    Created
+                  </th>
+                  <th scope="col" className="col-2 text-center mx-auto">
+                    Last Updated
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="scriptsCheckboxes">
+                {items &&
+                  dataPagination(items, currentPage, perPage).map(
+                    (script: any, index: any) => (
+                      <>
+                        <tr
+                          key={script.id}
+                          className="table-card rounded-3 bg-light-green mb-2 p-3"
+                        >
+                          <td className="col-1 fw-bold fs-6">{index + 1}</td>
+                          <td className="col-7 fw-bold fs-6">
+                            <Link
+                              to={`/account/ReportDetails/${script.id}`}
+                              className="text-decoration-none text-black"
+                            >
+                              {script.name}
+                            </Link>
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            <DateFormatter isoString={script.created} />
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            <DateFormatter isoString={script.last_updated} />
+                          </td>
+                        </tr>
+                        <tr style={{ height: "10px" }}></tr>
+                      </>
+                    )
+                  )}
+              </tbody>
+            </table>
+          </div>
         ) : (
-         <Loader/>
+          <Loader />
         )}
       </div>
-   
 
-      <MergeReports show={mergeshow} handleClose={()=>setShowmerges(false)}  allreport={allreport}/>
+      <MergeReports
+        show={mergeshow}
+        handleClose={() => setShowmerges(false)}
+        allreport={allreport}
+      />
     </div>
   );
 };

@@ -1,9 +1,9 @@
 // src/api/scriptsApi.js
-import axiosInstance from '../APInterceptors';
-import { endpoint } from '../endpoint';
+import axiosInstance from "../APInterceptors";
+import { endpoint } from "../endpoint";
 
 // Create Script
-export const CreateScript = async (data:any) => {
+export const CreateScript = async (data: any) => {
   const { formData } = data;
 
   try {
@@ -15,7 +15,7 @@ export const CreateScript = async (data:any) => {
 };
 
 // Update Script
-export const UpdateScript = async (data:any) => {
+export const UpdateScript = async (data: any) => {
   const { formData, scriptId } = data;
 
   try {
@@ -30,7 +30,7 @@ export const UpdateScript = async (data:any) => {
 };
 
 // Get Script by ID
-export const GetScriptByID = async (data:any) => {
+export const GetScriptByID = async (data: any) => {
   const { id } = data;
 
   try {
@@ -42,7 +42,7 @@ export const GetScriptByID = async (data:any) => {
 };
 
 // Delete Script by ID
-export const DeleteScriptByID = async (data:any) => {
+export const DeleteScriptByID = async (data: any) => {
   const { id } = data;
 
   try {
@@ -64,7 +64,7 @@ export const GetAllScript = async () => {
 };
 
 // Get Scripts by Category
-export const GetScriptbyCategory = async (data:any) => {
+export const GetScriptbyCategory = async (data: any) => {
   const { value } = data;
 
   try {
@@ -78,7 +78,7 @@ export const GetScriptbyCategory = async (data:any) => {
 };
 
 // Run Script
-export const RunScript = async (data:any) => {
+export const RunScript = async (data: any) => {
   const { id } = data;
 
   try {

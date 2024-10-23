@@ -1,13 +1,10 @@
-import React from 'react';
+import React from "react";
 
 type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const Select: React.FC<SelectProps> = ({ children, ...props }) => {
   return (
-    <select
-      className="border border-gray-300 p-2 rounded-md w-full"
-      {...props}
-    >
+    <select className="border border-gray-300 p-2 rounded-md w-full" {...props}>
       {children}
     </select>
   );
@@ -38,7 +35,7 @@ const SelectValue: React.FC<SelectValueProps> = ({ placeholder }) => {
   );
 };
 
-const SelectContent: React.FC = ({ children }:any) => {
+const SelectContent: React.FC = ({ children }: any) => {
   return (
     <div className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
       {children}
@@ -47,16 +44,12 @@ const SelectContent: React.FC = ({ children }:any) => {
 };
 
 type SelectItemProps = {
-	value: string;
-	children:any
+  value: string;
+  children: any;
 };
 
 const SelectItem: React.FC<SelectItemProps> = ({ value, children }) => {
-  return (
-    <option value={value}>
-      {children}
-    </option>
-  );
+  return <option value={value}>{children}</option>;
 };
 
 export { Select, SelectTrigger, SelectValue, SelectContent, SelectItem };

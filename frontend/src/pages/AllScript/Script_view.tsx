@@ -51,7 +51,7 @@ const ScriptView = () => {
       
     };
     getScript();
-  }, [loginUser]);
+  }, [loginUser,id]);
 
   const store: any = useSelector((i) => i);
 

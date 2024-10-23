@@ -26,8 +26,7 @@ function SignInComponent() {
       rememberMe: false,
     },
     validationSchema: Yup.object({
-      username: Yup.string()
-      .required("username is required"),
+      username: Yup.string().required("username is required"),
       password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
@@ -46,20 +45,19 @@ function SignInComponent() {
     if (isSuccess) {
       // Set login data in localStorage first
       localStorage.setItem("login", JSON.stringify(data));
-  
+
       // Then show a success message
       handleToast.SuccessToast("Logged in successfully");
-  
+
       // Finally, navigate to the next page
       navigate(`/account/${SidebarMenu.upload.path}`);
     }
-  
+
     if (isError) {
       // Show error toast if login fails
       handleToast.ErrorToast("Login failed. Please check your credentials.");
     }
   }, [data, isSuccess, isError, navigate]);
-  
 
   return (
     <div className="container">

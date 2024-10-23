@@ -6,7 +6,7 @@ import '../../assest/css/Header.css';
 import Icon from "../ui/icon/Icon";
 import { useSearchScriptMutation } from '../../Redux/Script';
 import { loginUSer } from '../../customHook/getrole';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../ui/Loader';
 import Sidebar from '../Sidebar/Sidebar';
  
@@ -14,10 +14,11 @@ import Sidebar from '../Sidebar/Sidebar';
 const SimpleHeader = () => {
   const [searchData, setSearchData] = useState<any>([]);
   const [searchScript, { isLoading,  data }]:any = useSearchScriptMutation();
+  const [search,setSearch]=useState('')
   const handleSearch =async (e: any) => {
   const value=e.target.value.toLowerCase()
 
-
+  setSearch(value)
   if (value === '') {
     setSearchData([]);
   } else {
@@ -26,12 +27,16 @@ const SimpleHeader = () => {
   };
 
   useEffect(()=>{
-    if (data) {
+    if (data && search !== '' ) {
     
       setSearchData(data?.scripts);
      }
   },[data])
-
+const navigate =useNavigate()
+  const changeRoute =(route:any)=>{
+    navigate(route)
+    setSearchData([]);
+  }
   return (
     <div className='bg-green main-header-conatiner row '>
 
@@ -76,12 +81,12 @@ const SimpleHeader = () => {
             }}
           >
             {isLoading ? <Loader/> : (searchData && searchData.map((item: any, index: any) => (
-              <Link  key={index} style={{textDecoration:'none'}}
-              to={`/account/ScriptDetails/${item.id}`}>
-              <span className="hover-span" >
+              // <Link  key={index} style={{textDecoration:'none'}}
+              // to={`/account/ScriptDetails/${item.id}`}>
+              <span className="hover-span" onClick={()=>changeRoute(`/account/ScriptDetails/${item.id}`)}>
                 {item?.name}
               </span> 
-              </Link>
+              // </Link>
             )))}
           </div>
         )}

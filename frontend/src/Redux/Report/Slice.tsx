@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Createreport, Createreportschedules, DeleteReportsByID, GetAllreport, GetreportByID, mergereport, Updatereport, UpdateReports} from "./Api";
+import { ReportState } from "../../types/stateTypes";
 
-const initialState:any = {
+const initialState:ReportState = {
   reports: [],
   report: [],
   Active_Role: '',
@@ -88,7 +89,7 @@ const reportSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(DeleteReportsByIDs.fulfilled, (state, action) => {
-        state.Script = action.payload;
+        // state.Script = action.payload;
         state.loading = false;
       })
       .addCase(DeleteReportsByIDs.pending, (state) => {

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Papa from 'papaparse';
- 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Papa from "papaparse";
 
 const CsvDisplay = ({ csvUrl }: any) => {
   const [data, setData] = useState([]);
@@ -20,7 +19,7 @@ const CsvDisplay = ({ csvUrl }: any) => {
           skipEmptyLines: true,
         });
       } catch (error) {
-        console.error('Error fetching CSV:', error);
+        console.error("Error fetching CSV:", error);
       }
     };
 
@@ -28,14 +27,12 @@ const CsvDisplay = ({ csvUrl }: any) => {
   }, [csvUrl]);
 
   return (
-    <div style={{overflow: 'auto'}}>
-      <table className="TableData" style={{minWidth:'800px'}}>
+    <div style={{ overflow: "auto" }}>
+      <table className="TableData" style={{ minWidth: "800px" }}>
         <thead>
           <tr>
             {headers.map((header, index) => (
-              <th key={index}>
-                {header}
-              </th>
+              <th key={index}>{header}</th>
             ))}
           </tr>
         </thead>
@@ -43,9 +40,7 @@ const CsvDisplay = ({ csvUrl }: any) => {
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {headers.map((header, colIndex) => (
-                <td key={colIndex}>
-                  {row[header]}
-                </td>
+                <td key={colIndex}>{row[header]}</td>
               ))}
             </tr>
           ))}

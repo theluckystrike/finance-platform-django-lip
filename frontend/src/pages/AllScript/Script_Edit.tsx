@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import "../../assest/css/AllScript.css";
 import Icon from "../../Comopnent/ui/icon/Icon";
@@ -13,37 +12,35 @@ const ScriptEdit = () => {
   const Navigate = useNavigate();
   const store: any = useSelector((i) => i);
   const ScriptData = store?.script?.Script;
-const handleToast = useToast()
-  const [code, setCode] = useState('');
-  const [description, setDescription] = useState(ScriptData?.description || '');
-  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  const handleToast = useToast();
+  const [code, setCode] = useState("");
+  const [description, setDescription] = useState(ScriptData?.description || "");
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 
   const handleGetFile = () => {
+    const url = ScriptData?.file; // Replace with your file URL
+    const xhr = new XMLHttpRequest();
 
-        const url = ScriptData?.file; // Replace with your file URL
-        const xhr = new XMLHttpRequest();
-    
-        xhr.open('GET', url, true);
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            setCode(xhr.responseText); // File content
-          }
-        };
-        xhr.send();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        setCode(xhr.responseText); // File content
       }
-      
-      useEffect(() => {
-        // Fetch the code from the provided URL
-        handleGetFile()
-      }, [ScriptData]);
+    };
+    xhr.send();
+  };
+
+  useEffect(() => {
+    // Fetch the code from the provided URL
+    handleGetFile();
+  }, [ScriptData]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
-    const blob = new Blob([code], { type: 'text/plain' });
-    formData.append('file', blob, `${ScriptData?.name}.py`);
-    formData.append('description', description);
- 
+    const blob = new Blob([code], { type: "text/plain" });
+    formData.append("file", blob, `${ScriptData?.name}.py`);
+    formData.append("description", description);
 
     try {
       const response = await axios.patch(
@@ -51,14 +48,14 @@ const handleToast = useToast()
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${loginUSer?.access}`,
           },
         }
       );
 
       if (response.status === 200) {
-        Navigate(`/account/ScriptDetails/${ScriptData?.id}`); 
+        Navigate(`/account/ScriptDetails/${ScriptData?.id}`);
         handleToast.SuccessToast(`New Category added successfully`);
         // Navigate after successful update
       }
@@ -74,13 +71,15 @@ const handleToast = useToast()
           <button className="btn mb-3" onClick={() => Navigate(-1)}>
             <Icon icon="ArrowBack" size="45px" color="dark" />
           </button>{" "}
-          <h1 className="h1 fw-bold ">
-            Editing ({ScriptData?.name})
-          </h1>
+          <h1 className="h1 fw-bold ">Editing ({ScriptData?.name})</h1>
         </div>
 
         <div className="d-flex justify-content-center">
-          <form className="w-75" onSubmit={handleSubmit} encType="multipart/form-data">
+          <form
+            className="w-75"
+            onSubmit={handleSubmit}
+            encType="multipart/form-data"
+          >
             <div className="mb-3">
               <label htmlFor="Description" className="form-label">
                 Description

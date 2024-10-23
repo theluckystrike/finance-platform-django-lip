@@ -33,36 +33,36 @@ const StockMultiChartPlot = ({ data, layout }) => {
           // Deep clone data and layout to avoid immutability issues
           const dataClone = JSON.parse(JSON.stringify(data));
           const layoutClone = JSON.parse(JSON.stringify(layout));
-  
-          layoutClone.width = screenWidth * 0.8 < 762 ? screenWidth+20: screenWidth * 0.8; 
-if ( screenWidth < 762) {
-  layoutClone.height =  450
-  
-}
-if ( screenWidth> 762) {
-layoutClone.showlegend = true;
-layoutClone.legend = {
-  x: 0,
-  y: 1,
-  orientation: "v",
-  bgcolor: "#00000000",
-  bordercolor: "#21252999",
-  borderStyle: 'outset',
-  borderwidth: 2,
- 
-  font: {
-    family: "Arial",
-    size:10,
-    color: "#000",
-    lineHeight:2
-  }
-};
- 
-}
+
+          layoutClone.width = screenWidth * 0.8 < 762 ? screenWidth + 20 : screenWidth * 0.8;
+          if (screenWidth < 762) {
+            layoutClone.height = 450
+
+          }
+          if (screenWidth > 762) {
+            layoutClone.showlegend = true;
+            layoutClone.legend = {
+              x: 0,
+              y: 1,
+              orientation: "v",
+              bgcolor: "#00000000",
+              bordercolor: "#21252999",
+              borderStyle: 'outset',
+              borderwidth: 2,
+
+              font: {
+                family: "Arial",
+                size: 10,
+                color: "#000",
+                lineHeight: 2
+              }
+            };
+
+          }
           // Adjust the height proportionally to the width (e.g., 50% of width)
 
           // Initialize the plot
-          window.Plotly.newPlot("plotDiv", dataClone, layoutClone );
+          window.Plotly.newPlot("plotDiv", dataClone, layoutClone);
         } else {
           console.error("Plotly failed to load.");
         }
@@ -86,7 +86,7 @@ layoutClone.legend = {
 
   return (
     <div style={{ width: "100%", margin: "0 auto" }}> {/* 70% width container */}
-      <div id="plotDiv" style={{ width: "100%", height: "100%"   ,  marginLeft: `${screenWidth * 0.8 < 720? '-70px' :''}` }}></div>
+      <div id="plotDiv" style={{ width: "100%", height: "100%", marginLeft: `${screenWidth * 0.8 < 720 ? '-70px' : ''}` }}></div>
     </div>
   );
 };
