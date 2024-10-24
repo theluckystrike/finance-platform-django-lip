@@ -82,29 +82,25 @@ const UploadScriptForm = () => {
       handleToast.SuccessToast(`New Script added successfully`);
     },
   });
+const [FilterCategory,setFilterCategory]=useState([])
+const [dataTypeOption ,setDataTypeOption]=useState(false)
+const FilterData = (value: any) => {
+  const trimmedValue = value.trim(); // Trim the input value
+  if (trimmedValue !== '') {
+    const res = categoryData.filter((i: any) =>
+      i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+    );
+    console.log(res, 'res');
+    setFilterCategory(res);
+  } else {
+    setFilterCategory([]);
+  }
+}
 
-  // useEffect(() => {
-  //   const categoryMap: any = {};
-  //   categoryData.forEach((cat: any) => {
-  //     categoryMap[cat.id] = { ...cat, subcategories: [] };
-  //   });
-  //   categoryData.forEach((cat: any) => {
-  //     if (cat?.parent_category !== null) {
-  //       const parent:any = Object.values(categoryMap).find(
-  //         (parentCat: any) => parentCat.name === cat?.parent_category
-  //       );
-  //       if (parent) {
-  //         parent.subcategories.push(categoryMap[cat.id]);
-  //       }
-  //     }
-  //   });
-  //   const structuredCategories = Object.values(categoryMap).filter(
-  //     (cat: any) => cat?.parent_category === null
-  //   );
 
-  //   setCategoryFilter(structuredCategories);
-  // }, [categoryData]);
-
+useEffect(()=>{
+  FilterData(formik.values.parentName)
+},[formik.values.parentName])
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
@@ -129,27 +125,35 @@ const UploadScriptForm = () => {
                     </div>
                     <input
                       type="text"
-                      placeholder="All"
+                      placeholder="Select a category"
                       value={formik.values.parentName}
-                      readOnly
+                   onChange={(e) => {
+                    formik.setFieldValue("parentName", e.target.value)
+                  
+                    FilterData( e.target.value)
+                  
+                  }}
                       className={`form-control ${
                         formik.touched.category && formik.errors.category
                           ? "input-error"
                           : ""
                       }`}
                     />
-                    <div
-                      className="dropdown-content"
-                      style={{ height: "200px", overflow: "auto" }}
-                    >
-                      {categoryData.length > 0 &&
-                        categoryData.map((item: any, index: any) => (
+                  <div
+  className="dropdown-content"
+  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
+>
+
+                      {FilterCategory.length > 0  &&
+                        FilterCategory.map((item: any, index: any) => (
                           <span
                             className="h6 hover-span"
                             key={item.name}
-                            onClick={() => {
-                              formik.setFieldValue("parentName", item.name);
-                              formik.setFieldValue("category", item.id);
+                            onClick={async () => {
+                             await formik.setFieldValue("parentName", item.name);
+                            await  formik.setFieldValue("category", item.id);
+    setFilterCategory([])
+
                             }}
                           >
                             {item.name}
@@ -184,31 +188,41 @@ const UploadScriptForm = () => {
                 <input
                   type="text"
                   id="output_type"
-                  placeholder="All"
+                  placeholder="Select a view data type"
+                  value={formik.values.output_type}
+               readOnly
+                     onFocus={()=>setDataTypeOption(true)}
+                    //  onBlur={()=>setDataTypeOption(false)}
                   className={`form-control ${
                     formik.touched.output_type && formik.errors.output_type
                       ? "input-error"
                       : ""
                   }`}
-                  {...formik.getFieldProps("output_type")}
+                  
                 />
-                <div className="dropdown-content">
+                <div className="dropdown-content" style={{ maxHeight: "200px", overflow: "auto", display: dataTypeOption ? 'block' : 'none' }}>
                   <span
                     className="hover-span"
-                    onClick={() => formik.setFieldValue("output_type", "pd")}
+                    onClick={async() => { await formik.setFieldValue("output_type", "pd")
+                      setDataTypeOption(false)
+                    }}
                   >
                     Chart
                   </span>
                   <span
                     className="hover-span"
-                    onClick={() => formik.setFieldValue("output_type", "plt")}
+                    onClick={async() => {await formik.setFieldValue("output_type", "plt")
+                      setDataTypeOption(false)
+                    }}
                   >
                     Table
                   </span>
                   <span
                     className="hover-span"
-                    onClick={() =>
-                      formik.setFieldValue("output_type", "pd plt")
+                    onClick={ async() =>
+                    { await formik.setFieldValue("output_type", "pd plt")
+                      setDataTypeOption(false)
+                    }
                     }
                   >
                     Chart and Table
@@ -229,6 +243,7 @@ const UploadScriptForm = () => {
               <input
                 type="text"
                 id="name"
+                placeholder="Enter script name"
                 className={`form-control ${
                   formik.touched.name && formik.errors.name ? "input-error" : ""
                 }`}
@@ -240,21 +255,22 @@ const UploadScriptForm = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="file" className="form-label">
-                Select a file
+              <label htmlFor="file" className="form-label" title="Select only .py files">
+                Select a file <Icon icon="InfoOutline" size="18px" />
               </label>
               <input
-                type="file"
-                id="file"
-                name="file"
-                ref={fileRef}
-                className={`form-control ${
-                  formik.touched.file && formik.errors.file ? "input-error" : ""
-                }`}
-                onChange={(event: any) =>
-                  formik.setFieldValue("file", event.target.files[0])
-                }
-              />
+  type="file"
+  id="file"
+  name="file"
+  ref={fileRef}
+  accept=".py" // Restrict to only .py files
+  className={`form-control ${
+    formik.touched.file && formik.errors.file ? "input-error" : ""
+  }`}
+  onChange={(event: any) =>
+    formik.setFieldValue("file", event.target.files[0])
+  }
+/>
               {formik.touched.file && formik.errors.file ? (
                 <div className="error-message">{formik.errors.file as any}</div>
               ) : null}

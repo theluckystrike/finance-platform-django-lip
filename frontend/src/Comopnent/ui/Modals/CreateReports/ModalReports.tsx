@@ -115,7 +115,7 @@ console.log(selectedScripts,'selectedScripts');
             
               </div>
 
-              <div className="col-12">
+              <div className="col-12 mb-2">
                 <label htmlFor="scripts" className="form-label">
                   Scripts
                 </label>
@@ -131,6 +131,7 @@ console.log(selectedScripts,'selectedScripts');
       ...provided,
       maxHeight: '150px', // Set max height for the entire control
       overflowY: 'auto',  // Add scroll when options exceed height
+      border: '2px solid #011c05', 
     }),
     menu: (provided) => ({
       ...provided,

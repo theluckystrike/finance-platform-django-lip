@@ -53,7 +53,7 @@ const ScriptTree = () => {
         </button>{" "}
         <h3 className="h1 fw-bold">Script Tree By Category</h3>
       </div>
-      <ScriptChart categoryFilter={categoryFilter} token={loginUser} />
+      <ScriptChart categoryFilter={categoryFilter} categoryData={categoryData} token={loginUser} />
     </div>
   );
 };

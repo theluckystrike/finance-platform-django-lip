@@ -50,7 +50,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
   const scriptOptions: ScriptOption[] =allreport && allreport.map((report: any) => ({
     value: report.id,
     label: report.name,
-  }));
+  })); 
 
   // Form validation schema
   const validationSchema = Yup.object({

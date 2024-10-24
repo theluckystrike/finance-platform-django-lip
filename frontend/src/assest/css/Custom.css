@@ -147,10 +147,12 @@ input:focus {
   background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content {
+/* .dropdown:hover .dropdown-content {
   display: block;
-}
-
+} */
+ .active-dropdown{
+  display:'block' !important;
+ }
 .dropdown:hover .dropbtn {
   background-color: #3e8e41;
 }
@@ -416,7 +418,7 @@ input:focus {
 }
 
 .modal-fullscreen-md-down .modal-content {
-  height: 45% !important;
+  height: 60% !important;
 }
 
 .js-plotly-plot .plotly .modebar {

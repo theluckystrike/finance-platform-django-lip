@@ -38,7 +38,7 @@ const navigate =useNavigate()
     setSearchData([]);
   }
   return (
-    <div className='bg-green main-header-conatiner row '>
+    <div className='bg-green main-header-conatiner row mx-0'>
 
 <div className='d-sm-flex d-md-none col-2 col-sm-2 text-light' style={{display:'flex', alignItems:'center'}}>
   

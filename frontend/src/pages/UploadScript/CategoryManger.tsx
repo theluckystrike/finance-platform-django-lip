@@ -61,7 +61,7 @@ const CategoryManger = () => {
         </button>{" "}
         <h3 className="h1 fw-bold">Category manager</h3>
       </div>
-      <OrgChartTree categoryFilter={categoryFilter} token={loginUser} />
+      <OrgChartTree categoryFilter={categoryFilter} categoryData={categoryData} token={loginUser} />
     </div>
   );
 };

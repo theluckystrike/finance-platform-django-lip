@@ -5,7 +5,7 @@ import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
 import DeleteModal from "../../pages/UploadScript/DeleteModal";
  
 
-const RenderTree = (data: any, token: any, level = 0) => {
+const RenderTree = (data: any,categoryData:any, token: any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [selectedPERnt, setSelectedPREnt] = useState("");
@@ -117,6 +117,7 @@ const RenderTree = (data: any, token: any, level = 0) => {
         editingCategory={editingCategory}
         data={data}
         token={token}
+        categoryData={categoryData}
         showDel={showDel}
       />
 
@@ -130,11 +131,11 @@ const RenderTree = (data: any, token: any, level = 0) => {
   );
 };
 
-const CategoryTree = ({ categoryFilter, token }: any) => {
+const CategoryTree = ({ categoryFilter, categoryData,token }: any) => {
   return (
     <div className="category-tree mx-auto w-25">
       <h3>Script Tree</h3>
-      {RenderTree(categoryFilter, token)}
+      {RenderTree(categoryFilter,categoryData, token)}
     </div>
   );
 };

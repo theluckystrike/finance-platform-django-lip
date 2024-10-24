@@ -4,7 +4,7 @@ import { Categoryarray2 } from "../../DummyData/TableData";
 import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
 import DeleteModal from "../../pages/UploadScript/DeleteModal";
 
-const RenderTree = (data: any, token: any, level = 0) => {
+const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState("");
   const [selectedPERnt, setSelectedPREnt] = useState("");
@@ -89,9 +89,9 @@ const RenderTree = (data: any, token: any, level = 0) => {
                                 <li key={subinnerIndex}>
                                   <span
                                     onClick={() =>
-                                      startEditing(
-                                        { name: subinnerItem.name },
-                                        innerItem
+                                      startEditing(  
+                                         subinnerItem,
+                                        innerItem,
                                       )
                                     }
                                     style={{ cursor: "pointer" }}
@@ -118,6 +118,7 @@ const RenderTree = (data: any, token: any, level = 0) => {
         selectedPERnt={selectedPERnt}
         editingCategory={editingCategory}
         data={data}
+        categoryData={categoryData}
         token={token}
         showDel={showDel}
       />
@@ -132,11 +133,11 @@ const RenderTree = (data: any, token: any, level = 0) => {
   );
 };
 
-const CategoryTree = ({ categoryFilter, token }: any) => {
+const CategoryTree = ({ categoryFilter,categoryData, token }: any) => {
   return (
     <div className="category-tree mx-auto col-3">
       <h3>Category Tree</h3>
-      {RenderTree(categoryFilter, token)}
+      {RenderTree(categoryFilter,categoryData, token)}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
 import { log } from "console";
 import useToast from "../../../../customHook/toast";
 import DeleteModal from "../DeleteModal/DeleteModal";
+import ArrowDown from "../../../../assest/image/arrow-down.png";
 
 interface NewCategoryModalProps {
   show: boolean;
@@ -17,6 +18,7 @@ interface NewCategoryModalProps {
   token: any;
   data: any;
   selectedPERnt: any;
+  categoryData:any;
   showDel: any;
 }
 
@@ -26,6 +28,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   handleClose,
   data,
   editingCategory,
+  categoryData,
   token,
   selectedPERnt,
   showDel,
@@ -72,6 +75,24 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
     showDel(editingCategory);
   };
 
+
+  const [FilterCategory,setFilterCategory]=useState([])
+  const [dataTypeOption ,setDataTypeOption]=useState(false)
+  const FilterData = (value: any) => {
+    if (value !== '') {
+      const trimmedValue = value?.trim(); // Trim the input value
+      const res = categoryData.filter((i: any) =>
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+      );
+      console.log(res, 'res');
+      setFilterCategory(res);
+    } else {
+      setFilterCategory([]);
+    }
+  }
+  
+ 
+
   return (
 <Modal
         size="lg"
@@ -104,9 +125,56 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
               </div>
               <div className="col-12">
                 <label htmlFor="parent_category" className="form-label">
-                  parent_category Category
+                  Parent category 
                 </label>
 
+
+                <div className="dropdown">
+                    <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Select a category"
+                      value={parentCategory.name}
+                   onChange={(e) => {
+                     
+                    setParentCategory({...parentCategory,name:e.target.value})
+                    FilterData( e.target.value)
+                  
+                  }}
+                      
+                    />
+                  <div
+  className="dropdown-content"
+  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
+>  <span className="h6  ">
+                      <span
+                        className="hover-span text-muted"
+                        onClick={() => setParentCategory({ name: "", id: "" })}
+                      >
+                        None
+                      </span>
+                    </span>
+
+                      {FilterCategory.length > 0  &&
+                        FilterCategory.map((item: any, index: any) => (
+                          <span
+                            className="h6 hover-span"
+                            key={item.name}
+                            onClick={async () => {
+                           await   setParentCategory(item)
+    setFilterCategory([])
+
+                            }}
+                          >
+                            {item.name}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+
+{/* 
                 <div className="dropdown">
                   <input
                     type="text"
@@ -123,11 +191,11 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                         className="hover-span text-muted"
                         onClick={() => setParentCategory({ name: "", id: "" })}
                       >
-                        Null
+                        None
                       </span>
                     </span>
-                    {data.length > 0 &&
-                      data.map((item: any, index: any) => (
+                    {FilterCategory.length > 0 &&
+                      FilterCategory.map((item: any, index: any) => (
                         <span className="h6  " key={item.name}>
                           <span
                             className="hover-span "
@@ -138,7 +206,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                         </span>
                       ))}
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="col-12 row justify-content-evenly m-0">
                 <label
