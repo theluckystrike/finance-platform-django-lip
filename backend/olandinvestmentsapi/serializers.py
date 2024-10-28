@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from scriptupload.models import Script, ChartData, TableData, Category, Report, ReportEmailTask
+from olandinvestmentsapi.models import Summary
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -103,3 +104,56 @@ class ReportEmailTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportEmailTask
         fields = "__all__"
+
+
+class SummarySerializer(serializers.ModelSerializer):
+    scripts = serializers.PrimaryKeyRelatedField(
+        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+
+    class Meta:
+        model = Summary
+        fields = ["id", "name", "scripts", "meta", "created"]
+
+
+class SummarySerializerLite(serializers.ModelSerializer):
+    scripts = serializers.PrimaryKeyRelatedField(
+        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+
+    class Meta:
+        model = Summary
+        fields = ["id", "name", "scripts", "created"]
+
+
+class SummaryMetaSerializer(serializers.ModelSerializer):
+    scripts = serializers.DictField(child=serializers.CharField(), write_only=True)
+
+    class Meta:
+        model = Summary
+        fields = ["scripts", "name", "meta"]
+
+    def validate_scripts(self, value):
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("Scripts must be a dictionary mapping from ID to column name")
+        if len(value) == 0:
+            raise serializers.ValidationError("Scripts cannot be empty")
+        for sid, col_name in value.items():
+            if not Script.objects.filter(id=int(sid)).exists():
+                raise serializers.ValidationError(f"Script with ID {sid} does not exist")
+            if col_name is None:
+                raise serializers.ValidationError("Cannot have null column name")
+            # TODO: validate column name is in table data column names
+        return value
+
+    def create(self, validated_data):
+        script_map = validated_data.pop("scripts")
+        validated_data['scripts'] = script_map.keys()
+        validated_data["meta"] = {
+            "scripts": {
+                sid: {
+                    "name": Script.objects.get(id=sid).name,
+                    "table_col_name": col_name,
+                    "table_col_last_value": None
+                } for sid, col_name in script_map.items()
+            }
+        }
+        return super().create(validated_data)
