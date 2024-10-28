@@ -79,7 +79,6 @@ const FilterData = (value: any) => {
     const res = categoryFilter.filter((i: any) =>
       i.name.toLowerCase().includes(trimmedValue.toLowerCase())
     );
-    console.log(res, 'res');
     setFilterCategory(res);
   } else {
     setFilterCategory([]);

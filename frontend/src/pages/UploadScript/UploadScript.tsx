@@ -90,7 +90,6 @@ const FilterData = (value: any) => {
     const res = categoryData.filter((i: any) =>
       i.name.toLowerCase().includes(trimmedValue.toLowerCase())
     );
-    console.log(res, 'res');
     setFilterCategory(res);
   } else {
     setFilterCategory([]);
@@ -105,7 +104,6 @@ useEffect(()=>{
     <>
       <div className="UploadScript_main_wrap mt-3">
         <h1 className="h1 fw-bold">Upload a Script</h1>
-
         <div className="d-flex justify-content-center">
           <form
             className="w-75"
@@ -127,23 +125,18 @@ useEffect(()=>{
                       type="text"
                       placeholder="Select a category"
                       value={formik.values.parentName}
-                   onChange={(e) => {
-                    formik.setFieldValue("parentName", e.target.value)
-                  
-                    FilterData( e.target.value)
-                  
-                  }}
+                      onChange={(e) => {
+                      formik.setFieldValue("parentName", e.target.value)
+                      FilterData( e.target.value)
+                      }}
                       className={`form-control ${
                         formik.touched.category && formik.errors.category
                           ? "input-error"
                           : ""
                       }`}
                     />
-                  <div
-  className="dropdown-content"
-  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
->
-
+                  <div className="dropdown-content"
+                   style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}>
                       {FilterCategory.length > 0  &&
                         FilterCategory.map((item: any, index: any) => (
                           <span
@@ -151,11 +144,9 @@ useEffect(()=>{
                             key={item.name}
                             onClick={async () => {
                              await formik.setFieldValue("parentName", item.name);
-                            await  formik.setFieldValue("category", item.id);
-    setFilterCategory([])
-
-                            }}
-                          >
+                             await  formik.setFieldValue("category", item.id);
+                             setFilterCategory([])
+                            }} >
                             {item.name}
                           </span>
                         ))}
@@ -198,7 +189,6 @@ useEffect(()=>{
                       ? "input-error"
                       : ""
                   }`}
-                  
                 />
                 <div className="dropdown-content" style={{ maxHeight: "200px", overflow: "auto", display: dataTypeOption ? 'block' : 'none' }}>
                   <span

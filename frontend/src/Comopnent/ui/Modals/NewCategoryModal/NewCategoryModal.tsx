@@ -84,7 +84,6 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
       const res = categoryData.filter((i: any) =>
         i.name.toLowerCase().includes(trimmedValue.toLowerCase())
       );
-      console.log(res, 'res');
       setFilterCategory(res);
     } else {
       setFilterCategory([]);

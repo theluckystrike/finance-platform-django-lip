@@ -28,15 +28,10 @@ const rootElement = document.getElementById("root") as HTMLElement;
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-
- 
-
     <Provider store={store}>
     <ToastContainer />
     <RouterProvider router={router} />
     </Provider>
- 
- 
   </React.StrictMode>
 );
 

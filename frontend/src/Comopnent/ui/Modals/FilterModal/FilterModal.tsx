@@ -57,7 +57,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
       number:1,
     },
     validationSchema,
-    onSubmit:async (values) => {
+    onSubmit:async (values,{ resetForm }) => {
 
 
    await dispatch(
@@ -67,6 +67,8 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
         })
       );
       // Handle form submission logic here
+        // Reset the form after dispatch
+    resetForm();
       handleClose(); // Close modal on form submission
     },
   });
@@ -80,11 +82,10 @@ const [cateDropDown1,setCateDropDown1]=useState(false)
 const [cateDropDown2,setCateDropDown2]=useState(false)
   useEffect(()=>{
     const  Cate = categoryData.filter((i:any)=>i?.parent_category === null)
-    const res = Cate.filter((i: any) =>
+    const res = categoryData.filter((i: any) =>
       i.name.toLowerCase().includes(formik.values.parentName.toLowerCase())
     );
-   
-    console.log(res,'subCate');
+
     setCategorylist(res)
     if(formik.values.parentName !== '' ){
     const  subCate = categoryData.filter((i:any)=>i?.parent_category === formik.values.category)
@@ -101,7 +102,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
         i.name.toLowerCase().includes(formik.values.parentName2.toLowerCase())
       );
       
-      console.log(res,'subdsdrtfCate');
+ 
       setSubcategory2(res)
       }
   },[formik.values.parentName,formik.values.parentName1, formik.values.parentName2,categoryData])

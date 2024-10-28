@@ -1,6 +1,1 @@
-Upload script page: Fix dropdown to show after focus on input.
-Fix parent category input with dropdown in the "Add Category" modal.
-Fix parent category input with dropdown in the "Edit Category" modal.
-Fix category dropdown in the "Filter by Category" modal.
-Ensure the file input only selects .py files.
-Fix the super sub-category delete function; it wasn't working before but is now working.
+ 

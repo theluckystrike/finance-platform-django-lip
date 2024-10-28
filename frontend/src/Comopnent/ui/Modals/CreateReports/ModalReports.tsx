@@ -30,10 +30,6 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScri
   const store: any = useSelector((i) => i);
   const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
-console.log(selectedScripts,'selectedScripts');
-
-  
-
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     scripts: Yup.array().of(Yup.string()).min(1, "At least one script must be selected"),
@@ -47,10 +43,8 @@ console.log(selectedScripts,'selectedScripts');
     enableReinitialize: true,
     validationSchema,
     onSubmit: (values) => {
-      console.log(values,'values');
-      
-      // dispatch(Createreports({ values, token: loginUser.access }));
-      // handleClose(); // Close modal after submission
+      dispatch(Createreports({ values, token: loginUser.access }));
+      handleClose(); 
     },
   });
 
@@ -74,7 +68,6 @@ console.log(selectedScripts,'selectedScripts');
     }
   }, [loginUser, dispatch]);
 
-  // Convert scripts to options for react-select
   const scriptOptions: ScriptOption[] = allscripts.map((script: any) => ({
     value: script.id,
     label: script.name,

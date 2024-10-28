@@ -5,7 +5,6 @@ import { endpoint } from "../endpoint";
 // Create Script
 export const CreateScript = async (data: any) => {
   const { formData } = data;
-
   try {
     const response = await axiosInstance.post(endpoint.scripts, formData);
     return response;
@@ -17,7 +16,6 @@ export const CreateScript = async (data: any) => {
 // Update Script
 export const UpdateScript = async (data: any) => {
   const { formData, scriptId } = data;
-
   try {
     const response = await axiosInstance.patch(
       `scripts/upload/${scriptId}/`,
@@ -32,7 +30,6 @@ export const UpdateScript = async (data: any) => {
 // Get Script by ID
 export const GetScriptByID = async (data: any) => {
   const { id } = data;
-
   try {
     const response = await axiosInstance.get(`${endpoint.scripts}/${id}`);
     return response;
@@ -44,7 +41,6 @@ export const GetScriptByID = async (data: any) => {
 // Delete Script by ID
 export const DeleteScriptByID = async (data: any) => {
   const { id } = data;
-
   try {
     const response = await axiosInstance.delete(`${endpoint.scripts}/${id}`);
     return response;
@@ -65,8 +61,7 @@ export const GetAllScript = async () => {
 
 // Get Scripts by Category
 export const GetScriptbyCategory = async (data: any) => {
-  const { value } = data;
-
+  const { value } = data
   try {
     const response = await axiosInstance.get(
       `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=success `
@@ -80,7 +75,6 @@ export const GetScriptbyCategory = async (data: any) => {
 // Run Script
 export const RunScript = async (data: any) => {
   const { id } = data;
-
   try {
     const response = await axiosInstance.post(`${endpoint.scripts}/${id}/run`);
     return response;
