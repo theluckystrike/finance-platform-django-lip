@@ -9,7 +9,7 @@ import { ScriptData } from "../../DummyData/TableData";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useSortableData from "../../customHook/useSortable";
-import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
+import { GetAllScripts, GetScriptbyCategorys } from "../../Redux/Script/ScriptSlice";
 import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import Loader from "../../Comopnent/ui/Loader";
@@ -23,23 +23,44 @@ const CustomReport = () => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const { loading } = store?.script;
-  const allscripts = store?.script?.Scripts?.results;
+  const allscripts = store?.script?.Scripts?.results || [];
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
   const [loginUser, setLoginUser] = useState<any>(null);
 
+  const [filterQuery,setFilterQuery]=useState<any>(null)
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
+    const filter= localStorage.getItem('filterquery')
+    console.log(filter);
+    
     const storedLoginUser = localStorage.getItem("login");
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
+   if (filter) {
+    setFilterQuery(JSON.parse(filter))
+   }
   }, []);
   useEffect(() => {
-    if (!loginUser === null) {
+  const filter:any= localStorage.getItem('filterquery')
+
+    if (loginUser) {
       const getDAta = async () => {
         try {
-          if (allscripts.length! > 0) {
+          // alert('running')
+          // console.log(allscripts.length ,filterQuery);
+          
+          if (allscripts.length === 0  && !filterQuery) {
             await dispatch(GetAllScripts({ token: loginUser?.access }));
+          }
+          else{
+
+            await dispatch(
+              GetScriptbyCategorys({
+                token: loginUser?.access,
+                value: filterQuery ,
+              })
+            );
           }
         } catch (error) {
           console.log(error);
@@ -47,7 +68,7 @@ const CustomReport = () => {
       };
       getDAta();
     }
-  }, [loginUser]);
+  }, [loginUser,filterQuery]);
 
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -100,10 +121,17 @@ const CustomReport = () => {
               <Icon icon="AddBusiness" size="20px" />
               <span>Home</span>
             </button>
-            <button onClick={handleShow} className="btn icon-button my-1 mx-2">
-              <Icon icon="Filter" size="20px" />
-              <span>Filter</span>
-            </button>
+         <button onClick={handleShow} className="btn icon-button my-1 mx-2 position-relative">
+  <Icon icon="Filter" size="20px" />
+  
+  {filterQuery&& (
+    <span className="filter-count-badge">
+      1
+    </span>
+  )}
+  <span>Filter</span>
+</button>
+
             <button
               onClick={() => setShowReport(true)}
               type="button"
@@ -306,7 +334,7 @@ const CustomReport = () => {
         </div>
       </div>
 
-      <FilterModal show={show} handleClose={handleClose} />
+      <FilterModal show={show} handleClose={handleClose} filterQuery={filterQuery} setFilterQuery={setFilterQuery} />
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
       <CreateReports
         show={showReport}

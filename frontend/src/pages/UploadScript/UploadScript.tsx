@@ -24,6 +24,8 @@ const UploadScriptForm = () => {
   const fileRef: any = useRef(null);
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
+    localStorage.removeItem('filterquery')
+
     const storedLoginUser = localStorage.getItem("login");
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
@@ -98,6 +100,8 @@ const FilterData = (value: any) => {
 
 
 useEffect(()=>{
+  localStorage.removeItem('filterquery')
+
   FilterData(formik.values.parentName)
 },[formik.values.parentName])
   return (

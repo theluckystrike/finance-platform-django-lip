@@ -111,7 +111,16 @@ const ReportViwe = () => {
   };
 
   const openPdfInNewTab = (url: any) => {
-    window.open(url, "_blank");
+    if (url){
+      
+      window.open(url, "_blank");
+    }
+    else{
+      handleToast.SuccessToast("Please update the script first, then wait for the PDF to generate successfully.");
+      handleUpdate()
+    
+    }
+    
   };
 
   const updateRepost = async () => {

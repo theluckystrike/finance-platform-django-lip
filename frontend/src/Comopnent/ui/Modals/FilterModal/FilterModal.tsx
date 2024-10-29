@@ -10,9 +10,11 @@ import { useDispatch } from "react-redux";
 interface FilterModalProps {
   show: boolean;
   handleClose: () => void;
+  filterQuery:any;
+  setFilterQuery:any;
 }
 
-const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
+const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFilterQuery }) => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const fileRef: any = useRef(null);
@@ -48,18 +50,20 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
   // Use Formik to manage form state
   const formik = useFormik({
     initialValues: {
-      parentName: "",
-      category: "",
-      parentName1: "",
-      category1: "",
-      parentName2: "",
-      category2: "",
+      parentName: filterQuery?.parentName || "",
+      category: filterQuery?.category || "",
+      parentName1: filterQuery?.parentName1 || "",
+      category1: filterQuery?.category1 || "",
+      parentName2: filterQuery?.parentName2 || "",
+      category2: filterQuery?.category2 || "",
       number:1,
     },
     validationSchema,
+    enableReinitialize:true,
     onSubmit:async (values,{ resetForm }) => {
 
-
+      setFilterQuery(values)
+      localStorage.setItem('filterquery',JSON.stringify(values))
    await dispatch(
         GetScriptbyCategorys({
           token: loginUser?.access,
@@ -68,12 +72,15 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
       );
       // Handle form submission logic here
         // Reset the form after dispatch
-    resetForm();
+    // resetForm();
       handleClose(); // Close modal on form submission
     },
   });
   const reset = async() =>{ 
+    localStorage.removeItem('filterquery')
+
     await  dispatch(GetAllScripts({token:loginUser?.access}))
+    setFilterQuery(null)
     handleClose()
   };
 
@@ -169,7 +176,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                     />
                     {formik.touched.parentName && formik.errors.parentName && (
                       <div className="text-danger">
-                        {formik.errors.parentName}
+                        {formik.errors.parentName as any}
                       </div>
                     )}
                     <div
@@ -225,7 +232,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                   />
                   {formik.touched.parentName1 && formik.errors.parentName1 && (
                     <div className="text-danger">
-                      {formik.errors.parentName1}
+                      {formik.errors.parentName1 as any}
                     </div>
                   )}
                   <div
@@ -291,7 +298,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                   />
                   {formik.touched.parentName2 && formik.errors.parentName2 && (
                     <div className="text-danger">
-                      {formik.errors.parentName2}
+                      {formik.errors.parentName2 as any}
                     </div>
                   )}
                   <div

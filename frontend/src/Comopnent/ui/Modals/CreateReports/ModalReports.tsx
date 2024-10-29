@@ -59,7 +59,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScri
     if (loginUser) {
       const getData = async () => {
         try {
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
+          // await dispatch(GetAllScripts({ token: loginUser?.access }));
         } catch (error) {
           console.log(error);
         }
