@@ -117,8 +117,7 @@ const ReportViwe = () => {
     }
     else{
       handleToast.SuccessToast("Please update the script first, then wait for the PDF to generate successfully.");
-      handleUpdate()
-    
+      updateRepost() 
     }
     
   };

@@ -6,6 +6,7 @@ import { ErrorMessage, useFormik } from 'formik';
 import * as Yup from "yup";
 import Select, { MultiValue } from "react-select";
 import { Createreports } from "../../../../Redux/Report/Slice";
+import useToast from "../../../../customHook/toast";
 
 // Define type for the script option
 interface ScriptOption {
@@ -28,6 +29,8 @@ interface CreateReportsProps {
 const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScripts }) => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
+  const handleToast = useToast();
+
   const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
   const validationSchema = Yup.object({
@@ -42,8 +45,11 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScri
     },
     enableReinitialize: true,
     validationSchema,
-    onSubmit: (values) => {
-      dispatch(Createreports({ values, token: loginUser.access }));
+    onSubmit:async (values) => {
+ await     dispatch(Createreports({ values, token: loginUser.access }));
+
+ handleToast.SuccessToast("Report create successfully.");
+
       handleClose(); 
     },
   });
