@@ -89,7 +89,7 @@ const [cateDropDown1,setCateDropDown1]=useState(false)
 const [cateDropDown2,setCateDropDown2]=useState(false)
   useEffect(()=>{
     const  Cate = categoryData.filter((i:any)=>i?.parent_category === null)
-    const res = categoryData.filter((i: any) =>
+    const res = Cate.filter((i: any) =>
       i.name.toLowerCase().includes(formik.values.parentName.toLowerCase())
     );
 
