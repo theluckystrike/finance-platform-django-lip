@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -8,8 +9,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from olandinvestmentsapi.models import Summary
 from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
-from scriptupload.models import Script
 import logging
 
 logger = logging.getLogger('testlogger')
@@ -131,3 +130,44 @@ class SummaryViewSet(ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+    
+
+class SummaryUpdateView(APIView):
+    """
+    POST request to run a script
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description="Status retrieved",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Message')
+                    },
+                    example={
+                        "message": "Script added to task queue"
+                    },
+                )
+            ),
+            404: openapi.Response(
+                description="Script not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error')
+                    },
+                    example={
+                        "error": "Script does not exist"
+                    }
+                )
+            ),
+        }
+    )
+    def post(self, request, pk):
+        summary = get_object_or_404(Summary, pk=pk)
+        summary.update()
+        return Response({"message": "Script added to task queue"})
+
