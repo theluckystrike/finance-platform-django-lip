@@ -130,3 +130,18 @@ export const UpdateReports = async (data:any) => {
     throw error;
   }
 };
+ 
+
+// Get status Report by ID
+export const GetSatusreportByID = async (data:any) => {
+  const { id } = data;
+
+  try {
+    const response = await axiosInstance.get(
+      `${endpoint.reports}/${id}/status`
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

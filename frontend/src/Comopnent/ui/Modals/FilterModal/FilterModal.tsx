@@ -6,6 +6,7 @@ import ArrowDown from "../../../../assest/image/arrow-down.png";
 import { useGetAllCategoryQuery } from "../../../../Redux/CategoryQuery";
 import { GetAllScripts, GetScriptbyCategorys } from "../../../../Redux/Script/ScriptSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface FilterModalProps {
   show: boolean;
@@ -18,6 +19,8 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFi
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const fileRef: any = useRef(null);
+
+  const navigate =useNavigate()
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -64,23 +67,26 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFi
 
       setFilterQuery(values)
       localStorage.setItem('filterquery',JSON.stringify(values))
-   await dispatch(
-        GetScriptbyCategorys({
-          token: loginUser?.access,
-          value: values ,
-        })
-      );
+  //  await dispatch(
+  //       GetScriptbyCategorys({
+  //         token: loginUser?.access,
+  //         value: values ,
+  //       })
+  //     );
       // Handle form submission logic here
         // Reset the form after dispatch
     // resetForm();
+    navigate(`/account/filter-scripts?category=${formik.values.parentName}&subcategory1=${formik.values.parentName1}&subcategory2=${formik.values.parentName2}`)
       handleClose(); // Close modal on form submission
     },
   });
   const reset = async() =>{ 
     localStorage.removeItem('filterquery')
 
-    await  dispatch(GetAllScripts({token:loginUser?.access}))
+    // await  dispatch(GetAllScripts({token:loginUser?.access}))
     setFilterQuery(null)
+    navigate('/account/allscripts')
+
     handleClose()
   };
 

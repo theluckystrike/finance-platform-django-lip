@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createreport, Createreportschedules, DeleteReportsByID, GetAllreport, GetreportByID, mergereport, Updatereport, UpdateReports} from "./Api";
+import { Createreport, Createreportschedules,GetSatusreportByID, DeleteReportsByID, GetAllreport, GetreportByID, mergereport, Updatereport, UpdateReports} from "./Api";
 import { ReportState } from "../../types/stateTypes";
 
 const initialState:ReportState = {
   reports: [],
   report: [],
+  reportStatus: '',
   Active_Role: '',
   page: 1,
   loading: false,
@@ -30,6 +31,7 @@ export const Createreports:any = AsyncFunctionThunk('Createreport', Createreport
 export const Updatereports:any = AsyncFunctionThunk('Updatereports', Updatereport);
 export const GetAllreports:any = AsyncFunctionThunk('GetAllreports', GetAllreport);
 export const GetreportByIDs:any = AsyncFunctionThunk('GetreportByIDs', GetreportByID);
+export const GetSatusreportByIDs:any = AsyncFunctionThunk('GetSatusreportByIDs', GetSatusreportByID);
 export const Createschedules:any = AsyncFunctionThunk('Createschedules', Createreportschedules);
 export const DeleteReportsByIDs:any = AsyncFunctionThunk('DeleteReportsByIDs',DeleteReportsByID);
 export const UpdateReportss:any = AsyncFunctionThunk('UpdateReportss',UpdateReports)
@@ -66,6 +68,17 @@ const reportSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(GetSatusreportByIDs.fulfilled, (state, action) => {
+        state.reportStatus = action.payload;
+        state.loading = false;
+      })
+      .addCase(GetSatusreportByIDs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(GetSatusreportByIDs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(GetreportByIDs.fulfilled, (state, action) => {
         state.report = action.payload;
         state.loading = false;
@@ -81,6 +94,7 @@ const reportSlice = createSlice({
         state.report = action.payload;
         state.loading = false;
       })
+      
       .addCase(Updatereports.pending, (state) => {
         state.loading = true;
       })

@@ -19,7 +19,7 @@ import PaginationButtons, {
   PER_COUNT,
 } from "../../Comopnent/ui/PaginationButtons";
 
-const CustomReport = () => {
+const FilterScripts = () => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const { loading } = store?.script;
@@ -30,25 +30,38 @@ const CustomReport = () => {
   const [filterQuery,setFilterQuery]=useState<any>(null)
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-  
+    const filter= localStorage.getItem('filterquery')
+    console.log(filter);
     
     const storedLoginUser = localStorage.getItem("login");
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
-   
+   if (filter) {
+    setFilterQuery(JSON.parse(filter))
+   }
   }, []);
   useEffect(() => {
-   
+  const filter:any= localStorage.getItem('filterquery')
+
     if (loginUser) {
       const getDAta = async () => {
         try {
           // alert('running')
           // console.log(allscripts.length ,filterQuery);
           
-          
+          if (allscripts.length === 0  && !filterQuery) {
             await dispatch(GetAllScripts({ token: loginUser?.access }));
-          
+          }
+          else{
+
+            await dispatch(
+              GetScriptbyCategorys({
+                token: loginUser?.access,
+                value: filterQuery ,
+              })
+            );
+          }
         } catch (error) {
           console.log(error);
         }
@@ -101,7 +114,7 @@ const CustomReport = () => {
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h2">
-            All scripts <span id="headerInfo">({items.length})</span>
+           Filter scripts by <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button type="button" className="btn icon-button my-1 mx-2">
@@ -332,4 +345,4 @@ const CustomReport = () => {
   );
 };
 
-export default CustomReport;
+export default FilterScripts;

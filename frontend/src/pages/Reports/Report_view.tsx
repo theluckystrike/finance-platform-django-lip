@@ -9,6 +9,7 @@ import { Link, useParams } from "react-router-dom";
 import { GetAllScripts, setLoading } from "../../Redux/Script/ScriptSlice";
 import {
   GetreportByIDs,
+  GetSatusreportByIDs,
   Updatereports,
   UpdateReportss,
 } from "../../Redux/Report/Slice";
@@ -34,6 +35,7 @@ const ReportViwe = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const handleToast = useToast();
+  
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -42,11 +44,17 @@ const ReportViwe = () => {
     }
   }, []);
 
+  const getStatus =async ()=>{
+    await dispatch(GetSatusreportByIDs({ id: id, token: loginUser?.access }));
+
+  }
+
   useEffect(() => {
     dispatch(setLoading(true));
     if (loginUser) {
       const getreport = async () => {
         await dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
+       await getStatus()
         await dispatch(GetAllScripts({ token: loginUser?.access }));
         dispatch(setLoading(false));
       };
@@ -56,8 +64,26 @@ const ReportViwe = () => {
 
   const store: any = useSelector((i) => i);
   const reportData = store?.report?.report;
+  const reportStatus = store?.report?.reportStatus;
+  console.log(reportStatus);
+  
   const allscripts = store?.script?.Scripts?.results || [];
   const { loading } = store?.report;
+  useEffect(() => {
+    let intervalId: any;
+
+    if (reportStatus.status === 'running') {
+      intervalId = setInterval(() => {
+        getStatus();
+      }, 5000);
+    }
+
+    if (reportStatus.status === 'success') {
+      clearInterval(intervalId);
+    }
+
+    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, [reportStatus]);
 
   // Safeguard against undefined or null values for reportData.scripts
   const filteredScripts = allscripts.filter((script: any) => {
@@ -151,8 +177,15 @@ const ReportViwe = () => {
               onClick={() => openPdfInNewTab(reportData?.latest_pdf)}
               className="btn icon-button my-1 mx-2"
             >
+             {reportStatus.status === 'running'?<>
+              <Loader />
+              <span>Running</span>
+             </>
+              : <>
               <Icon icon="RemoveRedEye" size="20px" />
               <span>View Latest</span>
+             </>
+              }
             </button>
             <button
               type="button"

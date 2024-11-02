@@ -44,6 +44,14 @@ export const SidebarMenu: SidebarMenutype = {
     role:'all'
 
   },
+  Filterscripts: {
+    name: "Filter scripts",
+    path: "filter-scripts",
+    icon: "List",
+    hide: true,
+    role:'all'
+
+  },
   Report: {
     name: "Reports",
     path: "Report",

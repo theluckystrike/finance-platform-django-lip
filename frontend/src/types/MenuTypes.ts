@@ -16,6 +16,7 @@ export interface SidebarMenutype{
   home: MenuItem,
   upload: MenuItem,
   Allscripts: MenuItem,
+  Filterscripts:MenuItem,
   Report: MenuItem,
   tapesummary:MenuItem,
   errorhandling:MenuItem,
