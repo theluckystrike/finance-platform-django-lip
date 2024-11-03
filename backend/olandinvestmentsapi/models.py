@@ -46,15 +46,18 @@ class Summary(models.Model):
     status = models.IntegerField(
         choices=Status.choices, default=Status.SUCCESS)
 
+    signal_plot_data = models.JSONField(blank=True, null=True)
+
     def set_status(self, status):
         self.status = status
         self.save(update_fields=["status"])
 
     def _update(self):
         try:
-            summary_df, meta = make_summary_table(self)
+            summary_json, meta = make_summary_table(self)
             self.meta['scripts'] = meta
-            self.save(update_fields=["meta"])
+            self.signal_plot_data = summary_json
+            self.save(update_fields=["meta", "signal_plot_data"])
             self.set_status(Status.SUCCESS)
             logger.info(
                 f"[report update] Successfully updated report {self.id}")
@@ -71,3 +74,10 @@ class Summary(models.Model):
             while job.get_status(refresh=True) in ["queued", "started"]:
                 time.sleep(5)
         return job
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Summary"
+        verbose_name_plural = "Summaries"

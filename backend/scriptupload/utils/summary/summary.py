@@ -1,8 +1,9 @@
 import pandas as pd
 from scriptupload.models import Script
+import json
 
 
-def get_date_col(script) -> str | None:
+def get_date_col(script: Script) -> str:
     '''Get the first column in a script's table data which is a date type'''
     for col in script.table_data.table_meta['columns']:
         if col['type'] == "date":
@@ -26,7 +27,7 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
     summary_df[date_col_name] = pd.to_datetime(summary_df[date_col_name])
     summary_df = summary_df[[date_col_name,
                              meta[str(first_script.id)]["table_col_name"]]]
-    date_index = date_col_name
+    date_index = "date"
     summary_df[date_col_name].name = date_index
 
     # for each script, merge it into the df on matching dates
@@ -42,10 +43,24 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
             summary_df, sdf, left_on=date_index, right_on=date_col_name, how="inner")
 
     # get sum of all cols and sort by date index descending
-    summary_df['total'] = summary_df[summary_df.columns[1:]].sum(axis=1)
+    summary_df['signal sum'] = summary_df[summary_df.columns[1:]].sum(axis=1)
     summary_df = summary_df.sort_values(date_index, ascending=False)
     # update meta last value
     for sid in script_ids:
         meta[str(sid)]["table_col_last_value"] = float(summary_df[meta[str(
             sid)]["table_col_name"]].iloc[0])
-    return summary_df, meta
+    # keep date format
+    summary_df[date_index] = summary_df[date_index].map(
+        lambda x: x.isoformat())
+    summary_df = summary_df[[date_index, "signal sum"]]
+    # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+    summary_json = df_to_json_no_index(summary_df[[date_index, 'signal sum']])
+    return summary_json, meta
+
+
+def df_to_json_no_index(df: pd.DataFrame) -> object:
+    df_dict = dict({
+        col: df[col].to_list()
+        for col in df.columns
+    })
+    return df_dict
