@@ -69,7 +69,8 @@ console.log(ScriptData,'ScriptData');
     setShow(true);
   };
 
-  const [activeComponet, setActivecomponet] = useState("chart");
+  const [activeComponet, setActivecomponet] = useState("chart"); 
+  
   const today = new Date();
   const dateOnly = today.toISOString().split("T")[0];
 

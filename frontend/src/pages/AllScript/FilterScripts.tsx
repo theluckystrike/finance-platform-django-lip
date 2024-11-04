@@ -47,14 +47,7 @@ const FilterScripts = () => {
     if (loginUser) {
       const getDAta = async () => {
         try {
-          // alert('running')
-          // console.log(allscripts.length ,filterQuery);
-          
-          if (allscripts.length === 0  && !filterQuery) {
-            await dispatch(GetAllScripts({ token: loginUser?.access }));
-          }
-          else{
-
+          if (filterQuery) {
             await dispatch(
               GetScriptbyCategorys({
                 token: loginUser?.access,
@@ -123,7 +116,6 @@ const FilterScripts = () => {
             </button>
          <button onClick={handleShow} className="btn icon-button my-1 mx-2 position-relative">
   <Icon icon="Filter" size="20px" />
-  
   {filterQuery&& (
     <span className="filter-count-badge">
       1
@@ -147,7 +139,6 @@ const FilterScripts = () => {
               className="btn icon-button my-1 mx-2 disabled"
             >
               <Icon icon="Download" size="20px" />
-
               <span>Download</span>
             </button>
           </div>

@@ -66,7 +66,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFi
     onSubmit:async (values,{ resetForm }) => {
 
       setFilterQuery(values)
-      localStorage.setItem('filterquery',JSON.stringify(values))
+    await  localStorage.setItem('filterquery',JSON.stringify(values))
   //  await dispatch(
   //       GetScriptbyCategorys({
   //         token: loginUser?.access,
@@ -252,13 +252,11 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                           key={item.id}
                           onClick={async() => {
    
-                          await  formik.setFieldValue("parentName1", item.name);
-                        await    formik.setFieldValue("category1", item.id);
-                          
-      const  subCate2 = categoryData.filter((i:any)=>i?.parent_category === item.id)
-      setSubcategory2(subCate2)
-                        
-                        setCateDropDown1(false)
+                          await formik.setFieldValue("parentName1", item.name);
+                          await formik.setFieldValue("category1", item.id);
+                          const subCate2 = categoryData.filter((i:any)=>i?.parent_category === item.id)
+                          setSubcategory2(subCate2)
+                          setCateDropDown1(false)
                           }}
                         >
                           {item.name}
@@ -331,7 +329,6 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                     className="h6 hover-span " >
               Please select a category and Subcategory 1 first.
                   </span>
-                    
                     }
                   </div>
                 </div>
@@ -366,7 +363,6 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
   {[...Array(10)].map((_, index) => (
     <span key={index}  onClick={() => {
       formik.setFieldValue("number", index + 1);
-      
     }}>{index + 1}</span>
   ))}
 </div>

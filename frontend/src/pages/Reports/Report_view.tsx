@@ -64,14 +64,11 @@ const ReportViwe = () => {
 
   const store: any = useSelector((i) => i);
   const reportData = store?.report?.report;
-  const reportStatus = store?.report?.reportStatus;
-  console.log(reportStatus);
-  
+  const reportStatus = store?.report?.reportStatus;  
   const allscripts = store?.script?.Scripts?.results || [];
   const { loading } = store?.report;
   useEffect(() => {
     let intervalId: any;
-
     if (reportStatus.status === 'running') {
       intervalId = setInterval(() => {
         getStatus();
@@ -138,12 +135,12 @@ const ReportViwe = () => {
 
   const openPdfInNewTab = (url: any) => {
     if (url){
-      
       window.open(url, "_blank");
     }
     else{
       handleToast.SuccessToast("Please update the script first, then wait for the PDF to generate successfully.");
       updateRepost() 
+
     }
     
   };
@@ -152,6 +149,7 @@ const ReportViwe = () => {
     const res = await dispatch(
       UpdateReportss({ token: loginUser.access, id: id })
     );
+    getStatus()
     if (res.payload) {
       handleToast.SuccessToast(res.payload.message);
     }

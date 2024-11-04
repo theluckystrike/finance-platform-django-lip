@@ -55,7 +55,7 @@ const CustomReport = () => {
       };
       getDAta();
     }
-  }, [loginUser,filterQuery]);
+  }, [loginUser]);
 
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
