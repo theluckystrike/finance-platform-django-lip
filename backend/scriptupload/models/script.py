@@ -80,23 +80,16 @@ class Script(models.Model):
             return
         if not self.has_table_data:
             table_data = TableData(script=self)
-            table_data.csv_data.save(filename, file)
-            self.table_data = table_data
-            table_data.set_last_updated()
-            self.save()
+            table_data.save_table(filename, file)
         else:
-            self.table_data.csv_data.save(filename, file)
+            self.table_data.save_table(filename, file)
 
     def save_plotly_config(self, config):
         if not self.has_chart_data:
             chart_data = ChartData(script=self)
-            chart_data.plotly_config = config
-            chart_data.set_last_updated()
-            chart_data.save()
+            chart_data.save_plotly_config(config)
         else:
-            self.chart_data.plotly_config = config
-            self.chart_data.set_last_updated()
-            self.chart_data.save()
+            self.chart_data.save_plotly_config(config)
 
     def save_chart(self, filename: str, file):
         if not filename.endswith(".png"):
@@ -105,12 +98,9 @@ class Script(models.Model):
             return
         if not self.has_chart_data:
             chart_data = ChartData(script=self)
-            chart_data.image_file.save(filename, file)
-            chart_data.set_last_updated()
-            self.chart_data = chart_data
-            self.save()
+            chart_data.save_chart(filename, file)
         else:
-            self.chart_data.image_file.save(filename, file)
+            self.chart_data.save_chart(filename, file)
 
     @property
     def table_data_file(self):
