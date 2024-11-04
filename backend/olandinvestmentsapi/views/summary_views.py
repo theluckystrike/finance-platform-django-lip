@@ -10,6 +10,7 @@ from drf_yasg import openapi
 from olandinvestmentsapi.models import Summary
 from django.utils.decorators import method_decorator
 import logging
+from olandinvestmentsapi.models import Status
 
 logger = logging.getLogger('testlogger')
 
@@ -112,12 +113,12 @@ class SummaryViewSet(ModelViewSet):
                         'created': openapi.Schema(type=openapi.TYPE_STRING, description='Created timestamp'),
                     },
                     example={
-                                "id": 10,
-                                "name": "Summary 4",
+                        "id": 10,
+                        "name": "Summary 4",
                                 "scripts": [
                                     348, 349
                                 ],
-                                "created": "2024-10-28T15:29:13.566890Z"
+                        "created": "2024-10-28T15:29:13.566890Z"
                     }
                 )
             ), })
@@ -130,7 +131,7 @@ class SummaryViewSet(ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
-    
+
 
 class SummaryUpdateView(APIView):
     """
@@ -168,6 +169,12 @@ class SummaryUpdateView(APIView):
     )
     def post(self, request, pk):
         summary = get_object_or_404(Summary, pk=pk)
-        summary.update()
-        return Response({"message": "Script added to task queue"})
-
+        if summary.status == Status.RUNNING:
+            return Response({"message": "Summary `is already running"})
+        try:
+            summary.update()
+            return Response({"message": "Summary added to task queue"})
+        except Exception as e:
+            logger.error(
+                f"[Summary update View] Failed to update summary {summary.id} -> {str(e)}")
+            return Response({"error": "Summary does not exists"}, status=status.HTTP_404_NOT_FOUND)

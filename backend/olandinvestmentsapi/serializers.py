@@ -112,7 +112,8 @@ class SummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["id", "name", "scripts", "meta", "created"]
+        fields = ["id", "name", "scripts",
+                  "meta", "created", "signal_plot_data"]
 
 
 class SummarySerializerLite(serializers.ModelSerializer):
@@ -125,6 +126,7 @@ class SummarySerializerLite(serializers.ModelSerializer):
 
 
 class SummaryMetaSerializer(serializers.ModelSerializer):
+    '''Used only for making new summaries from post requests'''
     scripts = serializers.DictField(child=serializers.CharField(), write_only=True)
 
     class Meta:

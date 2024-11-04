@@ -1,6 +1,5 @@
 import pandas as pd
 from scriptupload.models import Script
-import json
 
 
 def get_date_col(script: Script) -> str:
