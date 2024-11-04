@@ -104,18 +104,22 @@ RQ_QUEUES = {
         'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
         'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
     },
+    'summaries': {
+        'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
+        'DEFAULT_TIMEOUT': 5,  # 20 minute timeout
+    },
 }
 
 # see this issue https://github.com/rq/django-rq/issues/542
 RQ = {
-    "WORKER_CLASS": 'scriptupload.workers.JobWorker',
+    "WORKER_CLASS": 'rq.Worker',
 }
 
 # fork() causing issues on my latpop but fine on Heroku
 # CustomWorker inherits rq.SimpleWorker with no forking i.e
 # runs in same process just different thread
 if not IS_HEROKU:
-    RQ['WORKER_CLASS'] = "scriptupload.workers.SimpleJobWorker"
+    RQ['WORKER_CLASS'] = "rq.SimpleWorker"
 
 RQ_SHOW_ADMIN_LINK = True
 
