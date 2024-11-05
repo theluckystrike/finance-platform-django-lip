@@ -9,6 +9,7 @@ import dashboardApi from './Redux/Dashboard';
 import ScriptApi from './Redux/Script';
 import ScriptSlice from './Redux/Script/ScriptSlice';
 import ReportSlice from './Redux/Report/Slice';
+import SummerySlice from './Redux/TapeSummary/Slice'
 
 export const store = configureStore({
   reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
     [ScriptApi.reducerPath]:ScriptApi.reducer,
     [Categoryapi.reducerPath]:Categoryapi.reducer,
     script:ScriptSlice,
-    report:ReportSlice
+    report:ReportSlice,
+    summary:SummerySlice
 
 
 

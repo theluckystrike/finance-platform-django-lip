@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token?.access}`;
     }
-    if (config.url === endpoint.reports ) {
+    if (config.url === endpoint.reports || config.url === endpoint.summaries   ) {
       config.headers['Content-Type'] = 'application/json';  // For Createreport
     } else {
       config.headers['Content-Type'] = 'multipart/form-data';  // For others

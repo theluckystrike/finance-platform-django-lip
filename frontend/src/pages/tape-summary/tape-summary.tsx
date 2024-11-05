@@ -15,6 +15,8 @@ import PaginationButtons, {
 } from "../../Comopnent/ui/PaginationButtons";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import useSortableData from "../../customHook/useSortable";
+import CreateSummary from "../../Comopnent/ui/Modals/CreateSummary/ModalSummary";
+import { GetAllsummerys } from "../../Redux/TapeSummary/Slice";
 
 const TapeSummary: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,8 +26,9 @@ const TapeSummary: React.FC = () => {
   const store: any = useSelector((i) => i);
 
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
-  const { loading } = store?.script;
-  const allscripts = store?.script?.Scripts?.results;
+  const { loading } = store?.summary
+;
+  const allsummerys = store?.summary?.summerys?.results;
 
   const [loginUser, setLoginUser] = useState<any>(null);
 
@@ -41,6 +44,8 @@ const TapeSummary: React.FC = () => {
       const getDAta = async () => {
         try {
           await dispatch(GetAllScripts({ token: loginUser?.access }));
+          await dispatch(GetAllsummerys({ token: loginUser?.access }));
+
         } catch (error) {
           console.log(error);
         }
@@ -87,7 +92,7 @@ const TapeSummary: React.FC = () => {
     }
   };
   const { items, requestSort, getClassNamesFor } = useSortableData(
-    allscripts || []
+    allsummerys || []
   );
   const isAllSelected = selectedScripts.length === items.length;
 
@@ -106,19 +111,24 @@ const TapeSummary: React.FC = () => {
     <>
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-          <h1 className="h1">
+          <h1 className="h1 ">
             Tape Summary <span id="headerInfo">({items.length})</span>
           </h1>
-          <div className="btn-toolbar mb-2 mb-md-0">
-            <button
-              className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
-              type="button"
-              onClick={handleGetResults}
-              disabled={selectedScripts.length === 0}
-            >
-              Get Result
-            </button>
-          </div>
+   
+
+          <div className="btn-toolbar mb-2 mb-md-0  ">
+          
+         <button
+           className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
+           type="button"
+           onClick={()=>setSaveShow(true) }
+ 
+         >
+           Create Summary
+         </button>
+       </div>
+         
+        
         </div>
         <div>
           {!loading ? (
@@ -159,48 +169,7 @@ const TapeSummary: React.FC = () => {
                       </h6>
                     </th>
 
-                    <th
-                      scope="col"
-                      className="col-1 text-center mx-auto"
-                      onClick={() => requestSort("category.name")}
-                    >
-                      <h6>
-                        <span>Category</span>
-                        <Icon
-                          size="10px"
-                          className={getClassNamesFor("category.name")}
-                          icon="FilterList"
-                        />
-                      </h6>
-                    </th>
-                    <th
-                      scope="col"
-                      className="col-2 text-center mx-auto"
-                      onClick={() => requestSort("sub category 1 ")}
-                    >
-                      <h6>
-                        <span>Sub Category 1 </span>
-                        <Icon
-                          size="10px"
-                          className={getClassNamesFor("sub category 1 ")}
-                          icon="FilterList"
-                        />
-                      </h6>
-                    </th>
-                    <th
-                      scope="col"
-                      className="col-2 text-center mx-auto"
-                      onClick={() => requestSort("sub category 1 ")}
-                    >
-                      <h6>
-                        <span>Sub Category 2 </span>
-                        <Icon
-                          size="10px"
-                          className={getClassNamesFor("sub category 1 ")}
-                          icon="FilterList"
-                        />
-                      </h6>
-                    </th>
+                   
                     <th
                       scope="col"
                       className="col-2 text-center mx-auto"
@@ -256,19 +225,7 @@ const TapeSummary: React.FC = () => {
                                 <span className="fw-bold">{script.name}</span>
                               </Link>
                             </td>
-                            <td className="col-1 text-center wrap-word mx-auto">
-                              {
-                                script.category?.parent_category
-                                  ?.parent_category?.name
-                              }
-                            </td>
-
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script.category?.parent_category?.name}
-                            </td>
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script?.category?.name}
-                            </td>
+                             
                             <td className="col-2 text-center mx-auto">
                               <DateFormatter isoString={script.created} />
                             </td>
@@ -301,8 +258,12 @@ const TapeSummary: React.FC = () => {
           )}
         </div>
       </div>
+      <CreateSummary
+        show={saveShow}
+        handleClose={() => setSaveShow(false)}
 
-      <SaveModal show={saveShow} handleClose={() => setSaveShow(false)} />
+      />
+      
     </>
   );
 };

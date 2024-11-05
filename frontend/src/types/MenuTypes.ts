@@ -22,3 +22,14 @@ export interface SidebarMenutype{
   errorhandling:MenuItem,
   scriptTree:MenuItem
 }
+
+
+export interface Endpoint {
+  auth: string;
+  category: string;
+  scripts: string;
+  reports: string;
+  reportschedules: string;
+  search: string;
+  summaries: string;
+}

@@ -15,3 +15,7 @@ when you make a summary and update it, it will then have a signal_plot_data fiel
 
 I'm not sure if Jeffrey has explained to you how the page for a summary should look, let me know if you need any help with 
 what data needs to be displayed there
+
+
+
+tape summary page list and create new summary modal 
