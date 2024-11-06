@@ -219,7 +219,7 @@ const TapeSummary: React.FC = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`/account/ScriptDetails/${script.id}`}
+                                to={`/account/tape-summary-results/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>

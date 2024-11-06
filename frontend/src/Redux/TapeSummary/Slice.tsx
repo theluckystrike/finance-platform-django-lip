@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createsummery,GetSatussummeryByID, DeletesummariesByID, GetAllsummery, GetsummeryByID, mergesummery, Updatesummery} from "./Api";
+import { Createsummery,GetSatussummeryByID, DeletesummariesByID, GetAllsummery,Updatesummaries, GetsummeryByID, mergesummery, Updatesummery} from "./Api";
  
 
 const initialState:any = {
@@ -35,6 +35,7 @@ export const GetSatussummeryByIDs:any = AsyncFunctionThunk('GetSatussummeryByIDs
 
 export const DeletesummariesByIDs:any = AsyncFunctionThunk('DeletesummariesByIDs',DeletesummariesByID);
 export const Updatesummeryss:any = AsyncFunctionThunk('Updatesummeryss',Updatesummery)
+export const Updatesummariess:any = AsyncFunctionThunk('Updatesummariess',Updatesummaries)
 export const mergesummerys:any = AsyncFunctionThunk('mergesummerys',mergesummery)
  
  
@@ -90,7 +91,17 @@ const summerySlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-    
+      .addCase(Updatesummariess.fulfilled, (state, action) => {
+        
+        state.loading = false;
+      })
+      .addCase(Updatesummariess.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(Updatesummariess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
        
       .addCase(Updatesummeryss.fulfilled, (state, action) => {
         // state.Script = action.payload;

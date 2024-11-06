@@ -106,7 +106,7 @@ export const ActiveRoute = {
   },
   TapeSummaryResult: {
     name: "Tape Summary Result",
-    path: "tape-summary-results",
+    path: "tape-summary-results/:id",
     icon: "CategoryManager",
   },
   UserProfile:{
