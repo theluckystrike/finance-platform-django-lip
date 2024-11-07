@@ -33,7 +33,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
     handleClose();
   };
 
-  return (
+  return (    
     <Modal
       size="lg"
       fullscreen="md-down"
