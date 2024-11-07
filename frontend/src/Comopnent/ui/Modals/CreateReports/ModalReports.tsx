@@ -30,7 +30,6 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScri
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const handleToast = useToast();
-
   const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
   const validationSchema = Yup.object({
@@ -47,9 +46,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose, selectedScri
     validationSchema,
     onSubmit:async (values) => {
  await     dispatch(Createreports({ values, token: loginUser.access }));
-
  handleToast.SuccessToast("Report create successfully.");
-
       handleClose(); 
     },
   });

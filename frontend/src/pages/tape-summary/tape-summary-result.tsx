@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Card, Button } from "react-bootstrap";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import { GetSatusreportByIDs } from "../../Redux/Report/Slice";
@@ -10,6 +10,8 @@ import LineChart from "../../Comopnent/Charts/LineChart";
 
 import { TapeSummaryData } from "../../DummyData/TableData";
 import DeleteModal from "./DeleteModal";
+import EditSummary from "../../Comopnent/ui/Modals/CreateSummary/ModalEditSummary";
+import Loader from "../../Comopnent/ui/Loader";
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
@@ -55,9 +57,12 @@ const TapeSummaryResult: React.FC = () => {
     : []; // Fallback to an empty array if `summery.meta.scripts` is undefined
 
   console.log(summery2);
-
+const [upLoad,setUpload]=useState(false)
   const getStatus = async () => {
+    setUpload(true)
     await dispatch(Updatesummariess({ id }));
+    setUpload(false)
+
   };
 
   useEffect(() => {
@@ -65,7 +70,7 @@ const TapeSummaryResult: React.FC = () => {
   }, [dispatch, id]);
 
   const [deleteshow,setDeleteShow]=useState(false)
-
+const [editShow,setEditShow]=useState(false)
   return (
     <>
       <div className="mx-4 mb-4">
@@ -75,7 +80,7 @@ const TapeSummaryResult: React.FC = () => {
             <h6 className="ps-1">Last update :{summery?.created} </h6>
           </div>
           <div className="btn-toolbar mb-2 mb-md-0">
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button type="button" onClick={()=>setEditShow(true)} className="btn icon-button my-1 mx-2">
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
@@ -90,7 +95,7 @@ const TapeSummaryResult: React.FC = () => {
           </div>
         </div>
 
-        <div className="container row mx-auto p-4">
+       {upLoad?<Loader/>: <div className="container row mx-auto p-4">
           <Card className="col-12 mb-8  ">
             <Card.Header className="bg-light-green">
               <Card.Title> Summary of stock market performance and model predictions</Card.Title>
@@ -109,11 +114,15 @@ const TapeSummaryResult: React.FC = () => {
             <Card.Body>
               <div className="row justify-content-evenly">
                 {summery2.map((script: any) => (
+                  
                   <div
                     key={script.id}
                     className={`h-20 rounded-3 bg-light-green m-2 p-3 ${selectedScript === script.id ? 'border-primary ' : ''} col-5 p-4`}
                     onClick={() => setSelectedScript(script.id)}
-                  >
+                  > <Link
+                  to={`/account/ScriptDetails/${script.id}`}
+                  className="text-decoration-none text-black"
+                >
                     <div className="text-left">
                       <div>{script.name}</div>
                       <div>{script.tableColName}</div>
@@ -121,6 +130,7 @@ const TapeSummaryResult: React.FC = () => {
                         Score: {script.score }
                       </div>
                     </div>
+                  </Link>
                   </div>
                 ))}
               </div>
@@ -138,7 +148,8 @@ const TapeSummaryResult: React.FC = () => {
               </Card.Body>
             </Card>
           )}
-        </div>
+
+        </div>}
       </div>
 
 
@@ -147,6 +158,8 @@ const TapeSummaryResult: React.FC = () => {
        data={summery}
         handleClose={()=>setDeleteShow(false)}
       />
+
+     {summery ?<EditSummary data={summery} show={editShow} handleClose={()=>setEditShow(false)}/>:null}
     </>
   );
 };
