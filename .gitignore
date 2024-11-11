@@ -1,6 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,windows,intellij,pycharm,python,django,react,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,macos,windows,intellij,pycharm,python,django,react,node
-
+commands.txt
 ### Django ###
 *.log
 *.pot
@@ -10,6 +10,7 @@ local_settings.py
 *.sqlite3
 db.sqlite3-journal
 *.sqlite3
+*.sql
 
 # Ignore specific files in the financeplatform directory
 financeplatform/settings.py

@@ -54,7 +54,7 @@ variable "fargate_cpu" {
 
 variable "fargate_memory" {
   description = "Amount of memory for Fargate task. E.g., '512' (0.5GB)"
-  default     = "2048"
+  default     = "3072"
 }
 
 # rds
@@ -73,4 +73,11 @@ variable "rds_password" {
 variable "rds_instance_class" {
   description = "RDS instance type"
   default     = "db.t3.micro"
+}
+
+# load balancer
+
+variable "health_check_path" {
+  description = "Health check path for the default target group"
+  default     = "/ping/"
 }

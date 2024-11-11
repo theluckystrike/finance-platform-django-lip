@@ -10,3 +10,7 @@ output "subnets" {
 output "security_group" {
   value = aws_security_group.ecs-security-group.id
 }
+
+output "alb_hostname" {
+  value = aws_lb.production.dns_name
+}
