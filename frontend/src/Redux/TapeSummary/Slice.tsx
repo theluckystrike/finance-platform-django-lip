@@ -27,16 +27,14 @@ const AsyncFunctionThunk = (name:any, apiFunction:any) => {
   });
 };
  
-export const Createsummerys:any = AsyncFunctionThunk('Createsummery', Createsummery); 
- 
-export const GetAllsummerys:any = AsyncFunctionThunk('GetAllsummerys', GetAllsummery);
-export const GetsummeryByIDs:any = AsyncFunctionThunk('GetsummeryByIDs', GetsummeryByID);
+export const Createsummerys:any = AsyncFunctionThunk('Createsummery', Createsummery);                   
+export const GetAllsummerys:any = AsyncFunctionThunk('GetAllsummerys', GetAllsummery);                  
+export const GetsummeryByIDs:any = AsyncFunctionThunk('GetsummeryByIDs', GetsummeryByID);               
 export const GetSatussummeryByIDs:any = AsyncFunctionThunk('GetSatussummeryByIDs', GetSatussummeryByID);
-
-export const DeletesummariesByIDs:any = AsyncFunctionThunk('DeletesummariesByIDs',DeletesummariesByID);
-export const Updatesummeryss:any = AsyncFunctionThunk('Updatesummeryss',Updatesummery)
-export const Updatesummariess:any = AsyncFunctionThunk('Updatesummariess',Updatesummaries)
-export const mergesummerys:any = AsyncFunctionThunk('mergesummerys',mergesummery)
+export const DeletesummariesByIDs:any = AsyncFunctionThunk('DeletesummariesByIDs',DeletesummariesByID); 
+export const Updatesummeryss:any = AsyncFunctionThunk('Updatesummeryss',Updatesummery)                  
+export const Updatesummariess:any = AsyncFunctionThunk('Updatesummariess',Updatesummaries)              
+export const mergesummerys:any = AsyncFunctionThunk('mergesummerys',mergesummery)                        
  
  
 const summerySlice = createSlice({
@@ -92,7 +90,6 @@ const summerySlice = createSlice({
         state.error = action.payload;
       })
       .addCase(Updatesummariess.fulfilled, (state, action) => {
-        
         state.loading = false;
       })
       .addCase(Updatesummariess.pending, (state) => {
@@ -102,7 +99,6 @@ const summerySlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-       
       .addCase(Updatesummeryss.fulfilled, (state, action) => {
         // state.Script = action.payload;
         state.loading = false;

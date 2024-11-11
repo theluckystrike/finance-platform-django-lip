@@ -118,60 +118,10 @@ useEffect(()=>{
                 />
               </div>
 
-              <div className="col-5 mb-2">
-                <label htmlFor="scripts" className="form-label">
-                  Select Script
-                </label>
-                <Select
-                  id="scripts"
-                  options={availableScriptOptions}
-                  value={availableScriptOptions.find(option => option.value === selectedScriptId) || null}
-                  onChange={(selectedOption) => setSelectedScriptId(selectedOption ? selectedOption.value : "")}
-                  placeholder="Select a Script"
-                />
-              </div>
+            
 
-              <div className="col-5 mb-2">
-                <label htmlFor="column" className="form-label">
-                  Column Name
-                </label>
-                <input
-                  type="text"
-                  id="column"
-                  className="form-control"
-                  value={columnName}
-                  onChange={(e) => setColumnName(e.target.value)}
-                  placeholder="Enter Column Name"
-                />
-              </div>
 
-              <div className="col-2 mb-3 text-center">
-                <label htmlFor="column" className="form-label invisible">
-                  Name
-                </label>
-                <button type="button" className="btn btn-dark" onClick={addScript}>
-                  <Icon size="20px" icon="Add" />
-                </button>
-              </div>
-
-              {/* Display added scripts */}
-              <div className="col-12" style={{ maxHeight: '200px', overflow: 'auto' }}>
-                <h6>Scripts to Include:</h6>
-                <ul>
-                  {Object.entries(scripts).map(([id, column]) => (
-                    <li key={uuidv4()}>
-                      Script ID: {id}, Column: {column}{" "}
-                      <FaEdit
-                        onClick={() => {
-                          setSelectedScriptId(id);
-                          setColumnName(column);
-                        }}
-                        style={{ marginLeft: "8px", cursor: "pointer" }}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              
 
               <div className="col-12 row justify-content-evenly m-0">
                 <button

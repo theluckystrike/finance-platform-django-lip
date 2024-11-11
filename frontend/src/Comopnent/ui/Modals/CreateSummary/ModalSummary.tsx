@@ -1,13 +1,13 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import useToast from "../../../../customHook/toast";
 import Icon from "../../icon/Icon";
-import { Createsummerys } from "../../../../Redux/TapeSummary/Slice";
+import { Createsummerys, GetAllsummerys } from "../../../../Redux/TapeSummary/Slice";
+import axiosInstance from "../../../../Redux/APInterceptors";
 
-// Define type for the script option
 interface ScriptOption {
   value: string;
   label: string;
@@ -24,48 +24,58 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
   const handleToast = useToast();
 
   const allscripts = store?.script?.Scripts?.results || [];
-
-  // State to manage form values
+  const filterScript = allscripts.filter((i: any) => i.output_type === "pd plt" || i.output_type === "pd");
+  
   const [name, setName] = useState("");
   const [scripts, setScripts] = useState<{ [key: string]: string }>({});
   const [selectedScriptId, setSelectedScriptId] = useState<string>("");
-  const [columnName, setColumnName] = useState("");
+  const [selectScript, setSelectScript] = useState<any[]>([]);
+  const [selectedScriptIds, setSelectedScriptIds] = useState<{ [key: string]: string }>({});
 
-  // Generate script options excluding already selected scripts
-  const availableScriptOptions: ScriptOption[] = allscripts
-    .filter((script: any) => !scripts[script.id]) // Exclude selected scripts
-    .map((script: any) => ({
-      value: script.id,
-      label: script.name,
-    }));
+  const availableScriptOptions: ScriptOption[] = filterScript
+  .filter((script: any) => !Object.keys(selectedScriptIds).includes(script.id))
+  .map((script: any) => ({
+    value: script.id,
+    label: script.name,
+  }));
 
-  // Function to add a new script/column pair
-  const addScript = () => {
-    if (selectedScriptId && columnName) {
+  const addScript = async () => {
+    if (selectedScriptId) {
       setScripts((prevScripts) => ({
         ...prevScripts,
-        [selectedScriptId]: columnName,
+        [selectedScriptId]: "",
       }));
       setSelectedScriptId("");
-      setColumnName("");
-    } else {
-      // handleToast("Please select a script and enter a column name", "error");
+
+      const res = await axiosInstance.get(`https://www.olandinvestments.com/api/scripts/${selectedScriptId}`);
+      setSelectScript((prev) => [...prev, res.data]);
     }
   };
 
-  // Handle form submission
-  const handleSubmit =async () => {
-    const values = {
-      name,
-      scripts,
-    };
+  const handleSubmit = async () => {
+    const values = { name, scripts: selectedScriptIds };
     
-    
-    // Dispatch the create report action
-  await  dispatch(Createsummerys({values}));
-    handleClose();
+    try {
+      await dispatch(Createsummerys({ values }));
+      handleToast.SuccessToast('Summary created successfully!');
+      setSelectedScriptIds({})
+      setName('')
+      await dispatch(GetAllsummerys({}));
+      handleClose();
+    } catch (error) {
+      handleToast.ErrorToast('Failed to create summary. Please try again.');
+      console.error("Error creating summary:", error);
+    }
   };
+  
 
+  const handleSelectChange = (selectedOption: any, scriptId: string) => {
+    setSelectedScriptIds((prevSelected) => ({
+      ...prevSelected,
+      [scriptId]: selectedOption ? selectedOption.value : "",
+    }));
+  };
+  
   return (
     <Modal
       size="lg"
@@ -77,14 +87,11 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
     >
       <Modal.Body className="bg-light-green" style={{ borderRadius: "25px" }}>
         <h5>Create Tap Summary</h5>
-
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           <div className="mb-3">
             <div className="row mx-0 px-3">
               <div className="col-12 m-0">
-                <label htmlFor="name" className="form-label">
-                  Name
-                </label>
+                <label htmlFor="name" className="form-label">Name</label>
                 <input
                   id="name"
                   name="name"
@@ -94,10 +101,8 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                 />
               </div>
 
-              <div className="col-5 mb-2">
-                <label htmlFor="scripts" className="form-label">
-                  Select Script
-                </label>
+              <div className="col-10 mb-2">
+                <label htmlFor="scripts" className="form-label">Select Script</label>
                 <Select
                   id="scripts"
                   options={availableScriptOptions}
@@ -107,39 +112,39 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                 />
               </div>
 
-              <div className="col-5 mb-2">
-                <label htmlFor="column" className="form-label">
-                  Column Name
-                </label>
-                <input
-                  type="text"
-                  id="column"
-                  className="form-control"
-                  value={columnName}
-                  onChange={(e) => setColumnName(e.target.value)}
-                  placeholder="Enter Column Name"
-                />
-              </div>
-
               <div className="col-2 mb-3 text-center">
-                <label htmlFor="column" className="form-label invisible">
-                  Name
-                </label>
+                <label htmlFor="column" className="form-label invisible">Add</label>
                 <button type="button" className="btn btn-dark" onClick={addScript}>
                   <Icon size="20px" icon="Add" />
                 </button>
               </div>
 
-              {/* Display added scripts */}
-              <div className="col-12" style={{ maxHeight: '200px', overflow: 'auto' }}>
+              <div className="col-12" style={{maxHeight:'300px',overflow:'auto'}}>
                 <h6>Scripts to Include:</h6>
                 <ul>
-                  {Object.entries(scripts).map(([id, column]) => (
-                    <li key={uuidv4()}>
-                      Script ID: {id}, Column: {column}
-                    </li>
-                  ))}
-                </ul>
+  {selectScript.map((scriptItem: any) => (
+    <li key={uuidv4()}>
+      Script ID: {scriptItem?.id}, Column: {selectedScriptIds[scriptItem.id]}
+      <Select
+        id="columns"
+        options={scriptItem?.table_data?.table_meta?.columns.map((column: any) => ({
+          value: column.name,
+          label: column.name,
+        }))}
+        value={
+          scriptItem?.table_data?.table_meta?.columns
+            .map((column: any) => ({ value: column.name, label: column.name }))
+            .find((option: any) => option.value === selectedScriptIds[scriptItem.id]) || null
+        }
+        onChange={(selectedOption) =>
+          handleSelectChange(selectedOption, scriptItem.id)
+        }
+        placeholder="Select a Column"
+      />
+    </li>
+  ))}
+</ul>
+
               </div>
 
               <div className="col-12 row justify-content-evenly m-0">
