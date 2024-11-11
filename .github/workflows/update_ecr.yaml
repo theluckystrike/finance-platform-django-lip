@@ -48,13 +48,13 @@ jobs:
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Update ECS Tasks
-    - id: update-ecs
-    - env:
+      id: update-ecs
+      env:
         ECS_CLUSTER_NAME: oi-test-prod-cluster
         ECS_SERVICE_NAME: oi-test-prod-service
         IMAGE_TAG: ${{ github.sha }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_URI: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-    - run: |
+      run: |
         pip install boto3 click
         python backend/update_ecs.py --cluster=$ECS_CLUSTERNAME --service=$ECS_SERVICE_NAME --image=$IMAGE_URI
