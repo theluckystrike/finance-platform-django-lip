@@ -57,4 +57,5 @@ jobs:
         IMAGE_URI: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       run: |
         pip install boto3 click
+        echo $IMAGE_URI
         python backend/update_ecs.py --cluster=$ECS_CLUSTER_NAME --service=$ECS_SERVICE_NAME --image=$IMAGE_URI
