@@ -1,12 +1,12 @@
 terraform {
-  # cloud {
+  cloud {
 
-  #   organization = "learn-tf-91124"
+    organization = "learn-tf-91124"
 
-  #   workspaces {
-  #     name = "example-workspace"
-  #   }
-  # }
+    workspaces {
+      name = "example-workspace"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"

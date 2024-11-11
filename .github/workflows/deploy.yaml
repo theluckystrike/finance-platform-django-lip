@@ -1,0 +1,97 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ aws-deployment ]
+
+env:
+  AWS_REGION: eu-west-2
+  ECR_REPOSITORY: oi-test
+  IMAGE_TAG: latest
+  # IMAGE_TAG: ${{ github.sha }}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Plan
+      run: terraform plan -input=false
+
+      # On push to $default-branch, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      id: tf-apply
+      if: github.ref == 'refs/heads/aws-deployment' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        cd backend
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Update ECS Tasks
+      id: update-ecs
+      env:
+        ECS_CLUSTER_NAME: oi-test-prod-cluster
+        ECS_SERVICE_NAME: oi-test-prod-service
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        pip install boto3 click
+        python backend/update_ecs.py --cluster=$ECS_CLUSTER_NAME --service=$ECS_SERVICE_NAME --image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    
+    - name: Migrate Database
+      id: migrate-db
+      env:
+        ECS_CLUSTER_NAME: oi-test-prod-cluster
+        ECS_SERVICE_NAME: oi-test-prod-service
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECS_MIGRATION_TASK_DEF: oi-test-migration-task
+        SUBNET_1 = ${{ steps.tf-apply.outputs.subnet1 }}
+        SUBNET_2 = ${{ steps.tf-apply.outputs.subnet2 }}
+        SECURITY_GROUP = ${{ steps.tf-apply.outputs.security_group }}
+      run: |
+        aws ecs run-task \
+        --cluster $ECS_CLUSTER_NAME \
+        --task-definition $ECS_MIGRATION_TASK_DEF \
+        --launch-type FARGATE \
+        --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_1, $SUBNET_2],securityGroups=[$SECURITY_GROUP],assignPublicIp=ENABLED}"

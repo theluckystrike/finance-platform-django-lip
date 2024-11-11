@@ -3,8 +3,11 @@ output "ecs_task_execution_role_arn" {
     description = "ARN for the ECS Task Execution Role"
 }
 
-output "subnets" {
-  value = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
+output "subnet1" {
+  value = aws_subnet.public-subnet-1.id
+}
+output "subnet2" {
+  value = aws_subnet.public-subnet-2.id
 }
 
 output "security_group" {

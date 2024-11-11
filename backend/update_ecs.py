@@ -2,6 +2,8 @@ import boto3
 import click
 
 
+# these two task definitions must match family names from terraform/05_ecs.tf
+# https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs/client/describe_task_definition.html
 def get_current_app_task_definition(client):
     return client.describe_task_definition(taskDefinition="oi-test-app-task")
 
@@ -23,7 +25,7 @@ def deploy(cluster, service, image):
     migration_response = get_current_migration_task_definition(client)
     app_container_definitions = [
         r.copy() for r in app_response["taskDefinition"]["containerDefinitions"]]
-    
+
     migration_container_definitions = [
         r.copy() for r in migration_response["taskDefinition"]["containerDefinitions"]]
 
@@ -41,6 +43,7 @@ def deploy(cluster, service, image):
         family=migration_response["taskDefinition"]["family"],
         volumes=migration_response["taskDefinition"]["volumes"],
         containerDefinitions=migration_container_definitions,
+        # same params as terraform/05_ecs.tf
         cpu="1024",
         memory="3072",
         networkMode="awsvpc",
