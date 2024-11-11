@@ -2,7 +2,7 @@ name: Push to ECR and Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ aws-deployment ]
 
 env:
   AWS_REGION: eu-west-2
