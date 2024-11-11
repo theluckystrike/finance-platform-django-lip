@@ -81,3 +81,11 @@ variable "health_check_path" {
   description = "Health check path for the default target group"
   default     = "/ping/"
 }
+
+# logs
+
+variable "log_retention_days" {
+  description = "Log retention days for logging service"
+  default = 5
+}
+

@@ -20,8 +20,8 @@ resource "aws_alb_target_group" "default-target-group" {
     port                = "traffic-port"
     healthy_threshold   = 5
     unhealthy_threshold = 2
-    timeout             = 2
-    interval            = 5
+    timeout             = 5
+    interval            = 30
     matcher             = "200"
   }
 }
