@@ -27,6 +27,7 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        terraform_wrapper: false
 
     - name: Terraform Init
       run: cd terraform && terraform init
@@ -93,4 +94,4 @@ jobs:
         --cluster $ECS_CLUSTER_NAME \
         --task-definition $ECS_MIGRATION_TASK_DEF \
         --launch-type FARGATE \
-        --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_1, $SUBNET_2],securityGroups=[$SECURITY_GROUP],assignPublicIp=ENABLED}"
+        --network-configuration "awsvpcConfiguration={subnets=[$(terraform output subnet1), $(terraform output subnet2)],securityGroups=[$(terraform output security_group)],assignPublicIp=ENABLED}"
