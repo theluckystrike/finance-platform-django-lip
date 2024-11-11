@@ -83,13 +83,9 @@ jobs:
       id: migrate-db
       env:
         ECS_CLUSTER_NAME: oi-test-prod-cluster
-        ECS_SERVICE_NAME: oi-test-prod-service
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECS_MIGRATION_TASK_DEF: oi-test-migration-task
-        SUBNET_1: ${{ steps.tf-apply.outputs.subnet1 }}
-        SUBNET_2: ${{ steps.tf-apply.outputs.subnet2 }}
-        SECURITY_GROUP: ${{ steps.tf-apply.outputs.security_group }}
       run: |
+        cd terraform
         aws ecs run-task \
         --cluster $ECS_CLUSTER_NAME \
         --task-definition $ECS_MIGRATION_TASK_DEF \
