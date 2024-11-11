@@ -86,6 +86,6 @@ variable "health_check_path" {
 
 variable "log_retention_days" {
   description = "Log retention days for logging service"
-  default = 5
+  default     = 5
 }
 

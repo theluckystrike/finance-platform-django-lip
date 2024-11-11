@@ -49,11 +49,11 @@ resource "aws_subnet" "private-subnet-2" {
 # Route tables for the subnets
 resource "aws_route_table" "public-route-table" {
   vpc_id = aws_vpc.oi-test-vpc.id
-#   might need this
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.default.id
-#   }
+  #   might need this
+  #   route {
+  #     cidr_block = "0.0.0.0/0"
+  #     gateway_id = aws_internet_gateway.default.id
+  #   }
   tags = {
     Name = "OI_Test_Public_Route_Table"
   }
@@ -61,10 +61,10 @@ resource "aws_route_table" "public-route-table" {
 resource "aws_route_table" "private-route-table" {
   vpc_id = aws_vpc.oi-test-vpc.id
   #   might need this
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.default.id
-#   }
+  #   route {
+  #     cidr_block = "0.0.0.0/0"
+  #     gateway_id = aws_internet_gateway.default.id
+  #   }
   tags = {
     Name = "OI_Test_Private_Route_Table"
   }
@@ -92,7 +92,7 @@ resource "aws_route_table_association" "private-route-2-association" {
 
 # Elastic IP
 resource "aws_eip" "elastic-ip-for-nat-gw" {
-#   domain                       = "vpc"
+  #   domain                       = "vpc"
   associate_with_private_ip = "10.0.0.5"
   depends_on                = [aws_internet_gateway.oi-test-igw]
 }

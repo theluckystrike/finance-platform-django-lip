@@ -30,9 +30,9 @@ resource "aws_security_group" "load-balancer" {
 resource "aws_security_group" "ecs-security-group" {
   vpc_id = aws_vpc.oi-test-vpc.id
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     security_groups = [aws_security_group.load-balancer.id]
   }
   egress {
@@ -51,9 +51,9 @@ resource "aws_security_group" "rds_sg" {
   name        = "OITestRDSSecurityGroup"
   description = "Allow PostgreSQL traffic"
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
+    from_port = 5432
+    to_port   = 5432
+    protocol  = "tcp"
     # cidr_blocks = [aws_sec]
     security_groups = [aws_security_group.ecs-security-group.id]
   }
