@@ -47,6 +47,7 @@ resource "aws_ecs_task_definition" "oi-test-migrate" {
   memory                = var.fargate_memory
   execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
   container_definitions = data.template_file.migrate.rendered
+  depends_on            = [aws_db_instance.production]
 }
 
 
