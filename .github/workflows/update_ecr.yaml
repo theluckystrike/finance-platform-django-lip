@@ -7,6 +7,8 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: oi-test
+  IMAGE_TAG: latest
+  # IMAGE_TAG: ${{ github.sha }}
 
 permissions:
   contents: read
@@ -36,8 +38,6 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        # IMAGE_TAG: ${{ github.sha }}
-        IMAGE_TAG: latest
       run: |
         # Build a docker container and
         # push it to ECR so that it can
@@ -52,7 +52,6 @@ jobs:
       env:
         ECS_CLUSTER_NAME: oi-test-prod-cluster
         ECS_SERVICE_NAME: oi-test-prod-service
-        IMAGE_TAG: ${{ github.sha }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
         pip install boto3 click
