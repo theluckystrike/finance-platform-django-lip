@@ -89,3 +89,31 @@ variable "log_retention_days" {
   default     = 5
 }
 
+
+# aws
+
+variable "aws_access_key_id" {
+  description = "AWS access key ID"
+}
+variable "aws_bucket_name" {
+  description = "AWS bucket name"
+}
+variable "aws_secret_access_key" {
+  description = "AWS secret access key"
+}
+
+
+# Redis
+
+variable "rediscloud_url" {
+  description = "Redis Cloud Database URL"
+}
+
+
+# Django
+
+variable "secret_key" {
+  description = "Django secret key"
+}
+
+
