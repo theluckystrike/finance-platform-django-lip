@@ -40,11 +40,11 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = ['https://backend-oland-investments.cradle.services']
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
-IS_HEROKU = "DYNO" in os.environ
+IS_AWS = "RDS_DB_NAME" in os.environ
 
 # If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
 # environment variables from a .env file.
-if not IS_HEROKU:
+if not IS_AWS:
     load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -56,7 +56,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Determine if the project should be run in debug mode. If the project is running in Heroku, it should not be in debug
 # mode. If it is running anywhere else, debug mode should be enabled.
-DEBUG = False if IS_HEROKU else True
+DEBUG = False if IS_AWS else True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -118,12 +118,10 @@ RQ = {
 # fork() causing issues on my latpop but fine on Heroku
 # CustomWorker inherits rq.SimpleWorker with no forking i.e
 # runs in same process just different thread
-if not IS_HEROKU:
+if not IS_AWS:
     RQ['WORKER_CLASS'] = "rq.SimpleWorker"
 
 RQ_SHOW_ADMIN_LINK = True
-
-SCOUT_NAME = "Finance Platform scout"
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
@@ -189,22 +187,26 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
-# if not IS_HEROKU:
-#     DATABASES['default'] = {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'heroku_db',
-#         'USER': '',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 """LOGGING = {
     'version': 1,

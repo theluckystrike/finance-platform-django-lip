@@ -3,7 +3,7 @@ FROM python:3.9.20-bullseye
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
+ENV PORT=8000
 
 WORKDIR /app
 RUN mkdir -p /app/logs
@@ -31,4 +31,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE ${PORT}
 
 # Run Supervisor
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
