@@ -19,8 +19,8 @@ def deploy(cluster, service, image):
 
     # Fetch the current task definition
     print("Fetching current task definition...")
-    app_response = get_current_app_task_definition(client, cluster, service)
-    migration_response = get_current_migration_task_definition(client, cluster, service)
+    app_response = get_current_app_task_definition(client)
+    migration_response = get_current_migration_task_definition(client)
     app_container_definitions = [
         r.copy() for r in app_response["taskDefinition"]["containerDefinitions"]]
     
