@@ -30,7 +30,7 @@ data "template_file" "s3-role-policy" {
 
   vars = {
     private_bucket_name = var.private_bucket_name
-    public_bucket_name = var.public_bucket_name
+    public_bucket_name  = var.public_bucket_name
   }
 }
 

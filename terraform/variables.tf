@@ -119,14 +119,14 @@ variable "secret_key" {
 
 # S3
 
-variable "private_bucket_name"{
+variable "private_bucket_name" {
   description = "AWS S3 private bucket name"
-  default = "oi-test-private-bucket"
+  default     = "oi-test-private-bucket"
 }
 
-variable "public_bucket_name"{
+variable "public_bucket_name" {
   description = "AWS S3 public bucket name"
-  default = "oi-test-public-bucket"
+  default     = "oi-test-public-bucket"
 }
 
 

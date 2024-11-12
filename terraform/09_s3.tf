@@ -26,7 +26,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
-  depends_on = [ aws_lb.production ]
+  depends_on = [aws_lb.production]
 }
 resource "aws_s3_bucket_cors_configuration" "public_bucket_cors" {
   bucket = aws_s3_bucket.public_bucket.id
@@ -46,5 +46,5 @@ resource "aws_s3_bucket_cors_configuration" "public_bucket_cors" {
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
-  depends_on = [ aws_lb.production ]
+  depends_on = [aws_lb.production]
 }
