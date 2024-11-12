@@ -51,9 +51,14 @@ class PrivateMediaStorage(S3Boto3Storage):
     #     Overwrite the default url method to generate signed URLs with custom expiration time.
     #     """
     #     expire = expire or int(self.signed_url_expiration.total_seconds())
-    #     return self.connection.generate_presigned_url(
+
+    #     # Access the low-level boto3 client via the `meta.client` property
+    #     s3_client = self.connection.meta.client
+
+    #     # Generate the presigned URL
+    #     return s3_client.generate_presigned_url(
     #         'get_object',
     #         Params={'Bucket': self.bucket_name,
-    #                 'Key': self._normalize_name(self._clean_name(name))},
+    #                 'Key': self._normalize_name(self._normalize_name(name))},
     #         ExpiresIn=expire,
     #     )
