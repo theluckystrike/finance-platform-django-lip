@@ -95,9 +95,7 @@ variable "log_retention_days" {
 variable "aws_access_key_id" {
   description = "AWS access key ID"
 }
-variable "aws_bucket_name" {
-  description = "AWS bucket name"
-}
+
 variable "aws_secret_access_key" {
   description = "AWS secret access key"
 }

@@ -12,7 +12,6 @@ data "template_file" "app" {
     rds_username            = var.rds_username
     rds_password            = var.rds_password
     rds_hostname            = aws_db_instance.production.address
-    aws_bucket_name         = var.aws_bucket_name
     aws_access_key_id       = var.aws_access_key_id
     aws_secret_access_key   = var.aws_secret_access_key
     rediscloud_url          = var.rediscloud_url
@@ -31,7 +30,6 @@ data "template_file" "migrate" {
     rds_username            = var.rds_username
     rds_password            = var.rds_password
     rds_hostname            = aws_db_instance.production.address
-    aws_bucket_name         = var.aws_bucket_name
     aws_access_key_id       = var.aws_access_key_id
     aws_secret_access_key   = var.aws_secret_access_key
     rediscloud_url          = var.rediscloud_url
