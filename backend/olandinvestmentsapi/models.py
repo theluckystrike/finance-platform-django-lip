@@ -6,6 +6,8 @@ import django_rq
 from django.utils.translation import gettext_lazy as _
 import time
 import logging
+import traceback
+import sys
 
 logger = logging.getLogger('testlogger')
 
@@ -62,8 +64,10 @@ class Summary(models.Model):
             logger.info(
                 f"[report update] Successfully updated report {self.id}")
         except Exception as e:
+            exc_info = sys.exc_info()
+            exc_str = "".join(traceback.format_exception(*exc_info))
             logger.error(
-                f"[summary update] Failed to update summary {self.id} with error ->\n{str(e)}")
+                f"[summary update] Failed to update summary {self.id} with error ->\n{exc_str}")
             self.set_status(Status.FAILURE)
 
     def update(self, wait=False):

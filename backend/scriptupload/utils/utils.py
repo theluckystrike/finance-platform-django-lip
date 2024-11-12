@@ -154,10 +154,14 @@ def is_date(datestr: str) -> bool:
     if not isinstance(datestr, str):
         return False
     try:
-        # parse(s, fuzzy=False)
         return bool(datetime.strptime(datestr, "%Y-%m-%d"))
     except ValueError:
-        return False
+        try:
+            return bool(datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+        except ValueError:
+            return False
+        finally:
+            return False
     except Exception as e:
         print(e)
         return False
