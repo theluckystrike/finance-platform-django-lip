@@ -22,11 +22,7 @@
         "value": "${aws_secret_access_key}"
       },
       {
-        "name": "AWS_STATIC_STORAGE_BUCKET_NAME",
-        "value": "${public_bucket_name}"
-      },
-      {
-        "name": "AWS_MEDIA_STORAGE_BUCKET_NAME",
+        "name": "AWS_PUBLIC_STORAGE_BUCKET_NAME",
         "value": "${public_bucket_name}"
       },
       {

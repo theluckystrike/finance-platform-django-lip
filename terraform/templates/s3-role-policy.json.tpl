@@ -11,9 +11,7 @@
             ],
             "Resource": [
                 "arn:aws:s3:::${private_bucket_name}",
-                "arn:aws:s3:::${private_bucket_name}/*",
-                "arn:aws:s3:::${public_bucket_name}",
-                "arn:aws:s3:::${public_bucket_name}/*"
+                "arn:aws:s3:::${private_bucket_name}/*"
             ]
         }
     ]

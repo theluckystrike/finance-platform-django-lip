@@ -17,10 +17,10 @@ resource "aws_s3_bucket" "private_bucket" {
 resource "aws_s3_bucket_public_access_block" "private_bucket_access_block" {
   bucket = aws_s3_bucket.private_bucket.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_policy" "public_bucket_policy" {
@@ -77,7 +77,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
 
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["GET", "PUT", "POST", "DELETE", "HEAD"]
+    allowed_methods = ["GET"]
     allowed_origins = [
       "http://localhost",
       "https://www.olandinvestments.com",
@@ -87,7 +87,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
       "https://oland-investments.cradle.services/",
       aws_lb.production.dns_name
     ]
-    expose_headers  = ["ETag"]
+    # expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
   depends_on = [aws_lb.production]
