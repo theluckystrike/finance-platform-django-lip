@@ -39,39 +39,6 @@ resource "aws_s3_bucket_policy" "public_bucket_policy" {
   })
 }
 
-# resource "aws_s3_bucket_policy" "private_bucket_policy" {
-#   bucket = aws_s3_bucket.private_bucket.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Effect = "Allow",
-#         Principal = "*",
-#         Action = [
-#           "s3:GetObject",
-#           "s3:PutObject",
-#           "s3:DeleteObject"
-#         ],
-#         Resource = "${aws_s3_bucket.private_bucket.arn}/*",
-#         Condition = {
-#           StringEquals = {
-#             "aws:Referer" = [
-#               "http://localhost",
-#               "https://www.olandinvestments.com",
-#               "https://www.olandinvesmentslimited.com",
-#               "http://localhost:8000",
-#               "http://localhost:8090",
-#               "https://oland-investments.cradle.services/",
-#               aws_lb.production.dns_name
-#             ]
-#           }
-#         }
-#       }
-#     ]
-#   })
-# }
-
 resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
   bucket = aws_s3_bucket.private_bucket.id
 

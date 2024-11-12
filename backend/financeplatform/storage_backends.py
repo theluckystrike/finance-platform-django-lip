@@ -17,7 +17,6 @@ from datetime import timedelta
 class StaticStorage(S3Boto3Storage):
     location = 'static'
     default_acl = 'public-read'
-    # default_acl = None
     querystring_auth = False
     bucket_name = settings.AWS_STATIC_STORAGE_BUCKET_NAME
 
@@ -26,6 +25,7 @@ class PublicMediaStorage(S3Boto3Storage):
     location = 'media'
     default_acl = 'public-read'
     file_overwrite = False
+    querystring_auth = False
     bucket_name = settings.AWS_MEDIA_STORAGE_BUCKET_NAME
 
 
@@ -36,7 +36,7 @@ class PrivateMediaStorage(S3Boto3Storage):
     custom_domain = False
     bucket_name = settings.AWS_PRIVATE_STORAGE_BUCKET_NAME
     querystring_auth = True
-    querystring_expire = 3600
+    # querystring_expire = 3000
 
     # signed_url_expiration = timedelta(hours=1)
 
