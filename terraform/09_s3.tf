@@ -76,7 +76,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
   bucket = aws_s3_bucket.private_bucket.id
 
   cors_rule {
-    allowed_headers = ["*"]
+    allowed_headers = ["Authorization", "Content-Type"]
     allowed_methods = ["GET"]
     allowed_origins = [
       "http://localhost",
