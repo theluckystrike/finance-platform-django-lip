@@ -100,6 +100,10 @@
         "value": "${private_bucket_name}"
       },
       {
+        "name": "AWS_REGION_NAME",
+        "value": "${region}"
+      },
+      {
         "name": "DEBUG_VALUE",
         "value": "False"
       },
