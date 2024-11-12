@@ -51,7 +51,7 @@ urlpatterns = [
          MergeReportsView.as_view(), name='merge_reports'),
     # Summaries
     path('api/summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_update'),
-    path('api/summaries/<int:pk>/summaries',
+    path('api/summaries/<int:pk>/update',
          SummaryUpdateView.as_view(), name='summary_status'),
     # Router urls
     path('api/', include(router.urls)),
