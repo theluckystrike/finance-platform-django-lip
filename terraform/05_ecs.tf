@@ -17,6 +17,8 @@ data "template_file" "app" {
     aws_secret_access_key   = var.aws_secret_access_key
     rediscloud_url          = var.rediscloud_url
     secret_key              = var.secret_key
+    public_bucket_name      = var.public_bucket_name
+    private_bucket_name     = var.private_bucket_name
   }
 }
 data "template_file" "migrate" {
@@ -34,6 +36,8 @@ data "template_file" "migrate" {
     aws_secret_access_key   = var.aws_secret_access_key
     rediscloud_url          = var.rediscloud_url
     secret_key              = var.secret_key
+    public_bucket_name      = var.public_bucket_name
+    private_bucket_name     = var.private_bucket_name
   }
 }
 

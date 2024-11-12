@@ -10,17 +10,20 @@ https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 """
 
 from storages.backends.s3boto3 import S3Boto3Storage
+from django.conf import settings
 
 
 class StaticStorage(S3Boto3Storage):
     location = 'static'
     default_acl = 'public-read'
+    bucket_name = settings.AWS_STATIC_STORAGE_BUCKET_NAME
 
 
 class PublicMediaStorage(S3Boto3Storage):
     location = 'media'
     default_acl = 'public-read'
     file_overwrite = False
+    bucket_name = settings.AWS_MEDIA_STORAGE_BUCKET_NAME
 
 
 class PrivateMediaStorage(S3Boto3Storage):
@@ -28,3 +31,4 @@ class PrivateMediaStorage(S3Boto3Storage):
     default_acl = 'private'
     file_overwrite = True
     custom_domain = False
+    bucket_name = settings.AWS_PRIVATE_STORAGE_BUCKET_NAME

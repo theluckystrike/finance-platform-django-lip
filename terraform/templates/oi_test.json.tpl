@@ -22,8 +22,16 @@
         "value": "${aws_secret_access_key}"
       },
       {
-        "name": "AWS_STORAGE_BUCKET_NAME",
-        "value": "${aws_bucket_name}"
+        "name": "AWS_STATIC_STORAGE_BUCKET_NAME",
+        "value": "${public_bucket_name}"
+      },
+      {
+        "name": "AWS_MEDIA_STORAGE_BUCKET_NAME",
+        "value": "${public_bucket_name}"
+      },
+      {
+        "name": "AWS_PRIVATE_STORAGE_BUCKET_NAME",
+        "value": "${private_bucket_name}"
       },
       {
         "name": "DEBUG_VALUE",
@@ -88,8 +96,16 @@
         "value": "${aws_secret_access_key}"
       },
       {
-        "name": "AWS_STORAGE_BUCKET_NAME",
-        "value": "${aws_bucket_name}"
+        "name": "AWS_STATIC_STORAGE_BUCKET_NAME",
+        "value": "${public_bucket_name}"
+      },
+      {
+        "name": "AWS_MEDIA_STORAGE_BUCKET_NAME",
+        "value": "${public_bucket_name}"
+      },
+      {
+        "name": "AWS_PRIVATE_STORAGE_BUCKET_NAME",
+        "value": "${private_bucket_name}"
       },
       {
         "name": "DEBUG_VALUE",
