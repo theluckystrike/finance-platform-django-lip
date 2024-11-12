@@ -126,25 +126,35 @@ class ReportEmailTaskSerializer(serializers.ModelSerializer):
 class SummarySerializer(serializers.ModelSerializer):
     scripts = serializers.PrimaryKeyRelatedField(
         queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Summary
         fields = ["id", "name", "scripts",
-                  "meta", "created", "signal_plot_data"]
+                  "meta", "created", "signal_plot_data", "status"]
+
+    def get_status(self, obj):
+        print("getting status")
+        return obj.get_status_display()
 
 
 class SummarySerializerLite(serializers.ModelSerializer):
     scripts = serializers.PrimaryKeyRelatedField(
         queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Summary
-        fields = ["id", "name", "scripts", "created"]
+        fields = ["id", "name", "scripts", "created", "status"]
+
+    def get_status(self, obj):
+        return obj.get_status_display()
 
 
 class SummaryMetaSerializer(serializers.ModelSerializer):
     '''Used only for making new summaries from post requests'''
-    scripts = serializers.DictField(child=serializers.CharField(), write_only=True)
+    scripts = serializers.DictField(
+        child=serializers.CharField(), write_only=True)
 
     class Meta:
         model = Summary
@@ -152,14 +162,17 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
 
     def validate_scripts(self, value):
         if not isinstance(value, dict):
-            raise serializers.ValidationError("Scripts must be a dictionary mapping from ID to column name")
+            raise serializers.ValidationError(
+                "Scripts must be a dictionary mapping from ID to column name")
         if len(value) == 0:
             raise serializers.ValidationError("Scripts cannot be empty")
         for sid, col_name in value.items():
             if not Script.objects.filter(id=int(sid)).exists():
-                raise serializers.ValidationError(f"Script with ID {sid} does not exist")
+                raise serializers.ValidationError(
+                    f"Script with ID {sid} does not exist")
             if col_name is None:
-                raise serializers.ValidationError("Cannot have null column name")
+                raise serializers.ValidationError(
+                    "Cannot have null column name")
             # TODO: validate column name is in table data column names
         return value
 

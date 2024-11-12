@@ -178,3 +178,73 @@ class SummaryUpdateView(APIView):
             logger.error(
                 f"[Summary update View] Failed to update summary {summary.id} -> {str(e)}")
             return Response({"error": "Summary does not exists"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class SummaryStatusView(APIView):
+    """
+    GET request to retrieve the status of a script execution
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description="Status retrieved",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'status': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Current status of the execution',
+                            enum=['success', 'running', 'failure']
+                        ),
+                        'error_message': openapi.Schema(type=openapi.TYPE_STRING, description='Execution output or log'),
+                        'chart_data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Chart data info'),
+                        'table_data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Table data info')
+                    },
+                    example={
+                        "status": "success",
+                        "chart_data": {
+                            "id": 20,
+                            "image_file": "http://127.0.0.1:8000/mediafiles/scripts-dev/uploaded%204/chart/output_plot.png",
+                            "created": "2024-09-06T19:52:49.458525Z",
+                            "last_updated": None
+                        }
+                    }
+                )
+            ),
+            404: openapi.Response(
+                description="Script not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error')
+                    },
+                    example={
+                        "error": "Script does not exist"
+                    }
+                )
+            ),
+        }
+    )
+    def get(self, request, pk):
+        try:
+            summary = get_object_or_404(Summary, pk=pk)
+            resp = {
+                "status": summary.get_status_display()
+            }
+            if summary.status == Status.SUCCESS:
+                resp["signal_plot_data"] = summary.signal_plot_data
+            # if summary.status == Status.FAILURE:
+            #     resp['error_message'] = summary.error_message
+            # if summary.status == Status.SUCCESS:
+                # context required to return full URLs
+                # if script.has_chart_data:
+                #     resp["chart_data"] = ChartDataSerializer(
+                #         script.chart_data, context={'request': request}).data
+                # if script.has_table_data:
+                #     resp["table_data"] = TableDataSerializer(
+                #         script.table_data, context={'request': request}).data
+            return Response(resp)
+        except Summary.DoesNotExist:
+            return Response({'error': 'Summary does not exists'}, status=status.HTTP_404_NOT_FOUND)
