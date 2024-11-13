@@ -1,3 +1,20 @@
+locals {
+  container_vars = {
+    docker_image_url_django = var.docker_image_url_django
+    region                  = var.region
+    rds_db_name             = var.rds_db_name
+    rds_username            = var.rds_username
+    rds_password            = var.rds_password
+    rds_hostname            = aws_db_instance.production.address
+    aws_access_key_id       = var.aws_access_key_id
+    aws_secret_access_key   = var.aws_secret_access_key
+    rediscloud_url          = var.rediscloud_url
+    secret_key              = var.secret_key
+    public_bucket_name      = var.public_bucket_name
+    private_bucket_name     = var.private_bucket_name
+  }
+}
+
 resource "aws_ecs_cluster" "production" {
   name = "${var.ecs_cluster_name}-cluster"
 }
@@ -5,38 +22,12 @@ resource "aws_ecs_cluster" "production" {
 data "template_file" "app" {
   template = file("templates/oi_test.json.tpl")
 
-  vars = {
-    docker_image_url_django = var.docker_image_url_django
-    region                  = var.region
-    rds_db_name             = var.rds_db_name
-    rds_username            = var.rds_username
-    rds_password            = var.rds_password
-    rds_hostname            = aws_db_instance.production.address
-    aws_access_key_id       = var.aws_access_key_id
-    aws_secret_access_key   = var.aws_secret_access_key
-    rediscloud_url          = var.rediscloud_url
-    secret_key              = var.secret_key
-    public_bucket_name      = var.public_bucket_name
-    private_bucket_name     = var.private_bucket_name
-  }
+  vars = local.container_vars
 }
 data "template_file" "migrate" {
   template = file("templates/oi_test_migrate.json.tpl")
 
-  vars = {
-    docker_image_url_django = var.docker_image_url_django
-    region                  = var.region
-    rds_db_name             = var.rds_db_name
-    rds_username            = var.rds_username
-    rds_password            = var.rds_password
-    rds_hostname            = aws_db_instance.production.address
-    aws_access_key_id       = var.aws_access_key_id
-    aws_secret_access_key   = var.aws_secret_access_key
-    rediscloud_url          = var.rediscloud_url
-    secret_key              = var.secret_key
-    public_bucket_name      = var.public_bucket_name
-    private_bucket_name     = var.private_bucket_name
-  }
+  vars = local.container_vars
 }
 
 resource "aws_ecs_task_definition" "app" {
