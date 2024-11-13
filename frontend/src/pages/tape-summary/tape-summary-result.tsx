@@ -4,7 +4,7 @@ import { Card, Button } from "react-bootstrap";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import { GetSatusreportByIDs } from "../../Redux/Report/Slice";
 import { useDispatch, useSelector } from "react-redux";
-import { GetsummeryByIDs, Updatesummariess } from "../../Redux/TapeSummary/Slice";
+import { GetSatussummeryByIDs, GetsummeryByIDs, Updatesummariess } from "../../Redux/TapeSummary/Slice";
 import ScatterLineChart from "../../Comopnent/Charts/LineScatter";
 import LineChart from "../../Comopnent/Charts/LineChart";
 
@@ -12,6 +12,7 @@ import { TapeSummaryData } from "../../DummyData/TableData";
 import DeleteModal from "./DeleteModal";
 import EditSummary from "../../Comopnent/ui/Modals/CreateSummary/ModalEditSummary";
 import Loader from "../../Comopnent/ui/Loader";
+import Plot from "react-plotly.js";
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
@@ -44,33 +45,62 @@ const TapeSummaryResult: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedScript, setSelectedScript] = useState<number | null>(null);
+  const store: any = useSelector((i) => i);
 
   const { summery } = useSelector((i: any) => i?.summary);
+  console.log(summery,'summerysummery');
   
   const summery2 = summery?.meta?.scripts
-    ? Object.entries(summery.meta.scripts).map(([id, script]: any) => ({
+    ? Object.entries(summery.meta.scripts).map(([id, script]: any) =>({
         id: Number(id),
         name: script.name,
         tableColName: script.table_col_name,
-        score: script.table_col_last_value || 0, // Default score if null
+        score: script.table_col_last_value || 0 , // Default score if null
       }))
     : []; // Fallback to an empty array if `summery.meta.scripts` is undefined
 
-  console.log(summery2);
+  // console.log(summery2);
 const [upLoad,setUpload]=useState(false)
-  const getStatus = async () => {
+  const getupdate= async () => {
     setUpload(true)
     await dispatch(Updatesummariess({ id }));
+    getStatus()
     setUpload(false)
 
   };
 
   useEffect(() => {
     dispatch(GetsummeryByIDs({ id }));
+    getStatus()
   }, [dispatch, id]);
 
   const [deleteshow,setDeleteShow]=useState(false)
-const [editShow,setEditShow]=useState(false)
+const [editShow,setEditShow]=useState(false)  
+const summeryStatus = store?.summary?.summeryStatus;
+console.log(summeryStatus);
+
+const getStatus =async ()=>{
+  await dispatch(GetSatussummeryByIDs({ id: id }));
+
+}
+
+useEffect(() => {
+  let intervalId: any;
+  if (summeryStatus.status === 'running') {
+    intervalId = setInterval(() => {
+      getStatus();
+    }, 5000);
+  }
+
+  if (summeryStatus.status === 'success') {
+    clearInterval(intervalId);
+  }
+
+  return () => clearInterval(intervalId); // Clean up the interval on component unmount
+}, [summeryStatus]);
+
+
+ 
   return (
     <>
       <div className="mx-4 mb-4">
@@ -84,7 +114,19 @@ const [editShow,setEditShow]=useState(false)
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
-            <button onClick={getStatus} className="btn icon-button my-1 mx-2">
+            {summeryStatus?.status === 'running' &&
+            <button
+              type="button"
+              
+              className="btn icon-button my-1 mx-2"
+            >
+              <Loader />
+              <span>Running</span>
+          
+              
+            </button>
+              }
+            <button onClick={getupdate} className="btn icon-button my-1 mx-2">
               <Icon icon="PlayArrow" size="20px" />
               <span>Update</span>
             </button>
@@ -102,7 +144,44 @@ const [editShow,setEditShow]=useState(false)
               
             </Card.Header>
             <Card.Body>
-            <ChartComponent data={TapeSummaryData[0]?.chartData} />
+            {/* <ChartComponent data={TapeSummaryData[0]?.chartData} /> */}
+
+
+            {summery && summery.signal_plot_data   ? (
+  <Plot
+  data={[
+    {
+      x: summery.signal_plot_data.date,
+      y: summery.signal_plot_data['signal sum'],
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: { color: 'green' },
+      name: 'Signal Sum' // Name for the legend
+    }
+  ]}
+  layout={{
+    title: summery.name.replace(/\b\w/g, (char:any) => char.toUpperCase()),
+    xaxis: { title: 'Date' },
+    yaxis: { 
+      title: 'Signal Sum',
+      range: [-1, 1],  // Fixed y-axis range from -1 to 1
+      dtick: 1         // Step of 1 for ticks, so only -1, 0, and 1 appear
+    },
+    showlegend: true,  // Enable the legend
+    legend: {
+      x: 1,            // Position legend on the right
+      y: 1,
+      xanchor: 'right',
+      yanchor: 'top'
+    }
+  }}
+  style={{ width: "100%", height: "100%" }}
+/>
+
+) : (
+  <div>No data available for plotting</div>
+)}
+
             </Card.Body>
           </Card>
 
@@ -127,13 +206,13 @@ const [editShow,setEditShow]=useState(false)
                       <div>{script.name}</div>
                       <div>{script.tableColName}</div>
                       <div className={`text-sm ${script.score > 0 ? 'text-success' : 'text-danger'}`}>
-                        Score: {script.score }
-                      </div>
+  Score: {script.score} 
+</div>
                     </div>
                   </Link>
                   </div>
                 ))}
-              </div>
+              </div> 
             </Card.Body>
           </Card>
 

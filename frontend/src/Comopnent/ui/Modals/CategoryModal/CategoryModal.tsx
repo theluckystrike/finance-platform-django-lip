@@ -28,8 +28,6 @@ const CategoryModal: FC<CategoryModalProps> = ({
     useCreateMutation();
   const [refreshtoken, Res] = useRefreshTokenMutation();
 
-  
-
   const navigate = useNavigate();
   const [selectValue, setSelectValue] = useState("");
   const handleToast = useToast();
@@ -39,15 +37,16 @@ const CategoryModal: FC<CategoryModalProps> = ({
     initialValues: {
       name: "",
       category: "",
-      parentName:""
+      parentName: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Category name is required"),
     }),
     onSubmit: (values) => {
-  
-      
-      create({ token: loginUSer.access, data: {...values,parent_category:values.category} }); // Call mutation with form values
+      create({
+        token: loginUSer.access,
+        data: { ...values, parent_category: values.category },
+      }); // Call mutation with form values
       handleClose();
     },
   });
@@ -59,41 +58,35 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
     if (isError) {
       if ((error as any)?.data) {
-     
-        handleToast.ErrorToast(
-          "Please login again."
-        );
-  
-      
+        handleToast.ErrorToast("Please login again.");
       } else {
         console.log("An unknown error occurred.");
       }
     }
   }, [isSuccess, isError, error, data]);
 
-  const [FilterCategory,setFilterCategory]=useState([])
-const [dataTypeOption ,setDataTypeOption]=useState(false)
-const FilterData = (value: any) => {
-  const trimmedValue = value.trim(); // Trim the input value
-  if (trimmedValue !== '') {
-    const res = categoryFilter.filter((i: any) =>
-      i.name.toLowerCase().includes(trimmedValue.toLowerCase())
-    );
-    setFilterCategory(res);
-  } else {
-    setFilterCategory([]);
-  }
-}
+  const [FilterCategory, setFilterCategory] = useState([]);
+  const [dataTypeOption, setDataTypeOption] = useState(false);
+  const FilterData = (value: any) => {
+    const trimmedValue = value.trim(); // Trim the input value
+    if (trimmedValue !== "") {
+      const res = categoryFilter.filter((i: any) =>
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+      );
+      setFilterCategory(res);
+    } else {
+      setFilterCategory([]);
+    }
+  };
 
-
-useEffect(()=>{
-  FilterData(formik.values.parentName)
-},[formik.values.parentName])
+  useEffect(() => {
+    FilterData(formik.values.parentName);
+  }, [formik.values.parentName]);
   return (
     <>
       <Modal
         size="lg"
-        fullscreen="md-down" 
+        fullscreen="md-down"
         aria-labelledby="contained-modal-title-vcenter"
         centered
         show={show}
@@ -140,33 +133,37 @@ useEffect(()=>{
                       type="text"
                       placeholder="Select a category"
                       value={formik.values.parentName}
-                   onChange={(e) => {
-                    formik.setFieldValue("parentName", e.target.value)
-                  
-                    FilterData( e.target.value)
-                  
-                  }}
+                      onChange={(e) => {
+                        formik.setFieldValue("parentName", e.target.value);
+
+                        FilterData(e.target.value);
+                      }}
                       className={`form-control ${
                         formik.touched.category && formik.errors.category
                           ? "input-error"
                           : ""
                       }`}
                     />
-                  <div
-  className="dropdown-content"
-  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
->
-
-                      {FilterCategory.length > 0  &&
+                    <div
+                      className="dropdown-content"
+                      style={{
+                        maxHeight: "200px",
+                        overflow: "auto",
+                        display: FilterCategory.length > 0 ? "block" : "none",
+                      }}
+                    >
+                      {FilterCategory.length > 0 &&
                         FilterCategory.map((item: any, index: any) => (
                           <span
                             className="h6 hover-span"
                             key={item.name}
                             onClick={async () => {
-                             await formik.setFieldValue("parentName", item.name);
-                            await  formik.setFieldValue("category", item.id);
-    setFilterCategory([])
-
+                              await formik.setFieldValue(
+                                "parentName",
+                                item.name
+                              );
+                              await formik.setFieldValue("category", item.id);
+                              setFilterCategory([]);
                             }}
                           >
                             {item.name}
@@ -174,7 +171,7 @@ useEffect(()=>{
                         ))}
                     </div>
                   </div>
-                </div>
+                </div>                                                  
 
                 <div className="col-12 row justify-content-evenly m-0">
                   <label

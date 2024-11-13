@@ -184,20 +184,7 @@ const TapeSummary: React.FC = () => {
                         />
                       </h6>
                     </th>
-                    <th
-                      scope="col"
-                      className="col-2 text-center mx-auto"
-                      onClick={() => requestSort("last_updated")}
-                    >
-                      <h6>
-                        <span>Updated</span>
-                        <Icon
-                          size="10px"
-                          className={getClassNamesFor("last_updated")}
-                          icon="FilterList"
-                        />
-                      </h6>
-                    </th>
+                    
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
@@ -229,9 +216,7 @@ const TapeSummary: React.FC = () => {
                             <td className="col-2 text-center mx-auto">
                               <DateFormatter isoString={script.created} />
                             </td>
-                            <td className="col-2 text-center mx-auto">
-                              <DateFormatter isoString={script.last_updated} />
-                            </td>
+                       
                           </tr>
                           <tr style={{ height: "10px" }}></tr>
                         </>
