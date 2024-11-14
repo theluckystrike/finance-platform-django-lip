@@ -2,7 +2,7 @@ import boto3
 import click
 
 
-# these two task definitions must match family names from terraform/05_ecs.tf
+# these task definitions must match family names from ../terraform/05_ecs.tf
 # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs/client/describe_task_definition.html
 def get_current_app_task_definition(client):
     return client.describe_task_definition(taskDefinition="oi-test-app-task")
