@@ -1,6 +1,7 @@
 locals {
   container_vars = {
     docker_image_url_django = var.docker_image_url_django
+    docker_image_tag        = var.docker_image_tag
     region                  = var.region
     log_group_prefix        = aws_cloudwatch_log_group.oi-test-log-group.name
     common_env_vars = jsonencode([

@@ -7,8 +7,8 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: oi-test
-  IMAGE_TAG: latest
-  # IMAGE_TAG: ${{ github.sha }}
+  # IMAGE_TAG: latest
+  IMAGE_TAG: ${{ github.sha }}
 
 permissions:
   contents: read
@@ -40,10 +40,6 @@ jobs:
 
       # On push to $default-branch, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      id: tf-apply
-      if: github.ref == 'refs/heads/aws-deployment' && github.event_name == 'push'
-      run: cd terraform && terraform apply -auto-approve -input=false
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -69,15 +65,20 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Update ECS Tasks
-      id: update-ecs
+    - name: Terraform Apply
       env:
-        ECS_CLUSTER_NAME: oi-test-prod-cluster
-        ECS_SERVICE_NAME: oi-test-prod-service
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: |
-        pip install boto3 click
-        python backend/update_ecs.py --cluster=$ECS_CLUSTER_NAME --service=$ECS_SERVICE_NAME --image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      id: tf-apply
+      if: github.ref == 'refs/heads/aws-deployment' && github.event_name == 'push'
+      run: cd terraform && terraform apply -auto-approve -input=false -var="docker_image_tag=$IMAGE_TAG"
+    # - name: Update ECS Tasks
+    #   id: update-ecs
+    #   env:
+    #     ECS_CLUSTER_NAME: oi-test-prod-cluster
+    #     ECS_SERVICE_NAME: oi-test-prod-service
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #   run: |
+    #     pip install boto3 click
+    #     python backend/update_ecs.py --cluster=$ECS_CLUSTER_NAME --service=$ECS_SERVICE_NAME --image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     - name: Migrate Database
       id: migrate-db

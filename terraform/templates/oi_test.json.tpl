@@ -1,7 +1,7 @@
 [
   {
     "name": "oi-test-app-container",
-    "image": "${docker_image_url_django}",
+    "image": "${docker_image_url_django}:${docker_image_tag}",
     "essential": true,
     "portMappings": [
       {
@@ -22,7 +22,7 @@
   },
   {
     "name": "oi-test-rqworker-container",
-    "image": "${docker_image_url_django}",
+    "image": "${docker_image_url_django}:${docker_image_tag}",
     "essential": true,
     "command": ["python", "manage.py", "rqworker", "scripts", "reports", "summaries"],
     "environment": ${common_env_vars},

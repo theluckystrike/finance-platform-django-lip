@@ -39,7 +39,10 @@ variable "ecs_cluster_name" {
 
 variable "docker_image_url_django" {
   description = "Docker image to run in the ECS cluster"
-  default     = "022152200878.dkr.ecr.eu-west-2.amazonaws.com/oi-test:latest"
+  default     = "022152200878.dkr.ecr.eu-west-2.amazonaws.com/oi-test"
+}
+variable "docker_image_tag" {
+  description = "Docker image tag to run in the ECS cluster"
 }
 
 variable "app_count" {
