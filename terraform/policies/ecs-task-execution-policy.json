@@ -17,11 +17,7 @@
                 "s3:ListBucket",
                 "s3:GetObject",
                 "s3:DeleteObject",
-                "s3:PutObject",
-                "events:PutTargets",
-                "events:PutRule",
-                "events:DescribeRule",
-                "events:InvokeTarget"
+                "s3:PutObject"
             ],
             "Resource": "*"
         }

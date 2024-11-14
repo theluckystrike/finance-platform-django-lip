@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_rule" "daily-script-update" {
 resource "aws_cloudwatch_event_target" "scripts-update-event-target" {
   rule     = aws_cloudwatch_event_rule.daily-script-update.name
   arn      = aws_ecs_cluster.production.arn
-  role_arn = aws_iam_role.ecs-task-execution-role.arn
+  role_arn = aws_iam_role.ecs-events-role.arn
 
   ecs_target {
     launch_type         = "FARGATE"
@@ -29,7 +29,7 @@ resource "aws_cloudwatch_event_rule" "daily-data-scrape" {
 resource "aws_cloudwatch_event_target" "data-scrape-event-target" {
   rule     = aws_cloudwatch_event_rule.daily-data-scrape.name
   arn      = aws_ecs_cluster.production.arn
-  role_arn = aws_iam_role.ecs-task-execution-role.arn
+  role_arn = aws_iam_role.ecs-events-role.arn
 
   ecs_target {
     launch_type         = "FARGATE"
