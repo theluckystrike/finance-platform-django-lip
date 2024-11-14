@@ -4,7 +4,7 @@ resource "aws_lb" "production" {
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.load_balancer.id]
-  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_1.id]
+  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 }
 
 # Target group for ECS Fargate

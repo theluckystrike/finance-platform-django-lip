@@ -1,6 +1,6 @@
 [
   {
-    "name": "oi-test-rates-container",
+    "name": "rates",
     "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "getmostrecentrates"],
@@ -10,12 +10,12 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-rates-log-stream"
+        "awslogs-stream-prefix": "oi-prod-date-scrape"
       }
     }
   },
   {
-    "name": "oi-test-ohlc-container",
+    "name": "ohlc",
     "image": "${docker_image_url_django}",
     "essential": true,
     "command": ["python", "manage.py", "getmostrecentohlcdata"],
@@ -25,12 +25,12 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-ohlc-log-stream"
+        "awslogs-stream-prefix": "oi-prod-date-scrape"
       }
     }
   },
   {
-    "name": "oi-test-index-container",
+    "name": "indexes",
     "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "getmostrecentindexdata"],
@@ -40,12 +40,12 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-index-log-stream"
+        "awslogs-stream-prefix": "oi-prod-date-scrape"
       }
     }
   },
   {
-    "name": "oi-test-exchanges-container",
+    "name": "exchanges",
     "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "updateexchangedata"],
@@ -55,12 +55,12 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-exchanges-log-stream"
+        "awslogs-stream-prefix": "oi-prod-date-scrape"
       }
     }
   },
   {
-    "name": "oi-test-blackrock-container",
+    "name": "blackrock",
     "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "updateblackrockindexdata"],
@@ -70,7 +70,7 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-blackrock-log-stream"
+        "awslogs-stream-prefix": "oi-prod-data-scrape"
       }
     }
   }

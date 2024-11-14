@@ -1,6 +1,6 @@
 locals {
   container_vars = {
-    docker_image_url_django = "${aws_ecr_repository.ecr_repo.repository_url}:${var.docker_image_tag}"
+    docker_image_url_django = "022152200878.dkr.ecr.ca-central-1.amazonaws.com/oi-prod-repo:${var.docker_image_tag}"
     region                  = var.region
     log_group_prefix        = aws_cloudwatch_log_group.oi_prod_log_group.name
     common_env_vars = jsonencode([
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.app.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
 
 data "template_file" "migrate" {
@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "migrate" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.migrate.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
 
 data "template_file" "scrape" {
@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "scrape" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.scrape.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
 data "template_file" "update_scripts" {
   template = file("templates/update_scripts_task.json.tpl")
@@ -92,7 +92,7 @@ resource "aws_ecs_task_definition" "update_scripts" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.update_scripts.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
 
 
@@ -104,13 +104,13 @@ resource "aws_ecs_service" "production" {
   launch_type   = "FARGATE"
   desired_count = var.app_count
   network_configuration {
-    subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.private_subnet_2.id]
+    subnets          = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
     security_groups  = [aws_security_group.ecs_security_group.id]
     assign_public_ip = true
   }
   load_balancer {
     target_group_arn = aws_alb_target_group.default_target_group.arn
-    container_name   = "oi-prod-app"
+    container_name   = "web"
     container_port   = 8000
   }
 }

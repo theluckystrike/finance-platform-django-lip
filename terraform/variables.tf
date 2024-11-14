@@ -27,7 +27,7 @@ variable "private_subnet_2_cidr" {
 variable "availability_zones" {
   description = "Availability zones"
   type        = list(string)
-  default     = ["ca-central-1b", "ca-central-1c"]
+  default     = ["ca-central-1b", "ca-central-1d"]
 }
 
 
@@ -73,7 +73,7 @@ variable "rds_db_name" {
 }
 variable "rds_username" {
   description = "RDS database username"
-  default     = "default-user"
+  default     = "defaultUser"
 }
 variable "rds_password" {
   description = "RDS database password"

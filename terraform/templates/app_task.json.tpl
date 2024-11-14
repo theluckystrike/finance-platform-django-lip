@@ -1,6 +1,6 @@
 [
   {
-    "name": "oi-prod-app",
+    "name": "web",
     "image": "${docker_image_url_django}",
     "essential": true,
     "portMappings": [
@@ -16,12 +16,12 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-app-log-stream"
+        "awslogs-stream-prefix": "oi-prod-app"
       }
     }
   },
   {
-    "name": "oi-test-rqworker-container",
+    "name": "worker",
     "image": "${docker_image_url_django}",
     "essential": true,
     "command": ["python", "manage.py", "rqworker", "scripts", "reports", "summaries"],
@@ -31,7 +31,7 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-rqworker-log-stream"
+        "awslogs-stream-prefix": "oi-prod-app"
       }
     }
   }

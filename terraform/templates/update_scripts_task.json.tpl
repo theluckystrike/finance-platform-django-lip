@@ -1,6 +1,6 @@
 [
   {
-    "name": "oi-test-scripts-update-container",
+    "name": "update-scripts",
     "image": "${docker_image_url_django}",
     "essential": true,
     "command": ["python", "manage.py", "runallscripts"],
@@ -10,7 +10,7 @@
       "options": {
         "awslogs-group": "${log_group_prefix}",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "oi-test-scripts-update-log-stream"
+        "awslogs-stream-prefix": "oi-prod-update-scripts"
       }
     }
   }

@@ -13,7 +13,7 @@ resource "aws_cloudwatch_event_target" "scripts_update_event_target" {
     launch_type         = "FARGATE"
     task_definition_arn = aws_ecs_task_definition.update_scripts.arn
     network_configuration {
-      subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_1.id]
+      subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
       security_groups  = [aws_security_group.ecs_security_group.id]
       assign_public_ip = true
     }
@@ -35,7 +35,7 @@ resource "aws_cloudwatch_event_target" "data_scrape_event_target" {
     launch_type         = "FARGATE"
     task_definition_arn = aws_ecs_task_definition.scrape.arn
     network_configuration {
-      subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_1.id]
+      subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
       security_groups  = [aws_security_group.ecs_security_group.id]
       assign_public_ip = true
     }

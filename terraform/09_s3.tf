@@ -21,9 +21,17 @@ resource "aws_s3_bucket_public_access_block" "pulic_bucket_access_block" {
   ignore_public_acls      = false
   restrict_public_buckets = false
 }
+
+data "template_file" "s3_public_policy" {
+  template = file("templates/s3_public_acl.json.tpl")
+
+  vars = {
+    bucket_name = var.public_bucket_name
+  }
+}
 resource "aws_s3_bucket_policy" "public_bucket_policy" {
   bucket = aws_s3_bucket.public_bucket.id
-  policy = file("policies/s3-public-acl.json")
+  policy = data.template_file.s3_public_policy.rendered
 }
 
 

@@ -7,7 +7,7 @@ output "subnet1" {
   value = aws_subnet.public_subnet_1.id
 }
 output "subnet2" {
-  value = aws_subnet.public_subnet_1.id
+  value = aws_subnet.public_subnet_2.id
 }
 
 output "security_group" {
