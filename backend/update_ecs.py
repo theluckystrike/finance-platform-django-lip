@@ -12,6 +12,14 @@ def get_current_migration_task_definition(client):
     return client.describe_task_definition(taskDefinition="oi-test-migration-task")
 
 
+def get_current_scraping_task_definition(client):
+    return client.describe_task_definition(taskDefinition="oi-test-scraping-task")
+
+
+def get_current_scripts_update_task_definition(client):
+    return client.describe_task_definition(taskDefinition="oi-test-scripts-update-task")
+
+
 @click.command()
 @click.option("--cluster", help="Name of the ECS cluster", required=True)
 @click.option("--service", help="Name of the ECS service", required=True)
@@ -20,57 +28,59 @@ def deploy(cluster, service, image):
     client = boto3.client("ecs")
 
     # Fetch the current task definition
-    print("Fetching current task definition...")
-    app_response = get_current_app_task_definition(client)
-    migration_response = get_current_migration_task_definition(client)
+    print("Fetching current task definitions...")
+
+    task_responses = [
+        get_current_migration_task_definition(client),
+        get_current_scraping_task_definition(client),
+        get_current_scripts_update_task_definition(client),
+    ]
+
+    print("Updating non-service task definitions...")
+    # update tasks that are not part of the service and will not be pushed to it
+    for response in task_responses:
+        containers = [r.copy() for r in response["taskDefinition"]["containerDefinitions"]]
+        for container in containers:
+            container["image"] = image
+        update_response = client.register_task_definition(
+            family=response["taskDefinition"]["family"],
+            volumes=response["taskDefinition"]["volumes"],
+            containerDefinitions=containers,
+            cpu=response["taskDefinition"]["cpu"],
+            memory=response["taskDefinition"]["memory"],
+            networkMode=response["taskDefinition"]["networkMode"],
+            requiresCompatibilities=response["taskDefinition"]["requiresCompatibilities"],
+            executionRoleArn=response["taskDefinition"]["executionRoleArn"],
+            taskRoleArn=response["taskDefinition"]["taskRoleArn"]
+        )
+        new_task_arn = update_response["taskDefinition"]["taskDefinitionArn"]
+        print(
+            f"New {response['taskDefinition']['family']} ARN: {new_task_arn}")
+
+    print("\nUpdating service task definitions...")
+    # update tasks that are part of the service and will be pushed to it
+    app_task_response = get_current_app_task_definition(client)
     app_container_definitions = [
-        r.copy() for r in app_response["taskDefinition"]["containerDefinitions"]]
+        r.copy() for r in app_task_response["taskDefinition"]["containerDefinitions"]]
 
-    migration_container_definitions = [
-        r.copy() for r in migration_response["taskDefinition"]["containerDefinitions"]]
-
-    # Update the container definition with the new image
-    for cdef in app_container_definitions:
-        cdef["image"] = image
-    for cdef in migration_container_definitions:
-        cdef["image"] = image
-
-    print(f"Updated image to: {image}")
-
-    # Register a new task definition
-    print("Registering new migration task definition...")
-    migration_response = client.register_task_definition(
-        family=migration_response["taskDefinition"]["family"],
-        volumes=migration_response["taskDefinition"]["volumes"],
-        containerDefinitions=migration_container_definitions,
-        # same params as terraform/05_ecs.tf
-        cpu="1024",
-        memory="3072",
-        networkMode="awsvpc",
-        requiresCompatibilities=["FARGATE"],
-        executionRoleArn="ecs_task_execution_role_prod",
-        taskRoleArn="ecs_task_execution_role_prod"
-    )
-    new_migration_task_arn = migration_response["taskDefinition"]["taskDefinitionArn"]
-    print(f"New migration task definition ARN: {new_migration_task_arn}")
-
-    print("Registering new app task definition...")
+    for container in app_container_definitions:
+        container["image"] = image
     app_response = client.register_task_definition(
-        family=app_response["taskDefinition"]["family"],
-        volumes=app_response["taskDefinition"]["volumes"],
+        family=app_task_response["taskDefinition"]["family"],
+        volumes=app_task_response["taskDefinition"]["volumes"],
         containerDefinitions=app_container_definitions,
-        cpu="1024",
-        memory="3072",
-        networkMode="awsvpc",
-        requiresCompatibilities=["FARGATE"],
-        executionRoleArn="ecs_task_execution_role_prod",
-        taskRoleArn="ecs_task_execution_role_prod"
+        cpu=app_task_response["taskDefinition"]["cpu"],
+        memory=app_task_response["taskDefinition"]["memory"],
+        networkMode=app_task_response["taskDefinition"]["networkMode"],
+        requiresCompatibilities=app_task_response["taskDefinition"]["requiresCompatibilities"],
+        executionRoleArn=app_task_response["taskDefinition"]["executionRoleArn"],
+        taskRoleArn=app_task_response["taskDefinition"]["taskRoleArn"]
     )
     new_app_task_arn = app_response["taskDefinition"]["taskDefinitionArn"]
-    print(f"New app task definition ARN: {new_app_task_arn}")
+    print(f"New {app_response['taskDefinition']['family']} ARN: {new_app_task_arn}")
 
     # Update the service with the new task definition
-    print("Updating ECS service with new app task definition...")
+    print("\nUpdating ECS service with new app task definition...")
     client.update_service(
         cluster=cluster, service=service, taskDefinition=new_app_task_arn,
     )
