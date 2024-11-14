@@ -13,13 +13,14 @@ resource "aws_s3_bucket_versioning" "public_bucket_versioning" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "pulic_bucket_access_block" {
+resource "aws_s3_bucket_public_access_block" "public_bucket_access_block" {
   bucket = aws_s3_bucket.public_bucket.id
 
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
+  depends_on              = [aws_s3_bucket.public_bucket]
 }
 
 data "template_file" "s3_public_policy" {
@@ -30,8 +31,9 @@ data "template_file" "s3_public_policy" {
   }
 }
 resource "aws_s3_bucket_policy" "public_bucket_policy" {
-  bucket = aws_s3_bucket.public_bucket.id
-  policy = data.template_file.s3_public_policy.rendered
+  bucket     = aws_s3_bucket.public_bucket.id
+  policy     = data.template_file.s3_public_policy.rendered
+  depends_on = [aws_s3_bucket_public_access_block.public_bucket_access_block]
 }
 
 
@@ -53,7 +55,7 @@ resource "aws_s3_bucket_cors_configuration" "public_bucket_cors" {
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
-  depends_on = [aws_lb.production]
+  depends_on = [aws_s3_bucket.public_bucket]
 }
 
 
@@ -76,6 +78,7 @@ resource "aws_s3_bucket_public_access_block" "private_bucket_access_block" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+  depends_on              = [aws_s3_bucket.private_bucket]
 }
 
 
@@ -97,5 +100,4 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
-  depends_on = [aws_lb.production]
 }
