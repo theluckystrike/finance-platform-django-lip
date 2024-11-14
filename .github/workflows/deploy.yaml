@@ -73,8 +73,8 @@ jobs:
     - name: Migrate Database
       id: migrate-db
       env:
-        ECS_CLUSTER_NAME: oi-test-prod-cluster
-        ECS_MIGRATION_TASK_DEF: oi-test-migration-task
+        ECS_CLUSTER_NAME: oi-prod-cluster
+        ECS_MIGRATION_TASK_DEF: oi-prod-db-migration
       run: |
         cd terraform
         aws ecs run-task \
