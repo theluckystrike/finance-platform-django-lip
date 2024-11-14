@@ -1,7 +1,7 @@
 [
   {
     "name": "oi-test-migration-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": true,
     "command": ["python", "manage.py", "migrate"],
     "environment": ${common_env_vars},

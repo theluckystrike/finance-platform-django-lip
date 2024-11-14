@@ -1,7 +1,6 @@
 locals {
   container_vars = {
-    docker_image_url_django = var.docker_image_url_django
-    docker_image_tag        = var.docker_image_tag
+    docker_image_url_django = "${aws_ecr_repository.oi-test-repo.repository_url}:${var.docker_image_tag}"
     region                  = var.region
     log_group_prefix        = aws_cloudwatch_log_group.oi-test-log-group.name
     common_env_vars = jsonencode([
@@ -43,7 +42,7 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
   task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   container_definitions    = data.template_file.app.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
 }
 
 data "template_file" "migrate" {
@@ -60,7 +59,7 @@ resource "aws_ecs_task_definition" "oi-test-migrate" {
   execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
   task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   container_definitions    = data.template_file.migrate.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
 }
 
 data "template_file" "scrape" {
@@ -77,7 +76,7 @@ resource "aws_ecs_task_definition" "oi-test-scraping" {
   execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
   task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   container_definitions    = data.template_file.scrape.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
 }
 data "template_file" "scripts-update" {
   template = file("templates/update_scripts_task.json.tpl")
@@ -93,7 +92,7 @@ resource "aws_ecs_task_definition" "oi-test-scripts-update" {
   execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
   task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   container_definitions    = data.template_file.scripts-update.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
 }
 
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "oi-test-rates-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "getmostrecentrates"],
     "environment": ${common_env_vars},
@@ -16,7 +16,7 @@
   },
   {
     "name": "oi-test-ohlc-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": true,
     "command": ["python", "manage.py", "getmostrecentohlcdata"],
     "environment": ${common_env_vars},
@@ -31,7 +31,7 @@
   },
   {
     "name": "oi-test-index-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "getmostrecentindexdata"],
     "environment": ${common_env_vars},
@@ -46,7 +46,7 @@
   },
   {
     "name": "oi-test-exchanges-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "updateexchangedata"],
     "environment": ${common_env_vars},
@@ -61,7 +61,7 @@
   },
   {
     "name": "oi-test-blackrock-container",
-    "image": "${docker_image_url_django}:${docker_image_tag}",
+    "image": "${docker_image_url_django}",
     "essential": false,
     "command": ["python", "manage.py", "updateblackrockindexdata"],
     "environment": ${common_env_vars},

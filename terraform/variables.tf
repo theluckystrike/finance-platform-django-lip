@@ -30,6 +30,15 @@ variable "availability_zones" {
   default     = ["eu-west-2b", "eu-west-2c"]
 }
 
+
+# ecr
+
+variable "ecr_repo_name" {
+  description = "ECR repository name"
+  default     = "oi-test-repo"
+}
+
+
 # ecs
 
 variable "ecs_cluster_name" {
@@ -37,10 +46,10 @@ variable "ecs_cluster_name" {
   default     = "oi-test-prod"
 }
 
-variable "docker_image_url_django" {
-  description = "Docker image to run in the ECS cluster"
-  default     = "022152200878.dkr.ecr.eu-west-2.amazonaws.com/oi-test"
-}
+# variable "docker_image_url_django" {
+#   description = "Docker image to run in the ECS cluster"
+#   default     = "022152200878.dkr.ecr.eu-west-2.amazonaws.com/oi-test"
+# }
 variable "docker_image_tag" {
   description = "Docker image tag to run in the ECS cluster"
 }
