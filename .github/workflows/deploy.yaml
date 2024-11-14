@@ -68,7 +68,7 @@ jobs:
     - name: Terraform Apply
       id: tf-apply
       if: github.ref == 'refs/heads/aws-deployment' && github.event_name == 'push'
-      run: cd terraform && terraform apply -auto-approve -input=false -var="docker_image_tag=$IMAGE_TAG"
+      run: cd terraform && terraform apply -auto-approve -var="docker_image_tag=$IMAGE_TAG"
     # - name: Update ECS Tasks
     #   id: update-ecs
     #   env:
