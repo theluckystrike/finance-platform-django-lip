@@ -1,8 +1,8 @@
 locals {
   container_vars = {
-    docker_image_url_django = "${aws_ecr_repository.oi-test-repo.repository_url}:${var.docker_image_tag}"
+    docker_image_url_django = "${aws_ecr_repository.ecr_repo.repository_url}:${var.docker_image_tag}"
     region                  = var.region
-    log_group_prefix        = aws_cloudwatch_log_group.oi-test-log-group.name
+    log_group_prefix        = aws_cloudwatch_log_group.oi_prod_log_group.name
     common_env_vars = jsonencode([
       { name = "AWS_ACCESS_KEY_ID", value = var.aws_access_key_id },
       { name = "AWS_SECRET_ACCESS_KEY", value = var.aws_secret_access_key },
@@ -24,42 +24,42 @@ locals {
 
 
 resource "aws_ecs_cluster" "production" {
-  name = "${var.ecs_cluster_name}-cluster"
+  name = var.ecs_cluster_name
 }
 
 data "template_file" "app" {
-  template = file("templates/oi_test.json.tpl")
+  template = file("templates/app_task.json.tpl")
 
   vars = local.container_vars
 }
 
 resource "aws_ecs_task_definition" "app" {
-  family                   = "oi-test-app-task"
+  family                   = "oi-prod-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
-  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.app.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
 }
 
 data "template_file" "migrate" {
-  template = file("templates/oi_test_migrate.json.tpl")
+  template = file("templates/migrate_task.json.tpl")
 
   vars = local.container_vars
 }
-resource "aws_ecs_task_definition" "oi-test-migrate" {
-  family                   = "oi-test-migration-task"
+resource "aws_ecs_task_definition" "migrate" {
+  family                   = "oi-prod-db-migration"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
-  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.migrate.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
 }
 
 data "template_file" "scrape" {
@@ -67,32 +67,32 @@ data "template_file" "scrape" {
 
   vars = local.container_vars
 }
-resource "aws_ecs_task_definition" "oi-test-scraping" {
-  family                   = "oi-test-scraping-task"
+resource "aws_ecs_task_definition" "scrape" {
+  family                   = "oi-prod-data-scraping"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "1024"
   memory                   = "2048"
-  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.scrape.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
 }
-data "template_file" "scripts-update" {
+data "template_file" "update_scripts" {
   template = file("templates/update_scripts_task.json.tpl")
 
   vars = local.container_vars
 }
-resource "aws_ecs_task_definition" "oi-test-scripts-update" {
-  family                   = "oi-test-scripts-update-task"
+resource "aws_ecs_task_definition" "update_scripts" {
+  family                   = "oi-prod-update-scripts"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
   memory                   = "1024"
-  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
-  container_definitions    = data.template_file.scripts-update.rendered
-  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi-test-log-group, aws_ecr_repository.oi-test-repo]
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  container_definitions    = data.template_file.update_scripts.rendered
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group, aws_ecr_repository.ecr_repo]
 }
 
 
@@ -104,13 +104,13 @@ resource "aws_ecs_service" "production" {
   launch_type   = "FARGATE"
   desired_count = var.app_count
   network_configuration {
-    subnets          = [aws_subnet.public-subnet-1.id, aws_subnet.private-subnet-2.id]
-    security_groups  = [aws_security_group.ecs-security-group.id]
+    subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.private_subnet_2.id]
+    security_groups  = [aws_security_group.ecs_security_group.id]
     assign_public_ip = true
   }
   load_balancer {
-    target_group_arn = aws_alb_target_group.default-target-group.arn
-    container_name   = "oi-test-app-container"
+    target_group_arn = aws_alb_target_group.default_target_group.arn
+    container_name   = "oi-prod-app"
     container_port   = 8000
   }
 }

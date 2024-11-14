@@ -1,8 +1,8 @@
 # ALB Security Group (Traffic Internet -> ALB)
-resource "aws_security_group" "load-balancer" {
+resource "aws_security_group" "load_balancer" {
   name        = "load_balancer_security_group"
   description = "Controls access to the ALB"
-  vpc_id      = aws_vpc.oi-test-vpc.id
+  vpc_id      = aws_vpc.oi_prod_vpc.id
 
   ingress {
     from_port   = 80
@@ -27,13 +27,14 @@ resource "aws_security_group" "load-balancer" {
 }
 
 
-resource "aws_security_group" "ecs-security-group" {
-  vpc_id = aws_vpc.oi-test-vpc.id
+resource "aws_security_group" "ecs_security_group" {
+  vpc_id = aws_vpc.oi_prod_vpc.id
+  name   = "OIProdECSSecurityGroup"
   ingress {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
-    security_groups = [aws_security_group.load-balancer.id]
+    security_groups = [aws_security_group.load_balancer.id]
   }
   egress {
     from_port   = 0
@@ -46,16 +47,16 @@ resource "aws_security_group" "ecs-security-group" {
   }
 }
 
-resource "aws_security_group" "rds_sg" {
-  vpc_id      = aws_vpc.oi-test-vpc.id
-  name        = "OITestRDSSecurityGroup"
+resource "aws_security_group" "rds_security_group" {
+  vpc_id      = aws_vpc.oi_prod_vpc.id
+  name        = "OIProdRDSSecurityGroup"
   description = "Allow PostgreSQL traffic"
   ingress {
     from_port = 5432
     to_port   = 5432
     protocol  = "tcp"
     # cidr_blocks = [aws_sec]
-    security_groups = [aws_security_group.ecs-security-group.id]
+    security_groups = [aws_security_group.ecs_security_group.id]
   }
   egress {
     from_port   = 0

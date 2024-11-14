@@ -2,7 +2,7 @@
 
 variable "region" {
   description = "The AWS region to create resources in."
-  default     = "eu-west-2"
+  default     = "ca-central-1"
 }
 
 
@@ -27,7 +27,7 @@ variable "private_subnet_2_cidr" {
 variable "availability_zones" {
   description = "Availability zones"
   type        = list(string)
-  default     = ["eu-west-2b", "eu-west-2c"]
+  default     = ["ca-central-1b", "ca-central-1c"]
 }
 
 
@@ -35,7 +35,7 @@ variable "availability_zones" {
 
 variable "ecr_repo_name" {
   description = "ECR repository name"
-  default     = "oi-test-repo"
+  default     = "oi-prod-repo"
 }
 
 
@@ -43,13 +43,9 @@ variable "ecr_repo_name" {
 
 variable "ecs_cluster_name" {
   description = "Name of the ECS cluster"
-  default     = "oi-test-prod"
+  default     = "oi-prod-cluster"
 }
 
-# variable "docker_image_url_django" {
-#   description = "Docker image to run in the ECS cluster"
-#   default     = "022152200878.dkr.ecr.eu-west-2.amazonaws.com/oi-test"
-# }
 variable "docker_image_tag" {
   description = "Docker image tag to run in the ECS cluster"
 }
@@ -73,11 +69,11 @@ variable "fargate_memory" {
 
 variable "rds_db_name" {
   description = "RDS database name"
-  default     = "oitestdb"
+  default     = "oiproddb"
 }
 variable "rds_username" {
   description = "RDS database username"
-  default     = "testUser"
+  default     = "default-user"
 }
 variable "rds_password" {
   description = "RDS database password"
@@ -131,12 +127,12 @@ variable "secret_key" {
 
 variable "private_bucket_name" {
   description = "AWS S3 private bucket name"
-  default     = "oi-test-private-bucket"
+  default     = "oi-prod-private-bucket"
 }
 
 variable "public_bucket_name" {
   description = "AWS S3 public bucket name"
-  default     = "oi-test-public-bucket"
+  default     = "oi-prod-public-bucket"
 }
 
 

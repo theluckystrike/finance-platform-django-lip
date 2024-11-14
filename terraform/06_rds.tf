@@ -1,10 +1,10 @@
 resource "aws_db_subnet_group" "production" {
   name       = "main"
-  subnet_ids = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
+  subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
 }
 
 resource "aws_db_instance" "production" {
-  identifier              = "oi-test-prod-db"
+  identifier              = "oi-prod-db"
   db_name                 = var.rds_db_name
   username                = var.rds_username
   password                = var.rds_password
@@ -14,7 +14,7 @@ resource "aws_db_instance" "production" {
   instance_class          = var.rds_instance_class
   allocated_storage       = "10"
   storage_encrypted       = false
-  vpc_security_group_ids  = [aws_security_group.rds_sg.id]
+  vpc_security_group_ids  = [aws_security_group.rds_security_group.id]
   db_subnet_group_name    = aws_db_subnet_group.production.name
   multi_az                = false
   storage_type            = "gp2"
@@ -22,6 +22,6 @@ resource "aws_db_instance" "production" {
   backup_retention_period = 7
   skip_final_snapshot     = true
   tags = {
-    Name = "OI_Test_RDS_Instance"
+    Name = "OI_Prod_RDS_Instance"
   }
 }

@@ -1,17 +1,17 @@
 output "ecs_task_execution_role_arn" {
-  value       = aws_iam_role.ecs-task-execution-role.arn
+  value       = aws_iam_role.ecs_task_execution_role.arn
   description = "ARN for the ECS Task Execution Role"
 }
 
 output "subnet1" {
-  value = aws_subnet.public-subnet-1.id
+  value = aws_subnet.public_subnet_1.id
 }
 output "subnet2" {
-  value = aws_subnet.public-subnet-2.id
+  value = aws_subnet.public_subnet_1.id
 }
 
 output "security_group" {
-  value = aws_security_group.ecs-security-group.id
+  value = aws_security_group.ecs_security_group.id
 }
 
 output "alb_hostname" {

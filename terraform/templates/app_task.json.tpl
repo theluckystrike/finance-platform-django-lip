@@ -1,6 +1,6 @@
 [
   {
-    "name": "oi-test-app-container",
+    "name": "oi-prod-app",
     "image": "${docker_image_url_django}",
     "essential": true,
     "portMappings": [
