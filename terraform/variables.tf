@@ -33,9 +33,13 @@ variable "availability_zones" {
 
 # ecr
 
-variable "ecr_repo_name" {
-  description = "ECR repository name"
-  default     = "oi-prod-repo"
+# variable "ecr_repo_name" {
+#   description = "ECR repository name"
+#   default     = "oi-prod-repo"
+# }
+variable "ecr_repo_uri" {
+  description = "ECR repository URI"
+  default     = "024848465823.dkr.ecr.ca-central-1.amazonaws.com/oi-prod-repo"
 }
 
 
@@ -127,12 +131,12 @@ variable "secret_key" {
 
 variable "private_bucket_name" {
   description = "AWS S3 private bucket name"
-  default     = "oi-prod-private-bucket"
+  default     = "oi-prod-private-storage"
 }
 
 variable "public_bucket_name" {
   description = "AWS S3 public bucket name"
-  default     = "oi-prod-public-bucket"
+  default     = "oi-prod-public-storage"
 }
 
 

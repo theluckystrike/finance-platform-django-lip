@@ -1,6 +1,6 @@
 locals {
   container_vars = {
-    docker_image_url_django = "022152200878.dkr.ecr.ca-central-1.amazonaws.com/oi-prod-repo:${var.docker_image_tag}"
+    docker_image_url_django = "${var.ecr_repo_uri}:${var.docker_image_tag}"
     region                  = var.region
     log_group_prefix        = aws_cloudwatch_log_group.oi_prod_log_group.name
     common_env_vars = jsonencode([
