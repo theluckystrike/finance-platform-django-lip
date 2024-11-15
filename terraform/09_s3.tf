@@ -31,8 +31,8 @@ data "template_file" "s3_public_policy" {
   }
 }
 resource "aws_s3_bucket_policy" "public_bucket_policy" {
-  bucket     = aws_s3_bucket.public_bucket.id
-  policy     = data.template_file.s3_public_policy.rendered
+  bucket = aws_s3_bucket.public_bucket.id
+  policy = data.template_file.s3_public_policy.rendered
   # depends_on = [aws_s3_bucket_public_access_block.public_bucket_access_block]
 }
 
