@@ -26,22 +26,23 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://olandinvestments.com",
+    "https://www.olandinvestments.com",
+]
+
+# CORS_ALLOWED_ORIGINS = [
+#     "https://olandinvestments.com",
+#     "https://www.olandinvestments.com",
+# ]
+
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 ALLOWED_HOSTS = [
     "olandinvestments.com",
     "www.olandinvestments.com",
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost",
-#     "https://www.olandinvestments.com",
-#     "https://www.olandinvesmentslimited.com",
-#     "http://localhost:8000",
-#     "http://localhost:8090"
-# ]
 
-
-# CSRF_TRUSTED_ORIGINS = ['https://backend-oland-investments.cradle.services']
 # Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
 IS_AWS = "RDS_DB_NAME" in os.environ
 

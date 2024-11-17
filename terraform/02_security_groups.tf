@@ -1,6 +1,6 @@
 # ALB Security Group (Traffic Internet -> ALB)
 resource "aws_security_group" "load_balancer" {
-  name        = "load_balancer_security_group"
+  name = "load_balancer_security_group"
   # name        = "OIProdVPCSecurityGroup"
   description = "Controls access to the ALB"
   vpc_id      = aws_vpc.oi_prod_vpc.id
