@@ -140,3 +140,11 @@ variable "public_bucket_name" {
 }
 
 
+
+# acm + route53
+
+variable "root_domain" {
+  description = "Root domain for the site to be hosted on (Currently GoDaddy domain)"
+  default     = "olandinvestments.com"
+}
+

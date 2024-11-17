@@ -29,9 +29,11 @@ resource "aws_alb_target_group" "default_target_group" {
 # Listener (redirects traffic from the load balancer to the target group)
 resource "aws_alb_listener" "ecs_alb_http_listener" {
   load_balancer_arn = aws_lb.production.id
-  port              = "80"
-  protocol          = "HTTP"
-  depends_on        = [aws_alb_target_group.default_target_group]
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.cert.arn
+  depends_on        = [aws_alb_target_group.default_target_group, aws_acm_certificate.cert]
 
   default_action {
     type             = "forward"
