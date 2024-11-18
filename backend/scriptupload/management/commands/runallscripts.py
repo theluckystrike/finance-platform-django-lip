@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from scriptupload.models import Script
-from scriptupload.utils.runners import run_script
 import logging
 
 
