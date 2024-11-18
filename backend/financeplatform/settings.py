@@ -17,6 +17,13 @@ from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 from datetime import timedelta
 
+# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
+IS_AWS = "RDS_DB_NAME" in os.environ
+
+# If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
+# environment variables from a .env file.
+if not IS_AWS:
+    load_dotenv()
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
@@ -42,14 +49,6 @@ ALLOWED_HOSTS = [
     "www.olandinvestments.com",
 ]
 
-
-# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
-IS_AWS = "RDS_DB_NAME" in os.environ
-
-# If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
-# environment variables from a .env file.
-if not IS_AWS:
-    load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Determing if AWS S3 is being used based on the environment variable "USE_S3"
