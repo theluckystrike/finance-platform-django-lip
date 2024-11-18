@@ -47,6 +47,8 @@ CSRF_TRUSTED_ORIGINS = [
 ALLOWED_HOSTS = [
     "olandinvestments.com",
     "www.olandinvestments.com",
+    "api.localhost",
+    "localhost",
 ]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -94,6 +96,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_filters',
     'django_rq',
+    'django_hosts',
 ]
 
 # django-rq
@@ -144,6 +147,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     'olandinvestmentsapi.middleware.HealthCheckMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -153,7 +157,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware'
 ]
+
+ROOT_HOSTCONF = 'financeplatform.hosts'
+DEFAULT_HOST = 'www'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = os.environ.get("EMAIL_PORT")

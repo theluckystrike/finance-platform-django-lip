@@ -28,7 +28,7 @@ IAM roles for the ECS cluster and scheduled tasks.
 
 A lifecycle policy for the ECR which must be created prior.
 
-### [ECR](05_ecs.tf)
+### [ECS](05_ecs.tf)
 
 An ECS cluster as well as definitions for each task required by the Django app. One task defines the app itself (server and redis worker containers) while the other are management commands and database tasks for periodic execution.
 
