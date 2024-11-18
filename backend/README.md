@@ -1,6 +1,6 @@
-# Source code for finance webapp prototype
+# Oland Investments Platform Backend
 
-Access the app [here](https://finance-platform-prototype-4ce168540ea9.herokuapp.com/).
+Access the app [here](https://olandinvestments.com/).
 
 ## Stack
 
@@ -13,7 +13,7 @@ This backend uses the following:
 - [ReportLab](https://docs.reportlab.com/reportlab/userguide/ch1_intro/) for making PDFs
 - [drf-yasg](https://github.com/axnsan12/drf-yasg) for creating API documentation
 
-And the frontend uses the following:
+And the frontend templates uses the following:
 
 - [Bootstrap5](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
 - [jQuery](https://jquery.com)
@@ -24,45 +24,48 @@ And the frontend uses the following:
 
 ## Setup
 
-You will need a .env file in the base directory that has environment variables for the AWS S3 bucket details for static and media storage. This file should look like this:
+You will need a `.env` file in this directory for the app to use. It should look something like this:
 
 ```env
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_STORAGE_BUCKET_NAME = ""
-USE_S3 = True (production) | False (development)
+USE_S3 = False
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = ""
 EMAIL_HOST = ""
+MPLBACKEND="Agg"
+SECRET_KEY="abc123"
 ```
 
 ## Run the app locally
 
-To run the app in the local development environment run the following command:
+To run the app in the local development environment run the following command you need to have all of the Python [requirements](requirements.txt) installed, preferably in a virtual environment. You can then run:
 
 ```bash
 python manage.py runserver
 ```
 
-To run the task queue (RQ) you must have a Redis server running locally. You can install redis using:
+To run the task queue (RQ) you must have a Redis server running locally. You can run the Redis worker with:
 
 ```bash
-brew install redis
+python manage.py rqworker scripts reports summaries
 ```
 
-And run the server using:
+## Docker
+
+During deployment to production, the app is build into a Docker image. You can test this image by first building it:
 
 ```bash
-redis-server
+docker build -t local-image:test .
 ```
 
-The task queue can then be started using:
+and then running it:
 
 ```bash
-python manage.py rqworker scripts reports
+docker run -p 8000:8000 --name backend-test local-image:test python manage.py runserver
 ```
+
+This will only run the server, not the Redis worker, but is useful for making sure everything build and runs as expected.
 
 ## API Documentation
 
-The backend API has documentation automatically created by [drf-yasg](https://github.com/axnsan12/drf-yasg) in a [swagger-ui](https://github.com/swagger-api/swagger-ui). It is accessible at [/api-documentation/](https://finance-platform-prototype-4ce168540ea9.herokuapp.com/api-documentation/). Make sure to run the server so that you can access it (no need to run redis for this).
+The backend API has documentation automatically created by [drf-yasg](https://github.com/axnsan12/drf-yasg) in a [swagger-ui](https://github.com/swagger-api/swagger-ui). It is accessible at [/api-documentation/](https://finance-platform-prototype-4ce168540ea9.herokuapp.com/api-documentation/). Make sure to run the server so that you can access it (no need to run the redis worker for this).

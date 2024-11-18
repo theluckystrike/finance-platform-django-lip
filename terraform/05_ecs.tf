@@ -9,7 +9,6 @@ locals {
       { name = "AWS_PUBLIC_STORAGE_BUCKET_NAME", value = var.public_bucket_name },
       { name = "AWS_PRIVATE_STORAGE_BUCKET_NAME", value = var.private_bucket_name },
       { name = "AWS_REGION_NAME", value = var.region },
-      { name = "DEBUG_VALUE", value = "False" },
       { name = "SECRET_KEY", value = var.secret_key },
       { name = "USE_S3", value = "True" },
       { name = "RDS_DB_NAME", value = var.rds_db_name },
