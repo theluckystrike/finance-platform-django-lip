@@ -17,7 +17,10 @@ locals {
       { name = "RDS_PASSWORD", value = var.rds_password },
       { name = "RDS_HOSTNAME", value = aws_db_instance.production.address },
       { name = "RDS_PORT", value = "5432" },
-      { name = "REDISCLOUD_URL", value = var.rediscloud_url }
+      { name = "REDISCLOUD_URL", value = var.rediscloud_url },
+      { name = "FP_HEROKU_API_KEY", value = var.fp_heroku_api_key },
+      { name = "FRED_API_KEY", value = var.fred_api_key },
+      { name = "MPLBACKEND", value = "Agg" }
     ])
   }
 }

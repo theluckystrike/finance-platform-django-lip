@@ -148,3 +148,15 @@ variable "root_domain" {
   default     = "olandinvestments.com"
 }
 
+
+
+# app vars
+
+variable "fp_heroku_api_key" {
+  description = "API key for users to access the backend database"
+}
+
+variable "fred_api_key" {
+  description = "Fred API key"
+}
+
