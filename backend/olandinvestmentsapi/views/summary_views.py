@@ -171,10 +171,59 @@ class SummaryUpdateView(APIView):
         summary = get_object_or_404(Summary, pk=pk)
         if summary.status == Status.RUNNING:
             return Response({"message": "Summary `is already running"})
+        summary.update()
+        return Response({"message": "Summary added to task queue"})
+
+
+class SummaryStatusView(APIView):
+    """
+    GET request to retrieve the status of a script execution
+    """
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description="Status retrieved",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'status': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Current status of the execution',
+                            enum=['success', 'running', 'failure']
+                        ),
+                        'error_message': openapi.Schema(type=openapi.TYPE_STRING, description='Execution output or log'),
+                        'signal_plot_data': openapi.Schema(type=openapi.TYPE_OBJECT, description='Chart data info')
+                    },
+                    example={
+                        "status": "success",
+                        "signal_plot_data": {}
+                    }
+                )
+            ),
+            404: openapi.Response(
+                description="Summary not found",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error')
+                    },
+                    example={
+                        "error": "Summary does not exist"
+                    }
+                )
+            ),
+        }
+    )
+    def get(self, request, pk):
         try:
-            summary.update()
-            return Response({"message": "Summary added to task queue"})
-        except Exception as e:
-            logger.error(
-                f"[Summary update View] Failed to update summary {summary.id} -> {str(e)}")
-            return Response({"error": "Summary does not exists"}, status=status.HTTP_404_NOT_FOUND)
+            summary = get_object_or_404(Summary, pk=pk)
+            resp = {
+                "status": summary.get_status_display()
+            }
+            if summary.status == Status.SUCCESS:
+                resp["signal_plot_data"] = summary.signal_plot_data
+            return Response(resp)
+        except Summary.DoesNotExist:
+            return Response({'error': 'Summary does not exists'}, status=status.HTTP_404_NOT_FOUND)

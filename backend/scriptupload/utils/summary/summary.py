@@ -22,19 +22,22 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
     date_col_name = get_date_col(first_script)
     if date_col_name is None:
         raise Exception(f"No date column found in script {first_script.id}")
-    # convert data column to datetime and change name
-    summary_df[date_col_name] = pd.to_datetime(summary_df[date_col_name])
-    summary_df = summary_df[[date_col_name,
-                             meta[str(first_script.id)]["table_col_name"]]]
+
     date_index = "date"
-    summary_df[date_col_name].name = date_index
+    summary_df.rename(columns={date_col_name: date_index}, inplace=True)
+
+    # convert data column to datetime and change name
+    summary_df[date_index] = pd.to_datetime(summary_df[date_index])
+    summary_df = summary_df[[date_index,
+                             meta[str(first_script.id)]["table_col_name"]]]
 
     # for each script, merge it into the df on matching dates
     for sid in script_ids[1:]:
         script = Script.objects.get(id=sid)
         date_col_name = get_date_col(script)
         if date_col_name is None:
-            continue
+            raise Exception(
+                f"Script {script.name} has no valid date column in its table data")
         sdf = pd.read_csv(script.table_data_file)[
             [date_col_name, meta[str(script.id)]["table_col_name"]]]
         sdf[date_col_name] = pd.to_datetime(sdf[date_col_name])
@@ -48,6 +51,7 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
     for sid in script_ids:
         meta[str(sid)]["table_col_last_value"] = float(summary_df[meta[str(
             sid)]["table_col_name"]].iloc[0])
+
     # keep date format
     summary_df[date_index] = summary_df[date_index].map(
         lambda x: x.isoformat())
