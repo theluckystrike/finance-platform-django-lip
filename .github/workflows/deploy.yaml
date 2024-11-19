@@ -116,7 +116,7 @@ jobs:
       env:
         REACT_APP_API_URL: ${{ vars.API_URL }}
         CI: false
-      run: npm run build
+      run: CI=false npm run build
 
     - name: Sync S3 bucket content
       run: |
