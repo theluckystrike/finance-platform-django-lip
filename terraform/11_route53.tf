@@ -62,6 +62,19 @@ resource "aws_route53_record" "www_record" {
   }
 }
 
+resource "aws_route53_record" "frontend_alias" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "app.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_s3_bucket.frontend_bucket.website_endpoint
+    zone_id                = aws_s3_bucket.frontend_bucket.hosted_zone_id
+    evaluate_target_health = false
+  }
+  depends_on = [aws_s3_bucket.frontend_bucket]
+}
+
 # Define the certificate validation resource
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.cert.arn
