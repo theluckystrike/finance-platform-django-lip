@@ -138,7 +138,7 @@ resource "aws_s3_bucket_public_access_block" "frontend_bucket_access_block" {
 }
 
 resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
-  bucket = aws_s3_bucket.frontend_bucket.id
-  policy = data.template_file.s3_public_policy_frontend.rendered
+  bucket     = aws_s3_bucket.frontend_bucket.id
+  policy     = data.template_file.s3_public_policy_frontend.rendered
   depends_on = [aws_s3_bucket_public_access_block.frontend_bucket_access_block]
 }
