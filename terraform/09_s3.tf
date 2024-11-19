@@ -27,7 +27,7 @@ data "template_file" "s3_public_policy" {
   template = file("templates/s3_public_acl.json.tpl")
 
   vars = {
-    bucket_name = var.public_bucket_name
+    bucket_arn = aws_s3_bucket.public_bucket.arn
   }
 }
 resource "aws_s3_bucket_policy" "public_bucket_policy" {
@@ -99,4 +99,46 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
+}
+
+
+
+#### Frontend bucket ####
+
+resource "aws_s3_bucket" "frontend_bucket" {
+  bucket = "app.${var.root_domain}"
+}
+
+resource "aws_s3_bucket_website_configuration" "frontend" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+  index_document {
+    suffix = "index.html"
+  }
+  error_document {
+    key = "index.html"
+  }
+}
+
+data "template_file" "s3_public_policy_frontend" {
+  template = file("templates/s3_public_acl.json.tpl")
+
+  vars = {
+    bucket_arn = aws_s3_bucket.frontend_bucket.arn
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "frontend_bucket_access_block" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+  depends_on              = [aws_s3_bucket.frontend_bucket]
+}
+
+resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
+  bucket     = aws_s3_bucket.frontend_bucket.id
+  policy     = data.template_file.s3_public_policy_frontend.rendered
+  depends_on = [aws_s3_bucket_public_access_block.frontend_bucket_access_block]
 }
