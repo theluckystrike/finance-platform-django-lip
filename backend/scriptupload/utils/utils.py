@@ -3,11 +3,12 @@ General utility functions for the scriptupload app.
 """
 
 
-from .runners import run_script
 from django.http import HttpResponse, HttpResponseRedirect
 import logging
 from django.utils import timezone
 from .pdf import PDFBuilder
+import pandas as pd
+from datetime import datetime
 # from django.apps import apps
 
 
@@ -149,13 +150,39 @@ def scripts_to_httpresponse(scripts, categoryname=None, runscripts=False):
     return response
 
 
-def handover_report(user, report, run_scripts=False, base_url=None):
-    if user is None:
-        username = "None"
-    else:
-        username = user.username
-    logger.info(
-        f"[report handover] Updating report * {report.name} * for user * {username} *")
-    report.update(run_scripts, base_url)
-    logger.info(
-        f"[report handover] Finished update of report * {report.name} * for user * {username} *")
+def is_date(datestr: str) -> bool:
+    if not isinstance(datestr, str):
+        return False
+    try:
+        return bool(datetime.strptime(datestr, "%Y-%m-%d"))
+    except ValueError:
+        try:
+            return bool(datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+        except ValueError:
+            return False
+        finally:
+            return False
+    except Exception as e:
+        print(e)
+        return False
+
+
+def csv_to_meta_dict(filepath: str) -> dict[str]:
+    meta = {"columns": []}
+    # read and convert to native python types
+    df = pd.read_csv(filepath).astype('object')
+    for col in df.columns:
+        c = {"name": col, "size": df[col].__len__()}
+        if all(is_date(x) for x in df[col]):
+            c['type'] = 'date'
+        elif isinstance(df[col].iloc[0], float):
+            c['type'] = 'float'
+        elif isinstance(df[col].iloc[0], int):
+            c['type'] = 'int'
+        elif isinstance(df[col].iloc[0], str):
+            c['type'] = 'string'
+        else:
+            print(type(df[col].iloc[0]))
+            c['type'] = 'unknown'
+        meta['columns'].append(c)
+    return meta

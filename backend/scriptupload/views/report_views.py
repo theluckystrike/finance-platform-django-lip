@@ -1,12 +1,12 @@
 import django_rq
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.urls import reverse
 from ..utils.runners import run_script
 from ..utils.utils import get_script_hierarchy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from ..forms import ScriptSelectForm, NewReportForm, NewReportTaskForm, MergeReportsForm
-from ..utils.utils import scripts_to_httpresponse, handover_report, HTTPResponseHXRedirect
+from ..utils.utils import scripts_to_httpresponse, HTTPResponseHXRedirect
 from ..models import Script, Category, Report, ReportEmailTask, merge_reports
 from django.contrib import messages
 from django.template.defaulttags import register
@@ -152,10 +152,7 @@ def delete_report(request, reportid):
 def update_report(request, reportid):
     report = get_object_or_404(Report, pk=reportid)
     if request.method == "POST":
-        report.status = "running"
-        report.save(update_fields=["status"])
-        django_rq.get_queue("reports").enqueue(
-            handover_report, request.user, report, True, f"{request.scheme}://{request.get_host()}")
+        report.update(True, f"{request.scheme}://{request.get_host()}")
         logger.info(
             f"[task queue] Added update of report * {report.name} * by user * {request.user.username} * to task queue")
     return redirect(report_page, report.name)

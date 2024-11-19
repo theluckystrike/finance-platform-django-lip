@@ -10,16 +10,26 @@ from io import BytesIO
 from django.core.files import File
 import logging
 
+from scriptupload.utils.plotting import MpltToPlotly
 logger = logging.getLogger('testlogger')
 
 
 plt.switch_backend("agg")
 ORIGINAL_PLT_SAVE = plt.savefig
 mpl_plt_buffer = None
+mpl_plotly_json = None
 
 
 def custom_savefig(*args, **kwargs):
-    global mpl_plt_buffer
+    global mpl_plt_buffer, mpl_plotly_json
+    try:
+        fig = plt.gcf()
+        converter = MpltToPlotly(fig)
+        converter.crawl_fig()
+        mpl_plotly_json = converter.json
+    except Exception as e:
+        logger.error(
+            f"[plotly script runner] Failed to convert matplotlib plot to plotly JSON with error -> {e}")
     if args and isinstance(args[0], str):
         buffer = BytesIO()
         ORIGINAL_PLT_SAVE(buffer, format='png', dpi=300)
@@ -67,9 +77,10 @@ def setup_patched_env():
 
 
 def clear_buffers():
-    global pandas_csv_buffer, mpl_plt_buffer
+    global pandas_csv_buffer, mpl_plt_buffer, mpl_plotly_json
     pandas_csv_buffer = None
     mpl_plt_buffer = None
+    mpl_plotly_json = None
 
 
 def run_script(script):
@@ -83,6 +94,16 @@ def run_script(script):
     error_message = ""
 
     try:
+        # Not safe for production, options include:
+        # - RestrictedPython and preloading imports for safe packages https://github.com/zopefoundation/RestrictedPython
+        # - Using a Docker container (will not work with Heroku)
+        # - Using a VM (will not work with Heroku) https://github.com/vmware/pyvmomi
+        # - PyPy sandboxing https://doc.pypy.org/en/latest/sandbox.html
+        # - seccomp and setrlimit this is interesting https://github.com/healeycodes/untrusted-python, https://github.com/khamidou/minival
+        #     - could execute this in the RQ worker before running a script so that the process is
+        #       restricted
+        #     - will only run on linux
+        #     - use ast package to get imports from script and set them up
         exec(script.file.read(), env)
     except:
         exc_info = sys.exc_info()
@@ -98,6 +119,11 @@ def run_script(script):
         logger.info(
             f"[matplotlib-pyplot script runner] Successfully captured chart for script * {script.name} *")
         plt_success = True
+
+    if mpl_plotly_json:
+        script.save_plotly_config(mpl_plotly_json)
+        logger.info(
+            f"[plotly script runner] Successfully converted matplotlib plot to plotly JSON for script * {script.name} *")
 
     if pandas_csv_buffer:
         script.save_table("output_table.csv", File(pandas_csv_buffer))

@@ -1,5 +1,6 @@
 import logging
 from django.db import models
+import django_rq
 from financeplatform.storage_backends import PrivateMediaStorage
 from django.core.files.storage import default_storage
 from django.conf import settings
@@ -13,7 +14,6 @@ from .category import Category
 from .data import TableData, ChartData
 from .filepaths import script_file_path
 from django.urls import reverse
-import django_rq
 # This line configures which type of storage to use.
 # If the setting "USE_S3" is true, PrivateMediaStorage will be used. If it is false, default_storage will be used.
 privateStorage = PrivateMediaStorage() if settings.USE_S3 else default_storage
@@ -80,12 +80,16 @@ class Script(models.Model):
             return
         if not self.has_table_data:
             table_data = TableData(script=self)
-            table_data.csv_data.save(filename, file)
-            self.table_data = table_data
-            table_data.set_last_updated()
-            self.save()
+            table_data.save_table(filename, file)
         else:
-            self.table_data.csv_data.save(filename, file)
+            self.table_data.save_table(filename, file)
+
+    def save_plotly_config(self, config):
+        if not self.has_chart_data:
+            chart_data = ChartData(script=self)
+            chart_data.save_plotly_config(config)
+        else:
+            self.chart_data.save_plotly_config(config)
 
     def save_chart(self, filename: str, file):
         if not filename.endswith(".png"):
@@ -94,12 +98,9 @@ class Script(models.Model):
             return
         if not self.has_chart_data:
             chart_data = ChartData(script=self)
-            chart_data.image_file.save(filename, file)
-            chart_data.set_last_updated()
-            self.chart_data = chart_data
-            self.save()
+            chart_data.save_chart(filename, file)
         else:
-            self.chart_data.image_file.save(filename, file)
+            self.chart_data.save_chart(filename, file)
 
     @property
     def table_data_file(self):
@@ -141,8 +142,16 @@ class Script(models.Model):
                 f"[script model] No chart data for script: {self.name}")
             return False
 
-    # def update(self):
-    #     run_script(self)
+    @property
+    def has_plotly_config(self):
+        try:
+            return self.chart_data.plotly_config is not None
+        # catch exception if chart_data does not exist
+        except ChartData.DoesNotExist:
+            logging.debug(
+                f"[script model] No plotly config for script: {self.name}")
+            return False
+
 
     def update_index(self, new_idx):
         """

@@ -17,6 +17,13 @@ from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 from datetime import timedelta
 
+# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
+IS_AWS = "RDS_DB_NAME" in os.environ
+
+# If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
+# environment variables from a .env file.
+if not IS_AWS:
+    load_dotenv()
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
@@ -26,16 +33,22 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-ALLOWED_HOSTS = ['localhost:8090','localhost','127.0.0.1','backend-oland-investments.cradle.services','https://www.olandinvesmentslimited.com',
-                 '*.olandinvesmentslimited.com']
-CSRF_TRUSTED_ORIGINS = ['https://backend-oland-investments.cradle.services']
-# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
-IS_HEROKU = "DYNO" in os.environ
+CSRF_TRUSTED_ORIGINS = [
+    "https://olandinvestments.com",
+    "https://www.olandinvestments.com",
+]
 
-# If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
-# environment variables from a .env file.
-if not IS_HEROKU:
-    load_dotenv()
+# CORS_ALLOWED_ORIGINS = [
+#     "https://olandinvestments.com",
+#     "https://www.olandinvestments.com",
+# ]
+
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
+ALLOWED_HOSTS = [
+    "olandinvestments.com",
+    "www.olandinvestments.com",
+]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Determing if AWS S3 is being used based on the environment variable "USE_S3"
@@ -46,12 +59,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Determine if the project should be run in debug mode. If the project is running in Heroku, it should not be in debug
 # mode. If it is running anywhere else, debug mode should be enabled.
-DEBUG = False if IS_HEROKU else True
+DEBUG = False if IS_AWS else True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY","f05fb2$%#wg#4h^83@%5v3owm!(1(ni5ymfe6$!_!(fqe0-5sk")
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -70,6 +83,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
@@ -93,22 +107,24 @@ RQ_QUEUES = {
         'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
         'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
     },
+    'summaries': {
+        'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
+        'DEFAULT_TIMEOUT': 5,  # 20 minute timeout
+    },
 }
 
 # see this issue https://github.com/rq/django-rq/issues/542
 RQ = {
-    "WORKER_CLASS": 'scriptupload.workers.JobWorker',
+    "WORKER_CLASS": 'rq.Worker',
 }
 
 # fork() causing issues on my latpop but fine on Heroku
 # CustomWorker inherits rq.SimpleWorker with no forking i.e
 # runs in same process just different thread
-if not IS_HEROKU:
-    RQ['WORKER_CLASS'] = "scriptupload.workers.SimpleJobWorker"
+if not IS_AWS:
+    RQ['WORKER_CLASS'] = "rq.SimpleWorker"
 
 RQ_SHOW_ADMIN_LINK = True
-
-SCOUT_NAME = "Finance Platform scout"
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
@@ -128,6 +144,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    'olandinvestmentsapi.middleware.HealthCheckMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -174,22 +191,26 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
-# if not IS_HEROKU:
-#     DATABASES['default'] = {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'heroku_db',
-#         'USER': '',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 """LOGGING = {
     'version': 1,
@@ -348,24 +369,31 @@ django_heroku.settings(locals(), logging=False)
 
 if USE_S3:
     # aws settings
-    AWS_S3_REGION_NAME = 'eu-central-1'
+    AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+
     # s3 static settings
+    AWS_STATIC_STORAGE_BUCKET_NAME = os.getenv('AWS_PUBLIC_STORAGE_BUCKET_NAME')
+    AWS_S3_STATIC_CUSTOM_DOMAIN = f'{AWS_STATIC_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     STATIC_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATIC_URL = f'https://{AWS_S3_STATIC_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
     STATICFILES_STORAGE = 'financeplatform.storage_backends.StaticStorage'
-    # s3 public media settings
+
+    # s3 media settings (private)
+    AWS_MEDIA_STORAGE_BUCKET_NAME = os.getenv('AWS_PUBLIC_STORAGE_BUCKET_NAME')
+    AWS_S3_MEDIA_CUSTOM_DOMAIN = f'{AWS_MEDIA_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     PUBLIC_MEDIA_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    MEDIA_URL = f'https://{AWS_S3_MEDIA_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
     DEFAULT_FILE_STORAGE = 'financeplatform.storage_backends.PublicMediaStorage'
-    # s3 private media settings
+
     PRIVATE_MEDIA_LOCATION = 'private'
     PRIVATE_FILE_STORAGE = 'financeplatform.storage_backends.PrivateMediaStorage'
+    AWS_PRIVATE_STORAGE_BUCKET_NAME = os.getenv('AWS_PRIVATE_STORAGE_BUCKET_NAME')
+
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 else:
     STATIC_URL = '/staticfiles/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
