@@ -100,3 +100,45 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
     max_age_seconds = 3000
   }
 }
+
+
+
+#### Frontend bucket ####
+
+resource "aws_s3_bucket" "frontend_bucket" {
+  bucket = "oi-prod-frontend-storage"
+}
+
+resource "aws_s3_bucket_website_configuration" "frontend" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+  index_document {
+    suffix = "index.html"
+  }
+  error_document {
+    key = "index.html"
+  }
+}
+
+data "template_file" "s3_public_policy_frontend" {
+  template = file("templates/s3_public_acl.json.tpl")
+
+  vars = {
+    bucket_name = "oi-prod-frontend-storage"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "frontend_bucket_access_block" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+  depends_on              = [aws_s3_bucket.frontend_bucket]
+}
+
+resource "aws_s3_bucket_policy" "frontend_bucket_policy" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+  policy = data.template_file.s3_public_policy_frontend.rendered
+  depends_on = [aws_s3_bucket_public_access_block.frontend_bucket_access_block]
+}
