@@ -46,7 +46,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
       create({
         token: loginUSer.access,
         data: { ...values, parent_category: values.category },
-      }); // Call mutation with form values
+      }); 
       handleClose();
     },
   });
