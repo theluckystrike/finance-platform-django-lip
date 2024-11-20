@@ -56,6 +56,15 @@ class CategorySerializer(serializers.ModelSerializer):
     #     return fields
 
 
+class ScriptUploadSerializer(serializers.ModelSerializer):
+    '''Only for reading multipart form data and making a new Script via POST request'''
+    file = serializers.FileField()
+
+    class Meta:
+        model = Script
+        fields = ['name', 'category', 'file']
+
+
 class ScriptSerializerLite(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     category = DeepCategorySerializer()
