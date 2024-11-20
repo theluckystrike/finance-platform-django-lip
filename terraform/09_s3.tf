@@ -46,7 +46,7 @@ resource "aws_s3_bucket_cors_configuration" "public_bucket_cors" {
     allowed_origins = [
       "http://localhost",
       "https://www.olandinvestments.com",
-      "https://www.olandinvesmentslimited.com",
+      "https://app.olandinvestments.com",
       "http://localhost:8000",
       "http://localhost:8090",
       "https://oland-investments.cradle.services",
@@ -90,7 +90,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
     allowed_origins = [
       "http://localhost",
       "https://www.olandinvestments.com",
-      "https://www.olandinvesmentslimited.com",
+      "https://app.olandinvestments.com",
       "http://localhost:8000",
       "http://localhost:8090",
       "https://oland-investments.cradle.services",
