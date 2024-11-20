@@ -119,5 +119,7 @@ jobs:
       run: CI=false npm run build
 
     - name: Sync S3 bucket content
+      env:
+        FRONTEND_BUCKET_NAME: s3://app.olandinvestments.com
       run: |
-        aws s3 sync build/ s3://app.olandinvestments.com --delete
+        aws s3 sync build/ $FRONTEND_BUCKET_NAME --delete
