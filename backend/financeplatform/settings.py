@@ -36,12 +36,14 @@ MESSAGE_TAGS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://olandinvestments.com",
     "https://www.olandinvestments.com",
+    "https://app.olandinvestments.com",
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://olandinvestments.com",
-#     "https://www.olandinvestments.com",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "https://olandinvestments.com",
+    "https://www.olandinvestments.com",
+    "https://app.olandinvestments.com",
+]
 
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 ALLOWED_HOSTS = [
