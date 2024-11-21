@@ -168,8 +168,14 @@ body {
 }
 
 .icon-button svg {
-    stroke-width: 3;
+    stroke-width: 1;
     transition: stroke 0.3s ease;
+    
+}
+
+.icon-button svg:hover {
+ border: none;
+  color: #F7FCF7;
 }
 
 .icon-button span {

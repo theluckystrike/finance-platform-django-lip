@@ -1,12 +1,21 @@
+Nicholas Daskalovic 4:58 PM
+Hi Sandeep Srivastava , I have updated the site and added the summary endpoint, they are in the documentation as well.
+ You can make summaries and also update them while polling for their status just like a script or report. You can see 
+ the arguments required for making a new summary in the documentation but i will explain them here also.
 
-it might be worthwhile to start implementing a few of the new front end
+The script table_data property now contains some meta data in a meta field which is in the documentation too. this data 
+is only available when you GET a single script. to make a summary, the user need to select a single column from the columns 
+available in the meta data of the table. the body of the post request for making a summary then contains a name and list of
+ scripts and the column name for each on to be included in the summary
+
+when you make a summary and update it, it will then have a signal_plot_data field which will be have two json objects inside
+ it: "data" and "signal sum", these are the x and y axis that need to be plotted using plotly on the page for that summary. 
+ you will also need to create a table on that page using the summary meta data too. this contains the last values for each 
+ script in the summary and the name of the table column it comes from
+
+I'm not sure if Jeffrey has explained to you how the page for a summary should look, let me know if you need any help with 
+what data needs to be displayed there
 
 
 
-- error handling - I want to have a separate tab that only users with admin rights can view which displays any scripts that are running with errors
-
-
-
-- I want to add a tab on the side bar titled ‘tape summary ‘ which once selected can display a summary of various models already running on the site. The idea is that if I wanted to pick say 5 scripts - get the results from those scripts and displays them all on one place. If you look at the script ‘tape summary ‘ it begins to try and complete this task. I would like the model summary to be able to display both a graph and a table on the same tab
-- I want to be able to sort scripts on the main page by there column headers
-- i want to be able to click through the script tree and select scripts.
+tape summary page list and create new summary modal 

@@ -1,171 +1,156 @@
- 
-import React, { useState } from 'react';
-import '../../assest/css/AllScript.css'
-import Icon from '../../Comopnent/ui/icon/Icon';
-import { Link } from 'react-router-dom';
-import { ActiveRoute } from '../../Menu';
-import MergeReports from '../../Comopnent/ui/Modals/MergeReports/MergeReports';
+import React, { useEffect, useState } from "react";
+import "../../assest/css/AllScript.css";
+import Icon from "../../Comopnent/ui/icon/Icon";
+import { Link } from "react-router-dom";
+import { ActiveRoute } from "../../Menu";
+import MergeReports from "../../Comopnent/ui/Modals/MergeReports/MergeReports";
+import { GetAllreports } from "../../Redux/Report/Slice";
+import { useDispatch, useSelector } from "react-redux";
+import useSortableData from "../../customHook/useSortable";
+import Loader from "../../Comopnent/ui/Loader";
+import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
+import DateFormatter from "../../customHook/useTImeformnt";
+import PaginationButtons, {
+  dataPagination,
+  PER_COUNT,
+} from "../../Comopnent/ui/PaginationButtons";
 
-const  Report = () => {
-    const [category, setCategory] = useState("-1");
-    const [subCategory, setSubCategory] = useState("-1");
-    const [subSubCategory, setSubSubCategory] = useState("-1");
-    const [selectedScripts, setSelectedScripts] = useState([]);
- 
-    const data = [
-        {
-title:'Merged example 1 and example 2',
-            category1: "Tape",
-          category2: "Relative Strength",
-          category3: "RS",
-          startDate: "08/18/24",
-          endDate: "08/20/24",
-          startTime: "18:52",
-          endTime: "10:03"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Bonds",
-          category2: "CAD Bonds",
-          category3: "Regression-CAD",
-          startDate: "11/18/23",
-          endDate: "08/20/24",
-          startTime: "17:39",
-          endTime: "10:03"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Tape",
-          category2: "Returns",
-          category3: "Returns-Current",
-          startDate: "04/16/24",
-          endDate: "08/20/24",
-          startTime: "18:47",
-          endTime: "10:03"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Monetary",
-          category2: "Inflation",
-          category3: "Inflation-Models",
-          startDate: "11/16/23",
-          endDate: "08/20/24",
-          startTime: "22:56",
-          endTime: "10:03"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Tape",
-          category2: "Breadth",
-          category3: "Participation/Disperson",
-          startDate: "05/23/24",
-          endDate: "08/20/24",
-          startTime: "20:34",
-          endTime: "10:03"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Bonds",
-          category2: "USD Bonds",
-          category3: "Summary-USD",
-          startDate: "01/19/24",
-          endDate: "08/20/24",
-          startTime: "12:47",
-          endTime: "10:04"
-        },
-        {
-title:'Merged example 1 and example 2',
-            category1: "Econ",
-          category2: "Labour",
-          category3: "Labour-Models",
-          startDate: "08/08/24",
-          endDate: "08/20/24",
-          startTime: "19:44",
-          endTime: "10:03"
+const Report = () => {
+  const dispatch = useDispatch();
+  const [loginUser, setLoginUser] = useState<any>(null);
+  const store: any = useSelector((i) => i);
+  const { loading } = store?.report;
+  const allreport = store?.report?.reports?.results;
+  const { items, requestSort, getClassNamesFor } = useSortableData(
+    allreport || []
+  );
+  useEffect(() => {
+    const storedLoginUser = localStorage.getItem("login");
+    if (storedLoginUser) {
+      setLoginUser(JSON.parse(storedLoginUser));
+    }
+  }, []);
+  useEffect(() => {
+    if (loginUser) {
+      const getDAta = async () => {
+        try {
+          await dispatch(GetAllreports({ token: loginUser?.access }));
+        } catch (error) {
+          console.log(error);
         }
-      ];
-  
+      };
+      getDAta();
+    }
+  }, [loginUser]);
 
-    const handleFilter = () => {
-        let url = '/reports/custom-report/?';
-        if (category !== "-1") url += `category=${category}`;
-        if (subCategory !== "-1") url += `&subcategory1=${subCategory}`;
-        if (subSubCategory !== "-1") url += `&subcategory2=${subSubCategory}`;
-        window.location.replace(url);
-        setSelectedScripts([])
-    };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState<number>(PER_COUNT["10"]);
 
-    const handleResetFilters = () => {
-        window.location.replace('/reports/custom-report/');
-    };
+  const [show, setShow] = useState(false);
+  const [mergeshow, setShowmerges] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+  };
 
- 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => {
-      setShow(true);
-    };
-   
+  return (
+    <div className="mx-4">
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <h1 className="h1 fw-bold">Reports </h1>
 
-    return (
-        <div  className='mx-4'>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-                <h1 className="h1 fw-bold">Reports </h1>
-                <div className="btn-toolbar mb-2 mb-md-0"  >
-                <button onClick={handleShow} type="button" className="btn icon-button my-1 mx-2" >
-                       <Icon icon='AddChart' size='20px'/>
-                        <span>Merge</span>
-                    </button>
-                     
-                </div>
-            </div>
-            <div>
-                {132 > -1 ? (
-                    <form method="post" id="customReportForm">
-                        <div className="row mb-2 p-2 fw-bold w-100" >
-                            <div className="col-8">
-                                <h5>
-                                     Report Name
-                                </h5>
-                            </div>
-                           
-                            <div className="col-2 mx-auto text-center">Created</div>
-                            <div className="col-2 mx-auto text-center">Last updated</div>
-                        </div>
-                        <div id="scriptsCheckboxes">
-                            {data.map((script:any) => (
-                                <Link to={`/account/${ActiveRoute.ReportDetails.path}`} className="text-decoration-none text-black" key={script.id}>
-                                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                                        <div className="col-8">
-                                            <span className="fw-bold fs-6">
-                                           
-                                                {script.title}
-                                          
-                                            </span>
-                                        </div>
-                                         
-                                        <div className="col-2 mx-auto text-center">
-                                            {script.startDate}
-                                        </div>
-                                        <div className="col-2 mx-auto text-center">
-                                            {script.endDate}
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </form>
-                ) : (
-                    <span className="text-large">
-                        Upload scripts to generate reports with them
-                    </span>
-                )}
-            </div>
-
-         
-            <MergeReports show={show} handleClose={handleClose}/>
+        <div className="btn-toolbar mb-2 mb-md-0">
+          {/* <button
+            onClick={handleShow}
+            type="button"
+            className="btn icon-button my-1 mx-2"
+          >
+            <Icon icon="Add" size="20px" />
+            <span>Create</span>
+          </button>*/}
+          <button
+            onClick={() => setShowmerges(true)}
+            type="button"
+            className="btn icon-button my-1 mx-2"
+          >
+            <Icon icon="AddChart" size="20px" />
+            <span>Merge</span>
+          </button>
         </div>
-    );
+      </div>
+      <div>
+        {items.length > 0 ? (
+          <div style={{ overflow: "auto" }} id="customReportForm">
+            <div className="py-2">
+              <PaginationButtons
+                data={items}
+                label="Reports"
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                perPage={perPage}
+                setPerPage={setPerPage}
+              />
+            </div>
+            <table className="table" style={{ minWidth: "1000px" }}>
+              <thead>
+                <tr className="fw-bold mb-2 p-2">
+                  <th scope="col" className="col-1">
+                    <h5>Sr no.</h5>
+                  </th>
+                  <th scope="col" className="col-7">
+                    <h5>Report Name</h5>
+                  </th>
+                  <th scope="col" className="col-2 text-center mx-auto">
+                    Created
+                  </th>
+                  <th scope="col" className="col-2 text-center mx-auto">
+                    Last Updated
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="scriptsCheckboxes">
+                {items &&
+                  dataPagination(items, currentPage, perPage).map(
+                    (script: any, index: any) => (
+                      <>
+                        <tr
+                          key={script.id}
+                          className="table-card rounded-3 bg-light-green mb-2 p-3"
+                        >
+                          <td className="col-1 fw-bold fs-6">{index + 1}</td>
+                          <td className="col-7 fw-bold fs-6">
+                            <Link
+                              to={`/account/ReportDetails/${script.id}`}
+                              className="text-decoration-none text-black"
+                            >
+                              {script.name}
+                            </Link>
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            <DateFormatter isoString={script.created} />
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            <DateFormatter isoString={script.last_updated} />
+                          </td>
+                        </tr>
+                        <tr style={{ height: "10px" }}></tr>
+                      </>
+                    )
+                  )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Loader />
+        )}
+      </div>
+
+      <MergeReports
+        show={mergeshow}
+        handleClose={() => setShowmerges(false)}
+        allreport={allreport}
+      />
+    </div>
+  );
 };
 
 export default Report;

@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  memo,
-  ReactNode,
-  CSSProperties,
-} from "react";
+import React, { forwardRef, memo, ReactNode, CSSProperties } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import * as SvgIcon from "./svg-icons";

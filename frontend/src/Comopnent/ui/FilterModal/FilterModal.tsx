@@ -27,69 +27,6 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
           <form method="post" encType="multipart/form-data">
             <div className="mb-3">
               <div className="row mx-0 px-5">
-                {/* <div className="col-lg-6 m-0 px-4 mb-3">
-            <label htmlFor="category" className="form-label">Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-
-                  <option value="Bonds">Bonds</option>
-
-                  <option value="CAD">CAD</option>
-
-                  <option value="Breadth">Breadth</option>
-
-                </select>
-              </div>
-            <div className="col-lg-6 m-0 px-4 mb-3">
-            <label htmlFor="category" className="form-label">Add Script</label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-
-                  <option value="Bonds">Bonds</option>
-
-                  <option value="CAD">CAD</option>
-
-                  <option value="Breadth">Breadth</option>
-
-                </select>
-              </div>
-              <div className="col-lg-6 m-0 px-4 mb-3">
-            <label htmlFor="category" className="form-label">Sub-Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-
-                  <option value="Bonds">Bonds</option>
-
-                  <option value="CAD">CAD</option>
-
-                  <option value="Breadth">Breadth</option>
-
-                </select>
-              </div> */}
                 <div className="col-lg-6 m-0 px-4 mb-3">
                   <div className="dropdown">
                     <label htmlFor="">Category</label>
@@ -97,8 +34,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                     <div className="dropdown-content">
                       <a>Returns</a>
                       <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <a>Bonds</a> <a>CAD</a> <a>Breadth</a>
                     </div>
                   </div>
                 </div>
@@ -109,8 +45,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                     <div className="dropdown-content">
                       <a>Returns</a>
                       <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <a>Bonds</a> <a>CAD</a> <a>Breadth</a>
                     </div>
                   </div>
                 </div>
@@ -121,8 +56,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                     <div className="dropdown-content">
                       <a>Returns</a>
                       <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <a>Bonds</a> <a>CAD</a> <a>Breadth</a>
                     </div>
                   </div>
                 </div>
@@ -133,8 +67,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                     <div className="dropdown-content">
                       <a>Returns</a>
                       <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <a>Bonds</a> <a>CAD</a> <a>Breadth</a>
                     </div>
                   </div>
                 </div>
@@ -145,84 +78,36 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
                     <div className="dropdown-content">
                       <a>Returns</a>
                       <a>USD</a>
-                      <a>Bonds</a> <a>CAD</a>{" "}
-                      <a>Breadth</a>
+                      <a>Bonds</a> <a>CAD</a> <a>Breadth</a>
                     </div>
                   </div>
                 </div>
                 <div className="col-lg-6 m-0 px-4 mb-3  dropdown">
-                  <label htmlFor="" className="invisible">bh</label> 
+                  <label htmlFor="" className="invisible">
+                    bh
+                  </label>
                   <div className="d-flex justify-content-between">
-                  <button
-                    onClick={handleClose}
-                    className="btn btn-light  border-2px col-5 mx-auto   fw-bold  "
-                    type="button"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    onClick={handleClose}
-                    className="btn btn-dark   col-5 mx-auto   fw-bold  "
-                    type="button"
-                  >
-                    Apply
-                  </button>
+                    <button
+                      onClick={handleClose}
+                      className="btn btn-light  border-2px col-5 mx-auto   fw-bold  "
+                      type="button"
+                    >
+                      Reset
+                    </button>
+                    <button
+                      onClick={handleClose}
+                      className="btn btn-dark   col-5 mx-auto   fw-bold  "
+                      type="button"
+                    >
+                      Apply
+                    </button>
                   </div>
                   <div />
                 </div>
-                {/* <div className="col-lg-6 m-0 px-4 mb-3">
-            <label htmlFor="category" className="form-label">Added</label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select m-0"
-                  
-                  required
-                >
-                  <option value="" disabled selected>All</option>
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-
-                  <option value="Bonds">Bonds</option>
-
-                  <option value="CAD">CAD</option>
-
-                  <option value="Breadth">Breadth</option>
-
-                </select>
-              </div>
-            <div className="col-lg-6 row m-0 px-4">
-            <label htmlFor="category" className="form-label invisible">Last Updated</label>
-
-            <button
-            onClick={handleClose}
-                className="btn btn-light  border-2px col-5 mx-auto   fw-bold  "
-                type="button"
-           
-              >
-               Reset
-              </button>
-              <button
-              onClick={handleClose}
-                className="btn btn-dark   col-5 mx-auto   fw-bold  "
-                type="button"
-           
-              >
-               Apply
-              </button>
-              </div>   */}
               </div>
             </div>
           </form>
         </Modal.Body>
-        {/* <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer> */}
       </Modal>
     </>
   );

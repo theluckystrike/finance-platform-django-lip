@@ -10,7 +10,9 @@ interface TapeSummaryResltTableProps {
   TableData: TableDataRow[];
 }
 
-const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({ TableData }) => {
+const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({
+  TableData,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   let isDown = false;
   let startX: number;
@@ -80,7 +82,11 @@ const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({ TableData
             <thead>
               <tr className="mb-2 p-2 text-center fw-bold">
                 {TableData.map((_, index) => (
-                  <th key={index} className="px-2" style={{ minWidth: "150px" }}>
+                  <th
+                    key={index}
+                    className="px-2"
+                    style={{ minWidth: "150px" }}
+                  >
                     <h5 className="text-capitalize">{`Data ${index + 1}`}</h5>
                   </th>
                 ))}
@@ -99,7 +105,11 @@ const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({ TableData
                   }}
                 >
                   {column.map((cell, index) => (
-                    <td key={index} className="px-2" style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
+                    <td
+                      key={index}
+                      className="px-2"
+                      style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                    >
                       <span className="fw-bold fs-6">{cell.value}</span>
                     </td>
                   ))}

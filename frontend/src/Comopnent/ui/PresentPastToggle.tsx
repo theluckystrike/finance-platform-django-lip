@@ -9,16 +9,18 @@ const PresentPastToggle = () => {
 
   return (
     <div className="row justify-content-center">
-      <div className="col-3 text-center position-relative">
+      <div className="col-12 col-sm-12 col-md-3 col- row text-center position-relative">
         <span
           onClick={() => handleClick("present")}
-          className={`toggle-item ${active === "present" ? "active" : ""}`}
+          className={`toggle-item ${
+            active === "present" ? "active" : ""
+          } col-6`}
         >
           <h5> Present</h5>
         </span>
         <span
           onClick={() => handleClick("past")}
-          className={`toggle-item ${active === "past" ? "active" : ""}`}
+          className={`toggle-item ${active === "past" ? "active" : ""} col-6`}
         >
           <h5>Past</h5>
         </span>

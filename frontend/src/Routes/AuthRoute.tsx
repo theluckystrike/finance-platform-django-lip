@@ -9,6 +9,7 @@ import { ActiveRoute, SidebarMenu } from "../Menu";
 
 // Lazy load the components
 const CustomReport = lazy(() => import("../pages/AllScript/AllScript"));
+const FilterPAge = lazy(() => import("../pages/AllScript/FilterScripts"));
 const ScriptEdit = lazy(() => import("../pages/AllScript/Script_Edit"));
 const ScriptView = lazy(() => import("../pages/AllScript/Script_view"));
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -45,6 +46,10 @@ export const SimpleRoute = [
       {
         path: SidebarMenu.Allscripts.path,
         element: <CustomReport />,
+      },
+      {
+        path: SidebarMenu.Filterscripts.path,
+        element: <FilterPAge />,
       },
       {
         path: SidebarMenu.Report.path,

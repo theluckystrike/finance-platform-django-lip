@@ -3,12 +3,12 @@ import { endpoint } from './endpoint';
 
 const api = createApi({
   reducerPath: 'Categoryapi',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_LOCAL_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
   tagTypes: ['GET', 'Category'],
   endpoints: (builder) => ({
     create: builder.mutation({
       query: ({ token, data }) => ({
-        url: `${endpoint.category}/create/`,
+        url: `${endpoint.category}`,
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -20,7 +20,7 @@ const api = createApi({
    
     update: builder.mutation({
       query: ({ token,id, data }) => ({
-        url: `api${endpoint.category}/${id}/update/`,
+        url: `${endpoint.category}/${id}`,
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -31,7 +31,7 @@ const api = createApi({
     }),
     remove: builder.mutation({
       query: ({ token,id }) => ({
-        url: `${endpoint.category}/delete/${id}`,
+        url: `${endpoint.category}/${id}`,
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -42,7 +42,7 @@ const api = createApi({
     }),
       getAllCategory: builder.query({
       query: ({ token }) => ({
-        url: endpoint.category+'/manager/',
+        url: endpoint.category,
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

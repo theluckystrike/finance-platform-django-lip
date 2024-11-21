@@ -7,15 +7,16 @@ import { useCreateMutation } from "../../../../Redux/CategoryQuery";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { loginUSer } from "../../../../customHook/getrole";
+import ArrowDown from "../../../../assest/image/arrow-down.png";
 
-import { useRefreshtokenMutation } from "../../../../Redux/AuthSlice";
+import { useRefreshTokenMutation } from "../../../../Redux/AuthSlice";
 import useToast from "../../../../customHook/toast";
 import { useSelector } from "react-redux";
 
 interface CategoryModalProps {
   show: boolean;
   handleClose: () => void;
-  categoryFilter: any[];
+  categoryFilter: any;
 }
 
 const CategoryModal: FC<CategoryModalProps> = ({
@@ -25,9 +26,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 }) => {
   const [create, { isLoading, isSuccess, isError, error, data }] =
     useCreateMutation();
-  const [refreshtoken, Res] = useRefreshtokenMutation();
-
-  console.log(categoryFilter);
+  const [refreshtoken, Res] = useRefreshTokenMutation();
 
   const navigate = useNavigate();
   const [selectValue, setSelectValue] = useState("");
@@ -37,15 +36,17 @@ const CategoryModal: FC<CategoryModalProps> = ({
   const formik = useFormik({
     initialValues: {
       name: "",
-      parent: "",
-      parentName:""
+      category: "",
+      parentName: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Category name is required"),
     }),
     onSubmit: (values) => {
-      // Handle form submission
-      create({ token: loginUSer.access, data: values }); // Call mutation with form values
+      create({
+        token: loginUSer.access,
+        data: { ...values, parent_category: values.category },
+      }); // Call mutation with form values
       handleClose();
     },
   });
@@ -57,29 +58,35 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
     if (isError) {
       if ((error as any)?.data) {
-        // console.log('Calling refresh token...');
-        // refreshtoken({
-        //   token: loginUSer.refresh,
-        //   page_no: 1,
-        //   page_size: 1000,
-        // })
-        // console.log('Refresh token data:');
-        handleToast.ErrorToast(
-          "Token is invalid or expired. Please login again."
-        );
-        navigate("/login");
-        localStorage.removeItem("login");
-        const apiError = (error as any).data as { detail?: string };
-        console.log("Error:", apiError.detail || "An unknown error occurred");
+        handleToast.ErrorToast("Please login again.");
       } else {
         console.log("An unknown error occurred.");
       }
     }
   }, [isSuccess, isError, error, data]);
+
+  const [FilterCategory, setFilterCategory] = useState([]);
+  const [dataTypeOption, setDataTypeOption] = useState(false);
+  const FilterData = (value: any) => {
+    const trimmedValue = value.trim(); // Trim the input value
+    if (trimmedValue !== "") {
+      const res = categoryFilter.filter((i: any) =>
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+      );
+      setFilterCategory(res);
+    } else {
+      setFilterCategory([]);
+    }
+  };
+
+  useEffect(() => {
+    FilterData(formik.values.parentName);
+  }, [formik.values.parentName]);
   return (
     <>
       <Modal
         size="lg"
+        fullscreen="md-down"
         aria-labelledby="contained-modal-title-vcenter"
         centered
         show={show}
@@ -114,74 +121,57 @@ const CategoryModal: FC<CategoryModalProps> = ({
                 </div>
 
                 <div className="col-12">
-                  <label htmlFor="parent" className="form-label">
+                  <label htmlFor="category" className="form-label">
                     Parent Category
                   </label>
 
                   <div className="dropdown">
+                    <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
                     <input
                       type="text"
-                      placeholder="All"
+                      placeholder="Select a category"
                       value={formik.values.parentName}
-                      readOnly
+                      onChange={(e) => {
+                        formik.setFieldValue("parentName", e.target.value);
+
+                        FilterData(e.target.value);
+                      }}
+                      className={`form-control ${
+                        formik.touched.category && formik.errors.category
+                          ? "input-error"
+                          : ""
+                      }`}
                     />
                     <div
                       className="dropdown-content"
-                      style={{ height: "200px", overflow: "auto" }}
+                      style={{
+                        maxHeight: "200px",
+                        overflow: "auto",
+                        display: FilterCategory.length > 0 ? "block" : "none",
+                      }}
                     >
-                      {categoryFilter.length > 0 &&
-                        categoryFilter.map((item: any, index: any) => (
-                          <span className="h6  " key={item.name}>
-                            <span
-                              className="hover-span "
-                              onClick={() =>
-                               { formik.setFieldValue("parent", item.id)
-                                formik.setFieldValue("parentName", item.name)
-                               }
-                              }
-                            >
-                              {item.name}
-                            </span>
-                            {item.subcategories?.map(
-                              (subitem: any, subindex: any) => (
-                                <span
-                                  className="text-muted hover-span"
-                                  key={subindex}
-                                >
-                                  <span
-                                    className="hover-span  text-muted"
-                                    onClick={() =>
-                                      { formik.setFieldValue("parent", subitem.id)
-                                        formik.setFieldValue("parentName", subitem.name)
-                                       }
-                                    }
-                                  >
-                                    {subitem.name}
-                                  </span>
-                                  {subitem.subcategories?.map(
-                                    (inneritem: any, innerindex: any) => (
-                                      <span className="fs-6 " key={innerindex}>
-                                        <span
-                                          className="hover-span  text-mute"
-                                          onClick={() =>
-                                            { formik.setFieldValue("parent", inneritem.id)
-                                              formik.setFieldValue("parentName", inneritem.name)
-                                             }
-                                          }
-                                        >
-                                          {inneritem.name}
-                                        </span>
-                                      </span>
-                                    )
-                                  )}
-                                </span>
-                              )
-                            )}
+                      {FilterCategory.length > 0 &&
+                        FilterCategory.map((item: any, index: any) => (
+                          <span
+                            className="h6 hover-span"
+                            key={item.name}
+                            onClick={async () => {
+                              await formik.setFieldValue(
+                                "parentName",
+                                item.name
+                              );
+                              await formik.setFieldValue("category", item.id);
+                              setFilterCategory([]);
+                            }}
+                          >
+                            {item.name}
                           </span>
                         ))}
                     </div>
                   </div>
-                </div>
+                </div>                                                  
 
                 <div className="col-12 row justify-content-evenly m-0">
                   <label
@@ -205,7 +195,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
                     className="btn btn-dark col-5 px-3 fw-bold"
                     type="submit"
                   >
-                    Apply
+                    Create
                   </button>
                 </div>
               </div>

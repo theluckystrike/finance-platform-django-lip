@@ -1,36 +1,52 @@
 import { FC, useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
-import { useRemoveMutation, useUpdateMutation } from "../../../../Redux/CategoryQuery";
+import {
+  useRemoveMutation,
+  useUpdateMutation,
+} from "../../../../Redux/CategoryQuery";
+import { log } from "console";
+import useToast from "../../../../customHook/toast";
+import DeleteModal from "../DeleteModal/DeleteModal";
+import ArrowDown from "../../../../assest/image/arrow-down.png";
 
 interface NewCategoryModalProps {
   show: boolean;
   handleClose: () => void;
   selected: string;
   editingCategory: any | null;
-  token:any
+  token: any;
+  data: any;
+  selectedPERnt: any;
+  categoryData:any;
+  showDel: any;
 }
 
 const NewCategoryModal: FC<NewCategoryModalProps> = ({
   show,
   selected,
   handleClose,
+  data,
   editingCategory,
-  token
+  categoryData,
+  token,
+  selectedPERnt,
+  showDel,
 }) => {
   const navigate = useNavigate();
-  const [update, update_res] =
-  useUpdateMutation();
-  const [remove, delete_res] =
-  useRemoveMutation();
+  const [update, update_res] = useUpdateMutation();
+
+  const handleToast = useToast();
+
   const [categoryName, setCategoryName] = useState(selected);
-  const [parentCategory, setParentCategory] = useState("");
+  const [parentCategory, setParentCategory] = useState(selectedPERnt);
   const [isEditing, setIsEditing] = useState(false);
-console.log(editingCategory);
+
 
   useEffect(() => {
     if (editingCategory) {
       setCategoryName(editingCategory.name);
+      setParentCategory(selectedPERnt);
       setIsEditing(true);
     } else {
       setCategoryName("");
@@ -38,25 +54,49 @@ console.log(editingCategory);
     }
   }, [editingCategory, selected]);
 
-  const handleSave = () => {
-    console.log(token);
-    
-    update({token:token.access,id:editingCategory.id, data:{
-      name:categoryName
-    } })
-    // handleClose();
-  };
+  const handleSave = async () => {
+    await update({
+      token: token.access,
+      id: editingCategory.id,
+      data: {
+        name: categoryName,
+        parent_category: parentCategory.id,
+      },
+    });
 
-  const handleDelete = () => {
-    
-    remove({token:token.access,id:editingCategory.id  })
+    handleToast.SuccessToast(`Category updated successfully`);
+
     handleClose();
   };
 
+  const handleDelete = async () => {
+    handleClose();
+
+    showDel(editingCategory);
+  };
+
+
+  const [FilterCategory,setFilterCategory]=useState([])
+  const [dataTypeOption ,setDataTypeOption]=useState(false)
+  const FilterData = (value: any) => {
+    if (value !== '') {
+      const trimmedValue = value?.trim(); // Trim the input value
+      const res = categoryData.filter((i: any) =>
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+      );
+      setFilterCategory(res);
+    } else {
+      setFilterCategory([]);
+    }
+  }
+  
+ 
+
   return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
+<Modal
+        size="lg"
+        fullscreen="md-down" 
+        aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
@@ -82,28 +122,90 @@ console.log(editingCategory);
                   required
                 />
               </div>
-              <div className="col-12 m-0">
-                <label htmlFor="parentCategory" className="form-label">
-                  Parent Category
+              <div className="col-12">
+                <label htmlFor="parent_category" className="form-label">
+                  Parent category 
                 </label>
-                <select
-                  id="parentCategory"
-                  name="parentCategory"
-                  className="form-select m-0"
-                  value={parentCategory}
-                  onChange={(e) => setParentCategory(e.target.value)}
-                  required
-                >
-                  <option value="" disabled>
-                    All
-                  </option>
-                  {/* Populate this dynamically from your data */}
-                  <option value="Returns">Returns</option>
-                  <option value="USD">USD</option>
-                  <option value="Bonds">Bonds</option>
-                  <option value="CAD">CAD</option>
-                  <option value="Breadth">Breadth</option>
-                </select>
+
+
+                <div className="dropdown">
+                    <div className="arrow_down">
+                      <img src={ArrowDown} alt="" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Select a category"
+                      value={parentCategory.name}
+                   onChange={(e) => {
+                     
+                    setParentCategory({...parentCategory,name:e.target.value})
+                    FilterData( e.target.value)
+                  
+                  }}
+                      
+                    />
+                  <div
+  className="dropdown-content"
+  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
+>  <span className="h6  ">
+                      <span
+                        className="hover-span text-muted"
+                        onClick={() => setParentCategory({ name: "", id: "" })}
+                      >
+                        None
+                      </span>
+                    </span>
+
+                      {FilterCategory.length > 0  &&
+                        FilterCategory.map((item: any, index: any) => (
+                          <span
+                            className="h6 hover-span"
+                            key={item.name}
+                            onClick={async () => {
+                           await   setParentCategory(item)
+    setFilterCategory([])
+
+                            }}
+                          >
+                            {item.name}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+
+{/* 
+                <div className="dropdown">
+                  <input
+                    type="text"
+                    placeholder="All"
+                    value={parentCategory.name}
+                    readOnly
+                  />
+                  <div
+                    className="dropdown-content"
+                    style={{ height: "200px", overflow: "auto" }}
+                  >
+                    <span className="h6  ">
+                      <span
+                        className="hover-span text-muted"
+                        onClick={() => setParentCategory({ name: "", id: "" })}
+                      >
+                        None
+                      </span>
+                    </span>
+                    {FilterCategory.length > 0 &&
+                      FilterCategory.map((item: any, index: any) => (
+                        <span className="h6  " key={item.name}>
+                          <span
+                            className="hover-span "
+                            onClick={() => setParentCategory(item)}
+                          >
+                            {item.name}
+                          </span>
+                        </span>
+                      ))}
+                  </div>
+                </div> */}
               </div>
               <div className="col-12 row justify-content-evenly m-0">
                 <label

@@ -44,6 +44,14 @@ export const SidebarMenu: SidebarMenutype = {
     role:'all'
 
   },
+  Filterscripts: {
+    name: "Filter scripts",
+    path: "filter-scripts",
+    icon: "List",
+    hide: true,
+    role:'all'
+
+  },
   Report: {
     name: "Reports",
     path: "Report",
@@ -78,12 +86,12 @@ export const SidebarMenu: SidebarMenutype = {
 export const ActiveRoute = {
   ReportDetails: {
     name: "ReportDetails",
-    path: "ReportDetails",
+    path: "ReportDetails/:id",
     icon: "Report",
   },
   ScriptDetails: {
     name: "ScriptDetails",
-    path: "ScriptDetails",
+    path: "ScriptDetails/:id",
     icon: "Script",
   },
   ScriptEdit: {
@@ -98,7 +106,7 @@ export const ActiveRoute = {
   },
   TapeSummaryResult: {
     name: "Tape Summary Result",
-    path: "tape-summary-results",
+    path: "tape-summary-results/:id",
     icon: "CategoryManager",
   },
   UserProfile:{

@@ -4,37 +4,37 @@ import Icon from "../../Comopnent/ui/icon/Icon";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
-import ArrowDown from '../../assest/image/arrow-down.png'
+import ArrowDown from "../../assest/image/arrow-down.png";
 import { ScriptData } from "../../DummyData/TableData";
-import { useCreateScriptMutation } from "../../Redux/Script"; 
+
 import { useGetAllProjectQuery } from "../../Redux/Project";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const ErrorHandle = () => {
- 
+  const { data, error, isLoading } = useGetAllProjectQuery({
+    token: "fds",
+    page_no: 1,
+    page_size: 1000,
+  });
 
-  const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
-console.log(data,'data');
-const store = useSelector((i)=>i)
-console.log(store,'store');
+  const store = useSelector((i) => i);
 
   const [selectedScripts, setSelectedScripts] = useState([]);
   const [sortedData, setSortedData] = useState<any>([]);
-  const [sortValue,setSortValue]=useState('')
-  const handleShort = (value:any)=>{
-    setSortValue(value)
-    if(value==='Last Created'){
-      const sortedArray =  ScriptData.sort((a: any, b: any) => {
-        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+  const [sortValue, setSortValue] = useState("");
+  const handleShort = (value: any) => {
+    setSortValue(value);
+    if (value === "Last Created") {
+      const sortedArray = ScriptData.sort((a: any, b: any) => {
+        return (
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        );
       });
-     
-      console.log(sortedArray.reverse() ,'sortedArray');
-      
-      setSortedData(sortedArray );
+
+      setSortedData(sortedArray);
     }
-  }
- 
+  };
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -63,17 +63,16 @@ console.log(store,'store');
         '#scriptsCheckboxes input[type="checkbox"]:checked'
       )
     ).map((checkbox: any) => checkbox.value);
-    setSelectedScripts({...selected,...selectedScripts});
+    setSelectedScripts({ ...selected, ...selectedScripts });
   };
- 
+
   return (
     <>
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h1">
-           Error Handle <span id="headerInfo">(5)</span>
+            Error Handle <span id="headerInfo">(5)</span>
           </h1>
-        
         </div>
         <div>
           {132 > -1 ? (
@@ -90,12 +89,12 @@ console.log(store,'store');
                   </h5>
                 </div>
                 <div className="col-2 mx-auto text-center">Category</div>
-                 
+
                 <div className="col-2 mx-auto text-center">Created</div>
                 <div className="col-2 mx-auto text-center">Last updated</div>
               </div>
               <div id="scriptsCheckboxes">
-                { ScriptData.slice(0,5).map((script: any) => (
+                {ScriptData.slice(0, 5).map((script: any) => (
                   <Link
                     to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
                     className="text-decoration-none text-black"
@@ -114,7 +113,7 @@ console.log(store,'store');
                           {script.title}
                         </span>
                       </div>
-               
+
                       <div className="col-2 mx-auto text-center wrap-word">
                         {script.category3}
                       </div>
@@ -136,9 +135,7 @@ console.log(store,'store');
           )}
         </div>
       </div>
-
-      <FilterModal show={show} handleClose={handleClose} />
-      <SaveModal show={Saveshow} handleClose={handleSaveClose}/>
+      <SaveModal show={Saveshow} handleClose={handleSaveClose} />
     </>
   );
 };

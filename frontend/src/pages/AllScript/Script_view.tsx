@@ -1,54 +1,111 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assest/css/AllScript.css";
 import Icon from "../../Comopnent/ui/icon/Icon";
-import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
 import LineChart from "../../Comopnent/Charts/LineChart";
 import ScatterLineChart from "../../Comopnent/Charts/LineScatter";
-import { useLocation, useNavigate } from "react-router-dom";
-import ChartTable from "../../Comopnent/Table/ChartTable";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  GetScriptByIDs,
+  RunScripts,
+  setLoading,
+} from "../../Redux/Script/ScriptSlice";
+import { tokenToString } from "typescript";
+import { loginUSer } from "../../customHook/getrole";
+import DateFormatter from "../../customHook/useTImeformnt";
+import DeleteModal from "../../Comopnent/ui/Modals/DeleteModal/DeleteModal";
+import Loader from "../../Comopnent/ui/Loader";
+import CsvTable from "../../Comopnent/TableData/CsvTable";
+import { object } from "yup";
+import StockMultiChartPlot from "./Ploty_Chart";
 
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
 };
 const ScriptView = () => {
+  const [dynmicView,setDynmicView]=useState(true)
   const location = useLocation();
   const navigate = useNavigate();
-  // Get the search parameters from the URL
-  const searchParams = new URLSearchParams(location.search);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const [loginUser, setLoginUser] = useState<any>(null);
 
-  // Retrieve the value of the 'chartname' parameter
-  const chartName: any = searchParams.get("chartname") || <div></div>;
+  // Effect to retrieve loginUser from localStorage on component mount
+  useEffect(() => {
+    const storedLoginUser = localStorage.getItem("login");
+    if (storedLoginUser) {
+      setLoginUser(JSON.parse(storedLoginUser));
+    }
+  }, []);
 
-  const Reanding = Components[chartName];
+  useEffect(() => {
+    dispatch(setLoading(true));
+    const getScript = async () => {
+      if (loginUser?.access) {
+        await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+        dispatch(setLoading(false));
+      }
+      
+    };
+    getScript();
+  }, [loginUser,id]);
+
+  const store: any = useSelector((i) => i);
+
+  const ScriptData = store?.script?.Script;
+console.log(ScriptData,'ScriptData');
+
+
+
+  const { loading } = store?.script;
 
   const [show, setShow] = useState(false);
+
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
   };
 
-  const [activeComponet, setActivecomponet] = useState("chart");
+  const [activeComponet, setActivecomponet] = useState("chart"); 
+  
   const today = new Date();
   const dateOnly = today.toISOString().split("T")[0];
 
   const editScript = () => {
     navigate(`/account/${ActiveRoute.ScriptEdit.path}`);
   };
+
+  const [changeView, setChangeView] = useState(false);
+  const [changeChartView, setChangeChartView] = useState(false);
+
+  const runScript = () => {
+    dispatch(setLoading(true));
+    try {
+      setTimeout(() => {
+        dispatch(RunScripts({ id: id, token: loginUser?.access }));
+      }, 200);
+    } catch (error) {
+      console.warn(error);
+    }
+  };
   return (
     <>
       <div className="mx-4">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3 pb-2 mb-3">
-          <div>
-            <h1 className="h1">
+        <div className="row justify-content-between flex-wrap flex-md-nowrap  px-3 pt-3 pb-2 mb-3">
+          <div className="col-md-7">
+            <h2 className="h2">
               {" "}
-              Gold Relative Strength <span id="headerInfo">(132)</span>{" "}
-            </h1>
-            <h6 className="ps-1">Last update {dateOnly}</h6>
+              {ScriptData.name}
+              {/* <span id="headerInfo">(132)</span>{" "} */}
+            </h2>
+            <h6 className="ps-1">
+              Last update <DateFormatter isoString={ScriptData.last_updated} />
+            </h6>
           </div>
-          <div className="btn-toolbar mb-2 mb-md-0">
+          <div className="col-md-5 btn-toolbar mb-2 mb-md-0">
             <button
               onClick={editScript}
               type="button"
@@ -57,18 +114,42 @@ const ScriptView = () => {
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
-            <button onClick={handleShow} className="btn icon-button my-1 mx-2">
+            <button onClick={runScript} className="btn icon-button my-1 mx-2">
               <Icon icon="PlayArrow" size="20px" />
               <span>Play</span>
             </button>
-            <button type="button" className="btn icon-button my-1 mx-2">
+            <button
+              type="button"
+              onClick={handleShow}
+              className="btn icon-button my-1 mx-2"
+            >
               <Icon icon="Delete" size="20px" />
 
               <span>Delete</span>
             </button>
+            {ScriptData?.output_type === "pd plt" && (
+              <button
+                onClick={() => setChangeView(!changeView)}
+                type="button"
+                className="btn icon-button my-1 mx-2"
+              >
+                <Icon icon={changeView ? "InsertChart" : "TableView"} size="20px"/>
+                <span>{changeView ? "Chart" : "Table"}</span>
+              </button>
+            )}
+
+{ScriptData?.output_type !== "pd" && (
+              <button
+                onClick={() => setDynmicView(!dynmicView)}
+                type="button"
+                className="btn icon-button my-1 mx-2"
+              >
+                <Icon icon={!dynmicView ? "AreaChart" : "AddChart"} size="20px"/>
+                <span>{!dynmicView ? "Static view" : "Plotly view"}</span>
+              </button>
+            )}
             {/* <button type="submit" form="customReportForm" className="btn icon-button my-1 mx-2  ">
                     <Icon icon='Info' size='20px'/>
-
                         <span>Info</span>
                     </button> */}
             <button
@@ -82,23 +163,28 @@ const ScriptView = () => {
               <div className="tooltip-text">
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Created:</h6>
-                  <p>July 1,2024,4:43pm</p>
+                  <p>
+                    {" "}
+                    <DateFormatter isoString={ScriptData.created} />{" "}
+                  </p>
                 </div>
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Last Run:</h6>
-                  <p>July 9,2024,8:53am</p>
+                  <p>
+                    {" "}
+                    <DateFormatter isoString={ScriptData.last_updated} />{" "}
+                  </p>
                 </div>
 
-{/* tooltip two */}
-
-                {/* <div>
+                {/* tooltip two */}
+                <div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>ID (for API)</h6>
-                    <p>224</p>
+                    <p>{ScriptData.id}</p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Category:</h6>
-                    <p>breadth--Breadth 1--general2</p>
+                    <p>{ScriptData.category?.name}</p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Uploaded: </h6>
@@ -106,64 +192,68 @@ const ScriptView = () => {
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Last Updated: </h6>
-                    <p>April 28,2024,10:01 am.</p>
+                    <p>
+                      <DateFormatter isoString={ScriptData.last_updated} />
+                    </p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Output data type: </h6>
                     <p>Chart(Using matplotlib.pyplot.savefig())</p>
                   </div>
-                </div> */}
+                </div>
               </div>
             </button>
-            {activeComponet === "table" && (
-              <button
-                type="submit"
-                form="customReportForm"
-                onClick={() => setActivecomponet("chart")}
-                className="btn icon-button my-1 mx-2  "
-              >
-                <Icon icon="InsertChart" size="20px" />
-
-                <span>Chart</span>
-              </button>
-            )}
-
-            {/* {activeComponet=== 'chart'   &&  <button type="submit" form="customReportForm" onClick={()=>setActivecomponet('table')} className="btn icon-button my-1 mx-2  ">
-                    <Icon icon='TableRows' size='20px'/>
-
-                        <span>Table</span>
-                    </button>} */}
           </div>
         </div>
         <div></div>
         <PresentPastToggle />
-        {activeComponet === "table" && (
-          <div
-            style={{
-              width: "90%",
-              margin: "0px auto",
-            }}
-          >
-            <ChartTable />
-          </div>
-        )}
-        {activeComponet === "chart" && (
-          <div
-            style={{
-              width: "80%",
-              margin: "0px auto",
-            }}
-          >
-            <Reanding />
-            <Reanding />
-            <Reanding />
+        {loading ? (
+          <Loader />
+        ) : (
+          <div>
+            {ScriptData?.output_type === "plt" ||
+            (ScriptData?.output_type === "pd plt" && changeView === false) ? (
+              <>
+             {dynmicView ? <div
+                style={{
+                  width: "100%",
+                  margin:'0 auto'
+                }}
+              >
+                {/* <LineChart /> */}
+                <img
+                  src={ScriptData?.chart_data?.image_file}
+                  alt="" 
+                  width="100%"
+                />
+        
+
+              </div>:
+            
+            
+            <div   >
+
+              {ScriptData?.chart_data.plotly_config.data && <StockMultiChartPlot data={ScriptData?.chart_data.plotly_config.data} layout={ScriptData?.chart_data.plotly_config.layout}/> }
+ </div>
+            
+          }
+          </>
+            ) : (
+              <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
+            )}
           </div>
         )}
       </div>
 
-      <FilterModal show={show} handleClose={handleClose} />
+      <DeleteModal
+        show={show}
+        token={loginUSer?.access}
+        data={ScriptData}
+        handleClose={handleClose}
+      />
     </>
   );
 };
 
 export default ScriptView;
+ 

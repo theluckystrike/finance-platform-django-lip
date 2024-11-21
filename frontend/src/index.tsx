@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import store from "./Store";
 import { ToastContainer } from "react-toastify";
 import { SidebarMenu } from "./Menu";
+ 
 
 // Create the router instance with all route configurations
 const router = createBrowserRouter([
@@ -35,5 +36,5 @@ ReactDOM.createRoot(rootElement).render(
 );
 
 // If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
+ 
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

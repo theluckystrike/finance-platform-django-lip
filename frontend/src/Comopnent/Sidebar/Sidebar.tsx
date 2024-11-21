@@ -6,23 +6,25 @@ import dummyUser from "../../assest/image/logo/user.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import useToast from "../../customHook/toast";
 import { MenuItem } from "../../types/MenuTypes";
-import { GetRole } from "../../customHook/getrole";
+import { GetRole, loginUSer } from "../../customHook/getrole";
+import { useSignOutMutation } from "../../Redux/AuthSlice";
 const Sidebar = () => {
-  const admin = GetRole()
+  const admin = GetRole();
   const navigate = useNavigate();
-const toast =useToast()
+  const toast = useToast();
   const changeRoute = (value: String) => {
     navigate(`${value}`);
   };
 
-
-  const logout = ()=>{
-    localStorage.removeItem('login');
-    navigate('/')
-    toast.InfoToast('Logout successful')
-  }
+  const [signout, Res] = useSignOutMutation();
+  const logout = async () => {
+    await signout({ token: loginUSer });
+    localStorage.removeItem("login");
+    navigate("/");
+    toast.InfoToast("Logout successful");
+  };
   return (
-    <div className="bg-green text-light vh-100 d-flex flex-column">
+    <div className="bg-green text-light vh-100 d-flex flex-column w-100">
       <div className="d-flex justify-content-center">
         <Logo className="icon" width={160} height={70} />
       </div>
@@ -32,11 +34,11 @@ const toast =useToast()
             <li
               onClick={() => changeRoute(value.path)}
               key={key}
-              style={{cursor: 'pointer'}}
+              style={{ cursor: "pointer" }}
               className={`row justify-content-evenly align-items-center ${
-                value?.hide  ? "d-none" : "" 
+                value?.hide ? "d-none" : ""
               }
-              ${admin !== value?.role && value?.role !== 'all' ? "d-none" : ""}
+              ${admin !== value?.role && value?.role !== "all" ? "d-none" : ""}
               `}
             >
               <div className="col-3">
@@ -51,8 +53,11 @@ const toast =useToast()
         <div className="user-profile-logo dropdown">
           <div
             className=""
-            style={{ borderRadius: "50%", overflow: "hidden",cursor: 'pointer' }}
-        
+            style={{
+              borderRadius: "50%",
+              overflow: "hidden",
+              cursor: "pointer",
+            }}
             id="dropdownMenuButton"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
@@ -64,20 +69,26 @@ const toast =useToast()
             className="dropdown-menu text-center fw-bold"
             aria-labelledby="dropdownMenuButton"
           >
-            <span className="dropdown-item" onClick={()=>navigate(`/account/${ActiveRoute.UserProfile.path}`)} >
+            <span
+              className="dropdown-item"
+              onClick={() =>
+                navigate(`/account/${ActiveRoute.UserProfile.path}`)
+              }
+            >
               Profile
             </span>
-            <span className="dropdown-item"  onClick={()=>{
-
-              window.location.href=`${process.env.REACT_APP_API_LOCAL_URL}admin`
-            }} >
-          Admin Portal
+            <span
+              className="dropdown-item"
+              onClick={() => {
+                window.location.href = `${process.env.REACT_APP_API_URL}admin`;
+              }}
+            >
+              Admin Portal
             </span>
-<span className="dropdown-item" onClick={logout}>
-
+            <span className="dropdown-item" onClick={logout}>
               Sign Out
-</span>
-     
+            </span>
+
             <div className="divss"></div>
           </div>
         </div>
