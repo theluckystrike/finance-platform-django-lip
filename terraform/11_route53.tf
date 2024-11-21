@@ -90,7 +90,7 @@ provider "aws" {
 resource "aws_acm_certificate" "cloudfront_cert" {
   domain_name       = "app.${var.root_domain}"
   validation_method = "DNS"
-  provider = aws.us_east_1
+  provider          = aws.us_east_1
 
 
   tags = {
