@@ -26,3 +26,7 @@ output "route_53_nameservers" {
   description = "Route 53 Zone nameservers"
   value       = aws_route53_zone.main.name_servers
 }
+
+output "cloudfront_url" {
+  value = aws_cloudfront_distribution.frontend_distribution.domain_name
+}
