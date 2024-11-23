@@ -60,6 +60,28 @@ resource "aws_route53_record" "www_record" {
     evaluate_target_health = true
   }
 }
+resource "aws_route53_record" "api_record" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "api.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.production.dns_name
+    zone_id                = aws_lb.production.zone_id
+    evaluate_target_health = true
+  }
+}
+resource "aws_route53_record" "admin_record" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "admin.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.production.dns_name
+    zone_id                = aws_lb.production.zone_id
+    evaluate_target_health = true
+  }
+}
 
 resource "aws_route53_record" "frontend_alias" {
   zone_id = aws_route53_zone.main.zone_id

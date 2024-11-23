@@ -157,7 +157,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django_hosts.middleware.HostsRequestMiddleware',
-    'olandinvestmentsapi.middleware.HealthCheckMiddleware',
+    'financeplatform.middleware.HealthCheckMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
