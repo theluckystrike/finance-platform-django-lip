@@ -84,7 +84,7 @@ jobs:
         --network-configuration "awsvpcConfiguration={subnets=[$(terraform output subnet1), $(terraform output subnet2)],securityGroups=[$(terraform output security_group)],assignPublicIp=ENABLED}"
     
     - name: Invalidate Cloudfront cache
-      run: cd terraform && aws cloudfront create-invalidation --distribution-id $(terraform output cloudfront_distribution_id) --paths '/*'
+      run: cd terraform && aws cloudfront create-invalidation --distribution-id $(terraform output -raw cloudfront_distribution_id) --paths '/*'
   
   deploy-frontend:
     name: Deploy Frontend
