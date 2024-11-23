@@ -37,19 +37,26 @@ CSRF_TRUSTED_ORIGINS = [
     "https://olandinvestments.com",
     "https://www.olandinvestments.com",
     "https://app.olandinvestments.com",
+    "https://admin.olandinvestments.com",
+    "https://api.olandinvestments.com",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://olandinvestments.com",
     "https://www.olandinvestments.com",
     "https://app.olandinvestments.com",
+    "https://admin.olandinvestments.com",
+    "https://api.olandinvestments.com",
 ]
 
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 ALLOWED_HOSTS = [
     "olandinvestments.com",
     "www.olandinvestments.com",
+    "admin.olandinvestments.com",
+    "api.olandinvestments.com",
     "api.localhost",
+    "admin.localhost",
     "localhost",
 ]
 
