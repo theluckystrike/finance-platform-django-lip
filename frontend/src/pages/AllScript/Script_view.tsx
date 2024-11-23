@@ -8,6 +8,7 @@ import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  GetSatusScriptByIDs,
   GetScriptByIDs,
   RunScripts,
   setLoading,
@@ -46,6 +47,7 @@ const ScriptView = () => {
     const getScript = async () => {
       if (loginUser?.access) {
         await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+        await getStatus()
         dispatch(setLoading(false));
       }
       
@@ -54,11 +56,27 @@ const ScriptView = () => {
   }, [loginUser,id]);
 
   const store: any = useSelector((i) => i);
-
+  const ScriptStatus = store?.script?.ScriptStatus; 
   const ScriptData = store?.script?.Script;
 console.log(ScriptData,'ScriptData');
+useEffect(() => {
+  let intervalId: any;
+  if (ScriptStatus.status === 'running') {
+    intervalId = setInterval(() => {
+      getStatus();
+    }, 5000);
+  }
 
+  if (ScriptStatus.status === 'success') {
+    clearInterval(intervalId);
+  }
 
+  return () => clearInterval(intervalId); // Clean up the interval on component unmount
+}, [ScriptStatus]);
+const getStatus =async ()=>{
+  await dispatch(GetSatusScriptByIDs({ id: id, token: loginUser?.access }));
+
+}
 
   const { loading } = store?.script;
 
@@ -81,11 +99,12 @@ console.log(ScriptData,'ScriptData');
   const [changeView, setChangeView] = useState(false);
   const [changeChartView, setChangeChartView] = useState(false);
 
-  const runScript = () => {
+  const runScript =async () => {
     dispatch(setLoading(true));
     try {
-      setTimeout(() => {
-        dispatch(RunScripts({ id: id, token: loginUser?.access }));
+      setTimeout(async () => {
+       await dispatch(RunScripts({ id: id, token: loginUser?.access }));
+       getStatus()
       }, 200);
     } catch (error) {
       console.warn(error);
@@ -114,10 +133,23 @@ console.log(ScriptData,'ScriptData');
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
-            <button onClick={runScript} className="btn icon-button my-1 mx-2">
-              <Icon icon="PlayArrow" size="20px" />
+
+            <button
+              type="button"
+             
+              className="btn icon-button my-1 mx-2"
+            >
+             {ScriptStatus.status === 'running'?<>
+              <Loader />
+              <span>Running</span>
+             </>
+              : <>
+              <Icon icon="PlayArrow" onClick={runScript} size="20px" />
               <span>Play</span>
+             </>
+              }
             </button>
+          
             <button
               type="button"
               onClick={handleShow}
