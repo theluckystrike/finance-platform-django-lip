@@ -4,7 +4,7 @@ Configuration for different URLs that are used by the application.
 Each URL is connected to a view (like a page) in the views file.
 """
 
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 
@@ -56,4 +56,7 @@ urlpatterns = [
          views.update_category, name="update_category"),
     path('manage-categories/delete/<pk>/',
          views.delete_category, name="delete_category"),
+
+
+    path('accounts/', include("django.contrib.auth.urls")),
 ]

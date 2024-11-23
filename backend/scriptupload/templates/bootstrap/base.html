@@ -245,9 +245,6 @@
             <img class="dropdown-toggle" data-bs-toggle="dropdown" src="{% static 'bootstrap/img/user_icon.svg' %}"
               alt="User Icon" width="50px">
             <ul class="dropdown-menu mb-2 text-center">
-              {% if user.is_superuser %}
-              <li><a href="{% url 'admin:index' %}" class="dropdown-item">Admin portal</a></li>
-              {% endif %}
               <li><a href="{% url 'logout' %}" class="dropdown-item">Sign Out</a></li>
             </ul>
           </div>
