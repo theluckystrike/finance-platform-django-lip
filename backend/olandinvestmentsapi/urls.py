@@ -23,6 +23,21 @@ from olandinvestmentsapi.views import (
     SearchView
 )
 from rest_framework import routers
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Oland Investments API",
+        default_version='v2',
+        description="Full API reference documentation for the Oland Investments platform",
+        terms_of_service="https://www.google.com/policies/terms/",
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('scripts', ScriptViewSet, basename='scripts')
@@ -32,28 +47,37 @@ router.register('reports', ReportViewSet, basename='reports')
 router.register('summaries', SummaryViewSet, basename='summaries')
 
 urlpatterns = [
-    path('api/auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/refresh-token', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/auth/logout', LogoutView.as_view(), name='token_logout'),
-    path('api/auth/user-info', UserInfoView.as_view(), name='user_detail'),
+    # api doc routes
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0),
+         name='schema-json'),
+    path('documentation/', schema_view.with_ui('swagger',
+         cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc',
+         cache_timeout=0), name='schema-redoc'),
+
+    # api routes
+    path('auth/login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/refresh-token', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/logout', LogoutView.as_view(), name='token_logout'),
+    path('auth/user-info', UserInfoView.as_view(), name='user_detail'),
     # path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     # Script Views
-    path('api/scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
-    path('api/scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
+    path('scripts/<int:pk>/status', ScriptStatusView.as_view(), name='script_status'),
+    path('scripts/<int:pk>/run', ScriptRunView.as_view(), name='script_run'),
     # Categories
-    path('api/categories/tree', CategoryTreeView.as_view(), name='category_tree'),
+    path('categories/tree', CategoryTreeView.as_view(), name='category_tree'),
     # Search
-    path('api/search', SearchView.as_view(), name='search'),
+    path('search', SearchView.as_view(), name='search'),
     # Reports
-    path('api/reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
-    path('api/reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
-    path('api/reports/merge',
+    path('reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
+    path('reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
+    path('reports/merge',
          MergeReportsView.as_view(), name='merge_reports'),
     # Summaries
-    path('api/summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_update'),
-    path('api/summaries/<int:pk>/update',
+    path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_update'),
+    path('summaries/<int:pk>/update',
          SummaryUpdateView.as_view(), name='summary_status'),
     # Router urls
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 
 ]
