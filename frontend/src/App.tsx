@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
-    <HelmetProvider>
+    <HelmetProvider>   
       <div className="App">
         <Helmet>
           <title>Oland Investments </title>
