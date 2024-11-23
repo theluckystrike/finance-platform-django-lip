@@ -68,20 +68,25 @@ const UploadScriptForm = () => {
     },
     validationSchema,
     onSubmit: async (values: any, { resetForm }) => {
-      // Create FormData object
+    
       const formData = new FormData();
-      formData.append("category", values.category);
+      formData.append("category", values.category );
       formData.append("output_type", "plt");
       formData.append("name", values.name);
       formData.append("file", values.file);
       formData.append("description", values.description);
       // Dispatch the action with FormData
-      await dispatch(
-        CreateScripts({ formData, token: loginUser?.access }) as any
+     const res=  await dispatch(
+        CreateScripts({ formData:{...values,category:{name:values.category}}, token: loginUser?.access }) as any
       );
+      console.log(res);
+      
       resetForm();
       fileRef.current.value = "";
-      handleToast.SuccessToast(`New Script added successfully`);
+      if(!res.error){
+
+        handleToast.SuccessToast(`New Script added successfully`);
+      }
     },
   });
 const [FilterCategory,setFilterCategory]=useState([])
@@ -148,7 +153,7 @@ useEffect(()=>{
                             key={item.name}
                             onClick={async () => {
                              await formik.setFieldValue("parentName", item.name);
-                             await  formik.setFieldValue("category", item.id);
+                             await  formik.setFieldValue("category", item.name);
                              setFilterCategory([])
                             }} >
                             {item.name}
