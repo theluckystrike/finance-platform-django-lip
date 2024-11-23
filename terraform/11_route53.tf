@@ -2,7 +2,7 @@ resource "aws_acm_certificate" "cert" {
   domain_name       = var.root_domain
   validation_method = "DNS"
 
-  subject_alternative_names = ["www.${var.root_domain}"]
+  subject_alternative_names = ["www.${var.root_domain}", "api.${var.root_domain}", "admin.${var.root_domain}"]
 
   tags = {
     Name = "oi_prod_domain_certificate"
