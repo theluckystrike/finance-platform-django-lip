@@ -10,6 +10,7 @@ env:
 permissions:
   contents: read 
   
+jobs:
   deploy-frontend:
     name: Deploy Frontend
     runs-on: ubuntu-latest
