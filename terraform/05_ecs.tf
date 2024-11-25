@@ -19,7 +19,9 @@ locals {
       { name = "REDISCLOUD_URL", value = var.rediscloud_url },
       { name = "FP_HEROKU_API_KEY", value = var.fp_heroku_api_key },
       { name = "FRED_API_KEY", value = var.fred_api_key },
-      { name = "MPLBACKEND", value = "Agg" }
+      { name = "MPLBACKEND", value = "Agg" },
+      { name = "OI_API_URL", value = "https://app.${var.root_domain}/" },
+
     ])
   }
 }
