@@ -3,15 +3,26 @@ import {
   CreateScript,
   DeleteScriptByID,
   GetAllScript,
+  GetSatusScriptByID,
   GetScriptbyCategory,
   GetScriptByID,
   RunScript,
   UpdateScript,
 } from "./ScriptApi";
 
-const initialState: any = {
+interface ScriptState {
+  Scripts: any[]; // You can specify a more specific type if you know the structure of scripts
+  Script: any[]; // Same as above, specify the correct type if known
+  ScriptStatus: string;
+  Active_Role: string;
+  page: number;
+  loading: boolean;
+  error: any; // You can refine this to be more specific if you know the error type
+}
+const initialState: ScriptState = {
   Scripts: [],
   Script: [],
+  ScriptStatus:'',
   Active_Role: "",
   page: 1,
   loading: false,
@@ -61,6 +72,10 @@ export const GetScriptbyCategorys: any = AsyncFunctionThunk(
   "GetScriptbyCategorys",
   GetScriptbyCategory
 );
+export const GetSatusScriptByIDs:any = AsyncFunctionThunk(
+  'GetSatusScriptByIDs',
+  GetSatusScriptByID
+  );
 
 const ScriptSlice = createSlice({
   name: "ScriptSlice",
@@ -80,6 +95,17 @@ const ScriptSlice = createSlice({
         state.loading = true;
       })
       .addCase(CreateScripts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetSatusScriptByIDs.fulfilled, (state, action) => {
+        state.ScriptStatus = action.payload;
+        state.loading = false;
+      })
+      .addCase(GetSatusScriptByIDs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(GetSatusScriptByIDs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

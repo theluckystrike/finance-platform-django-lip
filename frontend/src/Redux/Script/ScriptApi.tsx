@@ -71,7 +71,19 @@ export const GetScriptbyCategory = async (data: any) => {
     throw error;
   }
 };
+// Get status Script by ID
+export const GetSatusScriptByID = async (data:any) => {
+  const { id } = data;
 
+  try {
+    const response = await axiosInstance.get(
+      `${endpoint.scripts}/${id}/status`
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 // Run Script
 export const RunScript = async (data: any) => {
   const { id } = data;
