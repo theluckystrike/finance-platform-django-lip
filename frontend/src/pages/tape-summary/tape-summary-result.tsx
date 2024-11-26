@@ -93,6 +93,7 @@ useEffect(() => {
   }
 
   if (summeryStatus.status === 'success') {
+    dispatch(GetsummeryByIDs({ id }));
     clearInterval(intervalId);
   }
 

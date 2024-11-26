@@ -68,6 +68,8 @@ useEffect(() => {
   }
 
   if (ScriptStatus.status === 'success') {
+      dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+
     clearInterval(intervalId);
   }
 
