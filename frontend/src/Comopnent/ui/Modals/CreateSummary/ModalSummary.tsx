@@ -48,12 +48,10 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
   const addScript = async () => {
     if (selectedScriptId) {
- 
-      const res =    await dispatch(GetScriptByIDs({ id: selectedScriptId,  }));
+      const res = await dispatch(GetScriptByIDs({ id: selectedScriptId }));
       console.log(res.payload);
-      if(res.meta.requestStatus === 'fulfilled')
-      
-      setSelectScript((prev) => [...prev, res.payload]);
+      if (res.meta.requestStatus === "fulfilled")
+        setSelectScript((prev) => [...prev, res.payload]);
       setSelectedScriptId("");
     }
   };
@@ -135,8 +133,11 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
               </div>
 
               <div className="col-2 mb-3 text-center">
-                <label htmlFor="column" className="form-label  d-block invisible">
-                     {' dfdd'}
+                <label
+                  htmlFor="column"
+                  className="form-label  d-block invisible"
+                >
+                  {" dfdd"}
                 </label>
                 <button
                   type="button"

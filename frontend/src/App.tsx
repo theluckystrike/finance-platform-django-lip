@@ -1,10 +1,10 @@
-import React from 'react';
-import { HelmetProvider, Helmet } from 'react-helmet-async';
-import { Outlet } from 'react-router-dom';
+import React from "react";
+import { HelmetProvider, Helmet } from "react-helmet-async";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
-    <HelmetProvider>   
+    <HelmetProvider>
       <div className="App">
         <Helmet>
           <title>Oland Investments </title>
@@ -16,9 +16,6 @@ function App() {
             name="keywords"
             content="Oland Investments, stock market analysis, data analysis, Python charts, investment insights, stock tables, market trends, financial analysis, stock data visualization, trading insights"
           />
-       
-         
-          
         </Helmet>
         <Outlet />
       </div>
