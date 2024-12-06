@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { DeleteScriptByIDs } from "../../../../Redux/Script/ScriptSlice";
+import { DeleteScriptByIDs, GetAllScripts } from "../../../../Redux/Script/ScriptSlice";
 
 interface DeleteModalProps {
   show: boolean;
@@ -21,9 +21,11 @@ const DeleteModal: FC<DeleteModalProps> = ({
   const navigate = useNavigate();
   const dispatch=useDispatch()
 
-  const handleDelete = () => {
+  const handleDelete =async () => {
     dispatch(DeleteScriptByIDs({token,id:data.id}))
+    await dispatch(GetAllScripts({ }))
     handleClose();
+    navigate('/account/allscripts')
   };
 
   return (
