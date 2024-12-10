@@ -33,7 +33,7 @@ const ScriptView = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [loginUser, setLoginUser] = useState<any>(null);
-
+ 
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -58,7 +58,7 @@ const ScriptView = () => {
   const store: any = useSelector((i) => i);
   const ScriptStatus = store?.script?.ScriptStatus; 
   const ScriptData = store?.script?.Script;
-console.log(ScriptData,'ScriptData');
+ 
 useEffect(() => {
   let intervalId: any;
   if (ScriptStatus.status === 'running') {
@@ -72,6 +72,10 @@ useEffect(() => {
 
     clearInterval(intervalId);
   }
+  if (ScriptStatus.status === 'failure') {
+  
+  clearInterval(intervalId);
+}
 
   return () => clearInterval(intervalId); // Clean up the interval on component unmount
 }, [ScriptStatus]);
@@ -243,7 +247,14 @@ const getStatus =async ()=>{
         <PresentPastToggle />
         {loading ? (
           <Loader />
-        ) : (
+        ) : ( <div>
+{ScriptStatus.status === 'failure' ? <>
+
+  <div style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '5px' }}>
+          <h3>Error</h3>
+          <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{ScriptStatus.error_message}</pre>
+        </div>
+</>:
           <div>
             {ScriptData?.output_type === "plt" ||
             (ScriptData?.output_type === "pd plt" && changeView === false) ? (
@@ -260,22 +271,18 @@ const getStatus =async ()=>{
                   alt="" 
                   width="100%"
                 />
-        
-
               </div>:
-            
-            
-            <div   >
-
+            <div>
               {ScriptData?.chart_data.plotly_config.data && <StockMultiChartPlot data={ScriptData?.chart_data.plotly_config.data} layout={ScriptData?.chart_data.plotly_config.layout}/> }
- </div>
-            
+            </div>
           }
           </>
             ) : (
               <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
             )}
-          </div>
+          </div>}
+        </div>
+
         )}
       </div>
 

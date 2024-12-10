@@ -64,7 +64,7 @@ export const GetScriptbyCategory = async (data: any) => {
   const { value } = data
   try {
     const response = await axiosInstance.get(
-      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=all`
+      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=${value?.status === ''?'all':value?.status}`
     );
     return response;
   } catch (error) {

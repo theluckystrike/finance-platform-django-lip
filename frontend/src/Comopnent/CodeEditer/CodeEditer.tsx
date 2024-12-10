@@ -11,16 +11,6 @@ export default function CodeEdit({code,setCode}:any) {
 
   return (
     <div>
-      {/* <div style={{ marginBottom: '10px' }}>
-        <label htmlFor="language-select" style={{ marginRight: '10px' }}>Select Language:</label>
-        <select id="language-select" value={language} onChange={handleLanguageChange}>
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-          <option value="java">Java</option>
- 
-        </select>
-      </div> */}
-
       <CodeEditor
         value={code}
         language='python'
