@@ -178,5 +178,5 @@ variable "email_password" {
 
 variable "email_default_from_address" {
   description = "Default email from address"
-  default = "no-reply@olandinvestments.com"
+  default     = "no-reply@olandinvestments.com"
 }
