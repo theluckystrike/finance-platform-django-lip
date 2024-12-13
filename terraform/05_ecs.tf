@@ -20,6 +20,10 @@ locals {
       { name = "FP_HEROKU_API_KEY", value = var.fp_heroku_api_key },
       { name = "FRED_API_KEY", value = var.fred_api_key },
       { name = "MPLBACKEND", value = "Agg" },
+      { name = "AWS_SMTP_USER", value = var.email_user },
+      { name = "AWS_SMTP_PASSWORD", value = var.email_password },
+      { name = "AWS_EMAIL_HOST", value = var.email_host },
+      { name = "DEFAULT_FROM_EMAIL", value = var.email_default_from_address },
       { name = "OI_API_URL", value = "https://api.${var.root_domain}/" }
     ])
   }
