@@ -155,7 +155,7 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
           </Pagination>
         )}
 
-        <Select
+        <Select 
           // size='sm'
           style={{ width: "67px", padding: " 0px 0px 0px 12px" }}
           ariaLabel="Per"
