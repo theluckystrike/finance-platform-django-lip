@@ -184,7 +184,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
                   <button
                     onClick={() =>
-                      navigate(`/account/${ActiveRoute.CategoryManager.path}`)
+                      navigate(`${ActiveRoute.CategoryManager.path}`)
                     }
                     className="btn border border-dark col-5 px-3 fw-bold"
                     type="button"

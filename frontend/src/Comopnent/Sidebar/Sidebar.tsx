@@ -72,7 +72,7 @@ const Sidebar = () => {
             <span
               className="dropdown-item"
               onClick={() =>
-                navigate(`/account/${ActiveRoute.UserProfile.path}`)
+                navigate(`${ActiveRoute.UserProfile.path}`)
               }
             >
               Profile

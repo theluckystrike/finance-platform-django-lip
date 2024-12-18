@@ -18,7 +18,7 @@ import { SidebarMenu } from "./Menu";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={`account/${SidebarMenu.upload.path}`} replace />,
+    element: <Navigate to={`${SidebarMenu.upload.path}`} replace />,
   },
   ...SimpleRoute,
   ...AuthRoute

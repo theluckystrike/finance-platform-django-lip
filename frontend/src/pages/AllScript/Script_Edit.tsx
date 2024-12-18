@@ -55,7 +55,7 @@ const ScriptEdit = () => {
       );
 
       if (response.status === 200) {
-        Navigate(`/account/ScriptDetails/${ScriptData?.id}`);
+        Navigate(`ScriptDetails/${ScriptData?.id}`);
         handleToast.SuccessToast(`Script updated successfully`);
         // Navigate after successful update
       }

@@ -99,7 +99,7 @@ const getStatus =async ()=>{
   const dateOnly = today.toISOString().split("T")[0];
 
   const editScript = () => {
-    navigate(`/account/${ActiveRoute.ScriptEdit.path}`);
+    navigate(`${ActiveRoute.ScriptEdit.path}`);
   };
 
   const [changeView, setChangeView] = useState(false);
