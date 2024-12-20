@@ -52,7 +52,7 @@ ALLOWED_HOSTS = [
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Determing if AWS S3 is being used based on the environment variable "USE_S3"
-USE_S3 = os.environ.get("USE_S3") == "True"
+USE_S3 = os.environ.get("USE_S3") == "False"
 
 # Get the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,7 +64,7 @@ DEBUG = False if IS_AWS else True
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
+SECRET_KEY = os.environ.get("SECRET_KEY", "FCwBU_SZ0JbdzWtL_UZcoEo0LujXEcCucXFj2kBqDNRpN636axaV7NeKG3M0Sh7lo-k")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 

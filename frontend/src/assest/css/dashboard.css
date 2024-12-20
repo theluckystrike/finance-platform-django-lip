@@ -186,9 +186,11 @@ body {
     font-weight: 500;
 }
 
-/* .icon-button:hover svg {
-    stroke: white;
-} */
+.icon-button:hover svg {
+  border: none;
+  color: white;
+  /* stroke: white; */
+}
 .icon-button:hover i {
     color: white;
 }
