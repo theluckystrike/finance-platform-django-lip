@@ -83,7 +83,7 @@ class ScriptViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return ScriptSerializerLite
-        elif self.action == 'create':
+        elif self.action in ['create', 'partial_update']:
             return ScriptUploadSerializer
         return super().get_serializer_class()
 
