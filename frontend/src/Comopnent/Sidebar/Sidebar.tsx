@@ -80,7 +80,7 @@ const Sidebar = () => {
             <span
               className="dropdown-item"
               onClick={() => {
-                window.location.href = `${process.env.REACT_APP_API_URL}admin`;
+                window.location.href = `${process.env.REACT_APP_ADMIN_URL}`;
               }}
             >
               Admin Portal
