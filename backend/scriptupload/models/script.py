@@ -67,7 +67,7 @@ class Script(models.Model):
             new_status = status
         self.status = new_status
         self.error_message = error_message
-        self.save(update_fields=["status", "error_message"])
+        self.save()
 
     def set_last_updated(self):
         self.last_updated = timezone.now()
