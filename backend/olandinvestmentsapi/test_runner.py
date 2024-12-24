@@ -1,3 +1,5 @@
+from collections.abc import Callable  # Modern way to import Callable
+from django_nose.runner import NoseTestSuiteRunner
 import subprocess
 import time
 import logging
@@ -87,7 +89,7 @@ class RQWorkerProcess:
             self.process.wait()
 
 
-class TestRunner(DiscoverRunner):
+class ColorTestRunner(DiscoverRunner):
     test_runner = ColorTextTestRunner
 
     def setup_test_environment(self, **kwargs):
@@ -103,3 +105,27 @@ class TestRunner(DiscoverRunner):
         self.worker_process.stop()
         self.redis_process.stop()
         super().teardown_test_environment(**kwargs)
+
+
+class CustomNoseTestRunner(NoseTestSuiteRunner):
+    def setup_test_environment(self, **kwargs):
+        logging.disable(logging.CRITICAL)
+        super().setup_test_environment(**kwargs)
+        self.redis_process = RedisProcess()
+        self.worker_process = RQWorkerProcess()
+        self.redis_process.start()
+        self.worker_process.start()
+
+    def teardown_test_environment(self, **kwargs):
+        logging.disable(logging.NOTSET)
+        self.worker_process.stop()
+        self.redis_process.stop()
+        super().teardown_test_environment(**kwargs)
+
+    def run_suite(self, nose_argv):
+        from nose.suite import LazySuite
+        # Monkey patch the Callable check
+        import collections
+        if not hasattr(collections, 'Callable'):
+            collections.Callable = Callable
+        return super().run_suite(nose_argv)

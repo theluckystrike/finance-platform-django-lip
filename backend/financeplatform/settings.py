@@ -84,7 +84,13 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
 
 # test_settings.py
-TEST_RUNNER = 'olandinvestmentsapi.test_runner.TestRunner'
+TEST_RUNNER = 'olandinvestmentsapi.test_runner.CustomNoseTestRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=olandinvestmentsapi',
+    '--cover-html',
+]
 
 # Application definition
 
@@ -109,6 +115,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_rq',
     'django_hosts',
+    'django_nose',
 ]
 
 # django-rq
