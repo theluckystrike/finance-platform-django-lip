@@ -12,7 +12,7 @@ def code_string_to_file(code: str, filename: str):
     return File(BytesIO(code.encode('utf-8')), name=filename)
 
 
-class ScriptsTests(APITestCase):
+class ScriptTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username='testuser',
@@ -144,3 +144,6 @@ class ScriptsTests(APITestCase):
         self.script.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.script.status, Script.ExecutionStatus.RUNNING)
+
+
+
