@@ -49,7 +49,7 @@ urlpatterns = [
     path('reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
     path('reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
     path('reports/merge',
-         MergeReportsView.as_view(), name='merge_reports'),
+         MergeReportsView.as_view(), name='reports_merge'),
     # Summaries
     path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_update'),
     path('summaries/<int:pk>/update',

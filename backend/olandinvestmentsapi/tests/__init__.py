@@ -1,2 +1,2 @@
-from .category_tests import CategoryTests
-from .script_tests import ScriptTests
+from .category_views_tests import CategoryTests
+from .script_views_tests import ScriptTests

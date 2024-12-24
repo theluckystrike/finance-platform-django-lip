@@ -1,4 +1,4 @@
-from collections.abc import Callable  # Modern way to import Callable
+from collections.abc import Callable
 from django_nose.runner import NoseTestSuiteRunner
 import subprocess
 import time

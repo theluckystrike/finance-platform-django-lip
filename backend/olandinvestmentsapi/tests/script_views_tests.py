@@ -144,6 +144,3 @@ class ScriptTests(APITestCase):
         self.script.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.script.status, Script.ExecutionStatus.RUNNING)
-
-
-
