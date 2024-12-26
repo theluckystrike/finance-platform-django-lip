@@ -64,9 +64,14 @@ class RedisProcess:
         self.process = None
 
     def start(self):
-        self.process = subprocess.Popen(
-            ['redis-server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(1)
+        # catch exception if redis-server is not installed
+        # github actions has redis installed as a seperate service
+        try:
+            self.process = subprocess.Popen(
+                ['redis-server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1)
+        except Exception as e:
+            print(f"Failed to run Redis server: {e}")
 
     def stop(self):
         if self.process:
