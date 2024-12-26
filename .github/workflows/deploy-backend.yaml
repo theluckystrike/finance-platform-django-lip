@@ -33,6 +33,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install Requirements
+      run: |
+        cd backend
+        pip install -r requirements.txt
+
     - name: Test Backend
       env:
         SECRET_KEY: ${{ github.sha }}
