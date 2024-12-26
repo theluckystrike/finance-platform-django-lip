@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
 import os
 from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
@@ -392,8 +391,6 @@ APPEND_SLASH = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-django_heroku.settings(locals(), logging=False)
 
 if USE_S3:
     # aws settings
