@@ -119,7 +119,7 @@ const Report = () => {
                           <td className="col-1 fw-bold fs-6">{index + 1}</td>
                           <td className="col-7 fw-bold fs-6">
                             <Link
-                              to={`/account/ReportDetails/${script.id}`}
+                              to={`ReportDetails/${script.id}`}
                               className="text-decoration-none text-black"
                             >
                               {script.name}

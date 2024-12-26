@@ -52,7 +52,6 @@ const TapeSummaryResult: React.FC = () => {
   const store: any = useSelector((i) => i);
 
   const { summery } = useSelector((i: any) => i?.summary);
-  console.log(summery, "summerysummery");
 
   const summery2 = summery?.meta?.scripts
     ? Object.entries(summery.meta.scripts).map(([id, script]: any) => ({
@@ -62,8 +61,6 @@ const TapeSummaryResult: React.FC = () => {
         score: script.table_col_last_value || 0, // Default score if null
       }))
     : []; // Fallback to an empty array if `summery.meta.scripts` is undefined
-
-  // console.log(summery2);
   const [upLoad, setUpload] = useState(false);
   const getupdate = async () => {
     setUpload(true);
@@ -80,7 +77,6 @@ const TapeSummaryResult: React.FC = () => {
   const [deleteshow, setDeleteShow] = useState(false);
   const [editShow, setEditShow] = useState(false);
   const summeryStatus = store?.summary?.summeryStatus;
-  console.log(summeryStatus);
 
   const getStatus = async () => {
     await dispatch(GetSatussummeryByIDs({ id: id }));
@@ -209,7 +205,7 @@ const TapeSummaryResult: React.FC = () => {
                     >
                       {" "}
                       <Link
-                        to={`/account/ScriptDetails/${script.id}`}
+                        to={`ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
                       >
                         <div className="text-left">

@@ -6,9 +6,6 @@ import { endpoint } from '../endpoint';
 // Create summery
 export const Createsummery = async (data:any) => {
   const { values } = data;
- console.log(values,'1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/');
- 
-
   try {
     const response = await axiosInstance.post(
       endpoint.summaries,

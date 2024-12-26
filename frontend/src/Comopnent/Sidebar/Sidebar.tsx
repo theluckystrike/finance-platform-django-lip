@@ -30,9 +30,10 @@ const Sidebar = () => {
       </div>
       <div className="d-flex justify-content-center">
         <ul className="sidebar-menu fw-bold">
-          {Object.entries(SidebarMenu).map(([key, value]: any) => (
+          {Object.entries(SidebarMenu).map(([key, value]: any) => 
+          (
             <li
-              onClick={() => changeRoute(value.path)}
+              onClick={() => changeRoute(value?.path)}
               key={key}
               style={{ cursor: "pointer" }}
               className={`row justify-content-evenly align-items-center ${
@@ -72,7 +73,7 @@ const Sidebar = () => {
             <span
               className="dropdown-item"
               onClick={() =>
-                navigate(`/account/${ActiveRoute.UserProfile.path}`)
+                navigate(`${ActiveRoute.UserProfile.path}`)
               }
             >
               Profile
@@ -80,7 +81,7 @@ const Sidebar = () => {
             <span
               className="dropdown-item"
               onClick={() => {
-                window.location.href = `${process.env.REACT_APP_API_URL}admin`;
+                window.location.href = `${process.env.REACT_APP_ADMIN_URL}`;
               }}
             >
               Admin Portal

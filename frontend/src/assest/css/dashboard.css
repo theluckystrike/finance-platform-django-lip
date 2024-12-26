@@ -187,7 +187,9 @@ body {
 }
 
 .icon-button:hover svg {
-    stroke: white;
+  border: none;
+  color: white;
+  /* stroke: white; */
 }
 .icon-button:hover i {
     color: white;
