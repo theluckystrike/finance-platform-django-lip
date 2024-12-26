@@ -52,7 +52,7 @@ ALLOWED_HOSTS = [
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Determing if AWS S3 is being used based on the environment variable "USE_S3"
-USE_S3 = os.environ.get("USE_S3") == "False"
+USE_S3 = os.environ.get("USE_S3") == "True"
 
 # Get the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent

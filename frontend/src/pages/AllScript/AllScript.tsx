@@ -14,6 +14,7 @@ import { loginUSer } from "../../customHook/getrole";
 import DateFormatter from "../../customHook/useTImeformnt";
 import Loader from "../../Comopnent/ui/Loader";
 import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
+
 import PaginationButtons, {
   dataPagination,
   PER_COUNT,
@@ -42,8 +43,13 @@ const CustomReport = () => {
    
     if (loginUser) {
       const getDAta = async () => {
-        try {          
-            await dispatch(GetAllScripts({ token: loginUser?.access }));  
+        try {
+          // alert('running')
+          // console.log(allscripts.length ,filterQuery);
+          
+          
+            await dispatch(GetAllScripts({ token: loginUser?.access }));
+          
         } catch (error) {
           console.log(error);
         }
@@ -264,7 +270,7 @@ const CustomReport = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`/ScriptDetails/${script.id}`}
+                                to={`/account/ScriptDetails/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>

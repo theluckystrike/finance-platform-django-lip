@@ -83,8 +83,8 @@ const navigate =useNavigate()
           >
             {isLoading ? <Loader/> : (searchData && searchData.map((item: any, index: any) => (
               // <Link  key={index} style={{textDecoration:'none'}}
-              // to={`ScriptDetails/${item.id}`}>
-              <span className="hover-span" onClick={()=>changeRoute(`ScriptDetails/${item.id}`)}>
+              // to={`/account/ScriptDetails/${item.id}`}>
+              <span className="hover-span" onClick={()=>changeRoute(`/account/ScriptDetails/${item.id}`)}>
                 {item?.name}
               </span> 
               // </Link>

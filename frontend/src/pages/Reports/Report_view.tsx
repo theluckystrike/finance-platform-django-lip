@@ -304,7 +304,7 @@ const ReportViwe = () => {
                         >
                           <td className="col-5">
                             <Link
-                              to={`ScriptDetails/${report.id}`}
+                              to={`/account/ScriptDetails/${report.id}`}
                               className="text-decoration-none text-black"
                             >
                               <span className="fw-bold fs-6">

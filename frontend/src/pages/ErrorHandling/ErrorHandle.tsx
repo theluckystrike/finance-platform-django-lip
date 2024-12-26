@@ -30,7 +30,9 @@ const ErrorScripts = () => {
   const [filterQuery,setFilterQuery]=useState<any>(null)
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-    const filter= localStorage.getItem('filterquery')    
+    const filter= localStorage.getItem('filterquery')
+    console.log(filter);
+    
     const storedLoginUser = localStorage.getItem("login");
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
@@ -274,7 +276,7 @@ const ErrorScripts = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`ScriptDetails/${script.id}`}
+                                to={`/account/ScriptDetails/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>

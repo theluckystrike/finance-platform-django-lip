@@ -68,6 +68,7 @@ const UploadScriptForm = () => {
     },
     validationSchema,
     onSubmit: async (values: any, { resetForm }) => {
+    
       const formData = new FormData();
       formData.append("category", values.category );
       formData.append("output_type", "plt");
@@ -76,8 +77,9 @@ const UploadScriptForm = () => {
       formData.append("description", values.description);
       // Dispatch the action with FormData
      const res=  await dispatch(
-        CreateScripts({ formData, token: loginUser?.access }) as any
+        CreateScripts({ formData:{...values,category:{name:values.category}}, token: loginUser?.access }) as any
       );
+      console.log(res);
       
       resetForm();
       fileRef.current.value = "";
@@ -107,7 +109,6 @@ useEffect(()=>{
 
   FilterData(formik.values.parentName)
 },[formik.values.parentName])
-
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
@@ -145,7 +146,6 @@ useEffect(()=>{
                     />
                   <div className="dropdown-content"
                    style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}>
-
                       {FilterCategory.length > 0  &&
                         FilterCategory.map((item: any, index: any) => (
                           <span
@@ -153,7 +153,7 @@ useEffect(()=>{
                             key={item.name}
                             onClick={async () => {
                              await formik.setFieldValue("parentName", item.name);
-                             await  formik.setFieldValue("category", item.id);
+                             await  formik.setFieldValue("category", item.name);
                              setFilterCategory([])
                             }} >
                             {item.name}
