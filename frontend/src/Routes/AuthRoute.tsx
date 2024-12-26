@@ -28,7 +28,7 @@ const ScriptTree = lazy(() => import("../pages/AllScript/ScriptTree"));
 
 export const SimpleRoute = [
   {
-    path: "/",
+    path: "/account",
     element: (
       <AuthGuard>
         <AuthLayout />

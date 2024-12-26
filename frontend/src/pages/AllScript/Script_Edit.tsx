@@ -30,13 +30,13 @@ const ScriptEdit = () => {
     xhr.send();
   };
 
-
   useEffect(() => {
     // Fetch the code from the provided URL
     handleGetFile();
   }, [ScriptData]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const formData = new FormData();
     const blob = new Blob([code], { type: "text/plain" });
     formData.append("file", blob, `${ScriptData?.name}.py`);
@@ -44,7 +44,7 @@ const ScriptEdit = () => {
 
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_API_URL}scripts/${ScriptData?.id}`, // Use the correct ID
+        `${process.env.REACT_APP_API_URL}api/scripts/${ScriptData?.id}`, // Use the correct ID
         formData,
         {
           headers: {
@@ -55,7 +55,7 @@ const ScriptEdit = () => {
       );
 
       if (response.status === 200) {
-        Navigate(`/ScriptDetails/${ScriptData?.id}`);
+        Navigate(`/account/ScriptDetails/${ScriptData?.id}`);
         handleToast.SuccessToast(`Script updated successfully`);
         // Navigate after successful update
       }

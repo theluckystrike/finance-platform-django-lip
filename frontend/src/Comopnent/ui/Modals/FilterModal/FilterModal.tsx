@@ -76,7 +76,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFi
       // Handle form submission logic here
         // Reset the form after dispatch
     // resetForm();
-    navigate(`filter-scripts?category=${formik.values.parentName}&subcategory1=${formik.values.parentName1}&subcategory2=${formik.values.parentName2}`)
+    navigate(`/account/filter-scripts?category=${formik.values.parentName}&subcategory1=${formik.values.parentName1}&subcategory2=${formik.values.parentName2}`)
       handleClose(); // Close modal on form submission
     },
   });
@@ -85,7 +85,7 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFi
 
     // await  dispatch(GetAllScripts({token:loginUser?.access}))
     setFilterQuery(null)
-    navigate('allscripts')
+    navigate('/account/allscripts')
 
     handleClose()
   };

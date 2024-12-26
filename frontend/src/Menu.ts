@@ -30,7 +30,7 @@ export const SidebarMenu: SidebarMenutype = {
   },
   upload: {
     name: "Upload",
-    path: "/upload",
+    path: "upload",
     icon: "Upload",
     hide: false,
     role:'all'
@@ -38,7 +38,7 @@ export const SidebarMenu: SidebarMenutype = {
   },
   Allscripts: {
     name: "All scripts",
-    path: "/allscripts",
+    path: "allscripts",
     icon: "List",
     hide: false,
     role:'all'
@@ -91,17 +91,17 @@ export const ActiveRoute = {
   },
   ScriptDetails: {
     name: "ScriptDetails",
-    path: "/ScriptDetails/:id",
+    path: "ScriptDetails/:id",
     icon: "Script",
   },
   ScriptEdit: {
     name: "ScriptEdit",
-    path: "/ScriptEdits",
+    path: "ScriptEdits",
     icon: "Script",
   },
   CategoryManager: {
     name: "Category Manager",
-    path: "/category-manager",
+    path: "category-manager",
     icon: "CategoryManager",
   },
   TapeSummaryResult: {

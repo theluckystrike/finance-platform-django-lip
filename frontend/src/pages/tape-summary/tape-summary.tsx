@@ -86,7 +86,7 @@ const TapeSummary: React.FC = () => {
       const query = new URLSearchParams({
         scriptIds: selectedScripts.join(","),
       }).toString();
-      navigate(`${ActiveRoute.TapeSummaryResult.path}?${query}`);
+      navigate(`/account/${ActiveRoute.TapeSummaryResult.path}?${query}`);
     }
   };
   const { items, requestSort, getClassNamesFor } = useSortableData(
@@ -197,7 +197,7 @@ const TapeSummary: React.FC = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`tape-summary-results/${script.id}`}
+                                to={`/account/tape-summary-results/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>

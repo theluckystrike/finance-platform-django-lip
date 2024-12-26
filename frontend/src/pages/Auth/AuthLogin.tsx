@@ -50,7 +50,7 @@ function SignInComponent() {
       handleToast.SuccessToast("Logged in successfully");
 
       // Finally, navigate to the next page
-      navigate(`${SidebarMenu.upload.path}`);
+      navigate(`/account/${SidebarMenu.upload.path}`);
     }
 
     if (isError) {
