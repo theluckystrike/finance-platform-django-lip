@@ -20,9 +20,9 @@ jobs:
     defaults:
       run:
         working-directory: backend/
-      env:
-        SECRET_KEY: ${{ github.sha }}
-        DEBUG: True
+    env:
+      SECRET_KEY: ${{ github.sha }}
+      DEBUG: True
     services:
       redis:
         image: redis
