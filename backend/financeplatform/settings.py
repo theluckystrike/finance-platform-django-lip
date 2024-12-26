@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 from datetime import timedelta
 
-# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
+# Determine if this is an AWS environment based on if there is an environment variable called "RDS_DB_NAME" that exists.
 IS_AWS = "RDS_DB_NAME" in os.environ
 
 # If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
@@ -88,6 +88,7 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=olandinvestmentsapi',
     '--cover-html',
+    '--verbosity=2',
 ]
 
 # Application definition
@@ -238,58 +239,6 @@ else:
     }
 
 
-"""LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
-                       'pathname=%(pathname)s lineno=%(lineno)s ' +
-                       'funcname=%(funcName)s %(message)s'),
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        'simple': {
-            'format': '[%(process)d] APP LOGS @ %(asctime)s [%(levelname)s] %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        "rq_console": {
-            "format": "[%(process)d] RQ LOGS @ %(asctime)s [%(levelname)s] %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-    },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-        'heroku': {
-            'level': 'DEBUG',
-            'class': "rq.logutils.ColorizingStreamHandler",
-            'formatter': 'simple'
-        },
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "rq.logutils.ColorizingStreamHandler",
-            "formatter": "rq_console",
-            "exclude": ["%(asctime)s"],
-        },
-    },
-    'loggers': {
-        'testlogger': {
-            'handlers': ['heroku'],
-            'level': 'INFO',
-        },
-        "rq.worker": {
-            "handlers": ["rq_console"],
-            "level": "DEBUG"
-        },
-    }
-}"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -398,9 +347,9 @@ if USE_S3:
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-
     # s3 static settings
-    AWS_STATIC_STORAGE_BUCKET_NAME = os.getenv('AWS_PUBLIC_STORAGE_BUCKET_NAME')
+    AWS_STATIC_STORAGE_BUCKET_NAME = os.getenv(
+        'AWS_PUBLIC_STORAGE_BUCKET_NAME')
     AWS_S3_STATIC_CUSTOM_DOMAIN = f'{AWS_STATIC_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     STATIC_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_STATIC_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
@@ -415,7 +364,8 @@ if USE_S3:
 
     PRIVATE_MEDIA_LOCATION = 'private'
     PRIVATE_FILE_STORAGE = 'financeplatform.storage_backends.PrivateMediaStorage'
-    AWS_PRIVATE_STORAGE_BUCKET_NAME = os.getenv('AWS_PRIVATE_STORAGE_BUCKET_NAME')
+    AWS_PRIVATE_STORAGE_BUCKET_NAME = os.getenv(
+        'AWS_PRIVATE_STORAGE_BUCKET_NAME')
 
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
