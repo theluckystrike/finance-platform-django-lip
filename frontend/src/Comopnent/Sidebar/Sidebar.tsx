@@ -30,9 +30,10 @@ const Sidebar = () => {
       </div>
       <div className="d-flex justify-content-center">
         <ul className="sidebar-menu fw-bold">
-          {Object.entries(SidebarMenu).map(([key, value]: any) => (
+          {Object.entries(SidebarMenu).map(([key, value]: any) => 
+          (
             <li
-              onClick={() => changeRoute(value.path)}
+              onClick={() => changeRoute(value?.path)}
               key={key}
               style={{ cursor: "pointer" }}
               className={`row justify-content-evenly align-items-center ${

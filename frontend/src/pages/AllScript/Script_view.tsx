@@ -116,6 +116,8 @@ const getStatus =async ()=>{
       console.warn(error);
     }
   };
+
+  console.log(ScriptData, "___________________ScriptData")
   return (
     <>
       <div className="mx-4">
@@ -124,7 +126,7 @@ const getStatus =async ()=>{
             <h2 className="h2">
               {" "}
               {ScriptData.name}
-              {/* <span id="headerInfo">(132)</span>{" "} */}
+              {/* <span id="headerInfo">(132)</span>{" "} */} 
             </h2>
             <h6 className="ps-1">
               Last update <DateFormatter isoString={ScriptData.last_updated} />
@@ -226,7 +228,10 @@ const getStatus =async ()=>{
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Uploaded: </h6>
-                    <p>April 28,2024,6:45 pm.</p>
+                    <p>
+                    <DateFormatter isoString={ScriptData.created} />
+                    </p>
+                    {/* <p>April 28,2024,6:45 pm.</p> */}
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Last Updated: </h6>

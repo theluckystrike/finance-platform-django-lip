@@ -42,13 +42,8 @@ const CustomReport = () => {
    
     if (loginUser) {
       const getDAta = async () => {
-        try {
-          // alert('running')
-          // console.log(allscripts.length ,filterQuery);
-          
-          
-            await dispatch(GetAllScripts({ token: loginUser?.access }));
-          
+        try {          
+            await dispatch(GetAllScripts({ token: loginUser?.access }));  
         } catch (error) {
           console.log(error);
         }
@@ -269,7 +264,7 @@ const CustomReport = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`ScriptDetails/${script.id}`}
+                                to={`/ScriptDetails/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>
