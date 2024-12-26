@@ -17,6 +17,9 @@ jobs:
     name: Test Backend
     runs-on: ubuntu-latest
     environment: Test (Backend)
+    defaults:
+      run:
+        working-directory: backend/
     services:
       redis:
         image: redis
@@ -39,17 +42,16 @@ jobs:
         python-version: '3.9.20' 
 
     - name: Install Requirements
-      run: |
-        cd backend
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
+
+    - name: Migrate Database
+      run: python manage.py migrate
 
     - name: Test Backend
       env:
         SECRET_KEY: ${{ github.sha }}
         DEBUG: True
-      run : |
-        cd backend
-        python manage.py test
+      run : python manage.py test
 
   deploy-backend:
     name: Deploy Backend
