@@ -2,7 +2,7 @@ resource "aws_acm_certificate" "cert" {
   domain_name       = var.root_domain
   validation_method = "DNS"
 
-  subject_alternative_names = ["www.${var.root_domain}"]
+  subject_alternative_names = ["www.${var.root_domain}", "api.${var.root_domain}", "admin.${var.root_domain}"]
 
   tags = {
     Name = "oi_prod_domain_certificate"
@@ -17,7 +17,6 @@ resource "aws_acm_certificate" "cert" {
 resource "aws_route53_zone" "main" {
   name = var.root_domain
 }
-
 
 
 # # Define the Route 53 records for certificate validation
@@ -61,6 +60,28 @@ resource "aws_route53_record" "www_record" {
     evaluate_target_health = true
   }
 }
+resource "aws_route53_record" "api_record" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "api.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.production.dns_name
+    zone_id                = aws_lb.production.zone_id
+    evaluate_target_health = true
+  }
+}
+resource "aws_route53_record" "admin_record" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "admin.${var.root_domain}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.production.dns_name
+    zone_id                = aws_lb.production.zone_id
+    evaluate_target_health = true
+  }
+}
 
 resource "aws_route53_record" "frontend_alias" {
   zone_id = aws_route53_zone.main.zone_id
@@ -68,9 +89,9 @@ resource "aws_route53_record" "frontend_alias" {
   type    = "A"
 
   alias {
-    name                   = aws_s3_bucket_website_configuration.frontend.website_domain
-    zone_id                = aws_s3_bucket.frontend_bucket.hosted_zone_id
-    evaluate_target_health = true
+    name                   = aws_cloudfront_distribution.frontend_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.frontend_distribution.hosted_zone_id
+    evaluate_target_health = false
   }
   depends_on = [aws_s3_bucket.frontend_bucket]
 }
@@ -79,4 +100,48 @@ resource "aws_route53_record" "frontend_alias" {
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
+#### Cloudfront Certificate ####
+
+resource "aws_acm_certificate" "cloudfront_cert" {
+  domain_name       = "app.${var.root_domain}"
+  validation_method = "DNS"
+  provider          = aws.us_east_1
+
+
+  tags = {
+    Name = "oi_prod_cloudfront_certificate"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route53_record" "cloudfront_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cloudfront_cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
+    }
+  }
+
+  name    = each.value.name
+  type    = each.value.type
+  zone_id = aws_route53_zone.main.zone_id
+  records = [each.value.record]
+  ttl     = 60
+}
+
+resource "aws_acm_certificate_validation" "cloudfront_cert" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.cloudfront_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cloudfront_cert_validation : record.fqdn]
 }

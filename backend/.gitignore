@@ -2,3 +2,4 @@ scripts/
 staticfiles/
 scripts-dev/
 reports-dev/
+*.rdb

@@ -139,6 +139,7 @@ def run_script(script):
         logger.error(
             f"[script runner] Could not find an output for script * {script.name} *")
         script.set_status(excStatus.FAILURE, error_message)
+        script.set_last_updated()
     clear_buffers()
-    logger.info(f"[script runner] Successfully ran script * {script.name} *")
+    logger.info(f"[script runner] Finished running script * {script.name} *")
     return success_flag, error_message

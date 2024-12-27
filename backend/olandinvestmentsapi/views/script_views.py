@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
-from ..serializers import ScriptSerializer, ChartDataSerializer, TableDataSerializer, ScriptSerializerLite
+from ..serializers import ScriptSerializer, ChartDataSerializer, TableDataSerializer, ScriptSerializerLite, ScriptUploadSerializer
 from scriptupload.models import Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -81,7 +81,21 @@ class ScriptViewSet(ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
-        return super().get_serializer_class() if self.action != 'list' else ScriptSerializerLite
+        if self.action == 'list':
+            return ScriptSerializerLite
+        elif self.action in ['create', 'partial_update']:
+            return ScriptUploadSerializer
+        return super().get_serializer_class()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ScriptStatusView(APIView):

@@ -19,7 +19,12 @@ locals {
       { name = "REDISCLOUD_URL", value = var.rediscloud_url },
       { name = "FP_HEROKU_API_KEY", value = var.fp_heroku_api_key },
       { name = "FRED_API_KEY", value = var.fred_api_key },
-      { name = "MPLBACKEND", value = "Agg" }
+      { name = "MPLBACKEND", value = "Agg" },
+      { name = "AWS_SMTP_USER", value = var.email_user },
+      { name = "AWS_SMTP_PASSWORD", value = var.email_password },
+      { name = "AWS_EMAIL_HOST", value = var.email_host },
+      { name = "DEFAULT_FROM_EMAIL", value = var.email_default_from_address },
+      { name = "OI_API_URL", value = "https://api.${var.root_domain}/" }
     ])
   }
 }
@@ -94,6 +99,22 @@ resource "aws_ecs_task_definition" "update_scripts" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   container_definitions    = data.template_file.update_scripts.rendered
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
+}
+data "template_file" "send_email" {
+  template = file("templates/send_emails_task.json.tpl")
+
+  vars = local.container_vars
+}
+resource "aws_ecs_task_definition" "send_emails" {
+  family                   = "oi-prod-send-emails"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "512"
+  memory                   = "1024"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  container_definitions    = data.template_file.send_email.rendered
   depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
 

@@ -11,13 +11,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
 import os
 from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 from datetime import timedelta
 
-# Determine if this is a Heroku environment based on if there is an environment variable called "DYNO" that exists.
+# Determine if this is an AWS environment based on if there is an environment variable called "RDS_DB_NAME" that exists.
 IS_AWS = "RDS_DB_NAME" in os.environ
 
 # If the "DYNO" environment variable does not exist, the project is being run locally. This means that we want to load
@@ -36,17 +35,28 @@ MESSAGE_TAGS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://olandinvestments.com",
     "https://www.olandinvestments.com",
+    "https://app.olandinvestments.com",
+    "https://admin.olandinvestments.com",
+    "https://api.olandinvestments.com",
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://olandinvestments.com",
-#     "https://www.olandinvestments.com",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "https://olandinvestments.com",
+    "https://www.olandinvestments.com",
+    "https://app.olandinvestments.com",
+    "https://admin.olandinvestments.com",
+    "https://api.olandinvestments.com",
+]
 
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 ALLOWED_HOSTS = [
     "olandinvestments.com",
     "www.olandinvestments.com",
+    "admin.olandinvestments.com",
+    "api.olandinvestments.com",
+    "api.localhost",
+    "admin.localhost",
+    "localhost",
 ]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -72,6 +82,15 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
 
+TEST_RUNNER = 'olandinvestmentsapi.test_runner.CustomNoseTestRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=olandinvestmentsapi',
+    '--cover-html',
+    '--verbosity=2',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -94,6 +113,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_filters',
     'django_rq',
+    'django_hosts',
+    'django_nose',
 ]
 
 # django-rq
@@ -144,7 +165,8 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'olandinvestmentsapi.middleware.HealthCheckMiddleware',
+    'django_hosts.middleware.HostsRequestMiddleware',
+    'financeplatform.middleware.HealthCheckMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -153,14 +175,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware'
 ]
 
+ROOT_HOSTCONF = 'financeplatform.hosts'
+DEFAULT_HOST = 'www'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_PORT = int(os.environ.get("AWS_EMAIL_PORT", 587))
 EMAIL_USE_TLS = True
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST = os.environ.get("AWS_EMAIL_HOST", None)
+EMAIL_HOST_USER = os.environ.get("AWS_SMTP_USER", None)
+EMAIL_HOST_PASSWORD = os.environ.get("AWS_SMTP_PASSWORD", None)
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", None)
 
 ROOT_URLCONF = 'financeplatform.urls'
 
@@ -212,58 +239,6 @@ else:
     }
 
 
-"""LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
-                       'pathname=%(pathname)s lineno=%(lineno)s ' +
-                       'funcname=%(funcName)s %(message)s'),
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        'simple': {
-            'format': '[%(process)d] APP LOGS @ %(asctime)s [%(levelname)s] %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        },
-        "rq_console": {
-            "format": "[%(process)d] RQ LOGS @ %(asctime)s [%(levelname)s] %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-    },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-        'heroku': {
-            'level': 'DEBUG',
-            'class': "rq.logutils.ColorizingStreamHandler",
-            'formatter': 'simple'
-        },
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "rq.logutils.ColorizingStreamHandler",
-            "formatter": "rq_console",
-            "exclude": ["%(asctime)s"],
-        },
-    },
-    'loggers': {
-        'testlogger': {
-            'handlers': ['heroku'],
-            'level': 'INFO',
-        },
-        "rq.worker": {
-            "handlers": ["rq_console"],
-            "level": "DEBUG"
-        },
-    }
-}"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -343,6 +318,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
     'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_ENABLED': True,
     'BLACKLIST_AFTER_ROTATION': True
 }
 
@@ -365,17 +341,15 @@ APPEND_SLASH = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-django_heroku.settings(locals(), logging=False)
-
 if USE_S3:
     # aws settings
     AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-
     # s3 static settings
-    AWS_STATIC_STORAGE_BUCKET_NAME = os.getenv('AWS_PUBLIC_STORAGE_BUCKET_NAME')
+    AWS_STATIC_STORAGE_BUCKET_NAME = os.getenv(
+        'AWS_PUBLIC_STORAGE_BUCKET_NAME')
     AWS_S3_STATIC_CUSTOM_DOMAIN = f'{AWS_STATIC_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     STATIC_LOCATION = 'static'
     STATIC_URL = f'https://{AWS_S3_STATIC_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
@@ -390,7 +364,8 @@ if USE_S3:
 
     PRIVATE_MEDIA_LOCATION = 'private'
     PRIVATE_FILE_STORAGE = 'financeplatform.storage_backends.PrivateMediaStorage'
-    AWS_PRIVATE_STORAGE_BUCKET_NAME = os.getenv('AWS_PRIVATE_STORAGE_BUCKET_NAME')
+    AWS_PRIVATE_STORAGE_BUCKET_NAME = os.getenv(
+        'AWS_PRIVATE_STORAGE_BUCKET_NAME')
 
     AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}

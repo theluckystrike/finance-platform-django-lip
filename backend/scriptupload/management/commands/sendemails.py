@@ -23,7 +23,7 @@ def send_pdf(task):
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {timezone.now().strftime('%Y/%m/%d')}",
         f"Report: {task.report.name}\nSchedule: {'Daily' if task.day == '*' else f'Every {today_str}'}\n\nPlease find your report attached.\n\n",
-        f"Financial-Reports-No-reply <{settings.EMAIL_HOST_USER}>",
+        f'Oland Investments Reports <{settings.DEFAULT_FROM_EMAIL}>',
         [task.email]
     )
     mail.attach(f"{task.report.name}_{timezone.now().strftime('%Y_%m_%d')}.pdf",

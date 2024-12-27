@@ -160,3 +160,23 @@ variable "fred_api_key" {
   description = "Fred API key"
 }
 
+
+
+# aws ses
+
+variable "email_host" {
+  description = "AWS SES host URL"
+}
+
+variable "email_user" {
+  description = "AWS SES SMTP user"
+}
+
+variable "email_password" {
+  description = "AWS SES SMTP user password"
+}
+
+variable "email_default_from_address" {
+  description = "Default email from address"
+  default     = "no-reply@olandinvestments.com"
+}
