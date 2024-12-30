@@ -9,6 +9,7 @@ import { useGetAllCategoryQuery } from "../../Redux/CategoryQuery";
 import { useDispatch } from "react-redux";
 import { CreateScripts } from "../../Redux/Script/ScriptSlice";
 import useToast from "../../customHook/toast";
+import CustomDropdown from "../../Comopnent/CustomDropdown/CustomDropdown";
 
 // Define validation schema using Yup
 const validationSchema = Yup.object({
@@ -126,41 +127,17 @@ useEffect(()=>{
               </label>
               <div className="row mx-0 p-0">
                 <div className="col-10 col-sm-10 col-md-11 m-0 p-0 pe-1">
-                  <div className="dropdown">
-                    <div className="arrow_down">
-                      <img src={ArrowDown} alt="" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Select a category"
-                      value={formik.values.parentName}
-                      onChange={(e) => {
-                      formik.setFieldValue("parentName", e.target.value)
-                      FilterData( e.target.value)
-                      }}
-                      className={`form-control ${
-                        formik.touched.category && formik.errors.category
-                          ? "input-error"
-                          : ""
-                      }`}
-                    />
-                  <div className="dropdown-content"
-                   style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}>
-                      {FilterCategory.length > 0  &&
-                        FilterCategory.map((item: any, index: any) => (
-                          <span
-                            className="h6 hover-span"
-                            key={item.name}
-                            onClick={async () => {
-                             await formik.setFieldValue("parentName", item.name);
-                             await  formik.setFieldValue("category", item.name);
-                             setFilterCategory([])
-                            }} >
-                            {item.name}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
+                  <CustomDropdown
+                    formik={formik}
+                    value={formik.values.parentName}
+                    onChange={(value) => {
+                      formik.setFieldValue("parentName", value);
+                      formik.setFieldValue("category", value);
+                    }}
+                    options={FilterCategory}
+                    placeholder="Select a category"
+                    onFilter={(value) => FilterData(value)}
+                  />
                 </div>
                 <button
                   className="btn btn-dark col-2 col-sm-2 col-md-1 p-0 justify-content-center"
@@ -169,70 +146,32 @@ useEffect(()=>{
                 >
                   <Icon icon="Add" size="30px" />
                 </button>
-                {formik.touched.category && formik.errors.category ? (
+              </div>
+              {formik.touched.category && formik.errors.category ? (
                   <div className="error-message">
                     {formik.errors.category as any}
                   </div>
-                ) : null}
-              </div>
+              ) : null}
             </div>
 
             <div className="mb-3">
               <label htmlFor="output_type" className="form-label">
                 How would you like to view data?
               </label>
-              <div className="dropdown">
-                <div className="arrow_down">
-                  <img src={ArrowDown} alt="" />
-                </div>
-                <input
-                  type="text"
-                  id="output_type"
-                  placeholder="Select a view data type"
-                  value={formik.values.output_type}
-               readOnly
-                     onFocus={()=>setDataTypeOption(true)}
-                    //  onBlur={()=>setDataTypeOption(false)}
-                  className={`form-control ${
-                    formik.touched.output_type && formik.errors.output_type
-                      ? "input-error"
-                      : ""
-                  }`}
-                />
-                <div className="dropdown-content" style={{ maxHeight: "200px", overflow: "auto", display: dataTypeOption ? 'block' : 'none' }}>
-                  <span
-                    className="hover-span"
-                    onClick={async() => { await formik.setFieldValue("output_type", "pd")
-                      setDataTypeOption(false)
-                    }}
-                  >
-                    Chart
-                  </span>
-                  <span
-                    className="hover-span"
-                    onClick={async() => {await formik.setFieldValue("output_type", "plt")
-                      setDataTypeOption(false)
-                    }}
-                  >
-                    Table
-                  </span>
-                  <span
-                    className="hover-span"
-                    onClick={ async() =>
-                    { await formik.setFieldValue("output_type", "pd plt")
-                      setDataTypeOption(false)
-                    }
-                    }
-                  >
-                    Chart and Table
-                  </span>
-                </div>
-                {formik.touched.output_type && formik.errors.output_type ? (
-                  <div className="error-message">
-                    {formik.errors.output_type as any}
-                  </div>
-                ) : null}
-              </div>
+              <CustomDropdown
+                formik={formik}
+                value={formik.values.output_type}
+                onChange={(value) => formik.setFieldValue("output_type", value)}
+                options={[
+                  { name: "Chart" },
+                  { name: "Table" },
+                  { name: "Chart and Table" },
+                ]}
+                placeholder="Select a view data type"
+                touchedField={formik.touched.output_type}
+                errorMessage={formik.errors.output_type as string}
+                onFilter={undefined}
+              />
             </div>
 
             <div className="mb-3">
