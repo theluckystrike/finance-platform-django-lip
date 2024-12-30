@@ -92,3 +92,16 @@ To learn React, check out the React documentation.
 ```bash
 node -v
 ```
+
+## Run cypress tests
+
+Cypress is a great instrument to ensure that your GUI behaves as expected.
+
+Cypress prerequesites:
+- Ensure that BE is running
+- Ensure that FE is running
+- Ensure that your FE .env file is filled with values (e.g. according with `.env.example`)
+
+There are two ways to run cypress tests:
+1. `npm test` runs cypress in headless mode. Perfect to quickly check if nothing was broken.
+2. `npx cypress open` opens cypress in interactive mode, which allows you to visualize and manage tests execution. Perfect to write new tests.
