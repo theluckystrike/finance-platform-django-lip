@@ -29,9 +29,7 @@ describe('testing script uploading page...', () => {
         cy.contains('span', results[0].name)
       } else {
         cy.log('No categories found, skipping test');
-        return cy.then(() => {
-          this.skip();
-        });
+        this.skip();
       }
     });
   });
@@ -94,115 +92,113 @@ describe('testing script uploading page...', () => {
     cy.get('div.error-message')
         .should('have.length', 4)
   });
-})
 
-describe('testing category creation modal...', () => {
-  beforeEach(() => {
-    cy.login();
-    cy.visit('/account/upload');
-    cy.get('button[type="button"] svg[data-name="Material--Add"]')
-        .click()
-  });
-
-  it('should open and close the modal window', () => {
-      cy.get('body')
-          .should('has.attr', 'data-rr-ui-modal-open')
-
-      cy.get('body').click(0, 0);
-
-      cy.get('body')
-          .should('not.have.attr', 'data-rr-ui-modal-open')
-  });
-
-  it('testing "Category Name" input', () => {
-    cy.contains('label', 'Category Name')
-      .next('input')
-      .type('Test Category Name');
-  })
-
-  it('testing "Parent Category" dropdown', () => {
-    cy.intercept('GET', `${Cypress.env().API_URL}/categories`).as('getCategories');
-
-    cy.reload()
-
-    cy.wait('@getCategories').then(({ response }) => {
-      const { count, results } = response.body;
-
+  describe('testing category creation modal...', () => {
+    beforeEach(() => {
+      cy.login();
+      cy.visit('/account/upload');
       cy.get('button[type="button"] svg[data-name="Material--Add"]')
-        .click()
-
-      if (count > 0) {
-        cy.contains('label', 'Parent Category')
-          .parent()
-          .find('input[placeholder="Select a category"]')
-          .type(results[0].name);
-        cy.get('div.dropdown-content')
-          .should('be.visible')
-        cy.contains('span', results[0].name)
-      } else {
-        cy.log('No categories found, skipping test');
-        return cy.then(() => {
+          .click()
+    });
+  
+    it('should open and close the modal window', () => {
+        cy.get('body')
+            .should('has.attr', 'data-rr-ui-modal-open')
+  
+        cy.get('body').click(0, 0);
+  
+        cy.get('body')
+            .should('not.have.attr', 'data-rr-ui-modal-open')
+    });
+  
+    it('testing "Category Name" input', () => {
+      cy.contains('label', 'Category Name')
+        .next('input')
+        .type('Test Category Name');
+    })
+  
+    it('testing "Parent Category" dropdown', function() {
+      cy.intercept('GET', `${Cypress.env().API_URL}/categories`).as('getCategories');
+  
+      cy.reload()
+  
+      cy.wait('@getCategories').then(({ response }) => {
+        const { count, results } = response.body;
+  
+        cy.get('button[type="button"] svg[data-name="Material--Add"]')
+          .click()
+  
+        if (count > 0) {
+          cy.contains('label', 'Parent Category')
+            .parent()
+            .find('input[placeholder="Select a category"]')
+            .type(results[0].name);
+          cy.get('div.dropdown-content')
+            .should('be.visible')
+          cy.contains('span', results[0].name)
+        } else {
+          cy.log('No categories found, skipping test');
           this.skip();
-        });
-      }
+        }
+      });
+    });
+  
+    it('testing "Edit All Categories" button redirects to /account/category-manager page', () => {
+      cy.contains('button', 'Edit All Categories')
+        .click();
+  
+      cy.url()
+        .should('contain', '/account/category-manager');
+    });
+  
+    it('testing succesfull category creation', () => {
+      cy.intercept('POST', `${Cypress.env().API_URL}/categories`, {
+          statusCode: 201,
+          body: { message: 'Test runned successfully!' },
+      }).as('categoryCreation');
+  
+      cy.contains('label', 'Category Name')
+        .next('input')
+        .type('Test Category Name');
+  
+      cy.contains('button', 'Edit All Categories')
+        .parent()
+        .find('button[type="submit"]')
+        .click();
+  
+      cy.wait('@categoryCreation').then((interception) => {
+        expect(interception.response.statusCode).to.eq(201);
+        expect(interception.response.body.message).to.contain('Test runned successfully!');
+      });
     });
   });
-
-  it('testing "Edit All Categories" button redirects to /account/category-manager page', () => {
-    cy.contains('button', 'Edit All Categories')
-      .click();
-
-    cy.url()
-      .should('contain', '/account/category-manager');
-  });
-
-  it('testing succesfull category creation', () => {
-    cy.intercept('POST', `${Cypress.env().API_URL}/categories`, {
+  
+  describe('Test successful form submission to upload script', () => {
+    it('should submit the form and handle success response', () => {
+      cy.login();
+      cy.visit('/account/upload');
+  
+      cy.intercept('POST', `${Cypress.env().API_URL}/scripts`, {
         statusCode: 201,
         body: { message: 'Test runned successfully!' },
-    }).as('categoryCreation');
-
-    cy.contains('label', 'Category Name')
-      .next('input')
-      .type('Test Category Name');
-
-    cy.contains('button', 'Edit All Categories')
-      .parent()
-      .find('button[type="submit"]')
-      .click();
-
-    cy.wait('@categoryCreation').then((interception) => {
-      expect(interception.response.statusCode).to.eq(201);
-      expect(interception.response.body.message).to.contain('Test runned successfully!');
+      }).as('formSubmit');
+  
+      cy.reload();
+  
+      cy.get('input[placeholder="Select a category"]').type('Test Category');
+      cy.get('input[placeholder="Select a view data type"]').type('Chart');
+      cy.contains('span', 'Chart').click();
+      cy.get('input[id="name"]').type('Test Script Name');
+      cy.get('input[type="file"]').selectFile('cypress/fixtures/test_script.py');
+  
+      cy.get('button[type="submit"]').click();
+  
+      cy.wait('@formSubmit').then((interception) => {
+        expect(interception.response.statusCode).to.eq(201);
+        expect(interception.response.body.message).to.contain('Test runned successfully!');
+      });
+  
+      cy.contains('New Script added successfully').should('be.visible');
     });
   });
-});
-
-describe('Test successful form submission to upload script', () => {
-  it('should submit the form and handle success response', () => {
-    cy.login();
-    cy.visit('/account/upload');
-
-    cy.intercept('POST', `${Cypress.env().API_URL}/scripts`, {
-      statusCode: 201,
-      body: { message: 'Test runned successfully!' },
-    }).as('formSubmit');
-
-    cy.reload();
-
-    cy.get('input[placeholder="Select a category"]').type('Test Category');
-    cy.get('input[placeholder="Select a view data type"]').type('Chart');
-    cy.contains('span', 'Chart').click();
-    cy.get('input[id="name"]').type('Test Script Name');
-    cy.get('input[type="file"]').selectFile('cypress/fixtures/test_script.py');
-
-    cy.get('button[type="submit"]').click();
-
-    cy.wait('@formSubmit').then((interception) => {
-      expect(interception.response.statusCode).to.eq(201);
-      expect(interception.response.body.message).to.contain('Test runned successfully!');
-    });
-
-    cy.contains('New Script added successfully').should('be.visible');
-  });
-});
+})
