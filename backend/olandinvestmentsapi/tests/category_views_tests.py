@@ -20,13 +20,28 @@ class CategoryTests(APITestCase):
         self.category = Category.objects.create(
             name="Test Category"
         )
+        self.subcategory = Category.objects.create(
+            name="Test Sub Category",
+            parent_category=self.category
+        )
 
     def test_category_list(self):
         url = reverse('categories-list', current_app='olandinvestmentsapi',
                       urlconf='olandinvestmentsapi.urls')
         response = self.client.get(url, HTTP_HOST='api.localhost')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+    def test_category_list_filter_parent_category(self):
+        url = reverse('categories-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"parent_category={self.category.id}"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results']
+                         [0]['id'], self.subcategory.id)
 
     def test_category_detail(self):
         url = reverse('categories-detail', kwargs={'pk': self.category.pk},

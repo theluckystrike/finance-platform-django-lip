@@ -26,21 +26,37 @@ class ScriptTests(APITestCase):
         self.category = Category.objects.create(
             name="Test Category"
         )
+        self.category2 = Category.objects.create(
+            name="Test Category 2"
+        )
 
         self.subcategory = Category.objects.create(
             name="Test Sub Category",
+            parent_category=self.category
+        )
+        self.subcategory2 = Category.objects.create(
+            name="Test Sub Category 2",
             parent_category=self.category
         )
         self.subsubcategory = Category.objects.create(
             name="Test Sub Sub Category",
             parent_category=self.subcategory
         )
-
+        self.subsubcategory2 = Category.objects.create(
+            name="Test Sub Sub Category 2",
+            parent_category=self.subcategory
+        )
         self.script = Script.objects.create(
             name="Test Script",
             category=self.subsubcategory,
             file=code_string_to_file('import pandas as pd', 'test.py'),
             description='Dummy script'
+        )
+        self.script2 = Script.objects.create(
+            name="Test Script 2",
+            category=self.category2,
+            file=code_string_to_file('import pandas as pd', 'test.py'),
+            description='Dummy script 2'
         )
 
     def test_script_list(self):
@@ -49,7 +65,7 @@ class ScriptTests(APITestCase):
                       urlconf='olandinvestmentsapi.urls')
         response = self.client.get(url, HTTP_HOST='api.localhost')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(len(response.data['results']), 2)
 
     def test_script_detail(self):
         """Test getting single script details"""
@@ -126,15 +142,29 @@ class ScriptTests(APITestCase):
                       current_app='olandinvestmentsapi',
                       urlconf='olandinvestmentsapi.urls')
         # Set initial status
-        self.script.status = Script.ExecutionStatus.RUNNING
+        self.script.status = Script.ExecutionStatus.FAILURE
         self.script.save()
 
         response = self.client.get(url, HTTP_HOST='api.localhost')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'],
-                         Script.ExecutionStatus.RUNNING.label)
+                         Script.ExecutionStatus.FAILURE.label)
+        self.assertIn('error_message', response.data)
         self.script.status = Script.ExecutionStatus.SUCCESS
         self.script.save()
+        response = self.client.get(url, HTTP_HOST='api.localhost')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'],
+                         Script.ExecutionStatus.SUCCESS.label)
+
+    def test_script_status_does_not_exist(self):
+        url = reverse('script_status',
+                      kwargs={'pk': 123456789},
+                      current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+
+        response = self.client.get(url, HTTP_HOST='api.localhost')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_run_script(self):
         url = reverse('script_run', current_app='olandinvestmentsapi',
@@ -144,3 +174,62 @@ class ScriptTests(APITestCase):
         self.script.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.script.status, Script.ExecutionStatus.RUNNING)
+
+    def test_run_script_does_not_exist(self):
+        url = reverse('script_run', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls', kwargs={'pk': 123456789})
+
+        response = self.client.post(url, HTTP_HOST='api.localhost')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_script_list_filter_category(self):
+        """Test getting list of scripts with category filter"""
+        url = reverse('scripts-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"category={self.category.id}"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], self.script.id)
+
+    def test_script_list_filter_subcategory(self):
+        """Test getting list of scripts with subcategory filter"""
+        url = reverse('scripts-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"category={self.category.id}&subcategory1={self.subcategory.id}"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], self.script.id)
+
+    def test_script_list_filter_subsubcategory(self):
+        """Test getting list of scripts with subsubcategory filter"""
+        url = reverse('scripts-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"category={self.category.id}&subcategory1={self.subcategory.id}&subcategory2={self.subsubcategory.id}"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], self.script.id)
+
+        query = f"category={self.category.id}&subcategory1={self.subcategory.id}&subcategory2={self.subsubcategory2.id}"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 0)
+
+    def test_script_list_filter_status(self):
+        """Test getting list of scripts with status filter"""
+        self.script2.status = Script.ExecutionStatus.FAILURE
+        self.script2.save()
+        url = reverse('scripts-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"status=failure"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], self.script2.id)

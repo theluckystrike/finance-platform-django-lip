@@ -196,7 +196,7 @@ class SearchView(APIView):
         '''
         search_str = request.query_params.get("query", None)
         if not search_str:
-            return Response({"error": "No search query provided"}, status=404)
+            return Response({"error": "No search query provided"}, status=400)
 
         scripts = Script.objects.filter(name__icontains=search_str)
         scripts_data = ScriptSearchSerializer(
