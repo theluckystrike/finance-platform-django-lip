@@ -189,7 +189,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
                     className="btn border border-dark col-5 px-3 fw-bold"
                     type="button"
                   >
-                    Edit All Category
+                    Edit All Categories
                   </button>
                   <button
                     className="btn btn-dark col-5 px-3 fw-bold"

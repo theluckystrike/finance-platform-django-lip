@@ -27,10 +27,8 @@ const Icon = forwardRef<HTMLSpanElement, any>(
     const IconName = icon;
 
     // @ts-ignore
-    // eslint-disable-next-line import/namespace
     const SvgIconWrapper = SvgIcon[IconName];
     // @ts-ignore
-    // eslint-disable-next-line import/namespace
     const MaterialWrapper = Material[IconName];
 
     // Create custom styles for size if provided

@@ -26,7 +26,7 @@ function SignInComponent() {
       rememberMe: false,
     },
     validationSchema: Yup.object({
-      username: Yup.string().required("username is required"),
+      username: Yup.string().required("Username is required"),
       password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
