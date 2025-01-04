@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useDispatch, useSelector } from "react-redux";
-import { GetAllScripts } from "../../../../Redux/Script/ScriptSlice";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import Select, { MultiValue } from "react-select";
-import { Createreports, mergereports } from "../../../../Redux/Report/Slice";
+import { FC, useEffect, useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllScripts } from '../../../../Redux/Script/ScriptSlice';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import Select, { MultiValue } from 'react-select';
+import { Createreports, mergereports } from '../../../../Redux/Report/Slice';
 
 // Define type for the script option
 interface ScriptOption {
@@ -16,25 +16,28 @@ interface ScriptOption {
 interface CreateReportsProps {
   show: boolean;
   handleClose: () => void;
-  allreport:any
+  allreport: any;
 }
 
-const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) => {
+const CreateReports: FC<CreateReportsProps> = ({
+  show,
+  handleClose,
+  allreport,
+}) => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
 
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
   }, []);
 
   useEffect(() => {
-    if(loginUser){
-
+    if (loginUser) {
       const getDAta = async () => {
         try {
           await dispatch(GetAllScripts({ token: loginUser?.access }));
@@ -47,30 +50,33 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
   }, [loginUser, dispatch]);
 
   // Convert scripts to options for react-select
-  const scriptOptions: ScriptOption[] =allreport && allreport.map((report: any) => ({
-    value: report.id,
-    label: report.name,
-  })); 
+  const scriptOptions: ScriptOption[] =
+    allreport &&
+    allreport.map((report: any) => ({
+      value: report.id,
+      label: report.name,
+    }));
 
   // Form validation schema
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    scripts: Yup.array().of(Yup.string()).min(1, "At least one script must be selected")
+    name: Yup.string().required('Name is required'),
+    scripts: Yup.array()
+      .of(Yup.string())
+      .min(1, 'At least one script must be selected'),
   });
 
   // Handle form submission
   const handleSubmit = (values: any) => {
-
-    dispatch(mergereports({values:values,token:loginUser.access}));
+    dispatch(mergereports({ values: values, token: loginUser.access }));
 
     handleClose(); // Close modal after submission
   };
 
   return (
-<Modal
-        size="lg"
-        fullscreen="md-down" 
-        aria-labelledby="contained-modal-title-vcenter"
+    <Modal
+      size="lg"
+      fullscreen="md-down"
+      aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
@@ -78,8 +84,8 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
       <Modal.Body
         className="bg-light-green"
         style={{
-          borderRadius: "25px",
-          overflow: "hidden",
+          borderRadius: '25px',
+          overflow: 'hidden',
         }}
       >
         <h5>Merge Reports</h5>
@@ -103,26 +109,38 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
                       className="form-control m-0"
                       required
                     />
-                    <ErrorMessage name="name" component="div" className="text-danger" />
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      className="text-danger"
+                    />
                   </div>
 
                   <div className="col-12">
                     <label htmlFor="scripts" className="form-label">
-                    Reports
+                      Reports
                     </label>
                     <Select
                       id="reports"
                       name="reports"
                       isMulti
                       options={scriptOptions}
-                      onChange={(selectedOptions: MultiValue<ScriptOption> | null) => {
-                        const values = selectedOptions ? selectedOptions.map((option) => option.value) : [];
-                        setFieldValue("reports", values);
+                      onChange={(
+                        selectedOptions: MultiValue<ScriptOption> | null,
+                      ) => {
+                        const values = selectedOptions
+                          ? selectedOptions.map((option) => option.value)
+                          : [];
+                        setFieldValue('reports', values);
                       }}
                       // value={scriptOptions.filter((option) => values.scripts.includes(option.value))}
                       placeholder="Select Scripts"
                     />
-                    <ErrorMessage name="scripts" component="div" className="text-danger" />
+                    <ErrorMessage
+                      name="scripts"
+                      component="div"
+                      className="text-danger"
+                    />
                   </div>
 
                   <div className="col-12 row justify-content-evenly m-0">
@@ -137,8 +155,7 @@ const CreateReports: FC<CreateReportsProps> = ({ show, handleClose,allreport }) 
                       type="submit"
                       className="btn btn-dark col-5 px-3 fw-bold"
                     >
-                      Create               
-
+                      Create
                     </button>
                   </div>
                 </div>

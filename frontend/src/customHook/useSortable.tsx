@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
 interface SortConfig {
   key: string;
-  direction: "ascending" | "descending";
+  direction: 'ascending' | 'descending';
 }
 
 const useSortableData = (items: any[], config: SortConfig | null = null) => {
@@ -22,17 +22,17 @@ const useSortableData = (items: any[], config: SortConfig | null = null) => {
           const dateB = new Date(bValue);
 
           if (dateA < dateB) {
-            return sortConfig.direction === "ascending" ? -1 : 1;
+            return sortConfig.direction === 'ascending' ? -1 : 1;
           }
           if (dateA > dateB) {
-            return sortConfig.direction === "ascending" ? 1 : -1;
+            return sortConfig.direction === 'ascending' ? 1 : -1;
           }
         } else {
           if (aValue < bValue) {
-            return sortConfig.direction === "ascending" ? -1 : 1;
+            return sortConfig.direction === 'ascending' ? -1 : 1;
           }
           if (aValue > bValue) {
-            return sortConfig.direction === "ascending" ? 1 : -1;
+            return sortConfig.direction === 'ascending' ? 1 : -1;
           }
         }
         return 0;
@@ -42,22 +42,22 @@ const useSortableData = (items: any[], config: SortConfig | null = null) => {
   }, [items, sortConfig]);
 
   const requestSort = (key: string) => {
-    let direction: "ascending" | "descending" = "ascending";
+    let direction: 'ascending' | 'descending' = 'ascending';
     if (
       sortConfig &&
       sortConfig.key === key &&
-      sortConfig.direction === "ascending"
+      sortConfig.direction === 'ascending'
     ) {
-      direction = "descending";
+      direction = 'descending';
     }
     setSortConfig({ key, direction });
   };
 
   const getClassNamesFor = (key: string) => {
     if (!sortConfig) {
-      return "d-none";
+      return 'd-none';
     }
-    return sortConfig.key === key ? sortConfig.direction : "d-none";
+    return sortConfig.key === key ? sortConfig.direction : 'd-none';
   };
 
   return { items: sortedItems, requestSort, getClassNamesFor, sortConfig };

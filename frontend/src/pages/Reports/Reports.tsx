@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import "../../assest/css/AllScript.css";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import { Link } from "react-router-dom";
-import { ActiveRoute } from "../../Menu";
-import MergeReports from "../../Comopnent/ui/Modals/MergeReports/MergeReports";
-import { GetAllreports } from "../../Redux/Report/Slice";
-import { useDispatch, useSelector } from "react-redux";
-import useSortableData from "../../customHook/useSortable";
-import Loader from "../../Comopnent/ui/Loader";
-import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
-import DateFormatter from "../../customHook/useTImeformnt";
+import React, { useEffect, useState } from 'react';
+import '../../assest/css/AllScript.css';
+import Icon from '../../Comopnent/ui/icon/Icon';
+import { Link } from 'react-router-dom';
+import { ActiveRoute } from '../../Menu';
+import MergeReports from '../../Comopnent/ui/Modals/MergeReports/MergeReports';
+import { GetAllreports } from '../../Redux/Report/Slice';
+import { useDispatch, useSelector } from 'react-redux';
+import useSortableData from '../../customHook/useSortable';
+import Loader from '../../Comopnent/ui/Loader';
+import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
+import DateFormatter from '../../customHook/useTImeformnt';
 import PaginationButtons, {
   dataPagination,
   PER_COUNT,
-} from "../../Comopnent/ui/PaginationButtons";
+} from '../../Comopnent/ui/PaginationButtons';
 
 const Report = () => {
   const dispatch = useDispatch();
@@ -22,10 +22,10 @@ const Report = () => {
   const { loading } = store?.report;
   const allreport = store?.report?.reports?.results;
   const { items, requestSort, getClassNamesFor } = useSortableData(
-    allreport || []
+    allreport || [],
   );
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
@@ -44,7 +44,7 @@ const Report = () => {
   }, [loginUser]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT["10"]);
+  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
   const [show, setShow] = useState(false);
   const [mergeshow, setShowmerges] = useState(false);
@@ -79,7 +79,7 @@ const Report = () => {
       </div>
       <div>
         {items.length > 0 ? (
-          <div style={{ overflow: "auto" }} id="customReportForm">
+          <div style={{ overflow: 'auto' }} id="customReportForm">
             <div className="py-2">
               <PaginationButtons
                 data={items}
@@ -90,7 +90,7 @@ const Report = () => {
                 setPerPage={setPerPage}
               />
             </div>
-            <table className="table" style={{ minWidth: "1000px" }}>
+            <table className="table" style={{ minWidth: '1000px' }}>
               <thead>
                 <tr className="fw-bold mb-2 p-2">
                   <th scope="col" className="col-1">
@@ -132,9 +132,9 @@ const Report = () => {
                             <DateFormatter isoString={script.last_updated} />
                           </td>
                         </tr>
-                        <tr style={{ height: "10px" }}></tr>
+                        <tr style={{ height: '10px' }}></tr>
                       </>
-                    )
+                    ),
                   )}
               </tbody>
             </table>

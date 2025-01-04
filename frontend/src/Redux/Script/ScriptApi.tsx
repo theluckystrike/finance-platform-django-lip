@@ -1,6 +1,6 @@
 // src/api/scriptsApi.js
-import axiosInstance from "../APInterceptors";
-import { endpoint } from "../endpoint";
+import axiosInstance from '../APInterceptors';
+import { endpoint } from '../endpoint';
 
 // Create Script
 export const CreateScript = async (data: any) => {
@@ -19,7 +19,7 @@ export const UpdateScript = async (data: any) => {
   try {
     const response = await axiosInstance.patch(
       `scripts/upload/${scriptId}/`,
-      formData
+      formData,
     );
     return response;
   } catch (error) {
@@ -61,10 +61,10 @@ export const GetAllScript = async () => {
 
 // Get Scripts by Category
 export const GetScriptbyCategory = async (data: any) => {
-  const { value } = data
+  const { value } = data;
   try {
     const response = await axiosInstance.get(
-      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=${value?.status === ''?'all':value?.status}`
+      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=${value?.status === '' ? 'all' : value?.status}`,
     );
     return response;
   } catch (error) {
@@ -72,12 +72,12 @@ export const GetScriptbyCategory = async (data: any) => {
   }
 };
 // Get status Script by ID
-export const GetSatusScriptByID = async (data:any) => {
+export const GetSatusScriptByID = async (data: any) => {
   const { id } = data;
 
   try {
     const response = await axiosInstance.get(
-      `${endpoint.scripts}/${id}/status`
+      `${endpoint.scripts}/${id}/status`,
     );
     return response;
   } catch (error) {

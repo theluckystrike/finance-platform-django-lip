@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   CreateScript,
   DeleteScriptByID,
@@ -8,7 +8,7 @@ import {
   GetScriptByID,
   RunScript,
   UpdateScript,
-} from "./ScriptApi";
+} from './ScriptApi';
 
 interface ScriptState {
   Scripts: any[]; // You can specify a more specific type if you know the structure of scripts
@@ -22,8 +22,8 @@ interface ScriptState {
 const initialState: ScriptState = {
   Scripts: [],
   Script: [],
-  ScriptStatus:'',
-  Active_Role: "",
+  ScriptStatus: '',
+  Active_Role: '',
   page: 1,
   loading: false,
   error: null,
@@ -43,42 +43,42 @@ const AsyncFunctionThunk = (name: any, apiFunction: any) => {
         return rejectWithValue({ error: error.message });
         throw error;
       }
-    }
+    },
   );
 };
 
 export const CreateScripts: any = AsyncFunctionThunk(
-  "CreateScript",
-  CreateScript
+  'CreateScript',
+  CreateScript,
 );
 export const GetAllScripts: any = AsyncFunctionThunk(
-  "GetAllScripts",
-  GetAllScript
+  'GetAllScripts',
+  GetAllScript,
 );
 export const GetScriptByIDs: any = AsyncFunctionThunk(
-  "GetScriptByIDs",
-  GetScriptByID
+  'GetScriptByIDs',
+  GetScriptByID,
 );
-export const RunScripts: any = AsyncFunctionThunk("RunScripts", RunScript);
+export const RunScripts: any = AsyncFunctionThunk('RunScripts', RunScript);
 export const DeleteScriptByIDs: any = AsyncFunctionThunk(
-  "DeleteScriptByIDs",
-  DeleteScriptByID
+  'DeleteScriptByIDs',
+  DeleteScriptByID,
 );
 export const UpdateScripts: any = AsyncFunctionThunk(
-  "UpdateScripts",
-  UpdateScript
+  'UpdateScripts',
+  UpdateScript,
 );
 export const GetScriptbyCategorys: any = AsyncFunctionThunk(
-  "GetScriptbyCategorys",
-  GetScriptbyCategory
+  'GetScriptbyCategorys',
+  GetScriptbyCategory,
 );
-export const GetSatusScriptByIDs:any = AsyncFunctionThunk(
+export const GetSatusScriptByIDs: any = AsyncFunctionThunk(
   'GetSatusScriptByIDs',
-  GetSatusScriptByID
-  );
+  GetSatusScriptByID,
+);
 
 const ScriptSlice = createSlice({
-  name: "ScriptSlice",
+  name: 'ScriptSlice',
   initialState,
   reducers: {
     setLoading: (state, action) => {

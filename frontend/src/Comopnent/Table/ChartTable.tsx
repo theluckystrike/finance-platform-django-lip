@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
-import "../../assest/css/AllScript.css";
-import { Tabledata } from "../../DummyData/TableData";
+import React, { useRef } from 'react';
+import '../../assest/css/AllScript.css';
+import { Tabledata } from '../../DummyData/TableData';
 
 const ChartTable = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -14,20 +14,20 @@ const ChartTable = () => {
     if (el) {
       startX = e.pageX - el.offsetLeft;
       scrollLeft = el.scrollLeft;
-      el.style.cursor = "grabbing";
+      el.style.cursor = 'grabbing';
     }
   };
 
   const mouseLeaveHandler = () => {
     isDown = false;
     const el = scrollRef.current;
-    if (el) el.style.cursor = "grab";
+    if (el) el.style.cursor = 'grab';
   };
 
   const mouseUpHandler = () => {
     isDown = false;
     const el = scrollRef.current;
-    if (el) el.style.cursor = "grab";
+    if (el) el.style.cursor = 'grab';
   };
 
   const mouseMoveHandler = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -51,16 +51,16 @@ const ChartTable = () => {
           onMouseUp={mouseUpHandler}
           onMouseMove={mouseMoveHandler}
           style={{
-            width: "100%",
-            overflowX: "hidden",
-            cursor: "grab", // Initial cursor
+            width: '100%',
+            overflowX: 'hidden',
+            cursor: 'grab', // Initial cursor
           }}
         >
           {132 > -1 ? (
             <table>
               <tr className="mb-2 p-2 text-center fw-bold ">
                 {Object.entries(Tabledata[0]).map(([key, value]) => (
-                  <th className="px-2" style={{ minWidth: "100px" }}>
+                  <th className="px-2" style={{ minWidth: '100px' }}>
                     <h5 className="text-capitalize">{key}</h5>
                   </th>
                 ))}
@@ -70,10 +70,10 @@ const ChartTable = () => {
                 <tr
                   className=" mb-4 p-3   rounded-3 text-center tr-value  bg-light-green"
                   style={{
-                    borderBottom: "5px white solid",
-                    height: "60px",
-                    padding: "0px 10px",
-                    borderRadius: "5px",
+                    borderBottom: '5px white solid',
+                    height: '60px',
+                    padding: '0px 10px',
+                    borderRadius: '5px',
                   }}
                 >
                   {Object.entries(script).map(([key, value]: any) => (

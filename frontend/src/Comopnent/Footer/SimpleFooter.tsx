@@ -1,15 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const SimpleFooter = () => {
+  return <div></div>;
+};
 
-
-  return (
-
-	<div>
-    
-  </div>
-
-  )
-}
-
-export default SimpleFooter
+export default SimpleFooter;

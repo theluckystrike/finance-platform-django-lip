@@ -1,117 +1,111 @@
-import path from "path";
-import { AuthMenutype, SidebarMenutype } from "./types/MenuTypes";
- 
+import path from 'path';
+import { AuthMenutype, SidebarMenutype } from './types/MenuTypes';
 
 export const AuthMenu: AuthMenutype = {
   login: {
-    name: "Login",
-    path: "login",
-    icon: "Login",
+    name: 'Login',
+    path: 'login',
+    icon: 'Login',
     hide: false,
-    role:'all'
+    role: 'all',
   },
   signup: {
-    name: "Signup",
-    path: "signup",
-    icon: "Signup",
+    name: 'Signup',
+    path: 'signup',
+    icon: 'Signup',
     hide: false,
-    role:'all'
+    role: 'all',
   },
 };
 
 export const SidebarMenu: SidebarMenutype = {
   home: {
-    name: "Home",
-    path: "home",
-    icon: "Home",
+    name: 'Home',
+    path: 'home',
+    icon: 'Home',
     hide: true,
-    role:'all'
-
+    role: 'all',
   },
   upload: {
-    name: "Upload",
-    path: "upload",
-    icon: "Upload",
+    name: 'Upload',
+    path: 'upload',
+    icon: 'Upload',
     hide: false,
-    role:'all'
-
+    role: 'all',
   },
   Allscripts: {
-    name: "All scripts",
-    path: "allscripts",
-    icon: "List",
+    name: 'All scripts',
+    path: 'allscripts',
+    icon: 'List',
     hide: false,
-    role:'all'
-
+    role: 'all',
   },
   Filterscripts: {
-    name: "Filter scripts",
-    path: "filter-scripts",
-    icon: "List",
+    name: 'Filter scripts',
+    path: 'filter-scripts',
+    icon: 'List',
     hide: true,
-    role:'all'
-
+    role: 'all',
   },
   Report: {
-    name: "Reports",
-    path: "Report",
-    icon: "Report",
+    name: 'Reports',
+    path: 'Report',
+    icon: 'Report',
     hide: false,
-    role:'all'
-
+    role: 'all',
   },
   tapesummary: {
-    name: "Tape Summary",
-    path: "tape-summary",
-    icon: "Summarize",
-    hide:false,
-    role:'all'
+    name: 'Tape Summary',
+    path: 'tape-summary',
+    icon: 'Summarize',
+    hide: false,
+    role: 'all',
   },
-  scriptTree:{
-    name: "Script Tree",
-    path: "scriptTree",
-    icon: "AccountTree",
-    hide:false,
-    role:'all'
+  scriptTree: {
+    name: 'Script Tree',
+    path: 'scriptTree',
+    icon: 'AccountTree',
+    hide: false,
+    role: 'all',
   },
-  errorhandling:{
-    name: "Error Handling",
-    path: "error-handling",
-    icon: "Error",
-    hide:false,
-    role:'all'
-  }
+  errorhandling: {
+    name: 'Error Handling',
+    path: 'error-handling',
+    icon: 'Error',
+    hide: false,
+    role: 'all',
+  },
 };
 
 export const ActiveRoute = {
   ReportDetails: {
-    name: "ReportDetails",
-    path: "ReportDetails/:id",
-    icon: "Report",
+    name: 'ReportDetails',
+    path: 'ReportDetails/:id',
+    icon: 'Report',
   },
   ScriptDetails: {
-    name: "ScriptDetails",
-    path: "ScriptDetails/:id",
-    icon: "Script",
+    name: 'ScriptDetails',
+    path: 'ScriptDetails/:id',
+    icon: 'Script',
   },
   ScriptEdit: {
-    name: "ScriptEdit",
-    path: "ScriptEdits",
-    icon: "Script",
+    name: 'ScriptEdit',
+    path: 'ScriptEdits',
+    icon: 'Script',
   },
   CategoryManager: {
-    name: "Category Manager",
-    path: "category-manager",
-    icon: "CategoryManager",
+    name: 'Category Manager',
+    path: 'category-manager',
+    icon: 'CategoryManager',
   },
   TapeSummaryResult: {
-    name: "Tape Summary Result",
-    path: "tape-summary-results/:id",
-    icon: "CategoryManager",
+    name: 'Tape Summary Result',
+    path: 'tape-summary-results/:id',
+    icon: 'CategoryManager',
   },
-  UserProfile:{
-    name: "Profile",
-    path: "user-profile",
-    icon: "Profile",
-  }
+  UserProfile: {
+    name: 'Profile',
+    path: 'user-profile',
+    icon: 'Profile',
+  },
 };

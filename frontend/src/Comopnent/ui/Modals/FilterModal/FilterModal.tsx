@@ -1,138 +1,147 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Modal from "react-bootstrap/Modal";
-import ArrowDown from "../../../../assest/image/arrow-down.png";
-import { useGetAllCategoryQuery } from "../../../../Redux/CategoryQuery";
-import { GetAllScripts, GetScriptbyCategorys } from "../../../../Redux/Script/ScriptSlice";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { FC, useEffect, useRef, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Modal from 'react-bootstrap/Modal';
+import ArrowDown from '../../../../assest/image/arrow-down.png';
+import { useGetAllCategoryQuery } from '../../../../Redux/CategoryQuery';
+import {
+  GetAllScripts,
+  GetScriptbyCategorys,
+} from '../../../../Redux/Script/ScriptSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 interface FilterModalProps {
   show: boolean;
   handleClose: () => void;
-  filterQuery:any;
-  setFilterQuery:any;
+  filterQuery: any;
+  setFilterQuery: any;
 }
 
-const FilterModal: FC<FilterModalProps> = ({ show, handleClose,filterQuery,setFilterQuery }) => {
+const FilterModal: FC<FilterModalProps> = ({
+  show,
+  handleClose,
+  filterQuery,
+  setFilterQuery,
+}) => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const fileRef: any = useRef(null);
 
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
   }, []);
 
-  const { data: AllCategory, isError } = useGetAllCategoryQuery({
-    token: loginUser?.access,
-    page_no: 1,
-    page_size: 1000,
-  },
-  {
-    skip: !loginUser, // Skip query execution if loginUser is null
-  });
+  const { data: AllCategory, isError } = useGetAllCategoryQuery(
+    {
+      token: loginUser?.access,
+      page_no: 1,
+      page_size: 1000,
+    },
+    {
+      skip: !loginUser, // Skip query execution if loginUser is null
+    },
+  );
   const categoryData = AllCategory?.results || [];
- 
-  const [Categorylist,setCategorylist]=useState([])
-  const [subCategory1,setSubcategory1]=useState([])
-  const [subCategory2,setSubcategory2]=useState([])
-  
+
+  const [Categorylist, setCategorylist] = useState([]);
+  const [subCategory1, setSubcategory1] = useState([]);
+  const [subCategory2, setSubcategory2] = useState([]);
 
   // Define the form validation schema using Yup
   const validationSchema = Yup.object({
-    parentName: Yup.string().required("Parent category is required"),
-    category: Yup.string().required("Category is required"),
+    parentName: Yup.string().required('Parent category is required'),
+    category: Yup.string().required('Category is required'),
   });
 
   // Use Formik to manage form state
   const formik = useFormik({
     initialValues: {
-      parentName: filterQuery?.parentName || "",
-      category: filterQuery?.category || "",
-      parentName1: filterQuery?.parentName1 || "",
-      category1: filterQuery?.category1 || "",
-      parentName2: filterQuery?.parentName2 || "",
-      category2: filterQuery?.category2 || "",
-      number:1,
+      parentName: filterQuery?.parentName || '',
+      category: filterQuery?.category || '',
+      parentName1: filterQuery?.parentName1 || '',
+      category1: filterQuery?.category1 || '',
+      parentName2: filterQuery?.parentName2 || '',
+      category2: filterQuery?.category2 || '',
+      number: 1,
     },
     validationSchema,
-    enableReinitialize:true,
-    onSubmit:async (values,{ resetForm }) => {
-
-      setFilterQuery(values)
-    await  localStorage.setItem('filterquery',JSON.stringify(values))
-  //  await dispatch(
-  //       GetScriptbyCategorys({
-  //         token: loginUser?.access,
-  //         value: values ,
-  //       })
-  //     );
+    enableReinitialize: true,
+    onSubmit: async (values, { resetForm }) => {
+      setFilterQuery(values);
+      await localStorage.setItem('filterquery', JSON.stringify(values));
+      //  await dispatch(
+      //       GetScriptbyCategorys({
+      //         token: loginUser?.access,
+      //         value: values ,
+      //       })
+      //     );
       // Handle form submission logic here
-        // Reset the form after dispatch
-    // resetForm();
-    navigate(`/account/filter-scripts?category=${formik.values.parentName}&subcategory1=${formik.values.parentName1}&subcategory2=${formik.values.parentName2}`)
+      // Reset the form after dispatch
+      // resetForm();
+      navigate(
+        `/account/filter-scripts?category=${formik.values.parentName}&subcategory1=${formik.values.parentName1}&subcategory2=${formik.values.parentName2}`,
+      );
       handleClose(); // Close modal on form submission
     },
   });
-  const reset = async() =>{ 
-    localStorage.removeItem('filterquery')
+  const reset = async () => {
+    localStorage.removeItem('filterquery');
 
     // await  dispatch(GetAllScripts({token:loginUser?.access}))
-    setFilterQuery(null)
-    navigate('/account/allscripts')
+    setFilterQuery(null);
+    navigate('/account/allscripts');
 
-    handleClose()
+    handleClose();
   };
 
-const [cateDropDown,setCateDropDown]=useState(false)
-const [cateDropDown1,setCateDropDown1]=useState(false)
-const [cateDropDown2,setCateDropDown2]=useState(false)
-  useEffect(()=>{
-    const  Cate = categoryData.filter((i:any)=>i?.parent_category === null)
+  const [cateDropDown, setCateDropDown] = useState(false);
+  const [cateDropDown1, setCateDropDown1] = useState(false);
+  const [cateDropDown2, setCateDropDown2] = useState(false);
+  useEffect(() => {
+    const Cate = categoryData.filter((i: any) => i?.parent_category === null);
     const res = Cate.filter((i: any) =>
-      i.name.toLowerCase().includes(formik.values.parentName.toLowerCase())
+      i.name.toLowerCase().includes(formik.values.parentName.toLowerCase()),
     );
 
-    setCategorylist(res)
-    if(formik.values.parentName !== '' ){
-    const  subCate = categoryData.filter((i:any)=>i?.parent_category === formik.values.category)
-    
- 
-    const res = subCate.filter((i: any) =>
-      i.name.toLowerCase().includes(formik.values.parentName1.toLowerCase())
-    );
-      setSubcategory1(res)
-    }
-   if(formik.values.parentName1 !== '' ){
-      const  subCate2 = categoryData.filter((i:any)=>i?.parent_category === formik.values.category1)
-      const res = subCate2.filter((i: any) =>
-        i.name.toLowerCase().includes(formik.values.parentName2.toLowerCase())
+    setCategorylist(res);
+    if (formik.values.parentName !== '') {
+      const subCate = categoryData.filter(
+        (i: any) => i?.parent_category === formik.values.category,
       );
-      
- 
-      setSubcategory2(res)
-      }
-  },[formik.values.parentName,formik.values.parentName1, formik.values.parentName2,categoryData])
- 
- 
- 
- 
- 
- 
- 
- 
- 
- return (
-<Modal
-        size="lg"
-        fullscreen="md-down" 
-        aria-labelledby="contained-modal-title-vcenter"
+
+      const res = subCate.filter((i: any) =>
+        i.name.toLowerCase().includes(formik.values.parentName1.toLowerCase()),
+      );
+      setSubcategory1(res);
+    }
+    if (formik.values.parentName1 !== '') {
+      const subCate2 = categoryData.filter(
+        (i: any) => i?.parent_category === formik.values.category1,
+      );
+      const res = subCate2.filter((i: any) =>
+        i.name.toLowerCase().includes(formik.values.parentName2.toLowerCase()),
+      );
+
+      setSubcategory2(res);
+    }
+  }, [
+    formik.values.parentName,
+    formik.values.parentName1,
+    formik.values.parentName2,
+    categoryData,
+  ]);
+
+  return (
+    <Modal
+      size="lg"
+      fullscreen="md-down"
+      aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
@@ -140,13 +149,13 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
       <Modal.Body
         className="bg-light-green"
         style={{
-          borderRadius: "25px",
-          overflow: "hidden",
+          borderRadius: '25px',
+          overflow: 'hidden',
         }}
       >
         <div>
           <h5 className="m-3"> Filter by Category</h5>
-        </div> 
+        </div>
         <form
           onSubmit={formik.handleSubmit}
           method="post"
@@ -158,63 +167,67 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                 <label htmlFor="category" className="form-label">
                   Category
                 </label>
-                  <div className="dropdown">
-                    <div className="arrow_down">
-                      <img src={ArrowDown} alt="Arrow down" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="All"
-                      onFocus={()=>{setCateDropDown(true)
-                        setCateDropDown1(false)
-                        setCateDropDown2(false)
-                      }}
-                       
-                      value={formik.values.parentName}
-                       onChange={(e)=>{
-                        formik.setFieldValue("parentName", e.target.value)
-                       }}
-                      className={`form-control ${
-                        formik.touched.parentName && formik.errors.parentName
-                          ? "input-error"
-                          : ""
-                      }`}
-                    />
-                    {formik.touched.parentName && formik.errors.parentName && (
-                      <div className="text-danger">
-                        {formik.errors.parentName as any}
-                      </div>
-                    )}
-                    <div
-                      className="dropdown-content"
-                      style={{ maxHeight: "200px", overflow: "auto",display :cateDropDown?'block':'none' }}
-                    >
-                      {Categorylist.length > 0 &&
-                        Categorylist.map((item: any, index: any) => (
-                          <span
-                            className="h6 hover-span"
-                            key={item.id}
-                            onClick={async() => {
- 
-                              await formik.setFieldValue("parentName", item.name);
-                             await formik.setFieldValue("category", item.id);
-                             const  subCate = categoryData.filter((i:any)=>i?.parent_category === item.id)
-                             setSubcategory1(subCate)
-    
-                             
-                             setCateDropDown(false)
-                            }}
-                          >
-                            {item.name}
-                          </span> 
-                        ))}
-                    </div>
+                <div className="dropdown">
+                  <div className="arrow_down">
+                    <img src={ArrowDown} alt="Arrow down" />
                   </div>
+                  <input
+                    type="text"
+                    placeholder="All"
+                    onFocus={() => {
+                      setCateDropDown(true);
+                      setCateDropDown1(false);
+                      setCateDropDown2(false);
+                    }}
+                    value={formik.values.parentName}
+                    onChange={(e) => {
+                      formik.setFieldValue('parentName', e.target.value);
+                    }}
+                    className={`form-control ${
+                      formik.touched.parentName && formik.errors.parentName
+                        ? 'input-error'
+                        : ''
+                    }`}
+                  />
+                  {formik.touched.parentName && formik.errors.parentName && (
+                    <div className="text-danger">
+                      {formik.errors.parentName as any}
+                    </div>
+                  )}
+                  <div
+                    className="dropdown-content"
+                    style={{
+                      maxHeight: '200px',
+                      overflow: 'auto',
+                      display: cateDropDown ? 'block' : 'none',
+                    }}
+                  >
+                    {Categorylist.length > 0 &&
+                      Categorylist.map((item: any, index: any) => (
+                        <span
+                          className="h6 hover-span"
+                          key={item.id}
+                          onClick={async () => {
+                            await formik.setFieldValue('parentName', item.name);
+                            await formik.setFieldValue('category', item.id);
+                            const subCate = categoryData.filter(
+                              (i: any) => i?.parent_category === item.id,
+                            );
+                            setSubcategory1(subCate);
+
+                            setCateDropDown(false);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                      ))}
+                  </div>
+                </div>
               </div>
 
               <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
                 <label htmlFor="sub category 1" className="form-label">
-                Sub Category 1
+                  Sub Category 1
                 </label>
                 <div className="dropdown">
                   <div className="arrow_down">
@@ -224,16 +237,18 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                     type="text"
                     placeholder="All"
                     value={formik.values.parentName1}
-                    onFocus={()=>{setCateDropDown(false)
-                      setCateDropDown1(true)
-                      setCateDropDown2(false)}}
-                    onChange={(e)=>{
-                      formik.setFieldValue("parentName1", e.target.value)
-                     }}
+                    onFocus={() => {
+                      setCateDropDown(false);
+                      setCateDropDown1(true);
+                      setCateDropDown2(false);
+                    }}
+                    onChange={(e) => {
+                      formik.setFieldValue('parentName1', e.target.value);
+                    }}
                     className={`form-control ${
                       formik.touched.parentName1 && formik.errors.parentName1
-                        ? "input-error"
-                        : ""
+                        ? 'input-error'
+                        : ''
                     }`}
                   />
                   {formik.touched.parentName1 && formik.errors.parentName1 && (
@@ -243,42 +258,45 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                   )}
                   <div
                     className="dropdown-content"
-                    style={{ maxHeight: "200px", overflow: "auto" ,display :cateDropDown1?'block':'none'}}
+                    style={{
+                      maxHeight: '200px',
+                      overflow: 'auto',
+                      display: cateDropDown1 ? 'block' : 'none',
+                    }}
                   >
-                    {subCategory1.length > 0 ?
+                    {subCategory1.length > 0 ? (
                       subCategory1.map((item: any, index: any) => (
                         <span
                           className="h6 hover-span"
                           key={item.id}
-                          onClick={async() => {
-   
-                          await formik.setFieldValue("parentName1", item.name);
-                          await formik.setFieldValue("category1", item.id);
-                          const subCate2 = categoryData.filter((i:any)=>i?.parent_category === item.id)
-                          setSubcategory2(subCate2)
-                          setCateDropDown1(false)
+                          onClick={async () => {
+                            await formik.setFieldValue(
+                              'parentName1',
+                              item.name,
+                            );
+                            await formik.setFieldValue('category1', item.id);
+                            const subCate2 = categoryData.filter(
+                              (i: any) => i?.parent_category === item.id,
+                            );
+                            setSubcategory2(subCate2);
+                            setCateDropDown1(false);
                           }}
                         >
                           {item.name}
                         </span>
                       ))
-                    :
-
-                    <span
-                          className="h6 hover-span"
-                         
-                           
-                        >
-                      Please select a category first.
-                        </span>
-                    }
+                    ) : (
+                      <span className="h6 hover-span">
+                        Please select a category first.
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="col-12 col-sm-12 col-md-6 m-0 p-0 pe-1">
                 <label htmlFor="sub category 2" className="form-label">
-                Sub Category 2
+                  Sub Category 2
                 </label>
                 <div className="dropdown">
                   <div className="arrow_down">
@@ -288,16 +306,18 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                     type="text"
                     placeholder="All"
                     value={formik.values.parentName2}
-                    onFocus={()=>{setCateDropDown(false)
-                      setCateDropDown1(false)
-                      setCateDropDown2(true)}}
-                    onChange={(e)=>{
-                      formik.setFieldValue("parentName2", e.target.value)
-                     }}
+                    onFocus={() => {
+                      setCateDropDown(false);
+                      setCateDropDown1(false);
+                      setCateDropDown2(true);
+                    }}
+                    onChange={(e) => {
+                      formik.setFieldValue('parentName2', e.target.value);
+                    }}
                     className={`form-control ${
                       formik.touched.parentName2 && formik.errors.parentName2
-                        ? "input-error"
-                        : ""
+                        ? 'input-error'
+                        : ''
                     }`}
                   />
                   {formik.touched.parentName2 && formik.errors.parentName2 && (
@@ -307,29 +327,31 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                   )}
                   <div
                     className="dropdown-content"
-                    style={{ maxHeight: "200px", overflow: "auto",display :cateDropDown2?'block':'none' }}
+                    style={{
+                      maxHeight: '200px',
+                      overflow: 'auto',
+                      display: cateDropDown2 ? 'block' : 'none',
+                    }}
                   >
-                    {subCategory2.length > 0 ?
+                    {subCategory2.length > 0 ? (
                       subCategory2.map((item: any, index: any) => (
                         <span
                           className="h6 hover-span"
                           key={item.id}
                           onClick={() => {
-                            formik.setFieldValue("parentName2", item.name);
-                            formik.setFieldValue("category2", item.id);
-                            setCateDropDown2(false)
-                         
+                            formik.setFieldValue('parentName2', item.name);
+                            formik.setFieldValue('category2', item.id);
+                            setCateDropDown2(false);
                           }}
                         >
                           {item.name}
                         </span>
                       ))
-                    :
-                    <span
-                    className="h6 hover-span " >
-              Please select a category and Subcategory 1 first.
-                  </span>
-                    }
+                    ) : (
+                      <span className="h6 hover-span ">
+                        Please select a category and Subcategory 1 first.
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -346,26 +368,33 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                     type="text"
                     placeholder="All"
                     value={formik.values.number}
-                    onFocus={()=>{setCateDropDown(false)
-                      setCateDropDown1(false)
-                      setCateDropDown2(false)}}
+                    onFocus={() => {
+                      setCateDropDown(false);
+                      setCateDropDown1(false);
+                      setCateDropDown2(false);
+                    }}
                     readOnly
                     className={`form-control ${
                       formik.touched.number && formik.errors.number
-                        ? "input-error"
-                        : ""
+                        ? 'input-error'
+                        : ''
                     }`}
                   />
                   {formik.touched.number && formik.errors.number && (
                     <div className="text-danger">{formik.errors.number}</div>
                   )}
-                 <div className="dropdown-content">
-  {[...Array(10)].map((_, index) => (
-    <span key={index}  onClick={() => {
-      formik.setFieldValue("number", index + 1);
-    }}>{index + 1}</span>
-  ))}
-</div>
+                  <div className="dropdown-content">
+                    {[...Array(10)].map((_, index) => (
+                      <span
+                        key={index}
+                        onClick={() => {
+                          formik.setFieldValue('number', index + 1);
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -380,7 +409,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                 <button
                   onClick={reset}
                   style={{
-                    width: "45%",
+                    width: '45%',
                   }}
                   className="btn form-control btn-light  border-2px col-12 col-sm-12 col-md-5 mx-auto fw-bold"
                   type="button"
@@ -389,7 +418,7 @@ const [cateDropDown2,setCateDropDown2]=useState(false)
                 </button>
                 <button
                   style={{
-                    width: "45%",
+                    width: '45%',
                   }}
                   className="btn form-control  btn-dark col-12 col-sm-12 col-md-5 mx-auto fw-bold"
                   type="submit"

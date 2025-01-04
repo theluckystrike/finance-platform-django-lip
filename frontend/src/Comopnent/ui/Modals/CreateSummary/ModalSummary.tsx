@@ -1,16 +1,16 @@
-import { FC, useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useDispatch, useSelector } from "react-redux";
-import Select from "react-select";
-import { v4 as uuidv4 } from "uuid";
-import useToast from "../../../../customHook/toast";
-import Icon from "../../icon/Icon";
+import { FC, useEffect, useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import Select from 'react-select';
+import { v4 as uuidv4 } from 'uuid';
+import useToast from '../../../../customHook/toast';
+import Icon from '../../icon/Icon';
 import {
   Createsummerys,
   GetAllsummerys,
-} from "../../../../Redux/TapeSummary/Slice";
-import axiosInstance from "../../../../Redux/APInterceptors";
-import { GetScriptByIDs } from "../../../../Redux/Script/ScriptSlice";
+} from '../../../../Redux/TapeSummary/Slice';
+import axiosInstance from '../../../../Redux/APInterceptors';
+import { GetScriptByIDs } from '../../../../Redux/Script/ScriptSlice';
 
 interface ScriptOption {
   value: string;
@@ -28,10 +28,10 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
   const handleToast = useToast();
   const allscripts = store?.script?.Scripts?.results || [];
   const filterScript = allscripts.filter(
-    (i: any) => i.output_type === "pd plt" || i.output_type === "pd"
+    (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
   );
-  const [name, setName] = useState("");
-  const [selectedScriptId, setSelectedScriptId] = useState<string>("");
+  const [name, setName] = useState('');
+  const [selectedScriptId, setSelectedScriptId] = useState<string>('');
   const [selectScript, setSelectScript] = useState<any[]>([]);
   const [selectedScriptIds, setSelectedScriptIds] = useState<{
     [key: string]: string;
@@ -39,7 +39,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
   const availableScriptOptions: ScriptOption[] = filterScript
     .filter(
-      (script: any) => !Object.keys(selectedScriptIds).includes(script.id)
+      (script: any) => !Object.keys(selectedScriptIds).includes(script.id),
     )
     .map((script: any) => ({
       value: script.id,
@@ -50,9 +50,9 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
     if (selectedScriptId) {
       const res = await dispatch(GetScriptByIDs({ id: selectedScriptId }));
       console.log(res.payload);
-      if (res.meta.requestStatus === "fulfilled")
+      if (res.meta.requestStatus === 'fulfilled')
         setSelectScript((prev) => [...prev, res.payload]);
-      setSelectedScriptId("");
+      setSelectedScriptId('');
     }
   };
 
@@ -61,21 +61,21 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
     try {
       await dispatch(Createsummerys({ values }));
-      handleToast.SuccessToast("Summary created successfully!");
+      handleToast.SuccessToast('Summary created successfully!');
       setSelectedScriptIds({});
-      setName("");
+      setName('');
       await dispatch(GetAllsummerys({}));
       handleClose();
     } catch (error) {
-      handleToast.ErrorToast("Failed to create summary. Please try again.");
-      console.error("Error creating summary:", error);
+      handleToast.ErrorToast('Failed to create summary. Please try again.');
+      console.error('Error creating summary:', error);
     }
   };
 
   const handleSelectChange = (selectedOption: any, scriptId: string) => {
     setSelectedScriptIds((prevSelected) => ({
       ...prevSelected,
-      [scriptId]: selectedOption ? selectedOption.value : "",
+      [scriptId]: selectedOption ? selectedOption.value : '',
     }));
   };
 
@@ -88,7 +88,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
       show={show}
       onHide={handleClose}
     >
-      <Modal.Body className="bg-light-green" style={{ borderRadius: "25px" }}>
+      <Modal.Body className="bg-light-green" style={{ borderRadius: '25px' }}>
         <h5>Create Tap Summary</h5>
         <form
           onSubmit={(e) => {
@@ -120,12 +120,12 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                   options={availableScriptOptions}
                   value={
                     availableScriptOptions.find(
-                      (option) => option.value === selectedScriptId
+                      (option) => option.value === selectedScriptId,
                     ) || null
                   }
                   onChange={(selectedOption) =>
                     setSelectedScriptId(
-                      selectedOption ? selectedOption.value : ""
+                      selectedOption ? selectedOption.value : '',
                     )
                   }
                   placeholder="Select a Script"
@@ -137,7 +137,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                   htmlFor="column"
                   className="form-label  d-block invisible"
                 >
-                  {" dfdd"}
+                  {' dfdd'}
                 </label>
                 <button
                   type="button"
@@ -150,13 +150,13 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
               <div
                 className="col-12"
-                style={{ maxHeight: "300px", overflow: "auto" }}
+                style={{ maxHeight: '300px', overflow: 'auto' }}
               >
                 <h6>Scripts to Include:</h6>
                 <ul>
                   {selectScript.map((scriptItem: any) => (
                     <li key={uuidv4()}>
-                      Script ID: {scriptItem?.id}, Column:{" "}
+                      Script ID: {scriptItem?.id}, Column:{' '}
                       {selectedScriptIds[scriptItem.id]}
                       <Select
                         id="columns"
@@ -164,7 +164,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                           (column: any) => ({
                             value: column.name,
                             label: column.name,
-                          })
+                          }),
                         )}
                         value={
                           scriptItem?.table_data?.table_meta?.columns
@@ -175,7 +175,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
                             .find(
                               (option: any) =>
                                 option.value ===
-                                selectedScriptIds[scriptItem.id]
+                                selectedScriptIds[scriptItem.id],
                             ) || null
                         }
                         onChange={(selectedOption) =>

@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import { Categoryarray2 } from "../../DummyData/TableData";
-import NewCategoryModal from "../ui/Modals/NewCategoryModal/NewCategoryModal";
-import DeleteModal from "../../pages/UploadScript/DeleteModal";
+import React, { useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
+import { Categoryarray2 } from '../../DummyData/TableData';
+import NewCategoryModal from '../ui/Modals/NewCategoryModal/NewCategoryModal';
+import DeleteModal from '../../pages/UploadScript/DeleteModal';
 
-const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
+const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [selected, setSelected] = useState("");
-  const [selectedPERnt, setSelectedPREnt] = useState("");
+  const [selected, setSelected] = useState('');
+  const [selectedPERnt, setSelectedPREnt] = useState('');
   const [show, setShow] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [editingCategoryid, setEditingCategoryid] = useState<string | null>(
-    null
+    null,
   );
 
   const handleClose = () => {
@@ -28,7 +28,7 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
     setExpandedCategories((prev) =>
       prev.includes(name)
         ? prev.filter((category) => category !== name)
-        : [...prev, name]
+        : [...prev, name],
     );
   };
 
@@ -53,15 +53,15 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
             <div>
               <span
                 onClick={() => toggleExpand(item.name)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
               >
                 {item.name}
                 <FaEdit
                   onClick={(e: any) => {
                     e.stopPropagation();
-                    startEditing(item, { name: "", id: "" });
+                    startEditing(item, { name: '', id: '' });
                   }}
-                  style={{ marginLeft: "8px", cursor: "pointer" }}
+                  style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
               </span>
               {expandedCategories.includes(item.name) && item.subcategories && (
@@ -70,7 +70,7 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
                     <li key={innerIndex}>
                       <span
                         onClick={() => toggleExpand(innerItem.name)}
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: 'pointer' }}
                       >
                         {innerItem.name}
                         <FaEdit
@@ -78,7 +78,7 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
                             e.stopPropagation();
                             startEditing(innerItem, item);
                           }}
-                          style={{ marginLeft: "8px", cursor: "pointer" }}
+                          style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
                       </span>
                       {expandedCategories.includes(innerItem.name) &&
@@ -89,17 +89,14 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
                                 <li key={subinnerIndex}>
                                   <span
                                     onClick={() =>
-                                      startEditing(  
-                                         subinnerItem,
-                                        innerItem,
-                                      )
+                                      startEditing(subinnerItem, innerItem)
                                     }
-                                    style={{ cursor: "pointer" }}
+                                    style={{ cursor: 'pointer' }}
                                   >
                                     {subinnerItem.name}
                                   </span>
                                 </li>
-                              )
+                              ),
                             )}
                           </ul>
                         )}
@@ -133,11 +130,11 @@ const RenderTree = (data: any, categoryData:any,token: any, level = 0) => {
   );
 };
 
-const CategoryTree = ({ categoryFilter,categoryData, token }: any) => {
+const CategoryTree = ({ categoryFilter, categoryData, token }: any) => {
   return (
     <div className="category-tree mx-auto col-3">
       <h3>Category Tree</h3>
-      {RenderTree(categoryFilter,categoryData, token)}
+      {RenderTree(categoryFilter, categoryData, token)}
     </div>
   );
 };

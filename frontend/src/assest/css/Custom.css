@@ -6,24 +6,24 @@
   --light-green-color: #e5f7e6c6;
 }
 
-@import "./Header.css";
-@import "./Home.css";
-@import "./login.css";
-@import "./sidebar.css";
-@import "./dashboard.css";
-@import "./tape-summary.css";
+@import './Header.css';
+@import './Home.css';
+@import './login.css';
+@import './sidebar.css';
+@import './dashboard.css';
+@import './tape-summary.css';
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
@@ -150,9 +150,9 @@ input:focus {
 /* .dropdown:hover .dropdown-content {
   display: block;
 } */
- .active-dropdown{
-  display:'block' !important;
- }
+.active-dropdown {
+  display: 'block' !important;
+}
 .dropdown:hover .dropbtn {
   background-color: #3e8e41;
 }
@@ -250,7 +250,7 @@ input:focus {
 }
 
 .category-tree li::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 10px;
   left: -9px;
@@ -260,7 +260,7 @@ input:focus {
 }
 
 .category-tree li::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0px;
   left: -10px;
@@ -306,7 +306,7 @@ input:focus {
 
 /* Add icon to tooltip using :after */
 .tooltip-text::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -19px; /* Position the arrow above the tooltip */
   right: 8px;

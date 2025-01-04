@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import "../../assest/css/AllScript.css";
-import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
-import { ActiveRoute } from "../../Menu";
-import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
-import { ScriptData, TapeSummaryData } from "../../DummyData/TableData";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { GetAllScripts } from "../../Redux/Script/ScriptSlice";
-import DateFormatter from "../../customHook/useTImeformnt";
-import Loader from "../../Comopnent/ui/Loader";
+import React, { useEffect, useState } from 'react';
+import '../../assest/css/AllScript.css';
+import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
+import { ActiveRoute } from '../../Menu';
+import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
+import { ScriptData, TapeSummaryData } from '../../DummyData/TableData';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
+import DateFormatter from '../../customHook/useTImeformnt';
+import Loader from '../../Comopnent/ui/Loader';
 import PaginationButtons, {
   dataPagination,
   PER_COUNT,
-} from "../../Comopnent/ui/PaginationButtons";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import useSortableData from "../../customHook/useSortable";
-import CreateSummary from "../../Comopnent/ui/Modals/CreateSummary/ModalSummary";
-import { GetAllsummerys } from "../../Redux/TapeSummary/Slice";
+} from '../../Comopnent/ui/PaginationButtons';
+import Icon from '../../Comopnent/ui/icon/Icon';
+import useSortableData from '../../customHook/useSortable';
+import CreateSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalSummary';
+import { GetAllsummerys } from '../../Redux/TapeSummary/Slice';
 
 const TapeSummary: React.FC = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const TapeSummary: React.FC = () => {
 
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
@@ -53,7 +53,7 @@ const TapeSummary: React.FC = () => {
   }, [loginUser]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT["10"]);
+  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
   const [show, setShow] = useState(false);
   const [saveShow, setSaveShow] = useState(false);
@@ -61,10 +61,10 @@ const TapeSummary: React.FC = () => {
 
   const toggleSelectAll = (event: React.ChangeEvent<any>) => {
     const checkboxes = document.querySelectorAll(
-      '#scriptsCheckboxes input[type="checkbox"]'
+      '#scriptsCheckboxes input[type="checkbox"]',
     );
     checkboxes.forEach(
-      (checkbox: any) => (checkbox.checked = event.target.checked)
+      (checkbox: any) => (checkbox.checked = event.target.checked),
     );
     handleCheckboxChange();
   };
@@ -74,8 +74,8 @@ const TapeSummary: React.FC = () => {
 
     const selected = Array.from(
       document.querySelectorAll(
-        '#scriptsCheckboxes input[type="checkbox"]:checked'
-      )
+        '#scriptsCheckboxes input[type="checkbox"]:checked',
+      ),
     ).map((checkbox: any) => checkbox.value);
 
     setSelectedScripts(selected);
@@ -84,13 +84,13 @@ const TapeSummary: React.FC = () => {
   const handleGetResults = () => {
     if (selectedScripts.length > 0) {
       const query = new URLSearchParams({
-        scriptIds: selectedScripts.join(","),
+        scriptIds: selectedScripts.join(','),
       }).toString();
       navigate(`/account/${ActiveRoute.TapeSummaryResult.path}?${query}`);
     }
   };
   const { items, requestSort, getClassNamesFor } = useSortableData(
-    allsummerys || []
+    allsummerys || [],
   );
   const isAllSelected = selectedScripts.length === items.length;
 
@@ -125,7 +125,7 @@ const TapeSummary: React.FC = () => {
         </div>
         <div>
           {!loading ? (
-            <div style={{ overflow: "auto" }} id="customReportForm">
+            <div style={{ overflow: 'auto' }} id="customReportForm">
               <div className="py-2">
                 <PaginationButtons
                   data={items}
@@ -136,7 +136,7 @@ const TapeSummary: React.FC = () => {
                   setPerPage={setPerPage}
                 />
               </div>
-              <table className="table" style={{ minWidth: "1000px" }}>
+              <table className="table" style={{ minWidth: '1000px' }}>
                 <thead>
                   <tr className="fw-bold mb-2 p-2">
                     <th scope="col" className="col-1">
@@ -150,13 +150,13 @@ const TapeSummary: React.FC = () => {
                     <th
                       scope="col"
                       className="col-4"
-                      onClick={() => requestSort("name")}
+                      onClick={() => requestSort('name')}
                     >
                       <h6>
                         <span>Name</span>
                         <Icon
                           size="10px"
-                          className={getClassNamesFor("name")}
+                          className={getClassNamesFor('name')}
                           icon="FilterList"
                         />
                       </h6>
@@ -165,13 +165,13 @@ const TapeSummary: React.FC = () => {
                     <th
                       scope="col"
                       className="col-2 text-center mx-auto"
-                      onClick={() => requestSort("created")}
+                      onClick={() => requestSort('created')}
                     >
                       <h6>
                         <span>Created</span>
                         <Icon
                           size="10px"
-                          className={getClassNamesFor("created")}
+                          className={getClassNamesFor('created')}
                           icon="FilterList"
                         />
                       </h6>
@@ -186,7 +186,7 @@ const TapeSummary: React.FC = () => {
                           <tr
                             key={index}
                             className="table-card rounded-3 bg-light-green mb-2 p-3"
-                            style={{ borderRadius: "10px" }}
+                            style={{ borderRadius: '10px' }}
                           >
                             <td className="col-1">
                               <input
@@ -208,9 +208,9 @@ const TapeSummary: React.FC = () => {
                               <DateFormatter isoString={script.created} />
                             </td>
                           </tr>
-                          <tr style={{ height: "10px" }}></tr>
+                          <tr style={{ height: '10px' }}></tr>
                         </>
-                      )
+                      ),
                     )
                   ) : (
                     <tr>

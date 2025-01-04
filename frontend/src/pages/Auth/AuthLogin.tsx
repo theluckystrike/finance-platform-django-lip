@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
-import { useFormik, FormikHelpers } from "formik";
-import * as Yup from "yup";
-import "../../assest/css/login.css"; // Import the CSS file
-import { ReactComponent as Logo } from "../../assest/svg/logo.svg";
-import { useNavigate } from "react-router-dom";
-import useToast from "../../customHook/toast";
-import { useLoginMutation } from "../../Redux/AuthSlice";
-import { SidebarMenu } from "../../Menu";
+import React, { useEffect } from 'react';
+import { useFormik, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+import '../../assest/css/login.css'; // Import the CSS file
+import { ReactComponent as Logo } from '../../assest/svg/logo.svg';
+import { useNavigate } from 'react-router-dom';
+import useToast from '../../customHook/toast';
+import { useLoginMutation } from '../../Redux/AuthSlice';
+import { SidebarMenu } from '../../Menu';
 
 // Define the types for the form values
 interface FormValues {
@@ -21,20 +21,20 @@ function SignInComponent() {
   const navigate = useNavigate();
   const formik = useFormik<FormValues>({
     initialValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       rememberMe: false,
     },
     validationSchema: Yup.object({
-      username: Yup.string().required("Username is required"),
+      username: Yup.string().required('Username is required'),
       password: Yup.string()
-        .min(8, "Password must be at least 8 characters")
-        .required("Password is required"),
+        .min(8, 'Password must be at least 8 characters')
+        .required('Password is required'),
     }),
 
     onSubmit: async (
       values: FormValues,
-      { setSubmitting }: FormikHelpers<FormValues>
+      { setSubmitting }: FormikHelpers<FormValues>,
     ) => {
       login(values);
       setSubmitting(false);
@@ -44,10 +44,10 @@ function SignInComponent() {
   useEffect(() => {
     if (isSuccess) {
       // Set login data in localStorage first
-      localStorage.setItem("login", JSON.stringify(data));
+      localStorage.setItem('login', JSON.stringify(data));
 
       // Then show a success message
-      handleToast.SuccessToast("Logged in successfully");
+      handleToast.SuccessToast('Logged in successfully');
 
       // Finally, navigate to the next page
       navigate(`/account/${SidebarMenu.upload.path}`);
@@ -55,7 +55,7 @@ function SignInComponent() {
 
     if (isError) {
       // Show error toast if login fails
-      handleToast.ErrorToast("Login failed. Please check your credentials.");
+      handleToast.ErrorToast('Login failed. Please check your credentials.');
     }
   }, [data, isSuccess, isError, navigate]);
 
@@ -77,8 +77,8 @@ function SignInComponent() {
               autoComplete="username"
               className={`input ${
                 formik.touched.username && formik.errors.username
-                  ? "input-error"
-                  : ""
+                  ? 'input-error'
+                  : ''
               }`}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -99,8 +99,8 @@ function SignInComponent() {
               autoComplete="current-password"
               className={`input ${
                 formik.touched.password && formik.errors.password
-                  ? "input-error"
-                  : ""
+                  ? 'input-error'
+                  : ''
               }`}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -122,9 +122,9 @@ function SignInComponent() {
           </div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <a href="#" className="link">

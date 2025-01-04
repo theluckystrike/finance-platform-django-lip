@@ -4,15 +4,11 @@ import axiosInstance from '../APInterceptors'; // Adjust the import path if nece
 import { endpoint } from '../endpoint';
 
 // Create Report
-export const Createreport = async (data:any) => {
+export const Createreport = async (data: any) => {
   const { values } = data;
- 
 
   try {
-    const response = await axiosInstance.post(
-      endpoint.reports,
-      values
-    );
+    const response = await axiosInstance.post(endpoint.reports, values);
     return response;
   } catch (error) {
     throw error;
@@ -20,13 +16,13 @@ export const Createreport = async (data:any) => {
 };
 
 // Merge Report
-export const mergereport = async (data:any) => {
+export const mergereport = async (data: any) => {
   const { values } = data;
 
   try {
     const response = await axiosInstance.post(
       `${endpoint.reports}/merge`,
-      values
+      values,
     );
     return response;
   } catch (error) {
@@ -35,13 +31,13 @@ export const mergereport = async (data:any) => {
 };
 
 // Update Report
-export const Updatereport = async (data:any) => {
+export const Updatereport = async (data: any) => {
   const { values, id } = data;
 
   try {
     const response = await axiosInstance.put(
       `${endpoint.reports}/${id}`,
-      values
+      values,
     );
     return response;
   } catch (error) {
@@ -50,13 +46,11 @@ export const Updatereport = async (data:any) => {
 };
 
 // Get Report by ID
-export const GetreportByID = async (data:any) => {
+export const GetreportByID = async (data: any) => {
   const { id } = data;
 
   try {
-    const response = await axiosInstance.get(
-      `${endpoint.reports}/${id}`
-    );
+    const response = await axiosInstance.get(`${endpoint.reports}/${id}`);
     return response;
   } catch (error) {
     throw error;
@@ -66,9 +60,7 @@ export const GetreportByID = async (data:any) => {
 // Get All Reports
 export const GetAllreport = async () => {
   try {
-    const response = await axiosInstance.get(
-      `${endpoint.reports}?page=1`
-    );
+    const response = await axiosInstance.get(`${endpoint.reports}?page=1`);
     return response;
   } catch (error) {
     throw error;
@@ -86,14 +78,11 @@ export const Runreport = async () => {
 };
 
 // Create Report Schedules
-export const Createreportschedules = async (data:any) => {
+export const Createreportschedules = async (data: any) => {
   const { values } = data;
 
   try {
-    const response = await axiosInstance.post(
-      endpoint.reportschedules,
-      values
-    );
+    const response = await axiosInstance.post(endpoint.reportschedules, values);
     return response;
   } catch (error) {
     throw error;
@@ -101,13 +90,11 @@ export const Createreportschedules = async (data:any) => {
 };
 
 // Delete Report by ID
-export const DeleteReportsByID = async (data:any) => {
+export const DeleteReportsByID = async (data: any) => {
   const { id } = data;
 
   try {
-    const response = await axiosInstance.delete(
-      `${endpoint.reports}/${id}`
-    );
+    const response = await axiosInstance.delete(`${endpoint.reports}/${id}`);
     return response;
   } catch (error) {
     throw error;
@@ -115,7 +102,7 @@ export const DeleteReportsByID = async (data:any) => {
 };
 
 // Update Reports
-export const UpdateReports = async (data:any) => {
+export const UpdateReports = async (data: any) => {
   const { id } = data;
 
   try {
@@ -123,22 +110,21 @@ export const UpdateReports = async (data:any) => {
       `${endpoint.reports}/${id}/update`,
       {
         run_scripts: false,
-      }
+      },
     );
     return response;
   } catch (error) {
     throw error;
   }
 };
- 
 
 // Get status Report by ID
-export const GetSatusreportByID = async (data:any) => {
+export const GetSatusreportByID = async (data: any) => {
   const { id } = data;
 
   try {
     const response = await axiosInstance.get(
-      `${endpoint.reports}/${id}/status`
+      `${endpoint.reports}/${id}/status`,
     );
     return response;
   } catch (error) {

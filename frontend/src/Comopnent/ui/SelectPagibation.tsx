@@ -1,8 +1,8 @@
-import React, { forwardRef, HTMLAttributes, ReactNode } from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import Option, { IOptionsProps, Options } from "./Option";
-import Validation from "./Validation";
+import React, { forwardRef, HTMLAttributes, ReactNode } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import Option, { IOptionsProps, Options } from './Option';
+import Validation from './Validation';
 
 interface ISelectProps
   extends Partial<IOptionsProps>,
@@ -13,7 +13,7 @@ interface ISelectProps
   children?: ReactNode;
   ariaLabel: string;
   placeholder?: string;
-  size?: "lg" | "sm";
+  size?: 'lg' | 'sm';
   multiple?: boolean;
   disabled?: boolean;
   required?: boolean;
@@ -68,7 +68,7 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
       onSelect,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <>
@@ -76,14 +76,14 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
           ref={ref}
           id={id}
           className={classNames(
-            "form-select",
+            'form-select',
             {
               [`form-select-${size}`]: size,
-              "text-muted": value === "" && placeholder,
-              "is-invalid": !isValid && isTouched && invalidFeedback,
-              "is-valid": !isValid && isTouched && !invalidFeedback,
+              'text-muted': value === '' && placeholder,
+              'is-invalid': !isValid && isTouched && invalidFeedback,
+              'is-valid': !isValid && isTouched && !invalidFeedback,
             },
-            className
+            className,
           )}
           name={name}
           aria-label={ariaLabel}
@@ -121,9 +121,9 @@ const Select = forwardRef<HTMLSelectElement, ISelectProps>(
         )}
       </>
     );
-  }
+  },
 );
-Select.displayName = "Select";
+Select.displayName = 'Select';
 Select.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
@@ -134,7 +134,7 @@ Select.propTypes = {
   children: PropTypes.node,
   ariaLabel: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
-  size: PropTypes.oneOf(["lg", "sm"]),
+  size: PropTypes.oneOf(['lg', 'sm']),
   multiple: PropTypes.bool,
   /**
    * A *disabled* element isn't editable and isn't sent on submit.
@@ -163,7 +163,7 @@ Select.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    })
+    }),
   ),
   /**
    * For formik ***`formik.touched.ID_OR_NAME`***

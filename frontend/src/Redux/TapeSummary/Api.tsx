@@ -4,16 +4,12 @@ import axiosInstance from '../APInterceptors'; // Adjust the import path if nece
 import { endpoint } from '../endpoint';
 
 // Create summery
-export const Createsummery = async (data:any) => {
+export const Createsummery = async (data: any) => {
   const { values } = data;
- console.log(values,'1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/');
- 
+  console.log(values, '1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik,9ol.0p;/');
 
   try {
-    const response = await axiosInstance.post(
-      endpoint.summaries,
-      values
-    );
+    const response = await axiosInstance.post(endpoint.summaries, values);
     return response;
   } catch (error) {
     throw error;
@@ -21,13 +17,13 @@ export const Createsummery = async (data:any) => {
 };
 
 // Merge summery
-export const mergesummery = async (data:any) => {
+export const mergesummery = async (data: any) => {
   const { values } = data;
 
   try {
     const response = await axiosInstance.post(
       `${endpoint.summaries}/merge`,
-      values
+      values,
     );
     return response;
   } catch (error) {
@@ -36,13 +32,13 @@ export const mergesummery = async (data:any) => {
 };
 
 // Update summery
-export const Updatesummery = async (data:any) => {
+export const Updatesummery = async (data: any) => {
   const { values, id } = data;
 
   try {
     const response = await axiosInstance.put(
       `${endpoint.summaries}/${id}`,
-      values
+      values,
     );
     return response;
   } catch (error) {
@@ -51,13 +47,11 @@ export const Updatesummery = async (data:any) => {
 };
 
 // Get summery by ID
-export const GetsummeryByID = async (data:any) => {
+export const GetsummeryByID = async (data: any) => {
   const { id } = data;
 
   try {
-    const response = await axiosInstance.get(
-      `${endpoint.summaries}/${id}`
-    );
+    const response = await axiosInstance.get(`${endpoint.summaries}/${id}`);
     return response;
   } catch (error) {
     throw error;
@@ -67,9 +61,7 @@ export const GetsummeryByID = async (data:any) => {
 // Get All summaries
 export const GetAllsummery = async () => {
   try {
-    const response = await axiosInstance.get(
-      `${endpoint.summaries}?page=1`
-    );
+    const response = await axiosInstance.get(`${endpoint.summaries}?page=1`);
     return response;
   } catch (error) {
     throw error;
@@ -86,16 +78,12 @@ export const Runsummery = async () => {
   }
 };
 
- 
-
 // Delete summery by ID
-export const DeletesummariesByID = async (data:any) => {
+export const DeletesummariesByID = async (data: any) => {
   const { id } = data;
 
   try {
-    const response = await axiosInstance.delete(
-      `${endpoint.summaries}/${id}`
-    );
+    const response = await axiosInstance.delete(`${endpoint.summaries}/${id}`);
     return response;
   } catch (error) {
     throw error;
@@ -103,7 +91,7 @@ export const DeletesummariesByID = async (data:any) => {
 };
 
 // Update summaries
-export const Updatesummaries = async (data:any) => {
+export const Updatesummaries = async (data: any) => {
   const { id } = data;
 
   try {
@@ -111,22 +99,21 @@ export const Updatesummaries = async (data:any) => {
       `${endpoint.summaries}/${id}/update`,
       {
         run_scripts: false,
-      }
+      },
     );
     return response;
   } catch (error) {
     throw error;
   }
 };
- 
 
 // Get status summery by ID
-export const GetSatussummeryByID = async (data:any) => {
+export const GetSatussummeryByID = async (data: any) => {
   const { id } = data;
 
   try {
     const response = await axiosInstance.get(
-      `${endpoint.summaries}/${id}/status`
+      `${endpoint.summaries}/${id}/status`,
     );
     return response;
   } catch (error) {

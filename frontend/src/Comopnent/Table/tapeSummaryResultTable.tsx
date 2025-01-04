@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import "../../assest/css/AllScript.css";
+import React, { useRef } from 'react';
+import '../../assest/css/AllScript.css';
 
 // Define the type for table data props
 interface TableDataRow {
@@ -25,20 +25,20 @@ const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({
     if (el) {
       startX = e.pageX - el.offsetLeft;
       scrollLeft = el.scrollLeft;
-      el.style.cursor = "grabbing";
+      el.style.cursor = 'grabbing';
     }
   };
 
   const mouseLeaveHandler = () => {
     isDown = false;
     const el = scrollRef.current;
-    if (el) el.style.cursor = "grab";
+    if (el) el.style.cursor = 'grab';
   };
 
   const mouseUpHandler = () => {
     isDown = false;
     const el = scrollRef.current;
-    if (el) el.style.cursor = "grab";
+    if (el) el.style.cursor = 'grab';
   };
 
   const mouseMoveHandler = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -72,20 +72,20 @@ const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({
         onMouseUp={mouseUpHandler}
         onMouseMove={mouseMoveHandler}
         style={{
-          width: "100%",
-          overflowX: "auto",
-          cursor: "grab",
+          width: '100%',
+          overflowX: 'auto',
+          cursor: 'grab',
         }}
       >
         {transposedData.length > 0 ? (
-          <table style={{ borderCollapse: "collapse", width: "max-content" }}>
+          <table style={{ borderCollapse: 'collapse', width: 'max-content' }}>
             <thead>
               <tr className="mb-2 p-2 text-center fw-bold">
                 {TableData.map((_, index) => (
                   <th
                     key={index}
                     className="px-2"
-                    style={{ minWidth: "150px" }}
+                    style={{ minWidth: '150px' }}
                   >
                     <h5 className="text-capitalize">{`Data ${index + 1}`}</h5>
                   </th>
@@ -98,17 +98,17 @@ const TapeSummaryResltTable: React.FC<TapeSummaryResltTableProps> = ({
                   key={idx}
                   className="mb-4 p-3 rounded-3 text-center tr-value bg-light-green"
                   style={{
-                    borderBottom: "5px white solid",
-                    height: "60px",
-                    padding: "0px 10px",
-                    borderRadius: "5px",
+                    borderBottom: '5px white solid',
+                    height: '60px',
+                    padding: '0px 10px',
+                    borderRadius: '5px',
                   }}
                 >
                   {column.map((cell, index) => (
                     <td
                       key={index}
                       className="px-2"
-                      style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                      style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
                     >
                       <span className="fw-bold fs-6">{cell.value}</span>
                     </td>
