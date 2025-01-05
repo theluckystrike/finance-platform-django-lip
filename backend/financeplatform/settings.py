@@ -166,8 +166,8 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'django_hosts.middleware.HostsRequestMiddleware',
     'financeplatform.middleware.HealthCheckMiddleware',
+    'django_hosts.middleware.HostsRequestMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
