@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useSortableData from '../../customHook/useSortable';
 import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
-import DateFormatter from '../../customHook/useTImeformnt';
+import { formatIsoDate } from '../../utils/formatDate';
 import PaginationButtons, {
   dataPagination,
   PER_COUNT,
@@ -126,10 +126,10 @@ const Report = () => {
                             </Link>
                           </td>
                           <td className="col-2 text-center mx-auto">
-                            <DateFormatter isoString={script.created} />
+                            {formatIsoDate(script.created)}
                           </td>
                           <td className="col-2 text-center mx-auto">
-                            <DateFormatter isoString={script.last_updated} />
+                            {formatIsoDate(script.last_updated)}
                           </td>
                         </tr>
                         <tr style={{ height: '10px' }}></tr>
