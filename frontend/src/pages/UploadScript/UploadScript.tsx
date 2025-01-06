@@ -27,7 +27,6 @@ const UploadScriptForm = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const fileRef = useRef<any>(null);
-
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     localStorage.removeItem('filterquery');
@@ -95,34 +94,31 @@ const UploadScriptForm = () => {
     },
   });
 
-  const [FilterCategory, setFilterCategory] = useState([]);
-
-  const filterData = (value: any) => {
-    const trimmedValue = value.trim(); // Trim the input value
-    if (trimmedValue !== '') {
-      const res = categoryData.filter(
-        (cate: Category) =>
-          cate.level === 2 &&
-          cate.name.toLowerCase().includes(trimmedValue.toLowerCase()),
-      );
-
-      setFilterCategory(res);
-    } else {
-      setFilterCategory([]);
-    }
-  };
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [selectedOutputType, setSelectedOutputType] = useState<string | null>(
+    null,
+  );
 
   const onCategoryChange = (
     event: React.SyntheticEvent,
     category: Category | null,
   ) => {
+    setSelectedCategory(category);
     formik.setFieldValue('category', category ? category.id : null);
   };
 
   const onOuputChange = (event: React.SyntheticEvent, value: string | null) => {
     formik.setFieldValue('output_type', value);
+    setSelectedOutputType(value);
   };
 
+  const onReset = () => {
+    formik.resetForm();
+    setSelectedCategory(null);
+    setSelectedOutputType(null);
+  };
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
@@ -147,6 +143,7 @@ const UploadScriptForm = () => {
                     renderInput={(params) => (
                       <TextField {...params} label="Select a category" />
                     )}
+                    value={selectedCategory}
                     onChange={onCategoryChange}
                   />
                 </div>
@@ -175,6 +172,7 @@ const UploadScriptForm = () => {
                 renderInput={(params) => (
                   <TextField {...params} label="Select a view data type" />
                 )}
+                value={selectedOutputType}
                 onChange={onOuputChange}
               />
 
@@ -239,7 +237,7 @@ const UploadScriptForm = () => {
               <button
                 type="reset"
                 className="btn btn-light bordered-button my-1  col-12 col-sm-12 col-md-5"
-                onClick={() => formik.resetForm()}
+                onClick={onReset}
               >
                 Reset
               </button>
