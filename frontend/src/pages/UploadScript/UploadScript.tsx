@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
+import { useGetAllCategoryQuery, Category } from '../../Redux/CategoryQuery';
+
 import Icon from '../../Comopnent/ui/icon/Icon';
 import CategoryModal from '../../Comopnent/ui/Modals/CategoryModal/CategoryModal';
-import ArrowDown from '../../assest/image/arrow-down.png';
-import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
-import { useGetAllCategoryQuery } from '../../Redux/CategoryQuery';
-import { useDispatch } from 'react-redux';
+
 import { CreateScripts } from '../../Redux/Script/ScriptSlice';
 import useToast from '../../customHook/toast';
-import CustomDropdown from '../../Comopnent/CustomDropdown/CustomDropdown';
 
 // Define validation schema using Yup
 const validationSchema = Yup.object({
@@ -43,6 +47,11 @@ const UploadScriptForm = () => {
 
   const categoryData = AllCategory?.results || [];
 
+  const level2Categories = useMemo(
+    () => categoryData.filter((cate: Category) => cate.level === 2),
+    [categoryData],
+  );
+
   const handleToast = useToast();
 
   const { data, error, isLoading } = useGetUserByTokenQuery(
@@ -68,12 +77,6 @@ const UploadScriptForm = () => {
     },
     validationSchema,
     onSubmit: async (values: any, { resetForm }) => {
-      const formData = new FormData();
-      formData.append('category', values.category);
-      formData.append('output_type', 'plt');
-      formData.append('name', values.name);
-      formData.append('file', values.file);
-      formData.append('description', values.description);
       // Dispatch the action with FormData
       const res = await dispatch(
         CreateScripts({
@@ -81,12 +84,13 @@ const UploadScriptForm = () => {
           token: loginUser?.access,
         }) as any,
       );
-      console.log(res);
 
-      resetForm();
-      fileRef.current.value = '';
       if (!res.error) {
         handleToast.SuccessToast(`New Script added successfully`);
+        resetForm();
+        fileRef.current.value = '';
+      } else {
+        handleToast.ErrorToast(res.payload.error);
       }
     },
   });
@@ -96,20 +100,28 @@ const UploadScriptForm = () => {
   const filterData = (value: any) => {
     const trimmedValue = value.trim(); // Trim the input value
     if (trimmedValue !== '') {
-      const res = categoryData.filter((i: any) =>
-        i.name.toLowerCase().includes(trimmedValue.toLowerCase()),
+      const res = categoryData.filter(
+        (cate: Category) =>
+          cate.level === 2 &&
+          cate.name.toLowerCase().includes(trimmedValue.toLowerCase()),
       );
+
       setFilterCategory(res);
     } else {
       setFilterCategory([]);
     }
   };
 
-  useEffect(() => {
-    localStorage.removeItem('filterquery');
+  const onCategoryChange = (
+    event: React.SyntheticEvent,
+    category: Category | null,
+  ) => {
+    formik.setFieldValue('category', category ? category.id : null);
+  };
 
-    filterData(formik.values.parentName);
-  }, [formik.values.parentName]);
+  const onOuputChange = (event: React.SyntheticEvent, value: string | null) => {
+    formik.setFieldValue('output_type', value);
+  };
 
   return (
     <>
@@ -128,22 +140,14 @@ const UploadScriptForm = () => {
               </label>
               <div className="row mx-0 p-0">
                 <div className="col-10 col-sm-10 col-md-11 m-0 p-0 pe-1">
-                  <CustomDropdown
-                    formik={formik}
-                    value={formik.values.parentName}
-                    onChange={(value) => {
-                      const selectedCategory = categoryData.find(
-                        (cat: any) => cat.name === value,
-                      );
-                      formik.setFieldValue('parentName', value);
-                      formik.setFieldValue(
-                        'category',
-                        selectedCategory?.id || value,
-                      );
-                    }}
-                    options={FilterCategory}
-                    placeholder="Select a category"
-                    onFilter={(value) => filterData(value)}
+                  <Autocomplete
+                    disablePortal
+                    options={level2Categories}
+                    getOptionLabel={(option: Category) => option.name}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Select a category" />
+                    )}
+                    onChange={onCategoryChange}
                   />
                 </div>
                 <button
@@ -165,20 +169,20 @@ const UploadScriptForm = () => {
               <label htmlFor="output_type" className="form-label">
                 How would you like to view data?
               </label>
-              <CustomDropdown
-                formik={formik}
-                value={formik.values.output_type}
-                onChange={(value) => formik.setFieldValue('output_type', value)}
-                options={[
-                  { name: 'Chart' },
-                  { name: 'Table' },
-                  { name: 'Chart and Table' },
-                ]}
-                placeholder="Select a view data type"
-                touchedField={formik.touched.output_type}
-                errorMessage={formik.errors.output_type as string}
-                onFilter={undefined}
+              <Autocomplete
+                disablePortal
+                options={['Chart', 'Table', 'Chart and Table']}
+                renderInput={(params) => (
+                  <TextField {...params} label="Select a view data type" />
+                )}
+                onChange={onOuputChange}
               />
+
+              {formik.touched.output_type && formik.errors.output_type ? (
+                <div className="error-message">
+                  {formik.errors.output_type as any}
+                </div>
+              ) : null}
             </div>
 
             <div className="mb-3">

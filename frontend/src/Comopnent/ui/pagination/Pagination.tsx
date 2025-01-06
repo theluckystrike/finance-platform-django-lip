@@ -81,7 +81,6 @@ PaginationItem.propTypes = {
   isFirst: PropTypes.bool,
   isNext: PropTypes.bool,
   isLast: PropTypes.bool,
-  children: PropTypes.node,
   onClick: PropTypes.func,
 };
 PaginationItem.defaultProps = {
@@ -127,7 +126,6 @@ const Pagination = forwardRef<HTMLDivElement, IPaginationProps>(
 Pagination.displayName = 'Pagination';
 Pagination.propTypes = {
   ariaLabel: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
   className: PropTypes.string,
   size: PropTypes.oneOf(['sm', 'lg']),
 };

@@ -1,6 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoint } from './endpoint';
 
+export interface Category {
+  id: number;
+  level: number;
+  name: string;
+  parent_category: number | null;
+}
+
 const api = createApi({
   reducerPath: 'Categoryapi',
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),

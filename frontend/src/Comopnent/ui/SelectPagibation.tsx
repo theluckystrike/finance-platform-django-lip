@@ -131,7 +131,6 @@ Select.propTypes = {
    * If the name value is left blank, the id value is assigned.
    */
   name: PropTypes.string,
-  children: PropTypes.node,
   ariaLabel: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   size: PropTypes.oneOf(['lg', 'sm']),
