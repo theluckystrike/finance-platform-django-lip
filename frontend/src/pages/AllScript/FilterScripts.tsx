@@ -14,7 +14,7 @@ import {
   GetScriptbyCategorys,
 } from '../../Redux/Script/ScriptSlice';
 import { loginUSer } from '../../customHook/getrole';
-import DateFormatter from '../../customHook/useTImeformnt';
+import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 import PaginationButtons, {
@@ -295,10 +295,10 @@ const FilterScripts = () => {
                               {script?.category?.name}
                             </td>
                             <td className="col-2 text-center mx-auto">
-                              <DateFormatter isoString={script.created} />
+                              {formatIsoDate(script.created)}
                             </td>
                             <td className="col-2 text-center mx-auto">
-                              <DateFormatter isoString={script.last_updated} />
+                              {formatIsoDate(script.last_updated)}
                             </td>
                           </tr>
                           <tr style={{ height: '10px' }}></tr>

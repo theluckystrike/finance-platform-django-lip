@@ -44,7 +44,7 @@ const ScriptEdit = () => {
 
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_API_URL}api/scripts/${ScriptData?.id}`, // Use the correct ID
+        `${process.env.REACT_APP_API_URL}/scripts/${ScriptData?.id}`, // Use the correct ID
         formData,
         {
           headers: {

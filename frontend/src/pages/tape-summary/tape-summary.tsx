@@ -7,7 +7,7 @@ import { ScriptData, TapeSummaryData } from '../../DummyData/TableData';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
-import DateFormatter from '../../customHook/useTImeformnt';
+import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import PaginationButtons, {
   dataPagination,
@@ -205,7 +205,7 @@ const TapeSummary: React.FC = () => {
                             </td>
 
                             <td className="col-2 text-center mx-auto">
-                              <DateFormatter isoString={script.created} />
+                              {formatIsoDate(script.created)}
                             </td>
                           </tr>
                           <tr style={{ height: '10px' }}></tr>

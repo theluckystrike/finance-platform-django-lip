@@ -15,7 +15,7 @@ import {
 } from '../../Redux/Script/ScriptSlice';
 import { tokenToString } from 'typescript';
 import { loginUSer } from '../../customHook/getrole';
-import DateFormatter from '../../customHook/useTImeformnt';
+import { formatIsoDate } from '../../utils/formatDate';
 import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
 import Loader from '../../Comopnent/ui/Loader';
 import CsvTable from '../../Comopnent/TableData/CsvTable';
@@ -124,7 +124,7 @@ const ScriptView = () => {
               {/* <span id="headerInfo">(132)</span>{" "} */}
             </h2>
             <h6 className="ps-1">
-              Last update <DateFormatter isoString={ScriptData.last_updated} />
+              {`Last update ${formatIsoDate(ScriptData.last_updated)}`}
             </h6>
           </div>
           <div className="col-md-5 btn-toolbar mb-2 mb-md-0">
@@ -202,17 +202,11 @@ const ScriptView = () => {
               <div className="tooltip-text">
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Created:</h6>
-                  <p>
-                    {' '}
-                    <DateFormatter isoString={ScriptData.created} />{' '}
-                  </p>
+                  <p>{` Last update ${formatIsoDate(ScriptData.created)} `}</p>
                 </div>
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
                   <h6>Last Run:</h6>
-                  <p>
-                    {' '}
-                    <DateFormatter isoString={ScriptData.last_updated} />{' '}
-                  </p>
+                  <p>{` Last update ${formatIsoDate(ScriptData.last_updated)} `}</p>
                 </div>
 
                 {/* tooltip two */}
@@ -231,9 +225,7 @@ const ScriptView = () => {
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Last Updated: </h6>
-                    <p>
-                      <DateFormatter isoString={ScriptData.last_updated} />
-                    </p>
+                    <p>{`${formatIsoDate(ScriptData.last_updated)}`}</p>
                   </div>
                   <div className="tooltip_text_row justify-content-between d-flex  mb-2">
                     <h6>Output data type: </h6>

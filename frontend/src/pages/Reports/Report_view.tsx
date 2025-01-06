@@ -13,7 +13,7 @@ import {
   Updatereports,
   UpdateReportss,
 } from '../../Redux/Report/Slice';
-import DateFormatter from '../../customHook/useTImeformnt';
+import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
@@ -332,7 +332,7 @@ const ReportViwe = () => {
                           </td>
 
                           <td className="col-2 text-center mx-auto">
-                            <DateFormatter isoString={report.created} />
+                            {formatIsoDate(report.created)}
                           </td>
                           <td className="col-1 text-center mx-auto">
                             <div

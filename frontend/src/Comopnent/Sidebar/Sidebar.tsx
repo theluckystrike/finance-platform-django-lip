@@ -69,25 +69,23 @@ const Sidebar = () => {
             className="dropdown-menu text-center fw-bold"
             aria-labelledby="dropdownMenuButton"
           >
-            <span
+            <Link
+              to={`/account/${ActiveRoute.UserProfile.path}`}
               className="dropdown-item"
-              onClick={() =>
-                navigate(`/account/${ActiveRoute.UserProfile.path}`)
-              }
             >
               Profile
-            </span>
-            <span
+            </Link>
+            <a
               className="dropdown-item"
               onClick={() => {
-                window.location.href = `${process.env.REACT_APP_API_URL}admin`;
+                window.location.href = `${process.env.REACT_APP_ADMIN_URL}`;
               }}
             >
               Admin Portal
-            </span>
-            <span className="dropdown-item" onClick={logout}>
+            </a>
+            <button className="dropdown-item" onClick={logout}>
               Sign Out
-            </span>
+            </button>
 
             <div className="divss"></div>
           </div>

@@ -30,3 +30,6 @@
   width: 15px;
   height: 15px;
 }
+.dropdown-item {
+  cursor: pointer;
+}
