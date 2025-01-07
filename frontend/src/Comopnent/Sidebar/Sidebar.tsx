@@ -70,7 +70,7 @@ const Sidebar = () => {
             aria-labelledby="dropdownMenuButton"
           >
             <Link
-              to={`/account/${ActiveRoute.UserProfile.path}`}
+              to={`/${ActiveRoute.UserProfile.path}`}
               className="dropdown-item"
             >
               Profile

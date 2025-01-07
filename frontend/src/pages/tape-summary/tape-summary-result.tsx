@@ -209,7 +209,7 @@ const TapeSummaryResult: React.FC = () => {
                     >
                       {' '}
                       <Link
-                        to={`/account/ScriptDetails/${script.id}`}
+                        to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
                       >
                         <div className="text-left">

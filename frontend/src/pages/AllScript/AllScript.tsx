@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+import FilterIcon from '@mui/icons-material/Filter';
+import SaveIcon from '@mui/icons-material/Save';
+
 import '../../assest/css/AllScript.css';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
@@ -6,8 +12,6 @@ import { ActiveRoute } from '../../Menu';
 import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
 import ArrowDown from '../../assest/image/arrow-down.png';
 import { ScriptData } from '../../DummyData/TableData';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import useSortableData from '../../customHook/useSortable';
 import {
   GetAllScripts,
@@ -102,16 +106,15 @@ const CustomReport = () => {
             All scripts <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
-            <button type="button" className="btn icon-button my-1 mx-2">
+            {/* <button type="button" className="btn icon-button my-1 mx-2">
               <Icon icon="AddBusiness" size="20px" />
               <span>Home</span>
-            </button>
+            </button> */}
             <button
               onClick={handleShow}
               className="btn icon-button my-1 mx-2 position-relative"
             >
-              <Icon icon="Filter" size="20px" />
-
+              <FilterIcon fontSize="small" />
               {filterQuery && <span className="filter-count-badge">1</span>}
               <span>Filter</span>
             </button>
@@ -121,11 +124,10 @@ const CustomReport = () => {
               type="button"
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Save" size="20px" />
-
+              <SaveIcon fontSize="small" />
               <span>Save</span>
             </button>
-            <button
+            {/* <button
               type="submit"
               form="customReportForm"
               className="btn icon-button my-1 mx-2 disabled"
@@ -133,7 +135,7 @@ const CustomReport = () => {
               <Icon icon="Download" size="20px" />
 
               <span>Download</span>
-            </button>
+            </button> */}
           </div>
         </div>
         <div>
@@ -266,7 +268,7 @@ const CustomReport = () => {
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`/account/ScriptDetails/${script.id}`}
+                                to={`/ScriptDetails/${script.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{script.name}</span>

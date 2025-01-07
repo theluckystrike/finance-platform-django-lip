@@ -105,12 +105,10 @@ const SimpleHeader = () => {
               searchData &&
               searchData.map((item: any, index: any) => (
                 // <Link  key={index} style={{textDecoration:'none'}}
-                // to={`/account/ScriptDetails/${item.id}`}>
+                // to={`/ScriptDetails/${item.id}`}>
                 <span
                   className="hover-span"
-                  onClick={() =>
-                    changeRoute(`/account/ScriptDetails/${item.id}`)
-                  }
+                  onClick={() => changeRoute(`/ScriptDetails/${item.id}`)}
                 >
                   {item?.name}
                 </span>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+
+import MergeIcon from '@mui/icons-material/Merge';
+
 import '../../assest/css/AllScript.css';
-import Icon from '../../Comopnent/ui/icon/Icon';
 import { Link } from 'react-router-dom';
 import { ActiveRoute } from '../../Menu';
 import MergeReports from '../../Comopnent/ui/Modals/MergeReports/MergeReports';
@@ -72,7 +74,7 @@ const Report = () => {
             type="button"
             className="btn icon-button my-1 mx-2"
           >
-            <Icon icon="AddChart" size="20px" />
+            <MergeIcon fontSize="small" />
             <span>Merge</span>
           </button>
         </div>
@@ -119,7 +121,7 @@ const Report = () => {
                           <td className="col-1 fw-bold fs-6">{index + 1}</td>
                           <td className="col-7 fw-bold fs-6">
                             <Link
-                              to={`/account/ReportDetails/${script.id}`}
+                              to={`/ReportDetails/${script.id}`}
                               className="text-decoration-none text-black"
                             >
                               {script.name}
