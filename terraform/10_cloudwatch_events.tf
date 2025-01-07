@@ -17,6 +17,10 @@ resource "aws_cloudwatch_event_target" "scripts_update_event_target" {
       security_groups  = [aws_security_group.ecs_security_group.id]
       assign_public_ip = true
     }
+    capacity_provider_strategy {
+      capacity_provider = "FARGATE_SPOT"
+      weight = 1
+    }
     platform_version = "LATEST"
   }
 }
@@ -40,6 +44,10 @@ resource "aws_cloudwatch_event_target" "data_scrape_event_target" {
       assign_public_ip = true
     }
     platform_version = "LATEST"
+    capacity_provider_strategy {
+      capacity_provider = "FARGATE_SPOT"
+      weight = 1
+    }
   }
 }
 resource "aws_cloudwatch_event_rule" "send_emails" {
@@ -60,6 +68,10 @@ resource "aws_cloudwatch_event_target" "send_emails_event_target" {
       subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
       security_groups  = [aws_security_group.ecs_security_group.id]
       assign_public_ip = true
+    }
+    capacity_provider_strategy {
+      capacity_provider = "FARGATE_SPOT"
+      weight = 1
     }
     platform_version = "LATEST"
   }
