@@ -4,7 +4,6 @@ import Icon from '../../Comopnent/ui/icon/Icon';
 import LineChart from '../../Comopnent/Charts/LineChart';
 import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import PresentPastToggle from '../../Comopnent/ui/PresentPastToggle';
 import { ActiveRoute } from '../../Menu';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -96,7 +95,7 @@ const ScriptView = () => {
   const dateOnly = today.toISOString().split('T')[0];
 
   const editScript = () => {
-    navigate(`/account/${ActiveRoute.ScriptEdit.path}`);
+    navigate(`/${ActiveRoute.ScriptEdit.path}`);
   };
 
   const [changeView, setChangeView] = useState(false);
@@ -237,7 +236,6 @@ const ScriptView = () => {
           </div>
         </div>
         <div></div>
-        <PresentPastToggle />
         {loading ? (
           <Loader />
         ) : (

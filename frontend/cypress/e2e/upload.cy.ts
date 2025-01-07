@@ -2,10 +2,10 @@
 describe('testing script uploading page...', () => {
   beforeEach(() => {
     cy.login();
-    cy.visit('/account/upload');
+    cy.visit('/upload');
   });
 
-  it('visit "/account/upload" page', () => {
+  it('visit "/upload" page', () => {
     // just execute 'beforeEach' block
   });
 
@@ -89,7 +89,7 @@ describe('testing script uploading page...', () => {
   describe('testing category creation modal...', () => {
     beforeEach(() => {
       cy.login();
-      cy.visit('/account/upload');
+      cy.visit('/upload');
       cy.get('button[type="button"] svg[data-name="Material--Add"]').click();
     });
 
@@ -133,10 +133,10 @@ describe('testing script uploading page...', () => {
       });
     });
 
-    it('testing "Edit All Categories" button redirects to /account/category-manager page', () => {
+    it('testing "Edit All Categories" button redirects to /category-manager page', () => {
       cy.contains('button', 'Edit All Categories').click();
 
-      cy.url().should('contain', '/account/category-manager');
+      cy.url().should('contain', '/category-manager');
     });
 
     it('testing succesfull category creation', () => {
@@ -166,7 +166,7 @@ describe('testing script uploading page...', () => {
   describe('Test successful form submission to upload script', () => {
     it('should submit the form and handle success response', () => {
       cy.login();
-      cy.visit('/account/upload');
+      cy.visit('/upload');
 
       cy.intercept('POST', `${Cypress.env().API_URL}/scripts`, {
         statusCode: 201,

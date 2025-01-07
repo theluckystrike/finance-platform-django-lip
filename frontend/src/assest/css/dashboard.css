@@ -174,11 +174,6 @@ body {
   transition: stroke 0.3s ease;
 }
 
-.icon-button svg:hover {
-  border: none;
-  color: #f7fcf7;
-}
-
 .icon-button span {
   position: absolute;
   top: 43px;

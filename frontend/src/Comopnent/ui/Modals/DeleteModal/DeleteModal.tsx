@@ -27,7 +27,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
     dispatch(DeleteScriptByIDs({ token, id: data.id }));
     await dispatch(GetAllScripts({}));
     handleClose();
-    navigate('/account/allscripts');
+    navigate('/allscripts');
   };
 
   return (
