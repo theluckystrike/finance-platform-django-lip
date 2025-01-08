@@ -19,7 +19,7 @@ resource "aws_cloudwatch_event_target" "scripts_update_event_target" {
     }
     capacity_provider_strategy {
       capacity_provider = "FARGATE_SPOT"
-      weight = 1
+      weight = 100
     }
     platform_version = "LATEST"
   }
@@ -46,7 +46,7 @@ resource "aws_cloudwatch_event_target" "data_scrape_event_target" {
     platform_version = "LATEST"
     capacity_provider_strategy {
       capacity_provider = "FARGATE_SPOT"
-      weight = 1
+      weight = 100
     }
   }
 }
@@ -71,7 +71,7 @@ resource "aws_cloudwatch_event_target" "send_emails_event_target" {
     }
     capacity_provider_strategy {
       capacity_provider = "FARGATE_SPOT"
-      weight = 1
+      weight = 100
     }
     platform_version = "LATEST"
   }
