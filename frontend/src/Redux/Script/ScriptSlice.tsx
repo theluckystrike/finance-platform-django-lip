@@ -10,19 +10,19 @@ import {
   UpdateScript,
 } from './ScriptApi';
 
-interface ScriptState {
+export interface ScriptState {
   Scripts: any[]; // You can specify a more specific type if you know the structure of scripts
-  Script: any[]; // Same as above, specify the correct type if known
-  ScriptStatus: string;
+  Script: any; // Same as above, specify the correct type if known
+  ScriptStatus: any;
   Active_Role: string;
   page: number;
   loading: boolean;
   error: any; // You can refine this to be more specific if you know the error type
 }
-const initialState: ScriptState = {
+export const initialState: ScriptState = {
   Scripts: [],
-  Script: [],
-  ScriptStatus: '',
+  Script: {},
+  ScriptStatus: {},
   Active_Role: '',
   page: 1,
   loading: false,
@@ -55,8 +55,8 @@ export const GetAllScripts: any = AsyncFunctionThunk(
   'GetAllScripts',
   GetAllScript,
 );
-export const GetScriptByIDs: any = AsyncFunctionThunk(
-  'GetScriptByIDs',
+export const getScriptByIDAction: any = AsyncFunctionThunk(
+  'GetScriptByID',
   GetScriptByID,
 );
 export const RunScripts: any = AsyncFunctionThunk('RunScripts', RunScript);
@@ -80,11 +80,7 @@ export const GetSatusScriptByIDs: any = AsyncFunctionThunk(
 const ScriptSlice = createSlice({
   name: 'ScriptSlice',
   initialState,
-  reducers: {
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(CreateScripts.fulfilled, (state, action) => {
@@ -131,14 +127,14 @@ const ScriptSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(GetScriptByIDs.fulfilled, (state, action) => {
+      .addCase(getScriptByIDAction.fulfilled, (state, action) => {
         state.Script = action.payload;
         state.loading = false;
       })
-      .addCase(GetScriptByIDs.pending, (state) => {
+      .addCase(getScriptByIDAction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(GetScriptByIDs.rejected, (state, action) => {
+      .addCase(getScriptByIDAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -177,7 +173,5 @@ const ScriptSlice = createSlice({
       });
   },
 });
-
-export const { setLoading } = ScriptSlice.actions;
 
 export default ScriptSlice.reducer;

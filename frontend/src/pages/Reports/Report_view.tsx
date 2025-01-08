@@ -11,7 +11,7 @@ import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/Sch
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { GetAllScripts, setLoading } from '../../Redux/Script/ScriptSlice';
+import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
 import {
   GetreportByIDs,
   GetSatusreportByIDs,
@@ -53,13 +53,11 @@ const ReportViwe = () => {
   };
 
   useEffect(() => {
-    dispatch(setLoading(true));
     if (loginUser) {
       const getreport = async () => {
         await dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
         await getStatus();
         await dispatch(GetAllScripts({ token: loginUser?.access }));
-        dispatch(setLoading(false));
       };
       getreport();
     }
