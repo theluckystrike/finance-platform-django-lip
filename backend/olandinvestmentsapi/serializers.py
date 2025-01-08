@@ -125,6 +125,12 @@ class ReportSerializer(serializers.ModelSerializer):
                   "last_updated", "status", "latest_pdf"]
         depth = 1
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        scripts = instance.scripts.all().order_by('index_in_category').order_by("category__name")
+        representation['scripts'] = [script.id for script in scripts]
+        return representation
+
 
 class ReportEmailTaskSerializer(serializers.ModelSerializer):
     class Meta:

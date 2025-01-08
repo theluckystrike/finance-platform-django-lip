@@ -221,7 +221,7 @@ def report_page(request, reportname):
         "7": "Sunday",
         "*": "day"
     }
-    table = ReportScriptTable(report.scripts.all(), order_by="subcategory2")
+    table = ReportScriptTable(report.scripts.all().order_by("index_in_category"), order_by="subcategory2")
     RequestConfig(request, paginate=False).configure(table)
     return render(
         request,
