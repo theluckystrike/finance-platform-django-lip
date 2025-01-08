@@ -7,7 +7,6 @@ import AddchartIcon from '@mui/icons-material/Addchart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import InfoIcon from '@mui/icons-material/Info';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import type { RootState } from '../../Store';
 import '../../assest/css/AllScript.css';
@@ -139,17 +138,16 @@ const ScriptView = () => {
               disabled={ScriptStatus.status === 'running'}
             >
               {ScriptStatus.status === 'running' ? (
-                <CircularProgress
-                  className="loading"
-                  size="20px"
-                  color="inherit"
-                />
+                <>
+                  <Loader />
+                  <span>Running</span>
+                </>
               ) : (
-                <PlayArrowIcon fontSize="small" />
+                <>
+                  <PlayArrowIcon fontSize="small" />
+                  <span>Play</span>
+                </>
               )}
-              <span>
-                {ScriptStatus.status === 'running' ? 'Running' : 'Play'}
-              </span>
             </button>
 
             <button

@@ -155,6 +155,7 @@ const ReportViwe = () => {
       handleToast.SuccessToast(res.payload.message);
     }
   };
+
   return (
     <>
       <div className="mx-5 py-3">
@@ -175,6 +176,7 @@ const ReportViwe = () => {
               type="button"
               onClick={() => openPdfInNewTab(reportData?.latest_pdf)}
               className="btn icon-button my-1 mx-2"
+              disabled={reportStatus.status === 'running'}
             >
               {reportStatus.status === 'running' ? (
                 <>
