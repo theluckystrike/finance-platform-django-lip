@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
-import Icon from '../../Comopnent/ui/icon/Icon';
-import { GetSatusreportByIDs } from '../../Redux/Report/Slice';
+
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { useDispatch, useSelector } from 'react-redux';
 import {
   GetSatussummeryByIDs,
@@ -44,10 +47,7 @@ const scriptData = [
 
 const TapeSummaryResult: React.FC = () => {
   const { id } = useParams();
-  const location = useLocation();
-  const ChartComponent = Components[TapeSummaryData[0].chartType];
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [selectedScript, setSelectedScript] = useState<number | null>(null);
   const store: any = useSelector((i) => i);
 
@@ -116,7 +116,7 @@ const TapeSummaryResult: React.FC = () => {
               onClick={() => setEditShow(true)}
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Edit" size="20px" />
+              <EditIcon fontSize="small" />
               <span>Edit</span>
             </button>
             {summeryStatus?.status === 'running' && (
@@ -126,7 +126,7 @@ const TapeSummaryResult: React.FC = () => {
               </button>
             )}
             <button onClick={getupdate} className="btn icon-button my-1 mx-2">
-              <Icon icon="PlayArrow" size="20px" />
+              <PlayArrowIcon fontSize="small" />
               <span>Update</span>
             </button>
             <button
@@ -134,7 +134,7 @@ const TapeSummaryResult: React.FC = () => {
               onClick={() => setDeleteShow(true)}
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Delete" size="20px" />
+              <DeleteIcon fontSize="small" />
               <span>Delete</span>
             </button>
           </div>

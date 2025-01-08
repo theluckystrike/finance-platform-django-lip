@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
+
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddchartIcon from '@mui/icons-material/Addchart';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import TableChartIcon from '@mui/icons-material/TableChart';
+import InfoIcon from '@mui/icons-material/Info';
+
 import '../../assest/css/AllScript.css';
-import Icon from '../../Comopnent/ui/icon/Icon';
 import LineChart from '../../Comopnent/Charts/LineChart';
 import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -132,31 +140,31 @@ const ScriptView = () => {
               type="button"
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Edit" size="20px" />
+              <EditIcon fontSize="small" />
               <span>Edit</span>
             </button>
-
-            <button type="button" className="btn icon-button my-1 mx-2">
-              {ScriptStatus.status === 'running' ? (
-                <>
-                  <Loader />
-                  <span>Running</span>
-                </>
-              ) : (
-                <>
-                  <Icon icon="PlayArrow" onClick={runScript} size="20px" />
-                  <span>Play</span>
-                </>
-              )}
-            </button>
+            {ScriptStatus.status === 'running' ? (
+              <>
+                <Loader />
+                <span>Running</span>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={runScript}
+                className="btn icon-button my-1 mx-2"
+              >
+                <PlayArrowIcon fontSize="small" />
+                <span>Play</span>
+              </button>
+            )}
 
             <button
               type="button"
               onClick={handleShow}
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Delete" size="20px" />
-
+              <DeleteIcon fontSize="small" />
               <span>Delete</span>
             </button>
             {ScriptData?.output_type === 'pd plt' && (
@@ -165,10 +173,11 @@ const ScriptView = () => {
                 type="button"
                 className="btn icon-button my-1 mx-2"
               >
-                <Icon
-                  icon={changeView ? 'InsertChart' : 'TableView'}
-                  size="20px"
-                />
+                {changeView ? (
+                  <AddchartIcon fontSize="small" />
+                ) : (
+                  <TableChartIcon fontSize="small" />
+                )}
                 <span>{changeView ? 'Chart' : 'Table'}</span>
               </button>
             )}
@@ -179,10 +188,11 @@ const ScriptView = () => {
                 type="button"
                 className="btn icon-button my-1 mx-2"
               >
-                <Icon
-                  icon={!dynmicView ? 'AreaChart' : 'AddChart'}
-                  size="20px"
-                />
+                {!dynmicView ? (
+                  <BarChartIcon fontSize="small" />
+                ) : (
+                  <AddchartIcon fontSize="small" />
+                )}
                 <span>{!dynmicView ? 'Static view' : 'Plotly view'}</span>
               </button>
             )}
@@ -196,7 +206,7 @@ const ScriptView = () => {
               form="customReportForm"
             >
               {' '}
-              <Icon icon="Info" size="20px" />
+              <InfoIcon fontSize="small" />
               <span>Info</span>
               <div className="tooltip-text">
                 <div className="tooltip_text_row d-flex justify-content-between  mb-2 text-left">
