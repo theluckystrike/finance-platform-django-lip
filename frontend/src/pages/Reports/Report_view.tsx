@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
+
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import InfoIcon from '@mui/icons-material/Info';
+
 import '../../assest/css/AllScript.css';
-import Icon from '../../Comopnent/ui/icon/Icon';
 import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
-import { ActiveRoute } from '../../Menu';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
@@ -17,7 +22,6 @@ import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
-import { Viewer, Worker } from '@react-pdf-viewer/core';
 
 // Plugins
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
@@ -166,7 +170,7 @@ const ReportViwe = () => {
               type="button"
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="CalendarToday" size="20px" />
+              <CalendarTodayIcon fontSize="small" />
               <span>Schedule Email</span>
             </button>
             <button
@@ -181,7 +185,7 @@ const ReportViwe = () => {
                 </>
               ) : (
                 <>
-                  <Icon icon="RemoveRedEye" size="20px" />
+                  <VisibilityIcon fontSize="small" />
                   <span>View Latest</span>
                 </>
               )}
@@ -191,7 +195,7 @@ const ReportViwe = () => {
               className="btn icon-button my-1 mx-2"
               onClick={() => setDeleteShow(true)}
             >
-              <Icon icon="Delete" size="20px" />
+              <DeleteIcon fontSize="small" />
               <span>Delete</span>
             </button>
             <button
@@ -199,13 +203,11 @@ const ReportViwe = () => {
               className="btn icon-button my-1 mx-2"
               onClick={updateRepost}
             >
-              <Icon icon="SystemUpdateAlt" size="20px" />
-
+              <SystemUpdateAltIcon fontSize="small" />
               <span>Update</span>
             </button>
             <button type="submit" className="btn icon-button my-1 mx-2">
-              <Icon icon="Info" size="20px" />
-
+              <InfoIcon fontSize="small" />
               <span>info</span>
             </button>
           </div>
