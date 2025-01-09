@@ -7,11 +7,9 @@
 }
 
 @import './Header.css';
-@import './Home.css';
 @import './login.css';
 @import './sidebar.css';
 @import './dashboard.css';
-@import './tape-summary.css';
 
 body {
   margin: 0;

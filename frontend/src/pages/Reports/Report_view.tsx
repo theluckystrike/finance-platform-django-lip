@@ -11,7 +11,7 @@ import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/Sch
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { GetAllScripts, setLoading } from '../../Redux/Script/ScriptSlice';
+import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
 import {
   GetreportByIDs,
   GetSatusreportByIDs,
@@ -53,13 +53,11 @@ const ReportViwe = () => {
   };
 
   useEffect(() => {
-    dispatch(setLoading(true));
     if (loginUser) {
       const getreport = async () => {
         await dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
         await getStatus();
         await dispatch(GetAllScripts({ token: loginUser?.access }));
-        dispatch(setLoading(false));
       };
       getreport();
     }
@@ -157,6 +155,7 @@ const ReportViwe = () => {
       handleToast.SuccessToast(res.payload.message);
     }
   };
+
   return (
     <>
       <div className="mx-5 py-3">
@@ -177,6 +176,7 @@ const ReportViwe = () => {
               type="button"
               onClick={() => openPdfInNewTab(reportData?.latest_pdf)}
               className="btn icon-button my-1 mx-2"
+              disabled={reportStatus.status === 'running'}
             >
               {reportStatus.status === 'running' ? (
                 <>

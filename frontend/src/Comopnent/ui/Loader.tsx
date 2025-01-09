@@ -4,7 +4,7 @@ const Loader = () => {
   return (
     <div className="loader-center">
       {' '}
-      <div className="  spinner-border text-dark" role="status"></div>
+      <div className="spinner-border text-dark" role="status"></div>
     </div>
   );
 };

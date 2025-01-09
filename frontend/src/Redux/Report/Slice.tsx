@@ -97,7 +97,7 @@ const reportSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetAllreports.fulfilled, (state, action) => {
-        state.reports = action.payload;
+        state.reports = action.payload.results;
         state.loading = false;
       })
       .addCase(GetAllreports.pending, (state) => {
@@ -106,6 +106,7 @@ const reportSlice = createSlice({
       .addCase(GetAllreports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.reports = [];
       })
       .addCase(GetSatusreportByIDs.fulfilled, (state, action) => {
         state.reportStatus = action.payload;

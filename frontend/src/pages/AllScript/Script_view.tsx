@@ -8,38 +8,36 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import InfoIcon from '@mui/icons-material/Info';
 
+import type { RootState } from '../../Store';
 import '../../assest/css/AllScript.css';
-import LineChart from '../../Comopnent/Charts/LineChart';
-import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ActiveRoute } from '../../Menu';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   GetSatusScriptByIDs,
-  GetScriptByIDs,
+  getScriptByIDAction,
   RunScripts,
-  setLoading,
+  ScriptState,
 } from '../../Redux/Script/ScriptSlice';
-import { tokenToString } from 'typescript';
 import { loginUSer } from '../../customHook/getrole';
 import { formatIsoDate } from '../../utils/formatDate';
 import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
 import Loader from '../../Comopnent/ui/Loader';
 import CsvTable from '../../Comopnent/TableData/CsvTable';
-import { object } from 'yup';
 import StockMultiChartPlot from './Ploty_Chart';
 
-const Components: any = {
-  ScatterLineChart: ScatterLineChart,
-  LineChart: LineChart,
-};
 const ScriptView = () => {
   const [dynmicView, setDynmicView] = useState(true);
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
   const [loginUser, setLoginUser] = useState<any>(null);
+
+  const {
+    ScriptStatus,
+    Script: ScriptData,
+    loading,
+  } = useSelector<RootState, ScriptState>((state) => state.script);
 
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
@@ -49,23 +47,23 @@ const ScriptView = () => {
     }
   }, []);
 
+  const getStatus = () => {
+    dispatch(GetSatusScriptByIDs({ id: id, token: loginUser?.access }));
+  };
+
+  const loadScriptData = async () => {
+    if (loginUser?.access && id) {
+      dispatch(getScriptByIDAction({ id: id, token: loginUser?.access }));
+      getStatus();
+    }
+  };
+
   useEffect(() => {
-    dispatch(setLoading(true));
-    const getScript = async () => {
-      if (loginUser?.access) {
-        await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
-        await getStatus();
-        dispatch(setLoading(false));
-      }
-    };
-    getScript();
+    loadScriptData();
   }, [loginUser, id]);
 
-  const store: any = useSelector((i) => i);
-  const ScriptStatus = store?.script?.ScriptStatus;
-  const ScriptData = store?.script?.Script;
-
   useEffect(() => {
+    console.log('ScriptStatus', ScriptStatus);
     let intervalId: any;
     if (ScriptStatus.status === 'running') {
       intervalId = setInterval(() => {
@@ -74,7 +72,7 @@ const ScriptView = () => {
     }
 
     if (ScriptStatus.status === 'success') {
-      dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+      dispatch(getScriptByIDAction({ id: id, token: loginUser?.access }));
 
       clearInterval(intervalId);
     }
@@ -84,11 +82,6 @@ const ScriptView = () => {
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [ScriptStatus]);
-  const getStatus = async () => {
-    await dispatch(GetSatusScriptByIDs({ id: id, token: loginUser?.access }));
-  };
-
-  const { loading } = store?.script;
 
   const [show, setShow] = useState(false);
 
@@ -97,20 +90,13 @@ const ScriptView = () => {
     setShow(true);
   };
 
-  const [activeComponet, setActivecomponet] = useState('chart');
-
-  const today = new Date();
-  const dateOnly = today.toISOString().split('T')[0];
-
   const editScript = () => {
     navigate(`/${ActiveRoute.ScriptEdit.path}`);
   };
 
   const [changeView, setChangeView] = useState(false);
-  const [changeChartView, setChangeChartView] = useState(false);
 
   const runScript = async () => {
-    dispatch(setLoading(true));
     try {
       setTimeout(async () => {
         await dispatch(RunScripts({ id: id, token: loginUser?.access }));
@@ -120,21 +106,22 @@ const ScriptView = () => {
       console.warn(error);
     }
   };
+
   return (
     <>
       <div className="mx-4">
         <div className="row justify-content-between flex-wrap flex-md-nowrap  px-3 pt-3 pb-2 mb-3">
           <div className="col-md-7">
-            <h2 className="h2">
-              {' '}
-              {ScriptData.name}
-              {/* <span id="headerInfo">(132)</span>{" "} */}
-            </h2>
-            <h6 className="ps-1">
-              {`Last update ${formatIsoDate(ScriptData.last_updated)}`}
-            </h6>
+            {ScriptData.name && (
+              <>
+                <h2 className="h2">{ScriptData.name}</h2>
+                <h6 className="ps-1">
+                  {`Last update ${formatIsoDate(ScriptData.last_updated)}`}
+                </h6>
+              </>
+            )}
           </div>
-          <div className="col-md-5 btn-toolbar mb-2 mb-md-0">
+          <div className="col-md-5 btn-toolbar mb-2 mb-md-0 div-flex-end">
             <button
               onClick={editScript}
               type="button"
@@ -143,21 +130,25 @@ const ScriptView = () => {
               <EditIcon fontSize="small" />
               <span>Edit</span>
             </button>
-            {ScriptStatus.status === 'running' ? (
-              <>
-                <Loader />
-                <span>Running</span>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={runScript}
-                className="btn icon-button my-1 mx-2"
-              >
-                <PlayArrowIcon fontSize="small" />
-                <span>Play</span>
-              </button>
-            )}
+
+            <button
+              type="button"
+              onClick={runScript}
+              className="btn icon-button my-1 mx-2"
+              disabled={ScriptStatus.status === 'running'}
+            >
+              {ScriptStatus.status === 'running' ? (
+                <>
+                  <Loader />
+                  <span>Running</span>
+                </>
+              ) : (
+                <>
+                  <PlayArrowIcon fontSize="small" />
+                  <span>Play</span>
+                </>
+              )}
+            </button>
 
             <button
               type="button"
@@ -245,67 +236,60 @@ const ScriptView = () => {
             </button>
           </div>
         </div>
-        <div></div>
-        {loading ? (
-          <Loader />
-        ) : (
-          <div>
-            {ScriptStatus.status === 'failure' ? (
-              <>
-                <div
-                  style={{
-                    color: 'red',
-                    background: '#ffe6e6',
-                    padding: '10px',
-                    borderRadius: '5px',
-                  }}
-                >
-                  <h3>Error</h3>
-                  <pre
-                    style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
-                  >
-                    {ScriptStatus.error_message}
-                  </pre>
-                </div>
-              </>
-            ) : (
-              <div>
-                {ScriptData?.output_type === 'plt' ||
-                (ScriptData?.output_type === 'pd plt' &&
-                  changeView === false) ? (
-                  <>
-                    {dynmicView ? (
-                      <div
-                        style={{
-                          width: '100%',
-                          margin: '0 auto',
-                        }}
-                      >
-                        {/* <LineChart /> */}
-                        <img
-                          src={ScriptData?.chart_data?.image_file}
-                          alt=""
-                          width="100%"
-                        />
-                      </div>
-                    ) : (
-                      <div>
-                        {ScriptData?.chart_data.plotly_config.data && (
-                          <StockMultiChartPlot
-                            data={ScriptData?.chart_data.plotly_config.data}
-                            layout={ScriptData?.chart_data.plotly_config.layout}
-                          />
-                        )}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
-                )}
+
+        <div>
+          {ScriptStatus.status === 'failure' ? (
+            <>
+              <div
+                style={{
+                  color: 'red',
+                  background: '#ffe6e6',
+                  padding: '10px',
+                  borderRadius: '5px',
+                }}
+              >
+                <h3>Error</h3>
+                <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                  {ScriptStatus.error_message}
+                </pre>
               </div>
-            )}
-          </div>
-        )}
+            </>
+          ) : (
+            <div>
+              {ScriptData?.output_type === 'plt' ||
+              (ScriptData?.output_type === 'pd plt' && changeView === false) ? (
+                <>
+                  {dynmicView ? (
+                    <div
+                      style={{
+                        width: '100%',
+                        margin: '0 auto',
+                      }}
+                    >
+                      {/* <LineChart /> */}
+                      <img
+                        src={ScriptData?.chart_data?.image_file}
+                        alt=""
+                        width="100%"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      {ScriptData?.chart_data.plotly_config.data && (
+                        <StockMultiChartPlot
+                          data={ScriptData?.chart_data.plotly_config.data}
+                          layout={ScriptData?.chart_data.plotly_config.layout}
+                        />
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <DeleteModal
