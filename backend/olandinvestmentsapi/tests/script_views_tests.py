@@ -217,6 +217,30 @@ class ScriptTests(APITestCase):
         self.assertEqual(len(response.data['results']), 1)
         self.assertEqual(response.data['results'][0]['id'], self.script.id)
 
+    def test_script_list_filter_for_summary(self):
+        """Test getting list of scripts with for_summary filter"""
+        url = reverse('scripts-list', current_app='olandinvestmentsapi',
+                      urlconf='olandinvestmentsapi.urls')
+        query = f"for_summary=True"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 0)
+
+        queryf = f"for_summary=False"
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=queryf)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        self.script.for_summary = True
+        self.script.save()
+        response = self.client.get(
+            url, HTTP_HOST='api.localhost', QUERY_STRING=query)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], self.script.id)
+
         query = f"category={self.category.id}&subcategory1={self.subcategory.id}&subcategory2={self.subsubcategory2.id}"
         response = self.client.get(
             url, HTTP_HOST='api.localhost', QUERY_STRING=query)
