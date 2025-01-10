@@ -110,14 +110,20 @@ class ScriptSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         return obj.get_status_display()
 
+class ScriptSerializerForReport(serializers.ModelSerializer):
+    class Meta:
+        model = Script
+        fields = ["name", "id", "created", "category"]
+        depth = 1
 
 class ReportSerializer(serializers.ModelSerializer):
     # this will include IDs only
-    scripts = serializers.PrimaryKeyRelatedField(
-        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+    # scripts = serializers.PrimaryKeyRelatedField(
+    #     queryset=Script.objects.all(), allow_null=False, required=True, many=True)
     # this gives hyperlinks to each script
     # scripts = serializers.HyperlinkedRelatedField(
     #     queryset=Script.objects.all(), allow_null=False, many=True, view_name="scripts-detail")
+    scripts = ScriptSerializerForReport(many=True)
 
     class Meta:
         model = Report

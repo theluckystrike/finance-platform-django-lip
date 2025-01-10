@@ -9,6 +9,8 @@ from scriptupload.models import Report, merge_reports, ReportEmailTask
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from ..utils import Pagination
+
 
 class ReportViewSet(ModelViewSet):
     '''
@@ -22,6 +24,7 @@ class ReportViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ReportSerializer
     queryset = Report.objects.all().order_by("-created")
+    pagination_class = Pagination
 
 
 # running reports
