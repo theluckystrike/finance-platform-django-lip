@@ -89,13 +89,15 @@ class ScriptTests(APITestCase):
             'name': 'New Script',
             'category': self.subsubcategory.id,
             'file': python_file,
-            'description': description
+            'description': description,
+            'for_summary': True
         }
         response = self.client.post(url, data, HTTP_HOST='api.localhost')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], 'New Script')
         self.assertEqual(response.data['description'], description)
         self.assertEqual(response.data['category'], self.subsubcategory.id)
+        self.assertEqual(response.data['for_summary'], True)
         created_obj = Script.objects.get(name="New Script")
         self.assertEqual(created_obj.file.read().decode('utf-8'), python_code)
 
