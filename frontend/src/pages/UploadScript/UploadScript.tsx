@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import AutoComplete from '../../Comopnent/AutoComplete';
 
 import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
 import { useGetAllCategoryQuery, Category } from '../../Redux/CategoryQuery';
@@ -136,13 +136,11 @@ const UploadScriptForm = () => {
               </label>
               <div className="row mx-0 p-0">
                 <div className="col-10 col-sm-10 col-md-11 m-0 p-0 pe-1">
-                  <Autocomplete
+                  <AutoComplete
                     disablePortal
                     options={level2Categories}
                     getOptionLabel={(option: Category) => option.name}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Select a category" />
-                    )}
+                    label="Select a category"
                     value={selectedCategory}
                     onChange={onCategoryChange}
                   />
@@ -166,12 +164,10 @@ const UploadScriptForm = () => {
               <label htmlFor="output_type" className="form-label">
                 How would you like to view data?
               </label>
-              <Autocomplete
+              <AutoComplete
                 disablePortal
                 options={['Chart', 'Table', 'Chart and Table']}
-                renderInput={(params) => (
-                  <TextField {...params} label="Select a view data type" />
-                )}
+                label="Select a view data type"
                 value={selectedOutputType}
                 onChange={onOuputChange}
               />
