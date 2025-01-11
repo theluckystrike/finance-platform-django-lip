@@ -11,6 +11,8 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 import logging
 
+from ..utils import Pagination
+
 logger = logging.getLogger('testlogger')
 
 
@@ -45,17 +47,18 @@ logger = logging.getLogger('testlogger')
     ]
 ))
 class ScriptViewSet(ModelViewSet):
-    '''
-    All of the base methods for handling scripts including:
+    """
+    All the base methods for handling scripts including:
     - GET
     - POST (creation)
     - PUT
     - PATCH (updating)
-    - DELETE 
-    '''
+    - DELETE
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = ScriptSerializer
     queryset = Script.objects.all().order_by("-created")
+    pagination_class = Pagination
 
     def get_queryset(self):
         queryset = super().get_queryset()
