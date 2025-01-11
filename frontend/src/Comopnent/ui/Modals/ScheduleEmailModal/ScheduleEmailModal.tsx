@@ -10,17 +10,20 @@ interface ScheduleEmailModalProps {
   show: boolean;
   handleClose: () => void;
 }
-const initialValues={
+const initialValues = {
   email: '',
   report: '',
-  day:'1'
-}
-const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({ show, handleClose }) => {
+  day: '1',
+};
+const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
+  show,
+  handleClose,
+}) => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const store: any = useSelector((i) => i);
   const allreport = store?.report?.reports?.results;
-const handleToast=useToast()
+  const handleToast = useToast();
   useEffect(() => {
     const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
@@ -43,7 +46,9 @@ const handleToast=useToast()
 
   // Form validation schema using Yup
   const validationSchema = Yup.object({
-    email: Yup.string().email('Invalid email format').required('Email is required'),
+    email: Yup.string()
+      .email('Invalid email format')
+      .required('Email is required'),
     report: Yup.string().required('Please select a report'),
     day: Yup.string().required('Please select a day'),
   });
@@ -60,12 +65,13 @@ const handleToast=useToast()
     { value: '*', label: 'Every Day' },
   ];
 
-  const onSubmit=async (values:any) => {
- 
-await    dispatch(Createschedules({values:values,token:loginUser?.access}))
-handleToast.SuccessToast(`Schedules added successfully`);
+  const onSubmit = async (values: any) => {
+    await dispatch(
+      Createschedules({ values: values, token: loginUser?.access }),
+    );
+    handleToast.SuccessToast(`Schedules added successfully`);
     handleClose(); // Close the modal after submitting
-  }
+  };
   return (
     <>
       <Modal
@@ -163,18 +169,26 @@ handleToast.SuccessToast(`Schedules added successfully`);
                       />
                     </div>
 
-
                     <div className="col-6 row m-0 px-4">
-                      <label style={{ height: '33px' }} htmlFor="category" className="invisible">
+                      <label
+                        style={{ height: '33px' }}
+                        htmlFor="category"
+                        className="invisible"
+                      >
                         Last Updated
                       </label>
-                      <button className="btn btn-dark px-3 fw-bold form-control" type="submit">
+                      <button
+                        className="btn btn-dark px-3 fw-bold form-control"
+                        type="submit"
+                      >
                         Apply
                       </button>
                     </div>
 
                     <div className="col-12 row mt-3 px-4">
-                      <p className="text-center">All reports are sent at 12:00 PM UTC</p>
+                      <p className="text-center">
+                        All reports are sent at 12:00 PM UTC
+                      </p>
                     </div>
                   </div>
                 </div>

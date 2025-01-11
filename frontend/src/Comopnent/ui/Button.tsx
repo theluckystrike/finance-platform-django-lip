@@ -1,18 +1,18 @@
-import React from "react";
+import React from 'react';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "default" | "outline";
+  variant?: 'default' | 'outline';
 };
 
 const Button: React.FC<ButtonProps> = ({
-  variant = "default",
+  variant = 'default',
   className,
   ...props
 }) => {
-  const baseClasses = "px-4 py-2 rounded focus:outline-none";
+  const baseClasses = 'px-4 py-2 rounded focus:outline-none';
   const variantClasses = {
-    default: "bg-blue-500 text-white hover:bg-blue-600",
-    outline: "border border-blue-500 text-blue-500 hover:bg-blue-100",
+    default: 'bg-blue-500 text-white hover:bg-blue-600',
+    outline: 'border border-blue-500 text-blue-500 hover:bg-blue-100',
   };
 
   return (

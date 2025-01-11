@@ -1,5 +1,5 @@
-import React, { FC, HTMLAttributes } from "react";
-import PropTypes from "prop-types";
+import React, { FC, HTMLAttributes } from 'react';
+import PropTypes from 'prop-types';
 
 interface IOptionProps extends HTMLAttributes<HTMLOptionElement> {
   children: string;
@@ -61,7 +61,7 @@ Options.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    })
+    }),
   ).isRequired,
 };
 

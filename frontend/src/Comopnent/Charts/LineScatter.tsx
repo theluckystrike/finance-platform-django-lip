@@ -3,29 +3,29 @@ import Chart from 'react-apexcharts';
 
 const ScatterLineChart = () => {
   // Generate random data points for demonstration
-  const generateDataPoints = (numPoints:any) => {
+  const generateDataPoints = (numPoints: any) => {
     let data = [];
     for (let i = 0; i < numPoints; i++) {
       data.push({
         x: i + 1,
-        y: parseFloat((Math.random() * 10).toFixed(2)) // Random y values between 0 and 10
+        y: parseFloat((Math.random() * 10).toFixed(2)), // Random y values between 0 and 10
       });
     }
     return data;
   };
 
-  const options:any = {
+  const options: any = {
     series: [
       {
         name: 'Points',
         type: 'scatter',
-        data: generateDataPoints(50) // Generate 50 points for the scatter plot
+        data: generateDataPoints(50), // Generate 50 points for the scatter plot
       },
       {
         name: 'Line',
         type: 'line',
-        data: generateDataPoints(50) // Generate 50 points for the line plot
-      }
+        data: generateDataPoints(50), // Generate 50 points for the line plot
+      },
     ],
     chart: {
       height: 350,
@@ -54,7 +54,12 @@ const ScatterLineChart = () => {
 
   return (
     <div id="chart">
-      <Chart options={options} series={options.series} type="line" height={350} />
+      <Chart
+        options={options}
+        series={options.series}
+        type="line"
+        height={350}
+      />
     </div>
   );
 };

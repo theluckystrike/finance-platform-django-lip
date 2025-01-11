@@ -1,8 +1,16 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createsummery,GetSatussummeryByID, DeletesummariesByID, GetAllsummery,Updatesummaries, GetsummeryByID, mergesummery, Updatesummery} from "./Api";
- 
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  Createsummery,
+  GetSatussummeryByID,
+  DeletesummariesByID,
+  GetAllsummery,
+  Updatesummaries,
+  GetsummeryByID,
+  mergesummery,
+  Updatesummery,
+} from './Api';
 
-const initialState:any = {
+const initialState: any = {
   summerys: [],
   summery: [],
   summeryStatus: '',
@@ -12,36 +20,62 @@ const initialState:any = {
   error: null,
 };
 
-const AsyncFunctionThunk = (name:any, apiFunction:any) => {
-  return createAsyncThunk(`summery/${name}`, async (data, { rejectWithValue }) => {
-    try {
-      const response = await apiFunction(data);
-      return response.data;
-    } catch (error:any) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
+const AsyncFunctionThunk = (name: any, apiFunction: any) => {
+  return createAsyncThunk(
+    `summery/${name}`,
+    async (data, { rejectWithValue }) => {
+      try {
+        const response = await apiFunction(data);
+        return response.data;
+      } catch (error: any) {
+        if (error.response && error.response.data) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ error: error.message });
+        throw error;
       }
-      return rejectWithValue({ error: error.message });
-      throw error;
-    }
-  });
+    },
+  );
 };
- 
-export const Createsummerys:any = AsyncFunctionThunk('Createsummery', Createsummery);                   
-export const GetAllsummerys:any = AsyncFunctionThunk('GetAllsummerys', GetAllsummery);                  
-export const GetsummeryByIDs:any = AsyncFunctionThunk('GetsummeryByIDs', GetsummeryByID);               
-export const GetSatussummeryByIDs:any = AsyncFunctionThunk('GetSatussummeryByIDs', GetSatussummeryByID);
-export const DeletesummariesByIDs:any = AsyncFunctionThunk('DeletesummariesByIDs',DeletesummariesByID); 
-export const Updatesummeryss:any = AsyncFunctionThunk('Updatesummeryss',Updatesummery)                  
-export const Updatesummariess:any = AsyncFunctionThunk('Updatesummariess',Updatesummaries)              
-export const mergesummerys:any = AsyncFunctionThunk('mergesummerys',mergesummery)                        
- 
- 
+
+export const Createsummerys: any = AsyncFunctionThunk(
+  'Createsummery',
+  Createsummery,
+);
+export const GetAllsummerys: any = AsyncFunctionThunk(
+  'GetAllsummerys',
+  GetAllsummery,
+);
+export const GetsummeryByIDs: any = AsyncFunctionThunk(
+  'GetsummeryByIDs',
+  GetsummeryByID,
+);
+export const GetSatussummeryByIDs: any = AsyncFunctionThunk(
+  'GetSatussummeryByIDs',
+  GetSatussummeryByID,
+);
+export const DeletesummariesByIDs: any = AsyncFunctionThunk(
+  'DeletesummariesByIDs',
+  DeletesummariesByID,
+);
+export const Updatesummeryss: any = AsyncFunctionThunk(
+  'Updatesummeryss',
+  Updatesummery,
+);
+export const Updatesummariess: any = AsyncFunctionThunk(
+  'Updatesummariess',
+  Updatesummaries,
+);
+export const mergesummerys: any = AsyncFunctionThunk(
+  'mergesummerys',
+  mergesummery,
+);
+
 const summerySlice = createSlice({
   name: 'summerySlice',
   initialState,
   reducers: {
-    Updatesummeryss
+    Updatesummeryss,
   },
   extraReducers: (builder) => {
     builder
@@ -120,10 +154,8 @@ const summerySlice = createSlice({
       .addCase(mergesummerys.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
-
- 
 
 export default summerySlice.reducer;

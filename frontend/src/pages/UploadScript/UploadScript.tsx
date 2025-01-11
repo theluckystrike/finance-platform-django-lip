@@ -1,32 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import CategoryModal from "../../Comopnent/ui/Modals/CategoryModal/CategoryModal";
-import ArrowDown from "../../assest/image/arrow-down.png";
-import { useGetUserByTokenQuery } from "../../Redux/AuthSlice";
-import { useGetAllCategoryQuery } from "../../Redux/CategoryQuery";
-import { useDispatch } from "react-redux";
-import { CreateScripts } from "../../Redux/Script/ScriptSlice";
-import useToast from "../../customHook/toast";
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
+import { useGetAllCategoryQuery, Category } from '../../Redux/CategoryQuery';
+
+import Icon from '../../Comopnent/ui/icon/Icon';
+import CategoryModal from '../../Comopnent/ui/Modals/CategoryModal/CategoryModal';
+
+import { CreateScripts } from '../../Redux/Script/ScriptSlice';
+import useToast from '../../customHook/toast';
 
 // Define validation schema using Yup
 const validationSchema = Yup.object({
-  category: Yup.string().required("Category is required"),
-  output_type: Yup.string().required("Output type is required"),
-  name: Yup.string().required("Script name is required"),
-  file: Yup.mixed().required("File is required"),
+  category: Yup.string().required('Category is required'),
+  output_type: Yup.string().required('Output type is required'),
+  name: Yup.string().required('Script name is required'),
+  file: Yup.mixed().required('File is required'),
 });
 
 const UploadScriptForm = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
-  const fileRef: any = useRef(null);
+  const fileRef = useRef<any>(null);
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-    localStorage.removeItem('filterquery')
+    localStorage.removeItem('filterquery');
 
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
@@ -36,79 +41,84 @@ const UploadScriptForm = () => {
     { token: loginUser?.access, page_no: 1, page_size: 1000 },
     {
       skip: !loginUser, // Skip query execution if loginUser is null
-    }
+    },
   );
 
   const categoryData = AllCategory?.results || [];
 
-  const handleToast = useToast();
+  const level2Categories = useMemo(
+    () => categoryData.filter((cate: Category) => cate.level === 2),
+    [categoryData],
+  );
 
-  const [categoryFilter, setCategoryFilter] = useState<any>([]);
+  const handleToast = useToast();
 
   const { data, error, isLoading } = useGetUserByTokenQuery(
     { token: loginUser?.access, page_no: 1, page_size: 1000 },
     {
       skip: !loginUser, // Skip query execution if loginUser is null
-    }
+    },
   );
   const [show, setShow] = useState(false);
-  const [selectValue, setSelectValue] = useState("");
+  const [selectValue, setSelectValue] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const formik = useFormik({
     initialValues: {
-      category: "",
-      output_type: "",
-      name: "",
+      category: '',
+      output_type: '',
+      name: '',
       file: null,
-      description: "",
-      parentName: "",
+      description: '',
+      parentName: '',
     },
     validationSchema,
     onSubmit: async (values: any, { resetForm }) => {
-    
-      const formData = new FormData();
-      formData.append("category", values.category );
-      formData.append("output_type", "plt");
-      formData.append("name", values.name);
-      formData.append("file", values.file);
-      formData.append("description", values.description);
       // Dispatch the action with FormData
-     const res=  await dispatch(
-        CreateScripts({ formData:{...values,category:{name:values.category}}, token: loginUser?.access }) as any
+      const res = await dispatch(
+        CreateScripts({
+          formData: { ...values },
+          token: loginUser?.access,
+        }) as any,
       );
-      console.log(res);
-      
-      resetForm();
-      fileRef.current.value = "";
-      if(!res.error){
 
+      if (!res.error) {
         handleToast.SuccessToast(`New Script added successfully`);
+        resetForm();
+        fileRef.current.value = '';
+      } else {
+        handleToast.ErrorToast(res.payload.error);
       }
     },
   });
-const [FilterCategory,setFilterCategory]=useState([])
-const [dataTypeOption ,setDataTypeOption]=useState(false)
-const FilterData = (value: any) => {
-  const trimmedValue = value.trim(); // Trim the input value
-  if (trimmedValue !== '') {
-    const res = categoryData.filter((i: any) =>
-      i.name.toLowerCase().includes(trimmedValue.toLowerCase())
-    );
-    setFilterCategory(res);
-  } else {
-    setFilterCategory([]);
-  }
-}
 
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [selectedOutputType, setSelectedOutputType] = useState<string | null>(
+    null,
+  );
 
-useEffect(()=>{
-  localStorage.removeItem('filterquery')
+  const onCategoryChange = (
+    event: React.SyntheticEvent,
+    category: Category | null,
+  ) => {
+    setSelectedCategory(category);
+    formik.setFieldValue('category', category ? category.id : null);
+  };
 
-  FilterData(formik.values.parentName)
-},[formik.values.parentName])
+  const onOuputChange = (event: React.SyntheticEvent, value: string | null) => {
+    formik.setFieldValue('output_type', value);
+    setSelectedOutputType(value);
+  };
+
+  const onReset = () => {
+    formik.resetForm();
+    setSelectedCategory(null);
+    setSelectedOutputType(null);
+  };
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
@@ -116,7 +126,7 @@ useEffect(()=>{
         <div className="d-flex justify-content-center">
           <form
             className="w-75"
-            style={{ maxWidth: "600px" }}
+            style={{ maxWidth: '600px' }}
             onSubmit={formik.handleSubmit}
             encType="multipart/form-data"
           >
@@ -126,41 +136,16 @@ useEffect(()=>{
               </label>
               <div className="row mx-0 p-0">
                 <div className="col-10 col-sm-10 col-md-11 m-0 p-0 pe-1">
-                  <div className="dropdown">
-                    <div className="arrow_down">
-                      <img src={ArrowDown} alt="" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Select a category"
-                      value={formik.values.parentName}
-                      onChange={(e) => {
-                      formik.setFieldValue("parentName", e.target.value)
-                      FilterData( e.target.value)
-                      }}
-                      className={`form-control ${
-                        formik.touched.category && formik.errors.category
-                          ? "input-error"
-                          : ""
-                      }`}
-                    />
-                  <div className="dropdown-content"
-                   style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}>
-                      {FilterCategory.length > 0  &&
-                        FilterCategory.map((item: any, index: any) => (
-                          <span
-                            className="h6 hover-span"
-                            key={item.name}
-                            onClick={async () => {
-                             await formik.setFieldValue("parentName", item.name);
-                             await  formik.setFieldValue("category", item.name);
-                             setFilterCategory([])
-                            }} >
-                            {item.name}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
+                  <Autocomplete
+                    disablePortal
+                    options={level2Categories}
+                    getOptionLabel={(option: Category) => option.name}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Select a category" />
+                    )}
+                    value={selectedCategory}
+                    onChange={onCategoryChange}
+                  />
                 </div>
                 <button
                   className="btn btn-dark col-2 col-sm-2 col-md-1 p-0 justify-content-center"
@@ -169,70 +154,33 @@ useEffect(()=>{
                 >
                   <Icon icon="Add" size="30px" />
                 </button>
-                {formik.touched.category && formik.errors.category ? (
-                  <div className="error-message">
-                    {formik.errors.category as any}
-                  </div>
-                ) : null}
               </div>
+              {formik.touched.category && formik.errors.category ? (
+                <div className="error-message">
+                  {formik.errors.category as any}
+                </div>
+              ) : null}
             </div>
 
             <div className="mb-3">
               <label htmlFor="output_type" className="form-label">
                 How would you like to view data?
               </label>
-              <div className="dropdown">
-                <div className="arrow_down">
-                  <img src={ArrowDown} alt="" />
+              <Autocomplete
+                disablePortal
+                options={['Chart', 'Table', 'Chart and Table']}
+                renderInput={(params) => (
+                  <TextField {...params} label="Select a view data type" />
+                )}
+                value={selectedOutputType}
+                onChange={onOuputChange}
+              />
+
+              {formik.touched.output_type && formik.errors.output_type ? (
+                <div className="error-message">
+                  {formik.errors.output_type as any}
                 </div>
-                <input
-                  type="text"
-                  id="output_type"
-                  placeholder="Select a view data type"
-                  value={formik.values.output_type}
-               readOnly
-                     onFocus={()=>setDataTypeOption(true)}
-                    //  onBlur={()=>setDataTypeOption(false)}
-                  className={`form-control ${
-                    formik.touched.output_type && formik.errors.output_type
-                      ? "input-error"
-                      : ""
-                  }`}
-                />
-                <div className="dropdown-content" style={{ maxHeight: "200px", overflow: "auto", display: dataTypeOption ? 'block' : 'none' }}>
-                  <span
-                    className="hover-span"
-                    onClick={async() => { await formik.setFieldValue("output_type", "pd")
-                      setDataTypeOption(false)
-                    }}
-                  >
-                    Chart
-                  </span>
-                  <span
-                    className="hover-span"
-                    onClick={async() => {await formik.setFieldValue("output_type", "plt")
-                      setDataTypeOption(false)
-                    }}
-                  >
-                    Table
-                  </span>
-                  <span
-                    className="hover-span"
-                    onClick={ async() =>
-                    { await formik.setFieldValue("output_type", "pd plt")
-                      setDataTypeOption(false)
-                    }
-                    }
-                  >
-                    Chart and Table
-                  </span>
-                </div>
-                {formik.touched.output_type && formik.errors.output_type ? (
-                  <div className="error-message">
-                    {formik.errors.output_type as any}
-                  </div>
-                ) : null}
-              </div>
+              ) : null}
             </div>
 
             <div className="mb-3">
@@ -244,9 +192,9 @@ useEffect(()=>{
                 id="name"
                 placeholder="Enter script name"
                 className={`form-control ${
-                  formik.touched.name && formik.errors.name ? "input-error" : ""
+                  formik.touched.name && formik.errors.name ? 'input-error' : ''
                 }`}
-                {...formik.getFieldProps("name")}
+                {...formik.getFieldProps('name')}
               />
               {formik.touched.name && formik.errors.name ? (
                 <div className="error-message">{formik.errors.name as any}</div>
@@ -254,22 +202,26 @@ useEffect(()=>{
             </div>
 
             <div className="mb-3">
-              <label htmlFor="file" className="form-label" title="Select only .py files">
+              <label
+                htmlFor="file"
+                className="form-label"
+                title="Select only .py files"
+              >
                 Select a file <Icon icon="InfoOutline" size="18px" />
               </label>
               <input
-  type="file"
-  id="file"
-  name="file"
-  ref={fileRef}
-  accept=".py" // Restrict to only .py files
-  className={`form-control ${
-    formik.touched.file && formik.errors.file ? "input-error" : ""
-  }`}
-  onChange={(event: any) =>
-    formik.setFieldValue("file", event.target.files[0])
-  }
-/>
+                type="file"
+                id="file"
+                name="file"
+                ref={fileRef}
+                accept=".py" // Restrict to only .py files
+                className={`form-control ${
+                  formik.touched.file && formik.errors.file ? 'input-error' : ''
+                }`}
+                onChange={(event: any) =>
+                  formik.setFieldValue('file', event.target.files[0])
+                }
+              />
               {formik.touched.file && formik.errors.file ? (
                 <div className="error-message">{formik.errors.file as any}</div>
               ) : null}
@@ -285,7 +237,7 @@ useEffect(()=>{
               <button
                 type="reset"
                 className="btn btn-light bordered-button my-1  col-12 col-sm-12 col-md-5"
-                onClick={() => formik.resetForm()}
+                onClick={onReset}
               >
                 Reset
               </button>

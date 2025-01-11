@@ -1,34 +1,31 @@
-import React, { lazy } from "react";
-import AuthGuard from "../Layout/AuthGuard";
-import AuthLayout from "../Layout/AuthLayout";
-import { ActiveRoute, SidebarMenu } from "../Menu";
- 
- 
- 
- 
+import React, { lazy } from 'react';
+import AuthGuard from '../Layout/AuthGuard';
+import AuthLayout from '../Layout/AuthLayout';
+import { ActiveRoute, SidebarMenu } from '../Menu';
 
 // Lazy load the components
-const CustomReport = lazy(() => import("../pages/AllScript/AllScript"));
-const FilterPAge = lazy(() => import("../pages/AllScript/FilterScripts"));
-const ScriptEdit = lazy(() => import("../pages/AllScript/Script_Edit"));
-const ScriptView = lazy(() => import("../pages/AllScript/Script_view"));
-const Home = lazy(() => import("../pages/Home/Home"));
-const ReportView = lazy(() => import("../pages/Reports/Report_view"));
-const Report = lazy(() => import("../pages/Reports/Reports"));
-const TapeSummary = lazy(() => import("../pages/tape-summary/tape-summary"));
-const TapeSummaryResult = lazy(() => import("../pages/tape-summary/tape-summary-result"))
-const UploadScript = lazy(() => import("../pages/UploadScript/UploadScript"));
-const CategoryManger = lazy(() => import("../pages/UploadScript/CategoryManger"));
-const ErrorHandling = lazy(() => import("../pages/ErrorHandling/ErrorHandle"));
-const Profile = lazy(() => import("../pages/user/Profile"));
-const ScriptTree = lazy(() => import("../pages/AllScript/ScriptTree"));
-
-
-
+const CustomReport = lazy(() => import('../pages/AllScript/AllScript'));
+const FilterPAge = lazy(() => import('../pages/AllScript/FilterScripts'));
+const ScriptEdit = lazy(() => import('../pages/AllScript/Script_Edit'));
+const ScriptView = lazy(() => import('../pages/AllScript/Script_view'));
+const Home = lazy(() => import('../pages/Home/Home'));
+const ReportView = lazy(() => import('../pages/Reports/Report_view'));
+const Report = lazy(() => import('../pages/Reports/Reports'));
+const TapeSummary = lazy(() => import('../pages/tape-summary/tape-summary'));
+const TapeSummaryResult = lazy(
+  () => import('../pages/tape-summary/tape-summary-result'),
+);
+const UploadScript = lazy(() => import('../pages/UploadScript/UploadScript'));
+const CategoryManger = lazy(
+  () => import('../pages/UploadScript/CategoryManger'),
+);
+const ErrorHandling = lazy(() => import('../pages/ErrorHandling/ErrorHandle'));
+const Profile = lazy(() => import('../pages/user/Profile'));
+const ScriptTree = lazy(() => import('../pages/AllScript/ScriptTree'));
 
 export const SimpleRoute = [
   {
-    path: "/account",
+    path: '/',
     element: (
       <AuthGuard>
         <AuthLayout />
@@ -57,7 +54,7 @@ export const SimpleRoute = [
       },
       {
         path: SidebarMenu.tapesummary.path,
-        element: <TapeSummary />
+        element: <TapeSummary />,
       },
       {
         path: ActiveRoute.ReportDetails.path,
@@ -77,21 +74,20 @@ export const SimpleRoute = [
       },
       {
         path: ActiveRoute.TapeSummaryResult.path,
-        element: <TapeSummaryResult />
+        element: <TapeSummaryResult />,
       },
       {
         path: SidebarMenu.errorhandling.path,
-        element: <ErrorHandling />
+        element: <ErrorHandling />,
       },
       {
         path: ActiveRoute.UserProfile.path,
-        element: <Profile />
+        element: <Profile />,
       },
       {
         path: SidebarMenu.scriptTree.path,
         element: <ScriptTree />,
-
-      }
+      },
     ],
   },
 ];

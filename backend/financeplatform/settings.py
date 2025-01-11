@@ -57,6 +57,7 @@ ALLOWED_HOSTS = [
     "api.localhost",
     "admin.localhost",
     "localhost",
+    "127.0.0.1",
 ]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

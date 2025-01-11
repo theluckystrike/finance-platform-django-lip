@@ -110,8 +110,22 @@ class ScriptSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         return obj.get_status_display()
 
+class ScriptSerializerForReport(serializers.ModelSerializer):
+    class Meta:
+        model = Script
+        fields = ["name", "id", "created", "category"]
+        depth = 1
 
-class ReportSerializer(serializers.ModelSerializer):
+class ReportReadSerializer(serializers.ModelSerializer):
+    scripts = ScriptSerializerForReport(many=True)
+
+    class Meta:
+        model = Report
+        fields = ["name", "id", "scripts", "created",
+                  "last_updated", "status", "latest_pdf"]
+        depth = 1
+
+class ReportWriteSerializer(serializers.ModelSerializer):
     # this will include IDs only
     scripts = serializers.PrimaryKeyRelatedField(
         queryset=Script.objects.all(), allow_null=False, required=True, many=True)

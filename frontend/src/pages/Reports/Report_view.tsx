@@ -1,30 +1,34 @@
-import React, { useEffect, useState } from "react";
-import "../../assest/css/AllScript.css";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import ScheduleEmailModal from "../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal";
-import { ActiveRoute } from "../../Menu";
+import React, { useEffect, useState } from 'react';
 
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { GetAllScripts, setLoading } from "../../Redux/Script/ScriptSlice";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import InfoIcon from '@mui/icons-material/Info';
+
+import '../../assest/css/AllScript.css';
+import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
 import {
   GetreportByIDs,
   GetSatusreportByIDs,
   Updatereports,
   UpdateReportss,
-} from "../../Redux/Report/Slice";
-import DateFormatter from "../../customHook/useTImeformnt";
-import useToast from "../../customHook/toast";
-import Loader from "../../Comopnent/ui/Loader";
-import DeleteModal from "./ReportDelete";
-import { Viewer, Worker } from "@react-pdf-viewer/core";
+} from '../../Redux/Report/Slice';
+import { formatIsoDate } from '../../utils/formatDate';
+import useToast from '../../customHook/toast';
+import Loader from '../../Comopnent/ui/Loader';
+import DeleteModal from './ReportDelete';
 
 // Plugins
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
 // Import styles
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 // Create new plugin instance
 
@@ -35,28 +39,25 @@ const ReportViwe = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
   const handleToast = useToast();
-  
+
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem("login");
+    const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
   }, []);
 
-  const getStatus =async ()=>{
+  const getStatus = async () => {
     await dispatch(GetSatusreportByIDs({ id: id, token: loginUser?.access }));
-
-  }
+  };
 
   useEffect(() => {
-    dispatch(setLoading(true));
     if (loginUser) {
       const getreport = async () => {
         await dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
-       await getStatus()
+        await getStatus();
         await dispatch(GetAllScripts({ token: loginUser?.access }));
-        dispatch(setLoading(false));
       };
       getreport();
     }
@@ -65,7 +66,7 @@ const ReportViwe = () => {
   const store: any = useSelector((i) => i);
   const reportData = store?.report?.report;
   const reportStatus = store?.report?.reportStatus;  
-  const allscripts = store?.script?.Scripts?.results || [];
+  const reportScripts = reportData.scripts || [];
   const { loading } = store?.report;
   useEffect(() => {
     let intervalId: any;
@@ -83,17 +84,9 @@ const ReportViwe = () => {
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [reportStatus]);
 
-  // Safeguard against undefined or null values for reportData.scripts
-  const filteredScripts = allscripts.filter((script: any) => {
-    return (
-      Array.isArray(reportData?.scripts) &&
-      reportData.scripts.includes(script.id)
-    );
-  });
-
   const [selectScript, setSelectScript] = useState({
-    name: "",
-    id: "",
+    name: '',
+    id: '',
   });
 
   const [show, setShow] = useState(false);
@@ -113,7 +106,7 @@ const ReportViwe = () => {
         },
         token: loginUser.access,
         id: id,
-      })
+      }),
     );
 
     handleToast.SuccessToast(`Update Report successfully`);
@@ -129,32 +122,32 @@ const ReportViwe = () => {
         },
         token: loginUser.access,
         id: id,
-      })
+      }),
     );
     handleToast.SuccessToast(`Remove Script successfully`);
   };
 
   const openPdfInNewTab = (url: any) => {
-    if (url){
-      window.open(url, "_blank");
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      handleToast.SuccessToast(
+        'Please update the script first, then wait for the PDF to generate successfully.',
+      );
+      updateRepost();
     }
-    else{
-      handleToast.SuccessToast("Please update the script first, then wait for the PDF to generate successfully.");
-      updateRepost() 
-
-    }
-    
   };
 
   const updateRepost = async () => {
     const res = await dispatch(
-      UpdateReportss({ token: loginUser.access, id: id })
+      UpdateReportss({ token: loginUser.access, id: id }),
     );
-    getStatus()
+    getStatus();
     if (res.payload) {
       handleToast.SuccessToast(res.payload.message);
     }
   };
+
   return (
     <>
       <div className="mx-5 py-3">
@@ -168,30 +161,33 @@ const ReportViwe = () => {
               type="button"
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="CalendarToday" size="20px" />
+              <CalendarTodayIcon fontSize="small" />
               <span>Schedule Email</span>
             </button>
             <button
               type="button"
               onClick={() => openPdfInNewTab(reportData?.latest_pdf)}
               className="btn icon-button my-1 mx-2"
+              disabled={reportStatus.status === 'running'}
             >
-             {reportStatus.status === 'running'?<>
-              <Loader />
-              <span>Running</span>
-             </>
-              : <>
-              <Icon icon="RemoveRedEye" size="20px" />
-              <span>View Latest</span>
-             </>
-              }
+              {reportStatus.status === 'running' ? (
+                <>
+                  <Loader />
+                  <span>Running</span>
+                </>
+              ) : (
+                <>
+                  <VisibilityIcon fontSize="small" />
+                  <span>View Latest</span>
+                </>
+              )}
             </button>
             <button
               type="button"
               className="btn icon-button my-1 mx-2"
               onClick={() => setDeleteShow(true)}
             >
-              <Icon icon="Delete" size="20px" />
+              <DeleteIcon fontSize="small" />
               <span>Delete</span>
             </button>
             <button
@@ -199,13 +195,11 @@ const ReportViwe = () => {
               className="btn icon-button my-1 mx-2"
               onClick={updateRepost}
             >
-              <Icon icon="SystemUpdateAlt" size="20px" />
-
+              <SystemUpdateAltIcon fontSize="small" />
               <span>Update</span>
             </button>
             <button type="submit" className="btn icon-button my-1 mx-2">
-              <Icon icon="Info" size="20px" />
-
+              <InfoIcon fontSize="small" />
               <span>info</span>
             </button>
           </div>
@@ -213,7 +207,7 @@ const ReportViwe = () => {
 
         <form
           className="w-75"
-          style={{ maxWidth: "600px" }}
+          style={{ maxWidth: '600px' }}
           method="post"
           encType="multipart/form-data"
         >
@@ -231,9 +225,9 @@ const ReportViwe = () => {
                   />
                   <div
                     className="dropdown-content"
-                    style={{ height: "200px", overflow: "auto" }}
+                    style={{ height: '200px', overflow: 'auto' }}
                   >
-                    {allscripts.map((script: any, index: any) => (
+                    {reportScripts.map((script: any, index: any) => (
                       <span
                         key={index}
                         onClick={() =>
@@ -253,7 +247,7 @@ const ReportViwe = () => {
               <button
                 className="btn btn-dark col col-2 p-0 fw-bold justify-content-center"
                 type="button"
-                disabled={selectScript.name == ""}
+                disabled={selectScript.name == ''}
                 onClick={handleUpdate}
               >
                 Add
@@ -263,8 +257,8 @@ const ReportViwe = () => {
         </form>
         <div>
           {!loading ? (
-            <div id="customReportForm" style={{ overflow: "auto" }}>
-              <table className="table   w-100" style={{ minWidth: "1000px" }}>
+            <div id="customReportForm" style={{ overflow: 'auto' }}>
+              <table className="table   w-100" style={{ minWidth: '1000px' }}>
                 <thead>
                   <tr className="fw-bold mb-2 p-2">
                     <th scope="col" className="col-5">
@@ -295,60 +289,60 @@ const ReportViwe = () => {
                   </tr>
                 </thead>
                 <tbody id="reportsCheckboxes">
-                  {filteredScripts ? (
-                    filteredScripts.map((report: any) => (
+                  {reportScripts ? (
+                    reportScripts.map((script: any) => (
                       <>
                         <tr
-                          key={report.id}
+                          key={script.id}
                           className="table-card rounded-3 bg-light-green mb-2 p-3"
                         >
                           <td className="col-5">
                             <Link
-                              to={`/account/ScriptDetails/${report.id}`}
+                              to={`/ScriptDetails/${script.id}`}
                               className="text-decoration-none text-black"
                             >
                               <span className="fw-bold fs-6">
                                 <input
                                   className="chbx"
                                   type="checkbox"
-                                  name="reports"
-                                  value={report.id}
+                                  name="scripts"
+                                  value={script.id}
                                 />
-                                {report.name}
+                                {script.name}
                               </span>
                             </Link>
                           </td>
                           <td className="col-2 text-center mx-auto wrap-word">
-                            {report?.category?.name}
+                            {script?.category?.name}
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
-                            {report.category?.parent_category?.name}
+                            {script.category?.parent_category?.name}
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
                             {
-                              report.category?.parent_category?.parent_category
+                              script.category?.parent_category?.parent_category
                                 ?.name
                             }
                           </td>
 
                           <td className="col-2 text-center mx-auto">
-                            <DateFormatter isoString={report.created} />
+                            {formatIsoDate(script.created)}
                           </td>
                           <td className="col-1 text-center mx-auto">
                             <div
-                              onClick={() => removeScript(report.id)}
+                              onClick={() => removeScript(script.id)}
                               className="bg-danger p-1 ms-auto"
                               style={{
-                                width: "27px",
-                                borderRadius: "50%",
-                                color: "white",
+                                width: '27px',
+                                borderRadius: '50%',
+                                color: 'white',
                               }}
                             >
                               -
                             </div>
                           </td>
                         </tr>
-                        <tr style={{ height: "10px" }}></tr>
+                        <tr style={{ height: '10px' }}></tr>
                       </>
                     ))
                   ) : (

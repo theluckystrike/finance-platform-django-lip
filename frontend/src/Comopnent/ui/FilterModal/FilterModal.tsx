@@ -1,6 +1,6 @@
-import { FC } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import { FC } from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 interface FilterModalProps {
   show: boolean;
@@ -20,8 +20,8 @@ const FilterModal: FC<FilterModalProps> = ({ show, handleClose }) => {
         <Modal.Body
           className="bg-light-green"
           style={{
-            borderRadius: "25px",
-            overflow: "hidden",
+            borderRadius: '25px',
+            overflow: 'hidden',
           }}
         >
           <form method="post" encType="multipart/form-data">

@@ -1,58 +1,58 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Card, Button } from "react-bootstrap";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import { GetSatusreportByIDs } from "../../Redux/Report/Slice";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Card, Button } from 'react-bootstrap';
+
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetSatussummeryByIDs,
   GetsummeryByIDs,
   Updatesummariess,
-} from "../../Redux/TapeSummary/Slice";
-import ScatterLineChart from "../../Comopnent/Charts/LineScatter";
-import LineChart from "../../Comopnent/Charts/LineChart";
+} from '../../Redux/TapeSummary/Slice';
+import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
+import LineChart from '../../Comopnent/Charts/LineChart';
 
-import { TapeSummaryData } from "../../DummyData/TableData";
-import DeleteModal from "./DeleteModal";
-import EditSummary from "../../Comopnent/ui/Modals/CreateSummary/ModalEditSummary";
-import Loader from "../../Comopnent/ui/Loader";
-import Plot from "react-plotly.js";
+import { TapeSummaryData } from '../../DummyData/TableData';
+import DeleteModal from './DeleteModal';
+import EditSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalEditSummary';
+import Loader from '../../Comopnent/ui/Loader';
+import Plot from 'react-plotly.js';
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
 };
 // Mock data for the chart
 const chartData = [
-  { date: "2023-01", stockMarket: 0.5, modelScore: 1 },
-  { date: "2023-02", stockMarket: 0.8, modelScore: 1 },
-  { date: "2023-03", stockMarket: 0.3, modelScore: 0 },
-  { date: "2023-04", stockMarket: -0.2, modelScore: -1 },
-  { date: "2023-05", stockMarket: -0.5, modelScore: -1 },
-  { date: "2023-06", stockMarket: 0.1, modelScore: 0 },
-  { date: "2023-07", stockMarket: 0.6, modelScore: 1 },
+  { date: '2023-01', stockMarket: 0.5, modelScore: 1 },
+  { date: '2023-02', stockMarket: 0.8, modelScore: 1 },
+  { date: '2023-03', stockMarket: 0.3, modelScore: 0 },
+  { date: '2023-04', stockMarket: -0.2, modelScore: -1 },
+  { date: '2023-05', stockMarket: -0.5, modelScore: -1 },
+  { date: '2023-06', stockMarket: 0.1, modelScore: 0 },
+  { date: '2023-07', stockMarket: 0.6, modelScore: 1 },
 ];
 
 // Mock data for the scripts
 const scriptData = [
-  { id: 1, name: "Script 1", score: 0.8 },
-  { id: 2, name: "Script 2", score: -0.3 },
-  { id: 3, name: "Script 3", score: 0.5 },
-  { id: 4, name: "Script 4", score: 1.0 },
-  { id: 5, name: "Script 5", score: -0.7 },
-  { id: 6, name: "Script 6", score: 0.2 },
+  { id: 1, name: 'Script 1', score: 0.8 },
+  { id: 2, name: 'Script 2', score: -0.3 },
+  { id: 3, name: 'Script 3', score: 0.5 },
+  { id: 4, name: 'Script 4', score: 1.0 },
+  { id: 5, name: 'Script 5', score: -0.7 },
+  { id: 6, name: 'Script 6', score: 0.2 },
 ];
 
 const TapeSummaryResult: React.FC = () => {
   const { id } = useParams();
-  const location = useLocation();
-  const ChartComponent = Components[TapeSummaryData[0].chartType];
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [selectedScript, setSelectedScript] = useState<number | null>(null);
   const store: any = useSelector((i) => i);
 
   const { summery } = useSelector((i: any) => i?.summary);
-  console.log(summery, "summerysummery");
+  console.log(summery, 'summerysummery');
 
   const summery2 = summery?.meta?.scripts
     ? Object.entries(summery.meta.scripts).map(([id, script]: any) => ({
@@ -88,13 +88,13 @@ const TapeSummaryResult: React.FC = () => {
 
   useEffect(() => {
     let intervalId: any;
-    if (summeryStatus.status === "running") {
+    if (summeryStatus.status === 'running') {
       intervalId = setInterval(() => {
         getStatus();
       }, 5000);
     }
 
-    if (summeryStatus.status === "success") {
+    if (summeryStatus.status === 'success') {
       dispatch(GetsummeryByIDs({ id }));
       clearInterval(intervalId);
     }
@@ -116,17 +116,17 @@ const TapeSummaryResult: React.FC = () => {
               onClick={() => setEditShow(true)}
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Edit" size="20px" />
+              <EditIcon fontSize="small" />
               <span>Edit</span>
             </button>
-            {summeryStatus?.status === "running" && (
+            {summeryStatus?.status === 'running' && (
               <button type="button" className="btn icon-button my-1 mx-2">
                 <Loader />
                 <span>Running</span>
               </button>
             )}
             <button onClick={getupdate} className="btn icon-button my-1 mx-2">
-              <Icon icon="PlayArrow" size="20px" />
+              <PlayArrowIcon fontSize="small" />
               <span>Update</span>
             </button>
             <button
@@ -134,7 +134,7 @@ const TapeSummaryResult: React.FC = () => {
               onClick={() => setDeleteShow(true)}
               className="btn icon-button my-1 mx-2"
             >
-              <Icon icon="Delete" size="20px" />
+              <DeleteIcon fontSize="small" />
               <span>Delete</span>
             </button>
           </div>
@@ -147,7 +147,7 @@ const TapeSummaryResult: React.FC = () => {
             <Card className="col-12 mb-8  ">
               <Card.Header className="bg-light-green">
                 <Card.Title>
-                  {" "}
+                  {' '}
                   Summary of stock market performance and model predictions
                 </Card.Title>
               </Card.Header>
@@ -159,20 +159,20 @@ const TapeSummaryResult: React.FC = () => {
                     data={[
                       {
                         x: summery.signal_plot_data.date,
-                        y: summery.signal_plot_data["signal sum"],
-                        type: "scatter",
-                        mode: "lines+markers",
-                        marker: { color: "green" },
-                        name: "Signal Sum", // Name for the legend
+                        y: summery.signal_plot_data['signal sum'],
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: { color: 'green' },
+                        name: 'Signal Sum', // Name for the legend
                       },
                     ]}
                     layout={{
                       title: summery.name.replace(/\b\w/g, (char: any) =>
-                        char.toUpperCase()
+                        char.toUpperCase(),
                       ),
-                      xaxis: { title: "Date" },
+                      xaxis: { title: 'Date' },
                       yaxis: {
-                        title: "Signal Sum",
+                        title: 'Signal Sum',
                         range: [-1, 1], // Fixed y-axis range from -1 to 1
                         dtick: 1, // Step of 1 for ticks, so only -1, 0, and 1 appear
                       },
@@ -180,11 +180,11 @@ const TapeSummaryResult: React.FC = () => {
                       legend: {
                         x: 1, // Position legend on the right
                         y: 1,
-                        xanchor: "right",
-                        yanchor: "top",
+                        xanchor: 'right',
+                        yanchor: 'top',
                       },
                     }}
-                    style={{ width: "100%", height: "100%" }}
+                    style={{ width: '100%', height: '100%' }}
                   />
                 ) : (
                   <div>No data available for plotting</div>
@@ -203,13 +203,13 @@ const TapeSummaryResult: React.FC = () => {
                     <div
                       key={script.id}
                       className={`h-20 rounded-3 bg-light-green m-2 p-3 ${
-                        selectedScript === script.id ? "border-primary " : ""
+                        selectedScript === script.id ? 'border-primary ' : ''
                       } col-5 p-4`}
                       onClick={() => setSelectedScript(script.id)}
                     >
-                      {" "}
+                      {' '}
                       <Link
-                        to={`/account/ScriptDetails/${script.id}`}
+                        to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
                       >
                         <div className="text-left">
@@ -217,7 +217,7 @@ const TapeSummaryResult: React.FC = () => {
                           <div>{script.tableColName}</div>
                           <div
                             className={`text-sm ${
-                              script.score > 0 ? "text-success" : "text-danger"
+                              script.score > 0 ? 'text-success' : 'text-danger'
                             }`}
                           >
                             Score: {script.score}

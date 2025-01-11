@@ -68,8 +68,6 @@ This will start a local server and serve the production build at http://localhos
 You can learn more in the Create React App documentation.
 To learn React, check out the React documentation.
 
-
-
 ### `npm run eject`
 
 **Warning: This is a one-way operation. Once you `eject`, you cannot undo this action!**
@@ -78,8 +76,9 @@ To learn React, check out the React documentation.
 - It copies all configuration files and dependencies (Webpack, Babel, ESLint, etc.) directly into your project, giving you full control over them.
 - You should only `eject` if you need to customize the build tool and configuration.
 
-##  `License`
-  This project is licensed under the MIT License.
+## `License`
+
+This project is licensed under the MIT License.
 
 ### Key Sections:
 
@@ -92,3 +91,18 @@ To learn React, check out the React documentation.
 ```bash
 node -v
 ```
+
+## Run cypress tests
+
+Cypress is a great instrument to ensure that your GUI behaves as expected.
+
+Cypress prerequesites:
+
+- Ensure that BE is running
+- Ensure that FE is running
+- Ensure that your FE .env file is filled with values (e.g. according with `.env.example`)
+
+There are two ways to run cypress tests:
+
+1. `npm test` runs cypress in headless mode. Perfect to quickly check if nothing was broken.
+2. `npx cypress open` opens cypress in interactive mode, which allows you to visualize and manage tests execution. Perfect to write new tests.

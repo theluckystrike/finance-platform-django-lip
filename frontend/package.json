@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.3.1",
+    "@mui/material": "^6.3.1",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
     "@reduxjs/toolkit": "^2.2.7",
@@ -20,6 +24,7 @@
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
     "classnames": "^2.5.1",
+    "dotenv": "^16.4.7",
     "formik": "^2.4.6",
     "history": "^5.3.0",
     "papaparse": "^5.4.1",
@@ -48,15 +53,15 @@
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "cross-env PORT=8000 GENERATE_SOURCEMAP=false react-scripts start",
+    "start": "cross-env PORT=4200 GENERATE_SOURCEMAP=false react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "npx cypress run --project .",
+    "eject": "react-scripts eject",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "plugin:cypress/recommended"
     ]
   },
   "browserslist": {
@@ -75,6 +80,10 @@
     "@types/papaparse": "^5.3.14",
     "@types/react-plotly.js": "^2.6.3",
     "@types/uuid": "^10.0.0",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "cypress": "^13.17.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-cypress": "^4.1.0",
+    "prettier": "^3.4.2"
   }
 }

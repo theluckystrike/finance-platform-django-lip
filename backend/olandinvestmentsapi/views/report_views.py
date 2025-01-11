@@ -4,10 +4,12 @@ from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
-from ..serializers import ReportSerializer, ReportEmailTaskSerializer
+from ..serializers import ReportEmailTaskSerializer, ReportReadSerializer, ReportWriteSerializer
 from scriptupload.models import Report, merge_reports, ReportEmailTask
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+from ..utils import Pagination
 
 
 class ReportViewSet(ModelViewSet):
@@ -20,8 +22,13 @@ class ReportViewSet(ModelViewSet):
     - DELETE 
     '''
     permission_classes = [IsAuthenticated]
-    serializer_class = ReportSerializer
     queryset = Report.objects.all().order_by("-created")
+    pagination_class = Pagination
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ReportReadSerializer
+        return ReportWriteSerializer
 
 
 # running reports

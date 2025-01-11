@@ -1,8 +1,8 @@
-import React, { forwardRef, memo, ReactNode, CSSProperties } from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import * as SvgIcon from "./svg-icons";
-import * as Material from "./material-icons";
+import React, { forwardRef, memo, ReactNode, CSSProperties } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import * as SvgIcon from './svg-icons';
+import * as Material from './material-icons';
 
 interface IRefWrapperProps extends Record<string, any> {
   children: ReactNode;
@@ -20,17 +20,15 @@ const RefWrapper = forwardRef<HTMLSpanElement, IRefWrapperProps>(
     return <>{children}</>;
   }
 );
-RefWrapper.displayName = "RefWrapper";
+RefWrapper.displayName = 'RefWrapper';
 
 const Icon = forwardRef<HTMLSpanElement, any>(
   ({ icon, className, color, size, forceFamily, style, ...props }, ref) => {
     const IconName = icon;
 
     // @ts-ignore
-    // eslint-disable-next-line import/namespace
     const SvgIconWrapper = SvgIcon[IconName];
     // @ts-ignore
-    // eslint-disable-next-line import/namespace
     const MaterialWrapper = Material[IconName];
 
     // Create custom styles for size if provided
@@ -42,23 +40,23 @@ const Icon = forwardRef<HTMLSpanElement, any>(
     };
 
     const ClassName = classNames(
-      "svg-icon",
+      'svg-icon',
       { [`text-${color}`]: color },
-      className
+      className,
     );
 
-    const isForceCustom = forceFamily === "custom";
-    const isForceMaterial = forceFamily === "material";
+    const isForceCustom = forceFamily === 'custom';
+    const isForceMaterial = forceFamily === 'material';
 
     if (
       isForceCustom ||
-      (!isForceMaterial && typeof SvgIconWrapper === "function")
+      (!isForceMaterial && typeof SvgIconWrapper === 'function')
     ) {
       return (
         <RefWrapper ref={ref}>
           <SvgIconWrapper
             data-name={`SvgIcon--${IconName}`}
-            className={classNames("svg-icon--custom", ClassName)}
+            className={classNames('svg-icon--custom', ClassName)}
             style={customStyle}
             {...props}
           />
@@ -67,13 +65,13 @@ const Icon = forwardRef<HTMLSpanElement, any>(
     }
     if (
       isForceMaterial ||
-      (!isForceCustom && typeof MaterialWrapper === "function")
+      (!isForceCustom && typeof MaterialWrapper === 'function')
     ) {
       return (
         <RefWrapper ref={ref}>
           <MaterialWrapper
             data-name={`Material--${icon}`}
-            className={classNames("svg-icon--material", ClassName)}
+            className={classNames('svg-icon--material', ClassName)}
             style={customStyle}
             {...props}
           />
@@ -81,7 +79,7 @@ const Icon = forwardRef<HTMLSpanElement, any>(
       );
     }
     return null;
-  }
+  },
 );
 
 Icon.propTypes = {
@@ -89,17 +87,17 @@ Icon.propTypes = {
   className: PropTypes.string,
   color: PropTypes.oneOf([
     null,
-    "primary",
-    "secondary",
-    "success",
-    "info",
-    "warning",
-    "danger",
-    "light",
-    "dark",
+    'primary',
+    'secondary',
+    'success',
+    'info',
+    'warning',
+    'danger',
+    'light',
+    'dark',
   ]),
   size: PropTypes.string, // Adjusted to handle any valid CSS size value
-  forceFamily: PropTypes.oneOf([null, "custom", "material"]),
+  forceFamily: PropTypes.oneOf([null, 'custom', 'material']),
   style: PropTypes.object, // Add style prop for further customization
 };
 
@@ -111,6 +109,6 @@ Icon.defaultProps = {
   style: {}, // Default style prop
 };
 
-Icon.displayName = "Icon";
+Icon.displayName = 'Icon';
 
 export default memo(Icon);

@@ -1,14 +1,14 @@
-import { FC, useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
+import { FC, useState, useEffect } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
 import {
   useRemoveMutation,
   useUpdateMutation,
-} from "../../../../Redux/CategoryQuery";
-import { log } from "console";
-import useToast from "../../../../customHook/toast";
-import DeleteModal from "../DeleteModal/DeleteModal";
-import ArrowDown from "../../../../assest/image/arrow-down.png";
+} from '../../../../Redux/CategoryQuery';
+import { log } from 'console';
+import useToast from '../../../../customHook/toast';
+import DeleteModal from '../DeleteModal/DeleteModal';
+import ArrowDown from '../../../../assest/image/arrow-down.png';
 
 interface NewCategoryModalProps {
   show: boolean;
@@ -18,7 +18,7 @@ interface NewCategoryModalProps {
   token: any;
   data: any;
   selectedPERnt: any;
-  categoryData:any;
+  categoryData: any;
   showDel: any;
 }
 
@@ -42,14 +42,13 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   const [parentCategory, setParentCategory] = useState(selectedPERnt);
   const [isEditing, setIsEditing] = useState(false);
 
-
   useEffect(() => {
     if (editingCategory) {
       setCategoryName(editingCategory.name);
       setParentCategory(selectedPERnt);
       setIsEditing(true);
     } else {
-      setCategoryName("");
+      setCategoryName('');
       setIsEditing(false);
     }
   }, [editingCategory, selected]);
@@ -75,37 +74,34 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
     showDel(editingCategory);
   };
 
-
-  const [FilterCategory,setFilterCategory]=useState([])
-  const [dataTypeOption ,setDataTypeOption]=useState(false)
+  const [FilterCategory, setFilterCategory] = useState([]);
+  const [dataTypeOption, setDataTypeOption] = useState(false);
   const FilterData = (value: any) => {
     if (value !== '') {
       const trimmedValue = value?.trim(); // Trim the input value
       const res = categoryData.filter((i: any) =>
-        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase()),
       );
       setFilterCategory(res);
     } else {
       setFilterCategory([]);
     }
-  }
-  
- 
+  };
 
   return (
-<Modal
-        size="lg"
-        fullscreen="md-down" 
-        aria-labelledby="contained-modal-title-vcenter"
+    <Modal
+      size="lg"
+      fullscreen="md-down"
+      aria-labelledby="contained-modal-title-vcenter"
       centered
       show={show}
       onHide={handleClose}
     >
       <Modal.Body
         className="bg-light-green"
-        style={{ borderRadius: "25px", overflow: "hidden" }}
+        style={{ borderRadius: '25px', overflow: 'hidden' }}
       >
-        <h4>{isEditing ? "Edit Category" : "Create a Category"}</h4>
+        <h4>{isEditing ? 'Edit Category' : 'Create a Category'}</h4>
         <form method="post" encType="multipart/form-data">
           <div className="mb-3">
             <div className="row mx-0 px-3">
@@ -124,56 +120,59 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
               </div>
               <div className="col-12">
                 <label htmlFor="parent_category" className="form-label">
-                  Parent category 
+                  Parent category
                 </label>
 
-
                 <div className="dropdown">
-                    <div className="arrow_down">
-                      <img src={ArrowDown} alt="" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Select a category"
-                      value={parentCategory.name}
-                   onChange={(e) => {
-                     
-                    setParentCategory({...parentCategory,name:e.target.value})
-                    FilterData( e.target.value)
-                  
-                  }}
-                      
-                    />
+                  <div className="arrow_down">
+                    <img src={ArrowDown} alt="" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Select a category"
+                    value={parentCategory.name}
+                    onChange={(e) => {
+                      setParentCategory({
+                        ...parentCategory,
+                        name: e.target.value,
+                      });
+                      FilterData(e.target.value);
+                    }}
+                  />
                   <div
-  className="dropdown-content"
-  style={{ maxHeight: "200px", overflow: "auto", display: FilterCategory.length > 0  ? 'block' : 'none' }}
->  <span className="h6  ">
+                    className="dropdown-content"
+                    style={{
+                      maxHeight: '200px',
+                      overflow: 'auto',
+                      display: FilterCategory.length > 0 ? 'block' : 'none',
+                    }}
+                  >
+                    {' '}
+                    <span className="h6  ">
                       <span
                         className="hover-span text-muted"
-                        onClick={() => setParentCategory({ name: "", id: "" })}
+                        onClick={() => setParentCategory({ name: '', id: '' })}
                       >
                         None
                       </span>
                     </span>
-
-                      {FilterCategory.length > 0  &&
-                        FilterCategory.map((item: any, index: any) => (
-                          <span
-                            className="h6 hover-span"
-                            key={item.name}
-                            onClick={async () => {
-                           await   setParentCategory(item)
-    setFilterCategory([])
-
-                            }}
-                          >
-                            {item.name}
-                          </span>
-                        ))}
-                    </div>
+                    {FilterCategory.length > 0 &&
+                      FilterCategory.map((item: any, index: any) => (
+                        <span
+                          className="h6 hover-span"
+                          key={item.name}
+                          onClick={async () => {
+                            await setParentCategory(item);
+                            setFilterCategory([]);
+                          }}
+                        >
+                          {item.name}
+                        </span>
+                      ))}
                   </div>
+                </div>
 
-{/* 
+                {/* 
                 <div className="dropdown">
                   <input
                     type="text"
@@ -209,7 +208,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
               </div>
               <div className="col-12 row justify-content-evenly m-0">
                 <label
-                  style={{ height: "33px" }}
+                  style={{ height: '33px' }}
                   htmlFor="category"
                   className="invisible"
                 >
