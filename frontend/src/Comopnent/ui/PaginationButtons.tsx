@@ -11,18 +11,24 @@ export const PER_COUNT = {
   10: 10,
   25: 25,
   50: 50,
+  All : Infinity
+
 };
 
 export const dataPagination = (
   data: any[],
   currentPage: number,
   perPage: number
-) =>
-  data.filter(
+) =>{
+  if (perPage === Infinity) {
+    return data; 
+  }
+  return data.filter(
     (i, index) =>
       index + 1 > (currentPage - 1) * perPage &&
       index + 1 <= currentPage * perPage
   );
+};
 
 interface IPaginationButtonsProps {
   setCurrentPage(...args: unknown[]): unknown;
@@ -84,6 +90,15 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
   };
 
   const getInfo = () => {
+    if (perPage === Infinity) {
+      return (
+        <span className="pagination__desc">
+          Showing all {totalItems} {label}
+        </span>
+      );
+    }
+
+
     const start = perPage * (currentPage - 1) + 1;
 
     const end = perPage * currentPage;
@@ -103,7 +118,7 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
       </div>
 
       <div className="d-flex justify-content-end col-sm-12 col-md-6 col-lg-5">
-        {totalPage > 1 && (
+        {totalPage > 1 && perPage !== Infinity && ( 
           // @ts-ignore
           <Pagination ariaLabel={label}>
             <PaginationItem
@@ -140,15 +155,17 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
           </Pagination>
         )}
 
-        <Select
+        <Select 
           // size='sm'
           style={{ width: "67px", padding: " 0px 0px 0px 12px" }}
           ariaLabel="Per"
           onChange={(e: { target: { value: string } }) => {
-            setPerPage(parseInt(e.target.value, 10));
-            setCurrentPage(1);
+            const value = e.target.value === "All" ? Infinity : parseInt(e.target.value, 10);
+              setPerPage(value);
+              setCurrentPage(1);
+           
           }}
-          value={perPage.toString()}
+          value={perPage === Infinity ? "All" : perPage.toString()}
         >
           {Object.keys(PER_COUNT).map((i) => (
             <Option key={i} value={i}>

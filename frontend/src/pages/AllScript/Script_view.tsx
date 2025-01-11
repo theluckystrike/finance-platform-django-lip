@@ -8,6 +8,7 @@ import PresentPastToggle from "../../Comopnent/ui/PresentPastToggle";
 import { ActiveRoute } from "../../Menu";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  GetSatusScriptByIDs,
   GetScriptByIDs,
   RunScripts,
   setLoading,
@@ -32,7 +33,7 @@ const ScriptView = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [loginUser, setLoginUser] = useState<any>(null);
-
+ 
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const storedLoginUser = localStorage.getItem("login");
@@ -46,6 +47,7 @@ const ScriptView = () => {
     const getScript = async () => {
       if (loginUser?.access) {
         await dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
+        await getStatus()
         dispatch(setLoading(false));
       }
       
@@ -54,11 +56,33 @@ const ScriptView = () => {
   }, [loginUser,id]);
 
   const store: any = useSelector((i) => i);
-
+  const ScriptStatus = store?.script?.ScriptStatus; 
   const ScriptData = store?.script?.Script;
-console.log(ScriptData,'ScriptData');
+ 
+useEffect(() => {
+  let intervalId: any;
+  if (ScriptStatus.status === 'running') {
+    intervalId = setInterval(() => {
+      getStatus();
+    }, 5000);
+  }
 
+  if (ScriptStatus.status === 'success') {
+      dispatch(GetScriptByIDs({ id: id, token: loginUser?.access }));
 
+    clearInterval(intervalId);
+  }
+  if (ScriptStatus.status === 'failure') {
+  
+  clearInterval(intervalId);
+}
+
+  return () => clearInterval(intervalId); // Clean up the interval on component unmount
+}, [ScriptStatus]);
+const getStatus =async ()=>{
+  await dispatch(GetSatusScriptByIDs({ id: id, token: loginUser?.access }));
+
+}
 
   const { loading } = store?.script;
 
@@ -81,11 +105,12 @@ console.log(ScriptData,'ScriptData');
   const [changeView, setChangeView] = useState(false);
   const [changeChartView, setChangeChartView] = useState(false);
 
-  const runScript = () => {
+  const runScript =async () => {
     dispatch(setLoading(true));
     try {
-      setTimeout(() => {
-        dispatch(RunScripts({ id: id, token: loginUser?.access }));
+      setTimeout(async () => {
+       await dispatch(RunScripts({ id: id, token: loginUser?.access }));
+       getStatus()
       }, 200);
     } catch (error) {
       console.warn(error);
@@ -114,10 +139,23 @@ console.log(ScriptData,'ScriptData');
               <Icon icon="Edit" size="20px" />
               <span>Edit</span>
             </button>
-            <button onClick={runScript} className="btn icon-button my-1 mx-2">
-              <Icon icon="PlayArrow" size="20px" />
+
+            <button
+              type="button"
+             
+              className="btn icon-button my-1 mx-2"
+            >
+             {ScriptStatus.status === 'running'?<>
+              <Loader />
+              <span>Running</span>
+             </>
+              : <>
+              <Icon icon="PlayArrow" onClick={runScript} size="20px" />
               <span>Play</span>
+             </>
+              }
             </button>
+          
             <button
               type="button"
               onClick={handleShow}
@@ -209,7 +247,14 @@ console.log(ScriptData,'ScriptData');
         <PresentPastToggle />
         {loading ? (
           <Loader />
-        ) : (
+        ) : ( <div>
+{ScriptStatus.status === 'failure' ? <>
+
+  <div style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '5px' }}>
+          <h3>Error</h3>
+          <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{ScriptStatus.error_message}</pre>
+        </div>
+</>:
           <div>
             {ScriptData?.output_type === "plt" ||
             (ScriptData?.output_type === "pd plt" && changeView === false) ? (
@@ -226,22 +271,18 @@ console.log(ScriptData,'ScriptData');
                   alt="" 
                   width="100%"
                 />
-        
-
               </div>:
-            
-            
-            <div   >
-
+            <div>
               {ScriptData?.chart_data.plotly_config.data && <StockMultiChartPlot data={ScriptData?.chart_data.plotly_config.data} layout={ScriptData?.chart_data.plotly_config.layout}/> }
- </div>
-            
+            </div>
           }
           </>
             ) : (
               <CsvTable csvUrl={ScriptData?.table_data?.csv_data} />
             )}
-          </div>
+          </div>}
+        </div>
+
         )}
       </div>
 

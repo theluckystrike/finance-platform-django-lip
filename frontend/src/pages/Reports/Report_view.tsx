@@ -76,6 +76,7 @@ const ReportViwe = () => {
     }
 
     if (reportStatus.status === 'success') {
+      dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
       clearInterval(intervalId);
     }
 

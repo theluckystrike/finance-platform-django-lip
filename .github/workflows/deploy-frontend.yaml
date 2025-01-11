@@ -1,0 +1,66 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ react-frontend ]
+
+env:
+  AWS_REGION: ca-central-1
+
+permissions:
+  contents: read 
+  
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    environment: Frontend (Production)
+    defaults:
+      run:
+        working-directory: frontend/
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      env:
+        REACT_APP_API_URL: ${{ vars.API_URL }}
+        CI: false
+      run: CI=false npm run build
+
+    - name: Sync S3 bucket content
+      env:
+        FRONTEND_BUCKET_NAME: s3://app.olandinvestments.com
+      run: |
+        aws s3 sync build/ $FRONTEND_BUCKET_NAME --delete
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        terraform_wrapper: false
+
+    - name: Terraform Init
+      working-directory: terraform/
+      run: terraform init
+
+    - name: Invalidate Cloudfront cache
+      working-directory: terraform/
+      run: aws cloudfront create-invalidation --distribution-id $(terraform output -raw cloudfront_distribution_id) --paths '/*'

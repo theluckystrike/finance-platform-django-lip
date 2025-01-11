@@ -56,7 +56,7 @@ const ScriptEdit = () => {
 
       if (response.status === 200) {
         Navigate(`/account/ScriptDetails/${ScriptData?.id}`);
-        handleToast.SuccessToast(`New Category added successfully`);
+        handleToast.SuccessToast(`Script updated successfully`);
         // Navigate after successful update
       }
     } catch (error) {
@@ -91,7 +91,7 @@ const ScriptEdit = () => {
                 className="form-control"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                required
+     
               />
             </div>
 

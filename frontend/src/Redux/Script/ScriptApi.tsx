@@ -64,14 +64,26 @@ export const GetScriptbyCategory = async (data: any) => {
   const { value } = data
   try {
     const response = await axiosInstance.get(
-      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=success `
+      `${endpoint.scripts}?page=1&category=${value?.category}&subcategory1=${value?.category1}&subcategory2=${value?.category2}&status=${value?.status === ''?'all':value?.status}`
     );
     return response;
   } catch (error) {
     throw error;
   }
 };
+// Get status Script by ID
+export const GetSatusScriptByID = async (data:any) => {
+  const { id } = data;
 
+  try {
+    const response = await axiosInstance.get(
+      `${endpoint.scripts}/${id}/status`
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 // Run Script
 export const RunScript = async (data: any) => {
   const { id } = data;

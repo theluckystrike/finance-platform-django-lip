@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../assest/css/AllScript.css";
 import Icon from "../../Comopnent/ui/icon/Icon";
 import FilterModal from "../../Comopnent/ui/Modals/FilterModal/FilterModal";
@@ -6,138 +6,337 @@ import { ActiveRoute } from "../../Menu";
 import SaveModal from "../../Comopnent/ui/Modals/SaveModal/SaveModal";
 import ArrowDown from "../../assest/image/arrow-down.png";
 import { ScriptData } from "../../DummyData/TableData";
-
-import { useGetAllProjectQuery } from "../../Redux/Project";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import useSortableData from "../../customHook/useSortable";
+import { GetAllScripts, GetScriptbyCategorys } from "../../Redux/Script/ScriptSlice";
+import { loginUSer } from "../../customHook/getrole";
+import DateFormatter from "../../customHook/useTImeformnt";
+import Loader from "../../Comopnent/ui/Loader";
+import CreateReports from "../../Comopnent/ui/Modals/CreateReports/ModalReports";
+import PaginationButtons, {
+  dataPagination,
+  PER_COUNT,
+} from "../../Comopnent/ui/PaginationButtons";
 
-const ErrorHandle = () => {
-  const { data, error, isLoading } = useGetAllProjectQuery({
-    token: "fds",
-    page_no: 1,
-    page_size: 1000,
-  });
+const ErrorScripts = () => {
+  const dispatch = useDispatch();
+  const store: any = useSelector((i) => i);
+  const { loading } = store?.script;
+  const allscripts = store?.script?.Scripts?.results || [];
+  const [selectedScripts, setSelectedScripts] = useState<any>([]);
+  const [loginUser, setLoginUser] = useState<any>(null);
 
-  const store = useSelector((i) => i);
-
-  const [selectedScripts, setSelectedScripts] = useState([]);
-  const [sortedData, setSortedData] = useState<any>([]);
-  const [sortValue, setSortValue] = useState("");
-  const handleShort = (value: any) => {
-    setSortValue(value);
-    if (value === "Last Created") {
-      const sortedArray = ScriptData.sort((a: any, b: any) => {
-        return (
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-        );
-      });
-
-      setSortedData(sortedArray);
+  const [filterQuery,setFilterQuery]=useState<any>(null)
+  // Effect to retrieve loginUser from localStorage on component mount
+  useEffect(() => {
+    const filter= localStorage.getItem('filterquery')
+    console.log(filter);
+    
+    const storedLoginUser = localStorage.getItem("login");
+    if (storedLoginUser) {
+      setLoginUser(JSON.parse(storedLoginUser));
     }
-  };
+   if (filter) {
+    setFilterQuery(JSON.parse(filter))
+   }
+  }, []);
+  useEffect(() => {
+  const filter:any= localStorage.getItem('filterquery')
+
+    if (loginUser) {
+      const getDAta = async () => {
+        try {
+          
+            await dispatch(
+              GetScriptbyCategorys({
+                token: loginUser?.access,
+                value: { 
+                  category:'',
+                  category1:'', category2:'', status:'failure'
+             } ,
+              })
+            );
+       
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getDAta();
+    }
+  }, [loginUser,filterQuery]);
 
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const [showReport, setShowReport] = useState(false);
+  const handleClose = async () => {
+    setShow(false);
+  };
   const handleShow = () => {
     setShow(true);
   };
   const [Saveshow, setSaveShow] = useState(false);
   const handleSaveClose = () => setSaveShow(false);
-  const handleSaveShow = () => {
-    setSaveShow(true);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      // Select all scripts
+      const allScriptIds: any = items.map((script: any) => script.id);
+      setSelectedScripts(allScriptIds);
+    } else {
+      // Deselect all scripts
+      setSelectedScripts([]);
+    }
   };
 
-  const toggleSelectAll = (event: any) => {
-    const checkboxes = document.querySelectorAll(
-      '#scriptsCheckboxes input[type="checkbox"]'
-    );
-    checkboxes.forEach(
-      (checkbox: any) => (checkbox.checked = event.target.checked)
-    );
-    handleCheckboxChange();
+  const handleCheckboxChange = (id: any) => {
+    if (selectedScripts.includes(id)) {
+      setSelectedScripts(
+        selectedScripts.filter((scriptId: any) => scriptId !== id)
+      );
+    } else {
+      setSelectedScripts([...selectedScripts, id]);
+    }
   };
-
-  const handleCheckboxChange = () => {
-    const selected: any = Array.from(
-      document.querySelectorAll(
-        '#scriptsCheckboxes input[type="checkbox"]:checked'
-      )
-    ).map((checkbox: any) => checkbox.value);
-    setSelectedScripts({ ...selected, ...selectedScripts });
-  };
+  // Check if all scripts are selected
+  const { items, requestSort, getClassNamesFor } = useSortableData(
+    allscripts || []
+  );
+  const isAllSelected = selectedScripts.length === items.length;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState<number>(PER_COUNT["10"]);
 
   return (
     <>
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-          <h1 className="h1">
-            Error Handle <span id="headerInfo">(5)</span>
+          <h1 className="h2">
+          Error Handle script by status failure <span id="headerInfo">({items.length})</span>
           </h1>
+          {/* <div className="btn-toolbar mb-2 mb-md-0">
+            <button type="button" className="btn icon-button my-1 mx-2">
+              <Icon icon="AddBusiness" size="20px" />
+              <span>Home</span>
+            </button>
+         <button onClick={handleShow} className="btn icon-button my-1 mx-2 position-relative">
+  <Icon icon="Filter" size="20px" />
+  {filterQuery&& (
+    <span className="filter-count-badge">
+      1
+    </span>
+  )}
+  <span>Filter</span>
+</button>
+
+            <button
+              onClick={() => setShowReport(true)}
+              type="button"
+              className="btn icon-button my-1 mx-2"
+            >
+              <Icon icon="Save" size="20px" />
+
+              <span>Save</span>
+            </button>
+            <button
+              type="submit"
+              form="customReportForm"
+              className="btn icon-button my-1 mx-2 disabled"
+            >
+              <Icon icon="Download" size="20px" />
+              <span>Download</span>
+            </button>
+          </div> */}
         </div>
         <div>
-          {132 > -1 ? (
-            <form method="post" id="customReportForm">
-              <div className="row mb-2 p-2 fw-bold w-100">
-                <div className="col-6">
-                  <h5>
-                    <input
-                      type="checkbox"
-                      id="selectAllCheckbox"
-                      onChange={toggleSelectAll}
-                    />{" "}
-                    Name
-                  </h5>
-                </div>
-                <div className="col-2 mx-auto text-center">Category</div>
-
-                <div className="col-2 mx-auto text-center">Created</div>
-                <div className="col-2 mx-auto text-center">Last updated</div>
+          {!loading ? (
+            <div style={{ overflow: "auto" }} id="customReportForm">
+              <div className="py-2">
+                <PaginationButtons
+                  data={items}
+                  label="Scripts"
+                  setCurrentPage={setCurrentPage}
+                  currentPage={currentPage}
+                  perPage={perPage}
+                  setPerPage={setPerPage}
+                />
               </div>
-              <div id="scriptsCheckboxes">
-                {ScriptData.slice(0, 5).map((script: any) => (
-                  <Link
-                    to={`/account/${ActiveRoute.ScriptDetails.path}?chartname=${script.chart}`}
-                    className="text-decoration-none text-black"
-                    key={script.id}
-                  >
-                    <div className="row mb-2 p-3 table-card rounded-3 w-100 bg-light-green">
-                      <div className="col-6">
-                        <span className="fw-bold fs-6">
-                          <input
-                            className="chbx"
-                            type="checkbox"
-                            name="scripts"
-                            value={script.id}
-                            onChange={handleCheckboxChange}
-                          />
-                          {script.title}
-                        </span>
-                      </div>
+              <table className="table" style={{ minWidth: "1000px" }}>
+                <thead>
+                  <tr className="fw-bold mb-2 p-2">
+                    <th scope="col" className="col-1">
+                      <input
+                        type="checkbox"
+                        id="selectAllCheckbox"
+                        checked={isAllSelected}
+                        onChange={handleSelectAll}
+                      />
+                    </th>
+                    <th
+                      scope="col"
+                      className="col-4"
+                      onClick={() => requestSort("name")}
+                    >
+                      <h6>
+                        <span>Name</span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("name")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
 
-                      <div className="col-2 mx-auto text-center wrap-word">
-                        {script.category3}
-                      </div>
-                      <div className="col-2 mx-auto text-center">
-                        {script.startDate}
-                      </div>
-                      <div className="col-2 mx-auto text-center">
-                        {script.endDate}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </form>
+                    <th
+                      scope="col"
+                      className="col-1 text-center mx-auto"
+                      onClick={() => requestSort("category.name")}
+                    >
+                      <h6>
+                        <span>Category</span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("category.name")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
+                    <th
+                      scope="col"
+                      className="col-2 text-center mx-auto"
+                      onClick={() => requestSort("sub category 1 ")}
+                    >
+                      <h6>
+                        <span>Sub Category 1 </span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("sub category 1 ")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
+                    <th
+                      scope="col"
+                      className="col-2 text-center mx-auto"
+                      onClick={() => requestSort("sub category 1 ")}
+                    >
+                      <h6>
+                        <span>Sub Category 2 </span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("sub category 1 ")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
+                    <th
+                      scope="col"
+                      className="col-2 text-center mx-auto"
+                      onClick={() => requestSort("created")}
+                    >
+                      <h6>
+                        <span>Created</span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("created")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
+                    <th
+                      scope="col"
+                      className="col-2 text-center mx-auto"
+                      onClick={() => requestSort("last_updated")}
+                    >
+                      <h6>
+                        <span>Updated</span>
+                        <Icon
+                          size="10px"
+                          className={getClassNamesFor("last_updated")}
+                          icon="FilterList"
+                        />
+                      </h6>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="scriptsCheckboxes">
+                  {items.length > 0 ? (
+                    dataPagination(items, currentPage, perPage).map(
+                      (script: any, index: any) => (
+                        <>
+                          <tr
+                            key={index}
+                            className="table-card rounded-3 bg-light-green mb-2 p-3"
+                            style={{ borderRadius: "10px" }}
+                          >
+                            <td className="col-1">
+                              <input
+                                type="checkbox"
+                                checked={selectedScripts.includes(script.id)}
+                                onChange={() => handleCheckboxChange(script.id)}
+                              />
+                            </td>
+                            <td className="col-4">
+                              <Link
+                                to={`/account/ScriptDetails/${script.id}`}
+                                className="text-decoration-none text-black"
+                              >
+                                <span className="fw-bold">{script.name}</span>
+                              </Link>
+                            </td>
+                            <td className="col-1 text-center wrap-word mx-auto">
+                              {
+                                script.category?.parent_category
+                                  ?.parent_category?.name
+                              }
+                            </td>
+
+                            <td className="col-2 text-center wrap-word mx-auto">
+                              {script.category?.parent_category?.name}
+                            </td>
+                            <td className="col-2 text-center wrap-word mx-auto">
+                              {script?.category?.name}
+                            </td>
+                            <td className="col-2 text-center mx-auto">
+                              <DateFormatter isoString={script.created} />
+                            </td>
+                            <td className="col-2 text-center mx-auto">
+                              <DateFormatter isoString={script.last_updated} />
+                            </td>
+                          </tr>
+                          <tr style={{ height: "10px" }}></tr>
+                        </>
+                      )
+                    )
+                  ) : (
+                    <tr>
+                      <td colSpan={6}>
+                        {store?.script?.Scripts?.count === 0 ? (
+                          <p>No scripts found</p>
+                        ) : (
+                          <Loader />
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <span className="text-large">
-              Upload scripts to generate reports with them
+              <Loader />
             </span>
           )}
         </div>
       </div>
+
+      <FilterModal show={show} handleClose={handleClose} filterQuery={filterQuery} setFilterQuery={setFilterQuery} />
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
+      <CreateReports
+        show={showReport}
+        handleClose={() => setShowReport(false)}
+        selectedScripts={selectedScripts}
+      />
     </>
   );
 };
 
-export default ErrorHandle;
+export default ErrorScripts;

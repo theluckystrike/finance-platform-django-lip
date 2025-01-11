@@ -10,6 +10,7 @@ import {
   GetAllsummerys,
 } from "../../../../Redux/TapeSummary/Slice";
 import axiosInstance from "../../../../Redux/APInterceptors";
+import { GetScriptByIDs } from "../../../../Redux/Script/ScriptSlice";
 
 interface ScriptOption {
   value: string;
@@ -47,10 +48,10 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
   const addScript = async () => {
     if (selectedScriptId) {
-      const res = await axiosInstance.get(
-        `https://www.olandinvestments.com/api/scripts/${selectedScriptId}`
-      );
-      setSelectScript((prev) => [...prev, res.data]);
+      const res = await dispatch(GetScriptByIDs({ id: selectedScriptId }));
+      console.log(res.payload);
+      if (res.meta.requestStatus === "fulfilled")
+        setSelectScript((prev) => [...prev, res.payload]);
       setSelectedScriptId("");
     }
   };
@@ -132,8 +133,11 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
               </div>
 
               <div className="col-2 mb-3 text-center">
-                <label htmlFor="column" className="form-label invisible">
-                  Add
+                <label
+                  htmlFor="column"
+                  className="form-label  d-block invisible"
+                >
+                  {" dfdd"}
                 </label>
                 <button
                   type="button"

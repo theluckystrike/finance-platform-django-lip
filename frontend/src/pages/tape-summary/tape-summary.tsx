@@ -26,8 +26,7 @@ const TapeSummary: React.FC = () => {
   const store: any = useSelector((i) => i);
 
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
-  const { loading } = store?.summary
-;
+  const { loading } = store?.summary;
   const allsummerys = store?.summary?.summerys?.results;
 
   const [loginUser, setLoginUser] = useState<any>(null);
@@ -45,7 +44,6 @@ const TapeSummary: React.FC = () => {
         try {
           await dispatch(GetAllScripts({ token: loginUser?.access }));
           await dispatch(GetAllsummerys({ token: loginUser?.access }));
-
         } catch (error) {
           console.log(error);
         }
@@ -114,21 +112,16 @@ const TapeSummary: React.FC = () => {
           <h1 className="h1 ">
             Tape Summary <span id="headerInfo">({items.length})</span>
           </h1>
-   
 
           <div className="btn-toolbar mb-2 mb-md-0  ">
-          
-         <button
-           className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
-           type="button"
-           onClick={()=>setSaveShow(true) }
- 
-         >
-           Create Summary
-         </button>
-       </div>
-         
-        
+            <button
+              className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
+              type="button"
+              onClick={() => setSaveShow(true)}
+            >
+              Create Summary
+            </button>
+          </div>
         </div>
         <div>
           {!loading ? (
@@ -169,7 +162,6 @@ const TapeSummary: React.FC = () => {
                       </h6>
                     </th>
 
-                   
                     <th
                       scope="col"
                       className="col-2 text-center mx-auto"
@@ -184,7 +176,6 @@ const TapeSummary: React.FC = () => {
                         />
                       </h6>
                     </th>
-                    
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
@@ -212,11 +203,10 @@ const TapeSummary: React.FC = () => {
                                 <span className="fw-bold">{script.name}</span>
                               </Link>
                             </td>
-                             
+
                             <td className="col-2 text-center mx-auto">
                               <DateFormatter isoString={script.created} />
                             </td>
-                       
                           </tr>
                           <tr style={{ height: "10px" }}></tr>
                         </>
@@ -243,12 +233,7 @@ const TapeSummary: React.FC = () => {
           )}
         </div>
       </div>
-      <CreateSummary
-        show={saveShow}
-        handleClose={() => setSaveShow(false)}
-
-      />
-      
+      <CreateSummary show={saveShow} handleClose={() => setSaveShow(false)} />
     </>
   );
 };

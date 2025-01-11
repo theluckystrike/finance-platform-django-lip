@@ -32,6 +32,7 @@ media
 
 # Distribution / packaging
 .Python
+build/
  
 develop-eggs/
 dist/
@@ -139,10 +140,10 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-*.env
+# *.env
 .env
-.venv
-env/
+# .venv
+# env/
 venv/
 ENV/
 env.bak/

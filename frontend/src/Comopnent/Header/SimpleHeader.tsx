@@ -22,7 +22,8 @@ const SimpleHeader = () => {
   if (value === '') {
     setSearchData([]);
   } else {
-      await searchScript({value:value,token:loginUSer.access})
+    const encodedQuery = encodeURIComponent(value);
+      await searchScript({value:encodedQuery,token:loginUSer.access})
     } 
   };
 
