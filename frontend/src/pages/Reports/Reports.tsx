@@ -4,56 +4,54 @@ import MergeIcon from '@mui/icons-material/Merge';
 
 import '../../assest/css/AllScript.css';
 import { Link } from 'react-router-dom';
-import { ActiveRoute } from '../../Menu';
 import MergeReports from '../../Comopnent/ui/Modals/MergeReports/MergeReports';
 import { GetAllreports } from '../../Redux/Report/Slice';
 import { useDispatch, useSelector } from 'react-redux';
 import useSortableData from '../../customHook/useSortable';
 import Loader from '../../Comopnent/ui/Loader';
-import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 import { formatIsoDate } from '../../utils/formatDate';
 import PaginationButtons, {
   dataPagination,
   PER_COUNT,
 } from '../../Comopnent/ui/PaginationButtons';
+import type { RootState } from '../../Store';
+import type { ReportState } from '../../types/stateTypes';
 
 const Report = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
-  const store: any = useSelector((i) => i);
-  const { loading } = store?.report;
-  const allreport = store?.report?.reports?.results;
+  const { reports: allreport } = useSelector<RootState, ReportState>(
+    (state) => state.report,
+  );
   const { items, requestSort, getClassNamesFor } = useSortableData(
     allreport || [],
   );
+
+  const loadData = async () => {
+    try {
+      await dispatch(GetAllreports({ token: loginUser?.access }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {
       setLoginUser(JSON.parse(storedLoginUser));
     }
   }, []);
+
   useEffect(() => {
-    if (loginUser) {
-      const getDAta = async () => {
-        try {
-          await dispatch(GetAllreports({ token: loginUser?.access }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
+    if (loginUser?.access) {
+      loadData();
     }
   }, [loginUser]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
-  const [show, setShow] = useState(false);
   const [mergeshow, setShowmerges] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => {
-    setShow(true);
-  };
 
   return (
     <div className="mx-4">
@@ -61,14 +59,6 @@ const Report = () => {
         <h1 className="h1 fw-bold">Reports </h1>
 
         <div className="btn-toolbar mb-2 mb-md-0">
-          {/* <button
-            onClick={handleShow}
-            type="button"
-            className="btn icon-button my-1 mx-2"
-          >
-            <Icon icon="Add" size="20px" />
-            <span>Create</span>
-          </button>*/}
           <button
             onClick={() => setShowmerges(true)}
             type="button"
@@ -146,11 +136,13 @@ const Report = () => {
         )}
       </div>
 
-      <MergeReports
-        show={mergeshow}
-        handleClose={() => setShowmerges(false)}
-        allreport={allreport}
-      />
+      {mergeshow && (
+        <MergeReports
+          show={mergeshow}
+          handleClose={() => setShowmerges(false)}
+          allreport={allreport}
+        />
+      )}
     </div>
   );
 };

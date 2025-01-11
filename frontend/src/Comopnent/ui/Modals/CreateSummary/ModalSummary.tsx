@@ -10,7 +10,7 @@ import {
   GetAllsummerys,
 } from '../../../../Redux/TapeSummary/Slice';
 import axiosInstance from '../../../../Redux/APInterceptors';
-import { GetScriptByIDs } from '../../../../Redux/Script/ScriptSlice';
+import { getScriptByIDAction } from '../../../../Redux/Script/ScriptSlice';
 
 interface ScriptOption {
   value: string;
@@ -48,7 +48,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
 
   const addScript = async () => {
     if (selectedScriptId) {
-      const res = await dispatch(GetScriptByIDs({ id: selectedScriptId }));
+      const res = await dispatch(getScriptByIDAction({ id: selectedScriptId }));
       console.log(res.payload);
       if (res.meta.requestStatus === 'fulfilled')
         setSelectScript((prev) => [...prev, res.payload]);
