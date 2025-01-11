@@ -116,14 +116,22 @@ class ScriptSerializerForReport(serializers.ModelSerializer):
         fields = ["name", "id", "created", "category"]
         depth = 1
 
-class ReportSerializer(serializers.ModelSerializer):
+class ReportReadSerializer(serializers.ModelSerializer):
+    scripts = ScriptSerializerForReport(many=True)
+
+    class Meta:
+        model = Report
+        fields = ["name", "id", "scripts", "created",
+                  "last_updated", "status", "latest_pdf"]
+        depth = 1
+
+class ReportWriteSerializer(serializers.ModelSerializer):
     # this will include IDs only
-    # scripts = serializers.PrimaryKeyRelatedField(
-    #     queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+    scripts = serializers.PrimaryKeyRelatedField(
+        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
     # this gives hyperlinks to each script
     # scripts = serializers.HyperlinkedRelatedField(
     #     queryset=Script.objects.all(), allow_null=False, many=True, view_name="scripts-detail")
-    scripts = ScriptSerializerForReport(many=True)
 
     class Meta:
         model = Report

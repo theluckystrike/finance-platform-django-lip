@@ -65,7 +65,7 @@ const ReportViwe = () => {
   const store: any = useSelector((i) => i);
   const reportData = store?.report?.report;
   const reportStatus = store?.report?.reportStatus;  
-  const allscripts = store?.script?.Scripts?.results || [];
+  const reportScripts = reportData.scripts || [];
   const { loading } = store?.report;
   useEffect(() => {
     let intervalId: any;
@@ -82,14 +82,6 @@ const ReportViwe = () => {
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [reportStatus]);
-
-  // Safeguard against undefined or null values for reportData.scripts
-  const filteredScripts = allscripts.filter((script: any) => {
-    return (
-      Array.isArray(reportData?.scripts) &&
-      reportData.scripts.includes(script.id)
-    );
-  });
 
   const [selectScript, setSelectScript] = useState({
     name: "",
@@ -233,7 +225,7 @@ const ReportViwe = () => {
                     className="dropdown-content"
                     style={{ height: "200px", overflow: "auto" }}
                   >
-                    {allscripts.map((script: any, index: any) => (
+                    {reportScripts.map((script: any, index: any) => (
                       <span
                         key={index}
                         onClick={() =>
@@ -295,48 +287,48 @@ const ReportViwe = () => {
                   </tr>
                 </thead>
                 <tbody id="reportsCheckboxes">
-                  {filteredScripts ? (
-                    filteredScripts.map((report: any) => (
+                  {reportScripts ? (
+                    reportScripts.map((script: any) => (
                       <>
                         <tr
-                          key={report.id}
+                          key={script.id}
                           className="table-card rounded-3 bg-light-green mb-2 p-3"
                         >
                           <td className="col-5">
                             <Link
-                              to={`/account/ScriptDetails/${report.id}`}
+                              to={`/account/ScriptDetails/${script.id}`}
                               className="text-decoration-none text-black"
                             >
                               <span className="fw-bold fs-6">
                                 <input
                                   className="chbx"
                                   type="checkbox"
-                                  name="reports"
-                                  value={report.id}
+                                  name="scripts"
+                                  value={script.id}
                                 />
-                                {report.name}
+                                {script.name}
                               </span>
                             </Link>
                           </td>
                           <td className="col-2 text-center mx-auto wrap-word">
-                            {report?.category?.name}
+                            {script?.category?.name}
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
-                            {report.category?.parent_category?.name}
+                            {script.category?.parent_category?.name}
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
                             {
-                              report.category?.parent_category?.parent_category
+                              script.category?.parent_category?.parent_category
                                 ?.name
                             }
                           </td>
 
                           <td className="col-2 text-center mx-auto">
-                            <DateFormatter isoString={report.created} />
+                            <DateFormatter isoString={script.created} />
                           </td>
                           <td className="col-1 text-center mx-auto">
                             <div
-                              onClick={() => removeScript(report.id)}
+                              onClick={() => removeScript(script.id)}
                               className="bg-danger p-1 ms-auto"
                               style={{
                                 width: "27px",
