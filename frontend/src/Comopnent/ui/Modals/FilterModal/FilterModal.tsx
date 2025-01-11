@@ -4,10 +4,6 @@ import * as Yup from 'yup';
 import Modal from 'react-bootstrap/Modal';
 import ArrowDown from '../../../../assest/image/arrow-down.png';
 import { useGetAllCategoryQuery } from '../../../../Redux/CategoryQuery';
-import {
-  GetAllScripts,
-  GetScriptbyCategorys,
-} from '../../../../Redux/Script/ScriptSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 

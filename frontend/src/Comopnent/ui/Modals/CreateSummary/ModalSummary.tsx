@@ -26,7 +26,7 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
   const dispatch = useDispatch();
   const store: any = useSelector((state) => state);
   const handleToast = useToast();
-  const allscripts = store?.script?.Scripts?.results || [];
+  const allscripts = store?.script.scripts;
   const filterScript = allscripts.filter(
     (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
   );

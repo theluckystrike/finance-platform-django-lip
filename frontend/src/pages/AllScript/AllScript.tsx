@@ -8,56 +8,46 @@ import SaveIcon from '@mui/icons-material/Save';
 import '../../assest/css/AllScript.css';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
-import { ActiveRoute } from '../../Menu';
 import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
-import ArrowDown from '../../assest/image/arrow-down.png';
-import { ScriptData } from '../../DummyData/TableData';
 import useSortableData from '../../customHook/useSortable';
-import {
-  GetAllScripts,
-  GetScriptbyCategorys,
-} from '../../Redux/Script/ScriptSlice';
-import { loginUSer } from '../../customHook/getrole';
+import type { RootState } from '../../Store';
+import { GetAllScripts, ScriptState } from '../../Redux/Script/ScriptSlice';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 
-import PaginationButtons, {
-  dataPagination,
-  PER_COUNT,
-} from '../../Comopnent/ui/PaginationButtons';
+import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
 
-const CustomReport = () => {
+const AllScripts = () => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
-  const { loading } = store?.script;
-  const allscripts = store?.script?.Scripts?.results || [];
+  const { loading, scripts, count } = useSelector<RootState, ScriptState>(
+    (state) => state.script,
+  );
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
-  const [loginUser, setLoginUser] = useState<any>(null);
+  const [perPage, setPerpage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
-  // Effect to retrieve loginUser from localStorage on component mount
-  useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
-    }
-  }, []);
-  useEffect(() => {
-    if (loginUser) {
-      const getDAta = async () => {
-        try {
-          // alert('running')
-          // console.log(allscripts.length ,filterQuery);
 
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
+  const getData = async () => {
+    try {
+      await dispatch(
+        GetAllScripts({
+          page: currentPage,
+          per_page: perPage,
+        }),
+      );
+    } catch (error) {
+      console.log(error);
     }
-  }, [loginUser]);
+  };
+
+  useEffect(() => {
+    if (perPage && currentPage) {
+      getData();
+    }
+  }, [currentPage, perPage]);
 
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -90,13 +80,9 @@ const CustomReport = () => {
       setSelectedScripts([...selectedScripts, id]);
     }
   };
-  // Check if all scripts are selected
-  const { items, requestSort, getClassNamesFor } = useSortableData(
-    allscripts || [],
-  );
+
+  const { items, requestSort, getClassNamesFor } = useSortableData(scripts);
   const isAllSelected = selectedScripts.length === items.length;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
   return (
     <>
@@ -106,10 +92,6 @@ const CustomReport = () => {
             All scripts <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
-            {/* <button type="button" className="btn icon-button my-1 mx-2">
-              <Icon icon="AddBusiness" size="20px" />
-              <span>Home</span>
-            </button> */}
             <button
               onClick={handleShow}
               className="btn icon-button my-1 mx-2 position-relative"
@@ -127,15 +109,6 @@ const CustomReport = () => {
               <SaveIcon fontSize="small" />
               <span>Save</span>
             </button>
-            {/* <button
-              type="submit"
-              form="customReportForm"
-              className="btn icon-button my-1 mx-2 disabled"
-            >
-              <Icon icon="Download" size="20px" />
-
-              <span>Download</span>
-            </button> */}
           </div>
         </div>
         <div>
@@ -145,10 +118,13 @@ const CustomReport = () => {
                 <PaginationButtons
                   data={items}
                   label="Scripts"
-                  setCurrentPage={setCurrentPage}
                   currentPage={currentPage}
                   perPage={perPage}
-                  setPerPage={setPerPage}
+                  setCurrentPage={(currentPage: number) =>
+                    setCurrentPage(currentPage)
+                  }
+                  setPerPage={(perPage: number) => setPerpage(perPage)}
+                  count={count}
                 />
               </div>
               <table className="table" style={{ minWidth: '1000px' }}>
@@ -250,62 +226,56 @@ const CustomReport = () => {
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
-                  {items.length > 0 ? (
-                    dataPagination(items, currentPage, perPage).map(
-                      (script: any, index: any) => (
-                        <>
-                          <tr
-                            key={index}
-                            className="table-card rounded-3 bg-light-green mb-2 p-3"
-                            style={{ borderRadius: '10px' }}
-                          >
-                            <td className="col-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedScripts.includes(script.id)}
-                                onChange={() => handleCheckboxChange(script.id)}
-                              />
-                            </td>
-                            <td className="col-4">
-                              <Link
-                                to={`/ScriptDetails/${script.id}`}
-                                className="text-decoration-none text-black"
-                              >
-                                <span className="fw-bold">{script.name}</span>
-                              </Link>
-                            </td>
-                            <td className="col-1 text-center wrap-word mx-auto">
-                              {
-                                script.category?.parent_category
-                                  ?.parent_category?.name
-                              }
-                            </td>
+                  {items?.length > 0 ? (
+                    items.map((script: any, index: any) => (
+                      <>
+                        <tr
+                          key={index}
+                          className="table-card rounded-3 bg-light-green mb-2 p-3"
+                          style={{ borderRadius: '10px' }}
+                        >
+                          <td className="col-1">
+                            <input
+                              type="checkbox"
+                              checked={selectedScripts.includes(script.id)}
+                              onChange={() => handleCheckboxChange(script.id)}
+                            />
+                          </td>
+                          <td className="col-4">
+                            <Link
+                              to={`/ScriptDetails/${script.id}`}
+                              className="text-decoration-none text-black"
+                            >
+                              <span className="fw-bold">{script.name}</span>
+                            </Link>
+                          </td>
+                          <td className="col-1 text-center wrap-word mx-auto">
+                            {
+                              script.category?.parent_category?.parent_category
+                                ?.name
+                            }
+                          </td>
 
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script.category?.parent_category?.name}
-                            </td>
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script?.category?.name}
-                            </td>
-                            <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(script.created)}
-                            </td>
-                            <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(script.last_updated)}
-                            </td>
-                          </tr>
-                          <tr style={{ height: '10px' }}></tr>
-                        </>
-                      ),
-                    )
+                          <td className="col-2 text-center wrap-word mx-auto">
+                            {script.category?.parent_category?.name}
+                          </td>
+                          <td className="col-2 text-center wrap-word mx-auto">
+                            {script?.category?.name}
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            {formatIsoDate(script.created)}
+                          </td>
+                          <td className="col-2 text-center mx-auto">
+                            {formatIsoDate(script.last_updated)}
+                          </td>
+                        </tr>
+                        <tr style={{ height: '10px' }}></tr>
+                      </>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        {store?.script?.Scripts?.count === 0 ? (
-                          <p>No scripts found</p>
-                        ) : (
-                          <Loader />
-                        )}
+                        {count === 0 ? <p>No scripts found</p> : <Loader />}
                       </td>
                     </tr>
                   )}
@@ -336,4 +306,4 @@ const CustomReport = () => {
   );
 };
 
-export default CustomReport;
+export default AllScripts;

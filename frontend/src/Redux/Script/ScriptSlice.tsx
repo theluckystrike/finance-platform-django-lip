@@ -9,9 +9,11 @@ import {
   RunScript,
   UpdateScript,
 } from './ScriptApi';
+import { act } from 'react';
 
 export interface ScriptState {
-  Scripts: any[]; // You can specify a more specific type if you know the structure of scripts
+  scripts: any[]; // You can specify a more specific type if you know the structure of scripts
+  count: number;
   Script: any; // Same as above, specify the correct type if known
   ScriptStatus: any;
   Active_Role: string;
@@ -20,7 +22,8 @@ export interface ScriptState {
   error: any; // You can refine this to be more specific if you know the error type
 }
 export const initialState: ScriptState = {
-  Scripts: [],
+  scripts: [],
+  count: 0,
   Script: {},
   ScriptStatus: {},
   Active_Role: '',
@@ -106,7 +109,8 @@ const ScriptSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetAllScripts.fulfilled, (state, action) => {
-        state.Scripts = action.payload;
+        state.scripts = action.payload.results;
+        state.count = action.payload.count;
         state.loading = false;
       })
       .addCase(GetAllScripts.pending, (state) => {
@@ -117,7 +121,8 @@ const ScriptSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetScriptbyCategorys.fulfilled, (state, action) => {
-        state.Scripts = action.payload;
+        state.scripts = action.payload.results;
+        state.count = action.payload.count;
         state.loading = false;
       })
       .addCase(GetScriptbyCategorys.pending, (state) => {

@@ -9,9 +9,10 @@ import { ScriptData } from '../../DummyData/TableData';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import useSortableData from '../../customHook/useSortable';
+import type { RootState } from '../../Store';
 import {
-  GetAllScripts,
   GetScriptbyCategorys,
+  ScriptState,
 } from '../../Redux/Script/ScriptSlice';
 import { loginUSer } from '../../customHook/getrole';
 import { formatIsoDate } from '../../utils/formatDate';
@@ -24,9 +25,9 @@ import PaginationButtons, {
 
 const FilterScripts = () => {
   const dispatch = useDispatch();
-  const store: any = useSelector((i) => i);
-  const { loading } = store?.script;
-  const allscripts = store?.script?.Scripts?.results || [];
+  const { loading, scripts, count } = useSelector<RootState, ScriptState>(
+    (state) => state.script,
+  );
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
   const [loginUser, setLoginUser] = useState<any>(null);
 
@@ -99,7 +100,7 @@ const FilterScripts = () => {
   };
   // Check if all scripts are selected
   const { items, requestSort, getClassNamesFor } = useSortableData(
-    allscripts || [],
+    scripts || [],
   );
   const isAllSelected = selectedScripts.length === items.length;
   const [currentPage, setCurrentPage] = useState(1);
@@ -308,11 +309,7 @@ const FilterScripts = () => {
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        {store?.script?.Scripts?.count === 0 ? (
-                          <p>No scripts found</p>
-                        ) : (
-                          <Loader />
-                        )}
+                        {count === 0 ? <p>No scripts found</p> : <Loader />}
                       </td>
                     </tr>
                   )}

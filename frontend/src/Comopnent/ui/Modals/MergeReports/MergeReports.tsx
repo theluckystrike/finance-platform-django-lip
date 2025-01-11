@@ -1,11 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAllScripts } from '../../../../Redux/Script/ScriptSlice';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Select, { MultiValue } from 'react-select';
-import { Createreports, mergereports } from '../../../../Redux/Report/Slice';
+import { mergereports } from '../../../../Redux/Report/Slice';
 
 // Define type for the script option
 interface ScriptOption {
@@ -26,7 +25,6 @@ const CreateReports: FC<CreateReportsProps> = ({
 }) => {
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
-  const allscripts = store?.script?.Scripts?.results || [];
   const [loginUser, setLoginUser] = useState<any>(null);
 
   useEffect(() => {
@@ -35,19 +33,6 @@ const CreateReports: FC<CreateReportsProps> = ({
       setLoginUser(JSON.parse(storedLoginUser));
     }
   }, []);
-
-  useEffect(() => {
-    if (loginUser) {
-      const getDAta = async () => {
-        try {
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
-    }
-  }, [loginUser, dispatch]);
 
   // Convert scripts to options for react-select
   const scriptOptions: ScriptOption[] =

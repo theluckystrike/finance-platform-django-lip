@@ -34,7 +34,7 @@ const CreateReports: FC<CreateReportsProps> = ({
   const dispatch = useDispatch();
   const store: any = useSelector((i) => i);
   const handleToast = useToast();
-  const allscripts = store?.script?.Scripts?.results || [];
+  const allscripts = store.script.scripts || [];
   const [loginUser, setLoginUser] = useState<any>(null);
   const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
