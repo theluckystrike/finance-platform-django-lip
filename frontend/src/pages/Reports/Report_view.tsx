@@ -157,10 +157,11 @@ const ReportViwe = () => {
       handleToast.SuccessToast(res.payload.message);
     }
   };
+
   return (
     <>
       <div className="mx-5 py-3">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5">
           <h1 className="h1">
             Report Details <span id="headerInfo">({reportData.name})</span>
           </h1>
@@ -206,14 +207,14 @@ const ReportViwe = () => {
               <SystemUpdateAltIcon fontSize="small" />
               <span>Update</span>
             </button>
-            <button type="submit" className="btn icon-button my-1 mx-2">
+            {/* <button type="submit" className="btn icon-button my-1 mx-2">
               <InfoIcon fontSize="small" />
               <span>info</span>
-            </button>
+            </button> */}
           </div>
         </div>
 
-        <form
+        {/* <form
           className="w-75"
           style={{ maxWidth: '600px' }}
           method="post"
@@ -262,7 +263,7 @@ const ReportViwe = () => {
               </button>
             </div>
           </div>
-        </form>
+        </form> */}
         <div>
           {!loading ? (
             <div id="customReportForm" style={{ overflow: 'auto' }}>
@@ -278,16 +279,11 @@ const ReportViwe = () => {
                       Category
                     </th>
                     <th scope="col" className="col-2 text-center mx-auto">
-                      <h6>
-                        <span>Sub Category 1 </span>
-                      </h6>
+                      Sub Category 1
                     </th>
                     <th scope="col" className="col-2 text-center mx-auto">
-                      <h6>
-                        <span>Sub Category 2 </span>
-                      </h6>
+                      Sub Category 2
                     </th>
-
                     <th scope="col" className="col-2 text-center mx-auto">
                       Created
                     </th>

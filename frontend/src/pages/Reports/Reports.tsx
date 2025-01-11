@@ -96,7 +96,7 @@ const Report = () => {
               <thead>
                 <tr className="fw-bold mb-2 p-2">
                   <th scope="col" className="col-1">
-                    <h5>Sr no.</h5>
+                    <h5>No</h5>
                   </th>
                   <th scope="col" className="col-7">
                     <h5>Report Name</h5>
