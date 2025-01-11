@@ -152,6 +152,7 @@ const FilterScripts = () => {
               <div className="py-2">
                 <PaginationButtons
                   data={items}
+                  count={count}
                   label="Scripts"
                   setCurrentPage={setCurrentPage}
                   currentPage={currentPage}

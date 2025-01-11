@@ -25,7 +25,7 @@ const AllScripts = () => {
     (state) => state.script,
   );
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
-  const [perPage, setPerpage] = useState(10);
+  const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
@@ -116,15 +116,13 @@ const AllScripts = () => {
             <div style={{ overflow: 'auto' }} id="customReportForm">
               <div className="py-2">
                 <PaginationButtons
-                  data={items}
+                  data={scripts}
                   label="Scripts"
+                  count={count}
                   currentPage={currentPage}
                   perPage={perPage}
-                  setCurrentPage={(currentPage: number) =>
-                    setCurrentPage(currentPage)
-                  }
-                  setPerPage={(perPage: number) => setPerpage(perPage)}
-                  count={count}
+                  setPerPage={setPerPage}
+                  setCurrentPage={setCurrentPage}
                 />
               </div>
               <table className="table" style={{ minWidth: '1000px' }}>

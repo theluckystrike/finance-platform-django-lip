@@ -179,7 +179,6 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
     </CardFooter>
   );
 };
-
 PaginationButtons.propTypes = {
   setCurrentPage: PropTypes.func.isRequired,
   currentPage: PropTypes.number.isRequired,

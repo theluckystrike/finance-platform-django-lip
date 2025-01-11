@@ -10,10 +10,20 @@ import {
   Updatereport,
   UpdateReports,
 } from './Api';
-import { ReportState } from '../../types/stateTypes';
+export interface ReportState {
+  reports: any[]; // You can replace `any` with a more specific type if available
+  count: number;
+  report: any[]; // Same here, replace `any` with a specific type if possible
+  Active_Role: string;
+  page: number;
+  reportStatus: string;
+  loading: boolean;
+  error: string | null;
+}
 
 const initialState: ReportState = {
   reports: [],
+  count: 0,
   report: [],
   reportStatus: '',
   Active_Role: '',
@@ -98,6 +108,7 @@ const reportSlice = createSlice({
       })
       .addCase(GetAllreports.fulfilled, (state, action) => {
         state.reports = action.payload.results;
+        state.count = action.payload.count;
         state.loading = false;
       })
       .addCase(GetAllreports.pending, (state) => {

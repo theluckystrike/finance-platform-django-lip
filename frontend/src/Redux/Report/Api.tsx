@@ -58,10 +58,10 @@ export const GetreportByID = async (data: any) => {
 };
 
 // Get All Reports
-export const GetAllreport = async () => {
+export const GetAllreport = async ({ page, per_page }: any) => {
   try {
     const response: { count: number; results: [] } = await axiosInstance.get(
-      `${endpoint.reports}?page=1`,
+      `${endpoint.reports}?page=${page}&per_page=${per_page}`,
     );
     return response;
   } catch (error) {
