@@ -5,13 +5,13 @@ each blob beginning with a period represents a class, and those without a period
 project knows where these styles should be applied.
  */
 :root {
-    --light-green: #EAFFEA;
-    --pale-green: #17AA1712;
-    --pale-cream: #F7FCF7;
-    --very-dark-green: #011C05;
+  --light-green: #eaffea;
+  --pale-green: #17aa1712;
+  --pale-cream: #f7fcf7;
+  --very-dark-green: #011c05;
 }
 body {
-  font-size: .875rem;
+  font-size: 0.875rem;
 }
 
 .feather {
@@ -34,7 +34,7 @@ body {
   left: 0;
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 767.98px) {
@@ -69,7 +69,7 @@ body {
 }
 
 .sidebar-heading {
-  font-size: .75rem;
+  font-size: 0.75rem;
 }
 
 /*
@@ -77,142 +77,143 @@ body {
  */
 
 .navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  background-color: rgba(0, 0, 0, .25);
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25);
 }
 
 .navbar .navbar-toggler {
-  top: .25rem;
+  top: 0.25rem;
   right: 1rem;
 }
 
 .navbar .form-control {
-  padding: .75rem 1rem;
+  padding: 0.75rem 1rem;
 }
 
 .form-control-dark {
   color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .form-control-dark:focus {
   border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
-.dropdown-toggle { outline: 0; }
+.dropdown-toggle {
+  outline: 0;
+}
 
 .btn-toggle {
-  padding: .25rem .5rem;
+  padding: 0.25rem 0.5rem;
   font-weight: 600;
-  color: rgba(0, 0, 0, .65);
+  color: rgba(0, 0, 0, 0.65);
   background-color: transparent;
 }
 .btn-toggle:hover,
 .btn-toggle:focus {
-  color: rgba(0, 0, 0, .85);
+  color: rgba(0, 0, 0, 0.85);
   /* background-color: #d2f4ea; */
 }
 
 .btn-toggle::before {
   width: 1.25em;
   line-height: 0;
-  transition: transform .35s ease;
-  transform-origin: .5em 50%;
+  transition: transform 0.35s ease;
+  transform-origin: 0.5em 50%;
 }
 
-.btn-toggle[aria-expanded="true"] {
-  color: rgba(0, 0, 0, .85);
+.btn-toggle[aria-expanded='true'] {
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .btn-toggle-nav a {
-  padding: .1875rem .5rem;
-  margin-top: .125rem;
+  padding: 0.1875rem 0.5rem;
+  margin-top: 0.125rem;
   margin-left: 1.25rem;
 }
-.form-control, .form-select{
-    margin-bottom: 1.5rem;
-    border: 2px solid var(--very-dark-green);
+.form-control,
+.form-select {
+  margin-bottom: 1.5rem;
+  border: 2px solid var(--very-dark-green);
 }
 
 .form-label {
-    color: #011C05;
-    font-size: 18px;
-    font-weight: 500;
+  color: #011c05;
+  font-size: 18px;
+  font-weight: 500;
 }
 
-.btn-dark{
-    background-color: var(--very-dark-green);
-    border-color: var(--very-dark-green);
+.btn-dark {
+  background-color: var(--very-dark-green);
+  border-color: var(--very-dark-green);
 }
-
 
 .icon-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease;
 }
 
 .icon-button svg {
-    stroke-width: 1;
-    transition: stroke 0.3s ease;
-    
+  stroke-width: 1;
+  transition: stroke 0.3s ease;
 }
 
-.icon-button svg:hover {
- border: none;
-  color: #F7FCF7;
-}
-
-.icon-button span {
-    position: absolute;
-    top: 43px;
-    font-size: 12px;
-    text-align: center;
-    font-weight: 500;
+.icon-button span:not(.loading) {
+  position: absolute;
+  top: 43px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
 }
 
 .icon-button:hover svg {
-    stroke: white;
+  stroke: white;
 }
 .icon-button:hover i {
-    color: white;
+  color: white;
 }
 .icon-button:hover {
-    background-color: #011C05; 
+  background-color: #011c05;
 }
 
-.nav-pills .nav-item .nav-link{
+.nav-pills .nav-item .nav-link {
   color: black;
-  }
-.nav-pills .nav-item .active{
+}
+.nav-pills .nav-item .active {
   background-color: var(--very-dark-green);
   color: white;
-} 
+}
 
 .btn-secondary {
-    background-color: white;
-    border: 2px solid var(--very-dark-green);
-    color: black
+  background-color: white;
+  border: 2px solid var(--very-dark-green);
+  color: black;
 }
 /* back button on category manage page and script code edit page */
 .back-button {
-        height: 24px;
-        width: 24px;
-        stroke-width: 3px;
-        color: black;
-    }
+  height: 24px;
+  width: 24px;
+  stroke-width: 3px;
+  color: black;
+}
+
+.div-flex-end {
+  display: flex;
+  justify-content: flex-end;
+}

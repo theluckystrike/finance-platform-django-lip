@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import React, { FC, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 interface IValidationProps {
   isTouched?: boolean;
@@ -22,14 +22,14 @@ const Validation: FC<IValidationProps> = ({
       // @ts-ignore
       for (let i = 0; i < ref?.current?.parentNode.classList.length; i += 1) {
         // @ts-ignore
-        if (["input-group"].includes(ref?.current?.parentNode.classList[i])) {
+        if (['input-group'].includes(ref?.current?.parentNode.classList[i])) {
           // @ts-ignore
           ref?.current?.parentNode.parentNode.classList.add(
-            "position-relative"
+            'position-relative',
           );
         } else {
           // @ts-ignore
-          ref?.current?.parentNode.classList.add("position-relative");
+          ref?.current?.parentNode.classList.add('position-relative');
         }
       }
     }
@@ -40,8 +40,8 @@ const Validation: FC<IValidationProps> = ({
       <div
         ref={ref}
         className={classNames({
-          "invalid-feedback": !isTooltip,
-          "invalid-tooltip": isTooltip,
+          'invalid-feedback': !isTooltip,
+          'invalid-tooltip': isTooltip,
         })}
       >
         {invalidFeedback}
@@ -54,8 +54,8 @@ const Validation: FC<IValidationProps> = ({
       <div
         ref={ref}
         className={classNames({
-          "valid-feedback": !isTooltip,
-          "valid-tooltip": isTooltip,
+          'valid-feedback': !isTooltip,
+          'valid-tooltip': isTooltip,
         })}
       >
         {validFeedback}

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 
-export default function CodeEdit({code,setCode}:any) {
-  
-  const [language, setLanguage] = useState("python");
+export default function CodeEdit({ code, setCode }: any) {
+  const [language, setLanguage] = useState('python');
 
-  const handleLanguageChange = (event:any) => {
+  const handleLanguageChange = (event: any) => {
     setLanguage(event.target.value);
   };
 
@@ -13,17 +12,17 @@ export default function CodeEdit({code,setCode}:any) {
     <div>
       <CodeEditor
         value={code}
-        language='python'
+        language="python"
         placeholder={`Please enter python code.`}
-        onChange={(evn:any) => setCode(evn.target.value)}
+        onChange={(evn: any) => setCode(evn.target.value)}
         padding={15}
         minHeight={300}
-       
         data-color-mode="dark"
         style={{
-          maxHeight:"500px",
+          maxHeight: '500px',
           overflowY: 'auto',
-          fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace',
+          fontFamily:
+            'ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace',
         }}
       />
     </div>

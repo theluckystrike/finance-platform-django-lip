@@ -1,10 +1,10 @@
-import { FC, useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
-import { log } from "console";
-import { useDispatch } from "react-redux";
-import { DeleteScriptByIDs } from "../../Redux/Script/ScriptSlice";
-import { DeleteReportsByIDs } from "../../Redux/Report/Slice";
+import { FC, useState, useEffect } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import { log } from 'console';
+import { useDispatch } from 'react-redux';
+import { DeleteScriptByIDs } from '../../Redux/Script/ScriptSlice';
+import { DeleteReportsByIDs } from '../../Redux/Report/Slice';
 
 interface DeleteModalProps {
   show: boolean;
@@ -39,7 +39,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
     >
       <Modal.Body
         className="bg-light-green"
-        style={{ borderRadius: "25px", overflow: "hidden" }}
+        style={{ borderRadius: '25px', overflow: 'hidden' }}
       >
         <div className="mb-3">
           <div className="row mx-0 px-3">

@@ -1,7 +1,7 @@
 export const Tabledata = [
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -23,8 +23,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -46,8 +46,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -69,8 +69,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -92,8 +92,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -115,8 +115,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -138,8 +138,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -161,8 +161,8 @@ export const Tabledata = [
     recordHighChange: 0.0,
   },
   {
-    date: "2019-06-03",
-    exchangeName: "NYSE",
+    date: '2019-06-03',
+    exchangeName: 'NYSE',
     advances: 1936,
     advancesVolume: 2864897000.0,
     declines: 1041,
@@ -187,37 +187,37 @@ export const Tabledata = [
 
 export const Categoryarray = [
   {
-    name: "Model Summaries",
+    name: 'Model Summaries',
     subcategory: [
       {
-        name: "Model Summaries-Tape",
-        innerCategory: ["Tape Summary", "Tape Summary2"],
+        name: 'Model Summaries-Tape',
+        innerCategory: ['Tape Summary', 'Tape Summary2'],
       },
     ],
   },
   {
-    name: "Bonds",
+    name: 'Bonds',
     subcategory: [
       {
-        name: "Cross Market",
-        innerCategory: ["Summary-XCCY", "Regression-XCCY", "Studies-XCCY"],
+        name: 'Cross Market',
+        innerCategory: ['Summary-XCCY', 'Regression-XCCY', 'Studies-XCCY'],
       },
       {
-        name: "USD Bonds",
-        innerCategory: ["Summary-USD", "Regression-USD", "Studies-USD"],
+        name: 'USD Bonds',
+        innerCategory: ['Summary-USD', 'Regression-USD', 'Studies-USD'],
       },
       {
-        name: "CAD Bonds",
-        innerCategory: ["Summary-CAD", "Regression-CAD", "Studies-CAD"],
+        name: 'CAD Bonds',
+        innerCategory: ['Summary-CAD', 'Regression-CAD', 'Studies-CAD'],
       },
     ],
   },
   {
-    name: "Tape",
+    name: 'Tape',
     subcategory: [
       {
-        name: "Trend",
-        innerCategory: ["Trend 2.0"],
+        name: 'Trend',
+        innerCategory: ['Trend 2.0'],
       },
     ],
   },
@@ -225,214 +225,213 @@ export const Categoryarray = [
 
 export const Categoryarray2 = [
   {
-    name: "Model Summaries",
+    name: 'Model Summaries',
     subcategory: [
       {
-        name: "Model Summaries-Tape",
-        innerCategory: ["Tape Summary", "Tape Summary2", "Tape Summary3"],
+        name: 'Model Summaries-Tape',
+        innerCategory: ['Tape Summary', 'Tape Summary2', 'Tape Summary3'],
       },
     ],
   },
   {
-    name: "Bonds",
+    name: 'Bonds',
     subcategory: [
       {
-        name: "Cross Market",
-        innerCategory: ["Summary-XCCY", "Regression-XCCY", "Studies-XCCY"],
+        name: 'Cross Market',
+        innerCategory: ['Summary-XCCY', 'Regression-XCCY', 'Studies-XCCY'],
       },
       {
-        name: "USD Bonds",
-        innerCategory: ["Summary-USD", "Regression-USD", "Studies-USD"],
+        name: 'USD Bonds',
+        innerCategory: ['Summary-USD', 'Regression-USD', 'Studies-USD'],
       },
       {
-        name: "CAD Bonds",
-        innerCategory: ["Summary-CAD", "Regression-CAD", "Studies-CAD"],
+        name: 'CAD Bonds',
+        innerCategory: ['Summary-CAD', 'Regression-CAD', 'Studies-CAD'],
       },
     ],
   },
   {
-    name: "Tape",
+    name: 'Tape',
     subcategory: [
       {
-        name: "Trend",
-        innerCategory: ["Trend 2.0"],
+        name: 'Trend',
+        innerCategory: ['Trend 2.0'],
       },
     ],
   },
   {
-    name: "Breadth",
+    name: 'Breadth',
     subcategory: [
       {
-        name: "Participation/Disperson",
-        innerCategory: ["Participation Metrics", "Disperson Metrics"],
+        name: 'Participation/Disperson',
+        innerCategory: ['Participation Metrics', 'Disperson Metrics'],
       },
       {
-        name: "Thrust",
-        innerCategory: ["Thrust Analysis", "Thrust Indicators"],
+        name: 'Thrust',
+        innerCategory: ['Thrust Analysis', 'Thrust Indicators'],
       },
       {
-        name: "Relative Strength",
-        innerCategory: ["RS Metrics", "RS Indicators"],
+        name: 'Relative Strength',
+        innerCategory: ['RS Metrics', 'RS Indicators'],
       },
     ],
   },
   {
-    name: "Returns",
+    name: 'Returns',
     subcategory: [
       {
-        name: "Returns-Current",
-        innerCategory: ["Current Data", "Recent Trends"],
+        name: 'Returns-Current',
+        innerCategory: ['Current Data', 'Recent Trends'],
       },
       {
-        name: "Returns Historic",
-        innerCategory: ["Historical Data", "Past Trends"],
+        name: 'Returns Historic',
+        innerCategory: ['Historical Data', 'Past Trends'],
       },
     ],
   },
   {
-    name: "Risk Management",
+    name: 'Risk Management',
     subcategory: [
       {
-        name: "Risk Models",
-        innerCategory: ["Model A", "Model B", "Model C"],
+        name: 'Risk Models',
+        innerCategory: ['Model A', 'Model B', 'Model C'],
       },
       {
-        name: "Risk Studies",
-        innerCategory: ["Study X", "Study Y"],
+        name: 'Risk Studies',
+        innerCategory: ['Study X', 'Study Y'],
       },
     ],
   },
   {
-    name: "Monetary",
+    name: 'Monetary',
     subcategory: [
       {
-        name: "Inflation",
-        innerCategory: ["Inflation-Models", "Inflation Studies"],
+        name: 'Inflation',
+        innerCategory: ['Inflation-Models', 'Inflation Studies'],
       },
       {
-        name: "Bank Balance Sheet",
-        innerCategory: ["Central Bank", "Commercial Bank"],
+        name: 'Bank Balance Sheet',
+        innerCategory: ['Central Bank', 'Commercial Bank'],
       },
     ],
   },
   {
-    name: "Econ",
+    name: 'Econ',
     subcategory: [
       {
-        name: "Labour",
-        innerCategory: ["Labour-Models", "Labour Data"],
+        name: 'Labour',
+        innerCategory: ['Labour-Models', 'Labour Data'],
       },
       {
-        name: "Housing",
-        innerCategory: ["Housing Models", "Housing Data"],
+        name: 'Housing',
+        innerCategory: ['Housing Models', 'Housing Data'],
       },
     ],
   },
   {
-    name: "Combo",
+    name: 'Combo',
     subcategory: [
       {
-        name: "Category A",
-        innerCategory: ["Item 1", "Item 2"],
+        name: 'Category A',
+        innerCategory: ['Item 1', 'Item 2'],
       },
       {
-        name: "Category B",
-        innerCategory: ["Item 1", "Item 2"],
+        name: 'Category B',
+        innerCategory: ['Item 1', 'Item 2'],
       },
     ],
   },
 ];
 
-export const ScriptData = [ 
+export const ScriptData = [
   {
-    title: "S&P 500 While NASDAQ AND DJIA Decline",
-    category1: "Tape",
-    category2: "Relative Strength",
-    category3: "RS",
-    startDate: "08/18/22",
-    endDate: "08/20/23",
-    startTime: "18:52",
-    endTime: "10:03",
-    chart: "LineChart",
+    title: 'S&P 500 While NASDAQ AND DJIA Decline',
+    category1: 'Tape',
+    category2: 'Relative Strength',
+    category3: 'RS',
+    startDate: '08/18/22',
+    endDate: '08/20/23',
+    startTime: '18:52',
+    endTime: '10:03',
+    chart: 'LineChart',
   },
   {
-    title: "Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression",
-    category1: "Bonds",
-    category2: "CAD Bonds",
-    category3: "Regression-CAD",
-    startDate: "11/18/23",
-    endDate: "08/11/24",
-    startTime: "17:39",
-    endTime: "10:03",
-    chart: "ScatterLineChart",
+    title: 'Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression',
+    category1: 'Bonds',
+    category2: 'CAD Bonds',
+    category3: 'Regression-CAD',
+    startDate: '11/18/23',
+    endDate: '08/11/24',
+    startTime: '17:39',
+    endTime: '10:03',
+    chart: 'ScatterLineChart',
   },
   {
-    title: "Factor Returns Table",
-    category1: "Tape",
-    category2: "Returns",
-    category3: "Returns-Current",
-    startDate: "04/16/24",
-    endDate: "08/23/24",
-    startTime: "18:47",
-    endTime: "10:03",
-    chart: "LineChart",
+    title: 'Factor Returns Table',
+    category1: 'Tape',
+    category2: 'Returns',
+    category3: 'Returns-Current',
+    startDate: '04/16/24',
+    endDate: '08/23/24',
+    startTime: '18:47',
+    endTime: '10:03',
+    chart: 'LineChart',
   },
   {
-    title: "Philly and empire fed prices paid vs cpi",
-    category1: "Monetary",
-    category2: "Inflation",
-    category3: "Inflation-Models",
-    startDate: "11/16/23",
-    endDate: "02/20/24",
+    title: 'Philly and empire fed prices paid vs cpi',
+    category1: 'Monetary',
+    category2: 'Inflation',
+    category3: 'Inflation-Models',
+    startDate: '11/16/23',
+    endDate: '02/20/24',
 
-    startTime: "22:56",
-    endTime: "10:03",
-    chart: "LineChart",
+    startTime: '22:56',
+    endTime: '10:03',
+    chart: 'LineChart',
   },
   {
-    title: "World Market ETFs Members 20pct 52WK",
-    category1: "Tape",
-    category2: "Breadth",
-    category3: "Participation/Disperson",
-    startDate: "05/23/24",
-    endDate: "07/20/24",
-    startTime: "20:34",
-    endTime: "10:03",
-    chart: "LineChart",
+    title: 'World Market ETFs Members 20pct 52WK',
+    category1: 'Tape',
+    category2: 'Breadth',
+    category3: 'Participation/Disperson',
+    startDate: '05/23/24',
+    endDate: '07/20/24',
+    startTime: '20:34',
+    endTime: '10:03',
+    chart: 'LineChart',
   },
   {
-    title: "U.S. 2y5y Fixed Income",
-    category1: "Bonds",
-    category2: "USD Bonds",
-    category3: "Summary-USD",
-    startDate: "01/19/24",
-    endDate: "08/20/24",
-    startTime: "12:47",
-    endTime: "10:04",
-    chart: "LineChart",
+    title: 'U.S. 2y5y Fixed Income',
+    category1: 'Bonds',
+    category2: 'USD Bonds',
+    category3: 'Summary-USD',
+    startDate: '01/19/24',
+    endDate: '08/20/24',
+    startTime: '12:47',
+    endTime: '10:04',
+    chart: 'LineChart',
   },
   {
-    title: "Continued Jobless Claims",
-    category1: "Econ",
-    category2: "Labour",
-    category3: "Labour-Models",
-    startDate: "08/08/24",
-    endDate: "08/20/24",
-    startTime: "19:44",
-    endTime: "10:03",
-    chart: "LineChart",
+    title: 'Continued Jobless Claims',
+    category1: 'Econ',
+    category2: 'Labour',
+    category3: 'Labour-Models',
+    startDate: '08/08/24',
+    endDate: '08/20/24',
+    startTime: '19:44',
+    endTime: '10:03',
+    chart: 'LineChart',
   },
 ];
-
 
 export const TapeSummaryData = [
   {
     id: 1,
-    title: "S&P 500 While NASDAQ AND DJIA Decline",
-    category: "Market Indices",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'S&P 500 While NASDAQ AND DJIA Decline',
+    category: 'Market Indices',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -467,11 +466,11 @@ export const TapeSummaryData = [
   },
   {
     id: 2,
-    title: "Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression",
-    category: "Bond Market",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "ScatterLineChart",
+    title: 'Canada 2Yr - 5Yr vs. 5Yr - 10Yr Regression',
+    category: 'Bond Market',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'ScatterLineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -502,11 +501,11 @@ export const TapeSummaryData = [
   },
   {
     id: 4,
-    title: "Monthly Inflation Rates",
-    category: "Economic Indicators",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'Monthly Inflation Rates',
+    category: 'Economic Indicators',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -529,11 +528,11 @@ export const TapeSummaryData = [
   },
   {
     id: 6,
-    title: "GDP Growth Rate",
-    category: "Economic Indicators",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'GDP Growth Rate',
+    category: 'Economic Indicators',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Q1', 'Q2', 'Q3', 'Q4'],
       datasets: [
@@ -554,11 +553,11 @@ export const TapeSummaryData = [
   },
   {
     id: 7,
-    title: "Consumer Confidence Index",
-    category: "Economic Indicators",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'Consumer Confidence Index',
+    category: 'Economic Indicators',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -581,11 +580,11 @@ export const TapeSummaryData = [
   },
   {
     id: 11,
-    title: "Energy Consumption Trends",
-    category: "Energy",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'Energy Consumption Trends',
+    category: 'Energy',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -608,11 +607,11 @@ export const TapeSummaryData = [
   },
   {
     id: 14,
-    title: "Automobile Sales Trends",
-    category: "Automotive",
-    created: "2024-01-01",
-    lastUpdated: "2024-06-01",
-    chartType: "LineChart",
+    title: 'Automobile Sales Trends',
+    category: 'Automotive',
+    created: '2024-01-01',
+    lastUpdated: '2024-06-01',
+    chartType: 'LineChart',
     chartData: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       datasets: [
@@ -634,6 +633,3 @@ export const TapeSummaryData = [
     ],
   },
 ];
-
-
-

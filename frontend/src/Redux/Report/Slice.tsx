@@ -1,8 +1,18 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Createreport, Createreportschedules,GetSatusreportByID, DeleteReportsByID, GetAllreport, GetreportByID, mergereport, Updatereport, UpdateReports} from "./Api";
-import { ReportState } from "../../types/stateTypes";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  Createreport,
+  Createreportschedules,
+  GetSatusreportByID,
+  DeleteReportsByID,
+  GetAllreport,
+  GetreportByID,
+  mergereport,
+  Updatereport,
+  UpdateReports,
+} from './Api';
+import { ReportState } from '../../types/stateTypes';
 
-const initialState:ReportState = {
+const initialState: ReportState = {
   reports: [],
   report: [],
   reportStatus: '',
@@ -12,37 +22,66 @@ const initialState:ReportState = {
   error: null,
 };
 
-const AsyncFunctionThunk = (name:any, apiFunction:any) => {
-  return createAsyncThunk(`report/${name}`, async (data, { rejectWithValue }) => {
-    try {
-      const response = await apiFunction(data);
-      return response.data;
-    } catch (error:any) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
+const AsyncFunctionThunk = (name: any, apiFunction: any) => {
+  return createAsyncThunk(
+    `report/${name}`,
+    async (data, { rejectWithValue }) => {
+      try {
+        const response = await apiFunction(data);
+        return response.data;
+      } catch (error: any) {
+        if (error.response && error.response.data) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ error: error.message });
+        throw error;
       }
-      return rejectWithValue({ error: error.message });
-      throw error;
-    }
-  });
+    },
+  );
 };
- 
-export const Createreports:any = AsyncFunctionThunk('Createreport', Createreport); 
-export const Updatereports:any = AsyncFunctionThunk('Updatereports', Updatereport);
-export const GetAllreports:any = AsyncFunctionThunk('GetAllreports', GetAllreport);
-export const GetreportByIDs:any = AsyncFunctionThunk('GetreportByIDs', GetreportByID);
-export const GetSatusreportByIDs:any = AsyncFunctionThunk('GetSatusreportByIDs', GetSatusreportByID);
-export const Createschedules:any = AsyncFunctionThunk('Createschedules', Createreportschedules);
-export const DeleteReportsByIDs:any = AsyncFunctionThunk('DeleteReportsByIDs',DeleteReportsByID);
-export const UpdateReportss:any = AsyncFunctionThunk('UpdateReportss',UpdateReports)
-export const mergereports:any = AsyncFunctionThunk('mergereports',mergereport)
- 
- 
+
+export const Createreports: any = AsyncFunctionThunk(
+  'Createreport',
+  Createreport,
+);
+export const Updatereports: any = AsyncFunctionThunk(
+  'Updatereports',
+  Updatereport,
+);
+export const GetAllreports: any = AsyncFunctionThunk(
+  'GetAllreports',
+  GetAllreport,
+);
+export const GetreportByIDs: any = AsyncFunctionThunk(
+  'GetreportByIDs',
+  GetreportByID,
+);
+export const GetSatusreportByIDs: any = AsyncFunctionThunk(
+  'GetSatusreportByIDs',
+  GetSatusreportByID,
+);
+export const Createschedules: any = AsyncFunctionThunk(
+  'Createschedules',
+  Createreportschedules,
+);
+export const DeleteReportsByIDs: any = AsyncFunctionThunk(
+  'DeleteReportsByIDs',
+  DeleteReportsByID,
+);
+export const UpdateReportss: any = AsyncFunctionThunk(
+  'UpdateReportss',
+  UpdateReports,
+);
+export const mergereports: any = AsyncFunctionThunk(
+  'mergereports',
+  mergereport,
+);
+
 const reportSlice = createSlice({
   name: 'reportSlice',
   initialState,
   reducers: {
-    UpdateReportss
+    UpdateReportss,
   },
   extraReducers: (builder) => {
     builder
@@ -58,7 +97,7 @@ const reportSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetAllreports.fulfilled, (state, action) => {
-        state.reports = action.payload;
+        state.reports = action.payload.results;
         state.loading = false;
       })
       .addCase(GetAllreports.pending, (state) => {
@@ -67,6 +106,7 @@ const reportSlice = createSlice({
       .addCase(GetAllreports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.reports = [];
       })
       .addCase(GetSatusreportByIDs.fulfilled, (state, action) => {
         state.reportStatus = action.payload;
@@ -94,7 +134,7 @@ const reportSlice = createSlice({
         state.report = action.payload;
         state.loading = false;
       })
-      
+
       .addCase(Updatereports.pending, (state) => {
         state.loading = true;
       })
@@ -134,10 +174,8 @@ const reportSlice = createSlice({
       .addCase(mergereports.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
-
- 
 
 export default reportSlice.reducer;

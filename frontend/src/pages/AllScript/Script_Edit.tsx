@@ -1,27 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../../assest/css/AllScript.css";
-import Icon from "../../Comopnent/ui/icon/Icon";
-import { useNavigate } from "react-router-dom";
-import CodeEdit from "../../Comopnent/CodeEditer/CodeEditer";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { loginUSer } from "../../customHook/getrole";
-import useToast from "../../customHook/toast";
+import React, { useEffect, useRef, useState } from 'react';
+import '../../assest/css/AllScript.css';
+import Icon from '../../Comopnent/ui/icon/Icon';
+import { useNavigate } from 'react-router-dom';
+import CodeEdit from '../../Comopnent/CodeEditer/CodeEditer';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { loginUSer } from '../../customHook/getrole';
+import useToast from '../../customHook/toast';
 
 const ScriptEdit = () => {
   const Navigate = useNavigate();
   const store: any = useSelector((i) => i);
   const ScriptData = store?.script?.Script;
   const handleToast = useToast();
-  const [code, setCode] = useState("");
-  const [description, setDescription] = useState(ScriptData?.description || "");
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+  const [code, setCode] = useState('');
+  const [description, setDescription] = useState(ScriptData?.description || '');
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
   const handleGetFile = () => {
     const url = ScriptData?.file; // Replace with your file URL
     const xhr = new XMLHttpRequest();
 
-    xhr.open("GET", url, true);
+    xhr.open('GET', url, true);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
         setCode(xhr.responseText); // File content
@@ -38,29 +38,29 @@ const ScriptEdit = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    const blob = new Blob([code], { type: "text/plain" });
-    formData.append("file", blob, `${ScriptData?.name}.py`);
-    formData.append("description", description);
+    const blob = new Blob([code], { type: 'text/plain' });
+    formData.append('file', blob, `${ScriptData?.name}.py`);
+    formData.append('description', description);
 
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_API_URL}api/scripts/${ScriptData?.id}`, // Use the correct ID
+        `${process.env.REACT_APP_API_URL}/scripts/${ScriptData?.id}`, // Use the correct ID
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${loginUSer?.access}`,
           },
-        }
+        },
       );
 
       if (response.status === 200) {
-        Navigate(`/account/ScriptDetails/${ScriptData?.id}`);
+        Navigate(`/ScriptDetails/${ScriptData?.id}`);
         handleToast.SuccessToast(`Script updated successfully`);
         // Navigate after successful update
       }
     } catch (error) {
-      console.error("Error updating script:", error);
+      console.error('Error updating script:', error);
     }
   };
 
@@ -70,7 +70,7 @@ const ScriptEdit = () => {
         <div className="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 text-center">
           <button className="btn mb-3" onClick={() => Navigate(-1)}>
             <Icon icon="ArrowBack" size="45px" color="dark" />
-          </button>{" "}
+          </button>{' '}
           <h1 className="h1 fw-bold ">Editing ({ScriptData?.name})</h1>
         </div>
 
@@ -91,7 +91,6 @@ const ScriptEdit = () => {
                 className="form-control"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-     
               />
             </div>
 

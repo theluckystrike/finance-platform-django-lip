@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.3.1",
+    "@mui/material": "^6.3.1",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
     "@reduxjs/toolkit": "^2.2.7",
@@ -52,7 +56,8 @@
     "start": "cross-env PORT=4200 GENERATE_SOURCEMAP=false react-scripts start",
     "build": "react-scripts build",
     "test": "npx cypress run --project .",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
@@ -78,6 +83,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^13.17.0",
     "eslint": "^9.17.0",
-    "eslint-plugin-cypress": "^4.1.0"
+    "eslint-plugin-cypress": "^4.1.0",
+    "prettier": "^3.4.2"
   }
 }

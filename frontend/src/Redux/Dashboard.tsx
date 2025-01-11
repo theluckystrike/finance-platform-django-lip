@@ -1,73 +1,73 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const dashboardApi = createApi({
-  reducerPath: "dashboardApi",
+  reducerPath: 'dashboardApi',
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
-  tagTypes: ["Dashboard"],
+  tagTypes: ['Dashboard'],
 
   endpoints: (builder) => ({
     // create
     createDashboard: builder.mutation({
       query: ({ token, data }) => ({
-        url: "create",
-        method: "POST",
+        url: 'create',
+        method: 'POST',
         headers: {
-          "x-access-token": token,
-          "Content-Type": "application/json",
+          'x-access-token': token,
+          'Content-Type': 'application/json',
         },
         body: data,
       }),
-      invalidatesTags: ["Dashboard"],
+      invalidatesTags: ['Dashboard'],
     }),
 
     getAllDashboard: builder.query({
       query: ({ token, page_no, page_size }) => ({
         url: `getall?page_no=${page_no}&page_size=${page_size}`,
-        method: "GET",
+        method: 'GET',
         headers: {
-          "x-access-token": token,
-          "Content-Type": "application/json",
+          'x-access-token': token,
+          'Content-Type': 'application/json',
         },
       }),
-      providesTags: ["Dashboard"],
+      providesTags: ['Dashboard'],
     }),
 
     // removeDashboard
     removeDashboard: builder.mutation({
       query: ({ token, ids }) => ({
         url: `removeMultiple`,
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          "x-access-token": token,
-          "Content-Type": "application/json", // Ensure proper content type
+          'x-access-token': token,
+          'Content-Type': 'application/json', // Ensure proper content type
         },
         body: ids,
       }),
-      invalidatesTags: ["Dashboard"],
+      invalidatesTags: ['Dashboard'],
     }),
 
     // search
     searchDashboard: builder.query({
       query: ({ token, name }) => ({
         url: `search?Name=${name}`,
-        method: "GET",
+        method: 'GET',
         headers: {
-          "x-access-token": token,
-          "Content-Type": "application/json", // Ensure proper content type
+          'x-access-token': token,
+          'Content-Type': 'application/json', // Ensure proper content type
         },
       }),
     }),
     updateDashboard: builder.mutation({
       query: ({ id, data, token }) => ({
         url: `update/${id}`,
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "x-access-token": token,
-          "Content-Type": "application/json", // Ensure proper content type
+          'x-access-token': token,
+          'Content-Type': 'application/json', // Ensure proper content type
         },
         body: data,
       }),
-      invalidatesTags: [{ type: "Dashboard" }],
+      invalidatesTags: [{ type: 'Dashboard' }],
     }),
   }),
 });

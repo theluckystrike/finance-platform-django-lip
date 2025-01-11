@@ -3,10 +3,10 @@ import React, {
   HTMLAttributes,
   ReactElement,
   ReactNode,
-} from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import Icon from "../icon/Icon";
+} from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import Icon from '../icon/Icon';
 
 interface IPaginationItemProps extends HTMLAttributes<HTMLLIElement> {
   className?: string;
@@ -33,18 +33,18 @@ export const PaginationItem = forwardRef<HTMLLIElement, IPaginationItemProps>(
       onClick,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <li
         ref={ref}
         className={classNames(
-          "page-item",
+          'page-item',
           {
             disabled: isDisabled,
             active: isActive,
           },
-          className
+          className,
         )}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
@@ -55,10 +55,10 @@ export const PaginationItem = forwardRef<HTMLLIElement, IPaginationItemProps>(
           onKeyDown={onClick}
           className="page-link"
           tabIndex={isDisabled ? -1 : undefined}
-          aria-disabled={isDisabled ? "true" : undefined}
+          aria-disabled={isDisabled ? 'true' : undefined}
           aria-label={
-            (isPrev && "First Page") ||
-            (isNext && "Last Page") ||
+            (isPrev && 'First Page') ||
+            (isNext && 'Last Page') ||
             `${children} page`
           }
         >
@@ -70,9 +70,9 @@ export const PaginationItem = forwardRef<HTMLLIElement, IPaginationItemProps>(
         </span>
       </li>
     );
-  }
+  },
 );
-PaginationItem.displayName = "PaginationItem";
+PaginationItem.displayName = 'PaginationItem';
 PaginationItem.propTypes = {
   className: PropTypes.string,
   isDisabled: PropTypes.bool,
@@ -81,7 +81,6 @@ PaginationItem.propTypes = {
   isFirst: PropTypes.bool,
   isNext: PropTypes.bool,
   isLast: PropTypes.bool,
-  children: PropTypes.node,
   onClick: PropTypes.func,
 };
 PaginationItem.defaultProps = {
@@ -104,7 +103,7 @@ interface IPaginationProps extends HTMLAttributes<HTMLElement> {
     | ReactNode
     | ReactNode[];
   className?: string | undefined;
-  size?: "sm" | "lg" | null;
+  size?: 'sm' | 'lg' | null;
 }
 const Pagination = forwardRef<HTMLDivElement, IPaginationProps>(
   ({ ariaLabel, className, children, size, ...props }, ref) => {
@@ -113,23 +112,22 @@ const Pagination = forwardRef<HTMLDivElement, IPaginationProps>(
       <nav ref={ref} aria-label={ariaLabel} className={className} {...props}>
         <ul
           className={classNames(
-            "pagination",
+            'pagination',
             { [`pagination-${size}`]: size },
-            "m-0"
+            'm-0',
           )}
         >
           {children}
         </ul>
       </nav>
     );
-  }
+  },
 );
-Pagination.displayName = "Pagination";
+Pagination.displayName = 'Pagination';
 Pagination.propTypes = {
   ariaLabel: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
   className: PropTypes.string,
-  size: PropTypes.oneOf(["sm", "lg"]),
+  size: PropTypes.oneOf(['sm', 'lg']),
 };
 Pagination.defaultProps = {
   className: undefined,

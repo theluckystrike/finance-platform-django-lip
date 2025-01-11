@@ -1,39 +1,33 @@
-import { FC, useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
+import { FC, useState, useEffect } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
 
-import { log } from "console";
-import { useDispatch } from "react-redux";
-import { useRemoveMutation } from "../../Redux/CategoryQuery";
-import useToast from "../../customHook/toast";
-import { DeletesummariesByIDs } from "../../Redux/TapeSummary/Slice";
+import { log } from 'console';
+import { useDispatch } from 'react-redux';
+import { useRemoveMutation } from '../../Redux/CategoryQuery';
+import useToast from '../../customHook/toast';
+import { DeletesummariesByIDs } from '../../Redux/TapeSummary/Slice';
 
 interface DeleteModalProps {
   show: boolean;
   handleClose: () => void;
- 
+
   data: any;
 }
 
-const DeleteModal: FC<DeleteModalProps> = ({
-  show,
-  handleClose,
-  data,
-  
-}) => {
+const DeleteModal: FC<DeleteModalProps> = ({ show, handleClose, data }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
- 
 
   const handleToast = useToast();
   const handleDelete = async () => {
     await dispatch(DeletesummariesByIDs({ id: data?.id }));
     handleToast.SuccessToast(`Tape summary delete successfully`);
-    navigate('/account/tape-summary')
+    navigate('/tape-summary');
     handleClose();
   };
 
-  return (    
+  return (
     <Modal
       size="lg"
       fullscreen="md-down"
@@ -44,7 +38,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
     >
       <Modal.Body
         className="bg-light-green"
-        style={{ borderRadius: "25px", overflow: "hidden" }}
+        style={{ borderRadius: '25px', overflow: 'hidden' }}
       >
         <div className="mb-3">
           <div className="row mx-0 px-3">
@@ -55,7 +49,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
             </div>
             <div className="col-12 row justify-content-evenly m-0">
               <label
-                style={{ height: "33px" }}
+                style={{ height: '33px' }}
                 htmlFor="category"
                 className="invisible"
               >

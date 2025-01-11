@@ -1,6 +1,6 @@
-import React from "react";
-import { HelmetProvider, Helmet } from "react-helmet-async";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
+import { Outlet } from 'react-router-dom';
 
 function App() {
   return (

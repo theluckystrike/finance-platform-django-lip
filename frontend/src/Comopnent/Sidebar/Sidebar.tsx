@@ -1,13 +1,13 @@
-import React from "react";
-import { ReactComponent as Logo } from "../../assest/svg/logo_text_image_white.svg";
-import { ActiveRoute, SidebarMenu } from "../../Menu";
-import Icon from "../ui/icon/Icon";
-import dummyUser from "../../assest/image/logo/user.jpg";
-import { Link, useNavigate } from "react-router-dom";
-import useToast from "../../customHook/toast";
-import { MenuItem } from "../../types/MenuTypes";
-import { GetRole, loginUSer } from "../../customHook/getrole";
-import { useSignOutMutation } from "../../Redux/AuthSlice";
+import React from 'react';
+import { ReactComponent as Logo } from '../../assest/svg/logo_text_image_white.svg';
+import { ActiveRoute, SidebarMenu } from '../../Menu';
+import Icon from '../ui/icon/Icon';
+import dummyUser from '../../assest/image/logo/user.jpg';
+import { Link, useNavigate } from 'react-router-dom';
+import useToast from '../../customHook/toast';
+import { MenuItem } from '../../types/MenuTypes';
+import { GetRole, loginUSer } from '../../customHook/getrole';
+import { useSignOutMutation } from '../../Redux/AuthSlice';
 const Sidebar = () => {
   const admin = GetRole();
   const navigate = useNavigate();
@@ -19,9 +19,9 @@ const Sidebar = () => {
   const [signout, Res] = useSignOutMutation();
   const logout = async () => {
     await signout({ token: loginUSer });
-    localStorage.removeItem("login");
-    navigate("/");
-    toast.InfoToast("Logout successful");
+    localStorage.removeItem('login');
+    navigate('/');
+    toast.InfoToast('Logout successful');
   };
   return (
     <div className="bg-green text-light vh-100 d-flex flex-column w-100">
@@ -34,11 +34,11 @@ const Sidebar = () => {
             <li
               onClick={() => changeRoute(value.path)}
               key={key}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
               className={`row justify-content-evenly align-items-center ${
-                value?.hide ? "d-none" : ""
+                value?.hide ? 'd-none' : ''
               }
-              ${admin !== value?.role && value?.role !== "all" ? "d-none" : ""}
+              ${admin !== value?.role && value?.role !== 'all' ? 'd-none' : ''}
               `}
             >
               <div className="col-3">
@@ -54,9 +54,9 @@ const Sidebar = () => {
           <div
             className=""
             style={{
-              borderRadius: "50%",
-              overflow: "hidden",
-              cursor: "pointer",
+              borderRadius: '50%',
+              overflow: 'hidden',
+              cursor: 'pointer',
             }}
             id="dropdownMenuButton"
             data-bs-toggle="dropdown"
@@ -69,25 +69,23 @@ const Sidebar = () => {
             className="dropdown-menu text-center fw-bold"
             aria-labelledby="dropdownMenuButton"
           >
-            <span
+            <Link
+              to={`/${ActiveRoute.UserProfile.path}`}
               className="dropdown-item"
-              onClick={() =>
-                navigate(`/account/${ActiveRoute.UserProfile.path}`)
-              }
             >
               Profile
-            </span>
-            <span
+            </Link>
+            <a
               className="dropdown-item"
               onClick={() => {
-                window.location.href = `${process.env.REACT_APP_API_URL}admin`;
+                window.location.href = `${process.env.REACT_APP_ADMIN_URL}`;
               }}
             >
               Admin Portal
-            </span>
-            <span className="dropdown-item" onClick={logout}>
+            </a>
+            <button className="dropdown-item" onClick={logout}>
               Sign Out
-            </span>
+            </button>
 
             <div className="divss"></div>
           </div>

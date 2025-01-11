@@ -1,11 +1,11 @@
-import { FC, useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
+import { FC, useState, useEffect } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
 
-import { log } from "console";
-import { useDispatch } from "react-redux";
-import { useRemoveMutation } from "../../Redux/CategoryQuery";
-import useToast from "../../customHook/toast";
+import { log } from 'console';
+import { useDispatch } from 'react-redux';
+import { useRemoveMutation } from '../../Redux/CategoryQuery';
+import useToast from '../../customHook/toast';
 
 interface DeleteModalProps {
   show: boolean;
@@ -42,7 +42,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
     >
       <Modal.Body
         className="bg-light-green"
-        style={{ borderRadius: "25px", overflow: "hidden" }}
+        style={{ borderRadius: '25px', overflow: 'hidden' }}
       >
         <div className="mb-3">
           <div className="row mx-0 px-3">
@@ -53,7 +53,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
             </div>
             <div className="col-12 row justify-content-evenly m-0">
               <label
-                style={{ height: "33px" }}
+                style={{ height: '33px' }}
                 htmlFor="category"
                 className="invisible"
               >

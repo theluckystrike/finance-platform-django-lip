@@ -1,17 +1,17 @@
-import { FC, useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
-import { ActiveRoute } from "../../../../Menu";
-import { Categoryarray } from "../../../../DummyData/TableData";
-import { useCreateMutation } from "../../../../Redux/CategoryQuery";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { loginUSer } from "../../../../customHook/getrole";
-import ArrowDown from "../../../../assest/image/arrow-down.png";
+import { FC, useEffect, useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import { ActiveRoute } from '../../../../Menu';
+import { Categoryarray } from '../../../../DummyData/TableData';
+import { useCreateMutation } from '../../../../Redux/CategoryQuery';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { loginUSer } from '../../../../customHook/getrole';
+import ArrowDown from '../../../../assest/image/arrow-down.png';
 
-import { useRefreshTokenMutation } from "../../../../Redux/AuthSlice";
-import useToast from "../../../../customHook/toast";
-import { useSelector } from "react-redux";
+import { useRefreshTokenMutation } from '../../../../Redux/AuthSlice';
+import useToast from '../../../../customHook/toast';
+import { useSelector } from 'react-redux';
 
 interface CategoryModalProps {
   show: boolean;
@@ -29,24 +29,24 @@ const CategoryModal: FC<CategoryModalProps> = ({
   const [refreshtoken, Res] = useRefreshTokenMutation();
 
   const navigate = useNavigate();
-  const [selectValue, setSelectValue] = useState("");
+  const [selectValue, setSelectValue] = useState('');
   const handleToast = useToast();
 
   // Formik setup
   const formik = useFormik({
     initialValues: {
-      name: "",
-      category: "",
-      parentName: "",
+      name: '',
+      category: '',
+      parentName: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Category name is required"),
+      name: Yup.string().required('Category name is required'),
     }),
     onSubmit: (values) => {
       create({
         token: loginUSer.access,
         data: { ...values, parent_category: values.category },
-      }); 
+      });
       handleClose();
     },
   });
@@ -58,9 +58,9 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
     if (isError) {
       if ((error as any)?.data) {
-        handleToast.ErrorToast("Please login again.");
+        handleToast.ErrorToast('Please login again.');
       } else {
-        console.log("An unknown error occurred.");
+        console.log('An unknown error occurred.');
       }
     }
   }, [isSuccess, isError, error, data]);
@@ -69,9 +69,9 @@ const CategoryModal: FC<CategoryModalProps> = ({
   const [dataTypeOption, setDataTypeOption] = useState(false);
   const FilterData = (value: any) => {
     const trimmedValue = value.trim(); // Trim the input value
-    if (trimmedValue !== "") {
+    if (trimmedValue !== '') {
       const res = categoryFilter.filter((i: any) =>
-        i.name.toLowerCase().includes(trimmedValue.toLowerCase())
+        i.name.toLowerCase().includes(trimmedValue.toLowerCase()),
       );
       setFilterCategory(res);
     } else {
@@ -95,8 +95,8 @@ const CategoryModal: FC<CategoryModalProps> = ({
         <Modal.Body
           className="bg-light-green"
           style={{
-            borderRadius: "25px",
-            overflow: "hidden",
+            borderRadius: '25px',
+            overflow: 'hidden',
           }}
         >
           <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
@@ -134,22 +134,22 @@ const CategoryModal: FC<CategoryModalProps> = ({
                       placeholder="Select a category"
                       value={formik.values.parentName}
                       onChange={(e) => {
-                        formik.setFieldValue("parentName", e.target.value);
+                        formik.setFieldValue('parentName', e.target.value);
 
                         FilterData(e.target.value);
                       }}
                       className={`form-control ${
                         formik.touched.category && formik.errors.category
-                          ? "input-error"
-                          : ""
+                          ? 'input-error'
+                          : ''
                       }`}
                     />
                     <div
                       className="dropdown-content"
                       style={{
-                        maxHeight: "200px",
-                        overflow: "auto",
-                        display: FilterCategory.length > 0 ? "block" : "none",
+                        maxHeight: '200px',
+                        overflow: 'auto',
+                        display: FilterCategory.length > 0 ? 'block' : 'none',
                       }}
                     >
                       {FilterCategory.length > 0 &&
@@ -159,10 +159,10 @@ const CategoryModal: FC<CategoryModalProps> = ({
                             key={item.name}
                             onClick={async () => {
                               await formik.setFieldValue(
-                                "parentName",
-                                item.name
+                                'parentName',
+                                item.name,
                               );
-                              await formik.setFieldValue("category", item.id);
+                              await formik.setFieldValue('category', item.id);
                               setFilterCategory([]);
                             }}
                           >
@@ -171,11 +171,11 @@ const CategoryModal: FC<CategoryModalProps> = ({
                         ))}
                     </div>
                   </div>
-                </div>                                                  
+                </div>
 
                 <div className="col-12 row justify-content-evenly m-0">
                   <label
-                    style={{ height: "33px" }}
+                    style={{ height: '33px' }}
                     htmlFor="category"
                     className="invisible"
                   >
@@ -184,7 +184,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
                   <button
                     onClick={() =>
-                      navigate(`/account/${ActiveRoute.CategoryManager.path}`)
+                      navigate(`/${ActiveRoute.CategoryManager.path}`)
                     }
                     className="btn border border-dark col-5 px-3 fw-bold"
                     type="button"

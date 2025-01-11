@@ -1,6 +1,12 @@
-import { toast, ToastOptions, ToastPosition, TypeOptions } from 'react-toastify';
+import {
+  toast,
+  ToastOptions,
+  ToastPosition,
+  TypeOptions,
+} from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';const useToast = () => {
+import 'react-toastify/dist/ReactToastify.css';
+const useToast = () => {
   const showToast = (message: string, options?: ToastOptions) => {
     toast(message, {
       position: 'top-right', // Use string values directly
@@ -26,7 +32,7 @@ import 'react-toastify/dist/ReactToastify.css';const useToast = () => {
     showToast(message, { ...options, type: 'info' });
   };
 
-  const  WarningToast = (message: string, options?: ToastOptions) => {
+  const WarningToast = (message: string, options?: ToastOptions) => {
     showToast(message, { ...options, type: 'warning' });
   };
 
@@ -35,7 +41,7 @@ import 'react-toastify/dist/ReactToastify.css';const useToast = () => {
     SuccessToast,
     ErrorToast,
     InfoToast,
-   WarningToast,
+    WarningToast,
   };
 };
 

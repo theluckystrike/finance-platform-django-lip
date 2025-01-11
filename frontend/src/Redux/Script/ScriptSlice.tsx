@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   CreateScript,
   DeleteScriptByID,
@@ -8,22 +8,22 @@ import {
   GetScriptByID,
   RunScript,
   UpdateScript,
-} from "./ScriptApi";
+} from './ScriptApi';
 
-interface ScriptState {
+export interface ScriptState {
   Scripts: any[]; // You can specify a more specific type if you know the structure of scripts
-  Script: any[]; // Same as above, specify the correct type if known
-  ScriptStatus: string;
+  Script: any; // Same as above, specify the correct type if known
+  ScriptStatus: any;
   Active_Role: string;
   page: number;
   loading: boolean;
   error: any; // You can refine this to be more specific if you know the error type
 }
-const initialState: ScriptState = {
+export const initialState: ScriptState = {
   Scripts: [],
-  Script: [],
-  ScriptStatus:'',
-  Active_Role: "",
+  Script: {},
+  ScriptStatus: {},
+  Active_Role: '',
   page: 1,
   loading: false,
   error: null,
@@ -43,48 +43,44 @@ const AsyncFunctionThunk = (name: any, apiFunction: any) => {
         return rejectWithValue({ error: error.message });
         throw error;
       }
-    }
+    },
   );
 };
 
 export const CreateScripts: any = AsyncFunctionThunk(
-  "CreateScript",
-  CreateScript
+  'CreateScript',
+  CreateScript,
 );
 export const GetAllScripts: any = AsyncFunctionThunk(
-  "GetAllScripts",
-  GetAllScript
+  'GetAllScripts',
+  GetAllScript,
 );
-export const GetScriptByIDs: any = AsyncFunctionThunk(
-  "GetScriptByIDs",
-  GetScriptByID
+export const getScriptByIDAction: any = AsyncFunctionThunk(
+  'GetScriptByID',
+  GetScriptByID,
 );
-export const RunScripts: any = AsyncFunctionThunk("RunScripts", RunScript);
+export const RunScripts: any = AsyncFunctionThunk('RunScripts', RunScript);
 export const DeleteScriptByIDs: any = AsyncFunctionThunk(
-  "DeleteScriptByIDs",
-  DeleteScriptByID
+  'DeleteScriptByIDs',
+  DeleteScriptByID,
 );
 export const UpdateScripts: any = AsyncFunctionThunk(
-  "UpdateScripts",
-  UpdateScript
+  'UpdateScripts',
+  UpdateScript,
 );
 export const GetScriptbyCategorys: any = AsyncFunctionThunk(
-  "GetScriptbyCategorys",
-  GetScriptbyCategory
+  'GetScriptbyCategorys',
+  GetScriptbyCategory,
 );
-export const GetSatusScriptByIDs:any = AsyncFunctionThunk(
+export const GetSatusScriptByIDs: any = AsyncFunctionThunk(
   'GetSatusScriptByIDs',
-  GetSatusScriptByID
-  );
+  GetSatusScriptByID,
+);
 
 const ScriptSlice = createSlice({
-  name: "ScriptSlice",
+  name: 'ScriptSlice',
   initialState,
-  reducers: {
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(CreateScripts.fulfilled, (state, action) => {
@@ -131,14 +127,14 @@ const ScriptSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(GetScriptByIDs.fulfilled, (state, action) => {
+      .addCase(getScriptByIDAction.fulfilled, (state, action) => {
         state.Script = action.payload;
         state.loading = false;
       })
-      .addCase(GetScriptByIDs.pending, (state) => {
+      .addCase(getScriptByIDAction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(GetScriptByIDs.rejected, (state, action) => {
+      .addCase(getScriptByIDAction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -177,7 +173,5 @@ const ScriptSlice = createSlice({
       });
   },
 });
-
-export const { setLoading } = ScriptSlice.actions;
 
 export default ScriptSlice.reducer;
