@@ -13,28 +13,44 @@ import Icon from '../../Comopnent/ui/icon/Icon';
 import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
 import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
 import useSortableData from '../../customHook/useSortable';
+
 import type { RootState } from '../../Store';
 import { GetAllScripts, ScriptState } from '../../Redux/Script/ScriptSlice';
+import { useGetAllCategoryQuery } from '../../Redux/CategoryQuery';
+import { useUpdateScriptMutation } from '../../Redux/Script';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 
 import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
 import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
-import SvgOnlinePrediction from '../../Comopnent/ui/icon/material-icons/OnlinePrediction';
+import UpdateScriptDialog from './dialogs/UpdateScriptDialog';
 
 const AllScripts = () => {
   const dispatch = useDispatch();
-  const store: any = useSelector((i) => i);
+
+  const { data: categoriesData } = useGetAllCategoryQuery({
+    page_no: 1,
+    page_size: 1000,
+  });
+  const categories = useMemo(
+    () => categoriesData?.results || [],
+    [categoriesData],
+  );
+
   const { loading, scripts, count } = useSelector<RootState, ScriptState>(
     (state) => state.script,
   );
+  const [updateScript, { isLoading, isError, isSuccess }] =
+    useUpdateScriptMutation();
+
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState<any>(null);
 
   const getData = async () => {
     try {
@@ -90,6 +106,17 @@ const AllScripts = () => {
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(null);
     getData();
+  };
+
+  const handleCloseUpdateModal = async (formData: any) => {
+    try {
+      if (formData && showUpdateModal) {
+        await updateScript({ id: showUpdateModal.id, data: formData });
+        getData();
+      }
+    } catch (error) {}
+
+    setShowUpdateModal(null);
   };
 
   const { items, requestSort, getClassNamesFor } = useSortableData(scripts);
@@ -281,7 +308,9 @@ const AllScripts = () => {
                         </td>
                         <td className="text-center mx-auto">
                           <div className="col-actions">
-                            <EditIcon />
+                            <EditIcon
+                              onClick={() => setShowUpdateModal(script)}
+                            />
                             <DeleteIcon
                               onClick={() => setShowDeleteModal(script)}
                             />
@@ -313,6 +342,7 @@ const AllScripts = () => {
           handleClose={handleClose}
           filterQuery={filterQuery}
           setFilterQuery={setFilterQuery}
+          categories={categories}
         />
       )}
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
@@ -326,6 +356,15 @@ const AllScripts = () => {
           show={!!showDeleteModal}
           data={showDeleteModal}
           handleClose={handleCloseDeleteModal}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateScriptDialog
+          isOpen={!!showUpdateModal}
+          data={showUpdateModal}
+          onClose={() => handleCloseUpdateModal(null)}
+          onSubmit={handleCloseUpdateModal}
+          categories={categories}
         />
       )}
     </>

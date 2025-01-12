@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpoint } from './endpoint';
-
+import { getToken } from '../utils/localStorage';
 export interface Category {
   id: number;
   level: number;
@@ -10,16 +10,24 @@ export interface Category {
 
 const api = createApi({
   reducerPath: 'Categoryapi',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL }),
+  baseQuery: async (args, api, extraOptions) => {
+    const token = getToken();
+    const headers = {
+      ...args.headers,
+      Authorization: `Bearer ${token}`,
+    };
+    return fetchBaseQuery({ baseUrl: process.env.REACT_APP_API_URL })(
+      { ...args, headers },
+      api,
+      extraOptions,
+    );
+  },
   tagTypes: ['GET', 'Category'],
   endpoints: (builder) => ({
     create: builder.mutation({
       query: ({ token, data }) => ({
         url: `${endpoint.category}`,
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: data,
       }),
       // Optionally, you can add invalidatesTags here if needed
@@ -29,9 +37,6 @@ const api = createApi({
       query: ({ token, id, data }) => ({
         url: `${endpoint.category}/${id}`,
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: data,
       }),
       // Optionally, you can add invalidatesTags here if needed
@@ -40,19 +45,13 @@ const api = createApi({
       query: ({ token, id }) => ({
         url: `${endpoint.category}/${id}`,
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
       // Optionally, you can add invalidatesTags here if needed
     }),
     getAllCategory: builder.query({
-      query: ({ token }) => ({
+      query: () => ({
         url: endpoint.category,
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
       providesTags: ['Category'],
     }),

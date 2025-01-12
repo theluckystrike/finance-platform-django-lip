@@ -14,6 +14,8 @@ import {
   GetScriptbyCategorys,
   ScriptState,
 } from '../../Redux/Script/ScriptSlice';
+import { useGetAllCategoryQuery } from '../../Redux/CategoryQuery';
+
 import { loginUSer } from '../../customHook/getrole';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
@@ -28,6 +30,13 @@ const ErrorScripts = () => {
   const { loading, scripts, count } = useSelector<RootState, ScriptState>(
     (state) => state.script,
   );
+
+  const { data: categoriesData } = useGetAllCategoryQuery({
+    page_no: 1,
+    page_size: 1000,
+  });
+  const categories = categoriesData?.results || [];
+
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
   const [loginUser, setLoginUser] = useState<any>(null);
 
@@ -333,6 +342,7 @@ const ErrorScripts = () => {
         handleClose={handleClose}
         filterQuery={filterQuery}
         setFilterQuery={setFilterQuery}
+        categories={categories}
       />
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
       <CreateReports

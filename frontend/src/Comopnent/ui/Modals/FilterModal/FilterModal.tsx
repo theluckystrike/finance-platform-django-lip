@@ -3,7 +3,6 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Modal from 'react-bootstrap/Modal';
 import ArrowDown from '../../../../assest/image/arrow-down.png';
-import { useGetAllCategoryQuery } from '../../../../Redux/CategoryQuery';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +11,7 @@ interface FilterModalProps {
   handleClose: () => void;
   filterQuery: any;
   setFilterQuery: any;
+  categories: [];
 }
 
 const FilterModal: FC<FilterModalProps> = ({
@@ -19,31 +19,9 @@ const FilterModal: FC<FilterModalProps> = ({
   handleClose,
   filterQuery,
   setFilterQuery,
+  categories,
 }) => {
-  const dispatch = useDispatch();
-  const [loginUser, setLoginUser] = useState<any>(null);
-  const fileRef: any = useRef(null);
-
   const navigate = useNavigate();
-  // Effect to retrieve loginUser from localStorage on component mount
-  useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
-    }
-  }, []);
-
-  const { data: AllCategory, isError } = useGetAllCategoryQuery(
-    {
-      token: loginUser?.access,
-      page_no: 1,
-      page_size: 1000,
-    },
-    {
-      skip: !loginUser, // Skip query execution if loginUser is null
-    },
-  );
-  const categoryData = AllCategory?.results || [];
 
   const [Categorylist, setCategorylist] = useState([]);
   const [subCategory1, setSubcategory1] = useState([]);
@@ -100,14 +78,14 @@ const FilterModal: FC<FilterModalProps> = ({
   const [cateDropDown1, setCateDropDown1] = useState(false);
   const [cateDropDown2, setCateDropDown2] = useState(false);
   useEffect(() => {
-    const Cate = categoryData.filter((i: any) => i?.parent_category === null);
+    const Cate = categories.filter((i: any) => i?.parent_category === null);
     const res = Cate.filter((i: any) =>
       i.name.toLowerCase().includes(formik.values.parentName.toLowerCase()),
     );
 
     setCategorylist(res);
     if (formik.values.parentName !== '') {
-      const subCate = categoryData.filter(
+      const subCate = categories.filter(
         (i: any) => i?.parent_category === formik.values.category,
       );
 
@@ -117,7 +95,7 @@ const FilterModal: FC<FilterModalProps> = ({
       setSubcategory1(res);
     }
     if (formik.values.parentName1 !== '') {
-      const subCate2 = categoryData.filter(
+      const subCate2 = categories.filter(
         (i: any) => i?.parent_category === formik.values.category1,
       );
       const res = subCate2.filter((i: any) =>
@@ -130,7 +108,7 @@ const FilterModal: FC<FilterModalProps> = ({
     formik.values.parentName,
     formik.values.parentName1,
     formik.values.parentName2,
-    categoryData,
+    categories,
   ]);
 
   return (
@@ -206,7 +184,7 @@ const FilterModal: FC<FilterModalProps> = ({
                           onClick={async () => {
                             await formik.setFieldValue('parentName', item.name);
                             await formik.setFieldValue('category', item.id);
-                            const subCate = categoryData.filter(
+                            const subCate = categories.filter(
                               (i: any) => i?.parent_category === item.id,
                             );
                             setSubcategory1(subCate);
@@ -271,7 +249,7 @@ const FilterModal: FC<FilterModalProps> = ({
                               item.name,
                             );
                             await formik.setFieldValue('category1', item.id);
-                            const subCate2 = categoryData.filter(
+                            const subCate2 = categories.filter(
                               (i: any) => i?.parent_category === item.id,
                             );
                             setSubcategory2(subCate2);
