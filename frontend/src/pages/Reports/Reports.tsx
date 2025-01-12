@@ -15,9 +15,11 @@ import type { RootState } from '../../Store';
 
 const Report = () => {
   const dispatch = useDispatch();
-  const { reports: allreport, count } = useSelector<RootState, ReportState>(
-    (state) => state.report,
-  );
+  const {
+    reports: allreport,
+    count,
+    loading,
+  } = useSelector<RootState, ReportState>((state) => state.report);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
@@ -55,7 +57,7 @@ const Report = () => {
         </div>
       </div>
       <div>
-        {items.length > 0 ? (
+        {!loading ? (
           <div style={{ overflow: 'auto' }} id="customReportForm">
             <div className="py-2">
               <PaginationButtons
@@ -86,8 +88,8 @@ const Report = () => {
                 </tr>
               </thead>
               <tbody id="scriptsCheckboxes">
-                {items &&
-                  items.map((script: any, index: any) => (
+                {allreport.length > 0 ? (
+                  allreport.map((script: any, index: any) => (
                     <>
                       <tr
                         key={script.id}
@@ -111,7 +113,14 @@ const Report = () => {
                       </tr>
                       <tr style={{ height: '10px' }}></tr>
                     </>
-                  ))}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      {count === 0 ? <p>No scripts found</p> : <Loader />}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

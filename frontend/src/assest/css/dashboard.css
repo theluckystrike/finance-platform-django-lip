@@ -217,3 +217,10 @@ body {
   display: flex;
   justify-content: flex-end;
 }
+
+.remove-report {
+  width: '27px';
+  border-radius: '50%';
+  color: 'white';
+  cursor: 'pointer';
+}

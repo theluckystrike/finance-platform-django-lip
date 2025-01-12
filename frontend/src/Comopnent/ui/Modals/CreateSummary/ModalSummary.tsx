@@ -49,7 +49,6 @@ const CreateSummary: FC<CreateReportsProps> = ({ show, handleClose }) => {
   const addScript = async () => {
     if (selectedScriptId) {
       const res = await dispatch(getScriptByIDAction({ id: selectedScriptId }));
-      console.log(res.payload);
       if (res.meta.requestStatus === 'fulfilled')
         setSelectScript((prev) => [...prev, res.payload]);
       setSelectedScriptId('');

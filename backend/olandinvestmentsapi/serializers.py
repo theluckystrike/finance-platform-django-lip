@@ -111,6 +111,7 @@ class ScriptSerializer(serializers.ModelSerializer):
         return obj.get_status_display()
 
 class ScriptSerializerForReport(serializers.ModelSerializer):
+    category = DeepCategorySerializer()
     class Meta:
         model = Script
         fields = ["name", "id", "created", "category"]

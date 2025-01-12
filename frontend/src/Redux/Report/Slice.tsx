@@ -13,7 +13,11 @@ import {
 export interface ReportState {
   reports: any[]; // You can replace `any` with a more specific type if available
   count: number;
-  report: any[]; // Same here, replace `any` with a specific type if possible
+  report: {
+    name: string;
+    scripts: [];
+    latest_pdf: string | null;
+  }; // Same here, replace `any` with a specific type if possible
   Active_Role: string;
   page: number;
   reportStatus: string;
@@ -24,7 +28,11 @@ export interface ReportState {
 const initialState: ReportState = {
   reports: [],
   count: 0,
-  report: [],
+  report: {
+    name: '',
+    scripts: [],
+    latest_pdf: null,
+  },
   reportStatus: '',
   Active_Role: '',
   page: 1,
@@ -120,7 +128,7 @@ const reportSlice = createSlice({
         state.reports = [];
       })
       .addCase(GetSatusreportByIDs.fulfilled, (state, action) => {
-        state.reportStatus = action.payload;
+        state.reportStatus = action.payload.status;
         state.loading = false;
       })
       .addCase(GetSatusreportByIDs.pending, (state) => {

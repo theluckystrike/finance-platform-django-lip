@@ -33,7 +33,6 @@ export const mergereport = async (data: any) => {
 // Update Report
 export const Updatereport = async (data: any) => {
   const { values, id } = data;
-
   try {
     const response = await axiosInstance.put(
       `${endpoint.reports}/${id}`,

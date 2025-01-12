@@ -35,7 +35,6 @@ const FilterScripts = () => {
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const filter = localStorage.getItem('filterquery');
-    console.log(filter);
 
     const storedLoginUser = localStorage.getItem('login');
     if (storedLoginUser) {

@@ -4,25 +4,24 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
-import InfoIcon from '@mui/icons-material/Info';
 
 import '../../assest/css/AllScript.css';
 import ScheduleEmailModal from '../../Comopnent/ui/Modals/ScheduleEmailModal/ScheduleEmailModal';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
+import type { RootState } from '../../Store';
 import {
   GetreportByIDs,
   GetSatusreportByIDs,
   Updatereports,
   UpdateReportss,
+  ReportState,
 } from '../../Redux/Report/Slice';
 import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
-
 // Plugins
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
@@ -32,52 +31,39 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 // Create new plugin instance
 
-const ReportViwe = () => {
+const ReportView = () => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   // Get the search parameters from the URL
   const { id } = useParams();
   const dispatch = useDispatch();
-  const [loginUser, setLoginUser] = useState<any>(null);
   const handleToast = useToast();
 
-  // Effect to retrieve loginUser from localStorage on component mount
-  useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
-    }
-  }, []);
+  const { loading, reportStatus, report } = useSelector<RootState, ReportState>(
+    (state) => state.report,
+  );
 
-  const getStatus = async () => {
-    await dispatch(GetSatusreportByIDs({ id: id, token: loginUser?.access }));
+  const getStatus = () => {
+    dispatch(GetSatusreportByIDs({ id }));
+  };
+
+  const getreport = async () => {
+    dispatch(GetreportByIDs({ id }));
+    getStatus();
+    // await dispatch(GetAllScripts({ token: loginUser?.access }));
   };
 
   useEffect(() => {
-    if (loginUser) {
-      const getreport = async () => {
-        await dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
-        await getStatus();
-        await dispatch(GetAllScripts({ token: loginUser?.access }));
-      };
-      getreport();
-    }
-  }, [loginUser]);
+    getreport();
+  }, []);
 
-  const store: any = useSelector((i) => i);
-  const reportData = store?.report?.report;
-  const reportStatus = store?.report?.reportStatus;  
-  const reportScripts = reportData.scripts || [];
-  const { loading } = store?.report;
   useEffect(() => {
     let intervalId: any;
-    if (reportStatus.status === 'running') {
+    if (reportStatus === 'running') {
       intervalId = setInterval(() => {
         getStatus();
       }, 5000);
-    }
-
-    if (reportStatus.status === 'success') {
-      dispatch(GetreportByIDs({ id: id, token: loginUser?.access }));
+    } else if (reportStatus === 'success') {
+      dispatch(GetreportByIDs({ id }));
       clearInterval(intervalId);
     }
 
@@ -89,23 +75,22 @@ const ReportViwe = () => {
     id: '',
   });
 
-  const [show, setShow] = useState(false);
-  const [Deleteshow, setDeleteShow] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [deleteshow, setDeleteShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => {
-    setShow(true);
+  const handleClose = () => setShowScheduleModal(false);
+  const handleShowScheduleModal = () => {
+    setShowScheduleModal(true);
   };
 
   const handleUpdate = async () => {
     await dispatch(
       Updatereports({
         values: {
-          name: reportData.name,
-          scripts: [...reportData.scripts, selectScript.id],
+          name: report.name,
+          scripts: [...report.scripts, selectScript.id],
         },
-        token: loginUser.access,
-        id: id,
+        id,
       }),
     );
 
@@ -113,18 +98,23 @@ const ReportViwe = () => {
   };
 
   const removeScript = async (val: any) => {
-    const reduceArray = reportData.scripts.filter((i: any) => i !== val);
-    await dispatch(
-      Updatereports({
-        values: {
-          name: reportData.name,
-          scripts: [...reduceArray],
-        },
-        token: loginUser.access,
-        id: id,
-      }),
-    );
-    handleToast.SuccessToast(`Remove Script successfully`);
+    try {
+      const newReportScripts = report.scripts.filter((i: any) => i.id !== val);
+
+      await dispatch(
+        Updatereports({
+          values: {
+            name: report.name,
+            scripts: newReportScripts.map((s: any) => s.id),
+          },
+          id,
+        }),
+      );
+      handleToast.SuccessToast(`Remove Script successfully`);
+    } catch (error) {
+      handleToast.ErrorToast(`Failed remove script`);
+    } finally {
+    }
   };
 
   const openPdfInNewTab = (url: any) => {
@@ -139,9 +129,7 @@ const ReportViwe = () => {
   };
 
   const updateRepost = async () => {
-    const res = await dispatch(
-      UpdateReportss({ token: loginUser.access, id: id }),
-    );
+    const res = await dispatch(UpdateReportss({ id }));
     getStatus();
     if (res.payload) {
       handleToast.SuccessToast(res.payload.message);
@@ -153,11 +141,11 @@ const ReportViwe = () => {
       <div className="mx-5 py-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5">
           <h1 className="h1">
-            Report Details <span id="headerInfo">({reportData.name})</span>
+            Report Details <span id="headerInfo">({report.name})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
             <button
-              onClick={handleShow}
+              onClick={handleShowScheduleModal}
               type="button"
               className="btn icon-button my-1 mx-2"
             >
@@ -166,11 +154,11 @@ const ReportViwe = () => {
             </button>
             <button
               type="button"
-              onClick={() => openPdfInNewTab(reportData?.latest_pdf)}
+              onClick={() => openPdfInNewTab(report?.latest_pdf)}
               className="btn icon-button my-1 mx-2"
-              disabled={reportStatus.status === 'running'}
+              disabled={reportStatus === 'running'}
             >
-              {reportStatus.status === 'running' ? (
+              {reportStatus === 'running' ? (
                 <>
                   <Loader />
                   <span>Running</span>
@@ -194,6 +182,7 @@ const ReportViwe = () => {
               type="button"
               className="btn icon-button my-1 mx-2"
               onClick={updateRepost}
+              disabled={reportStatus === 'running'}
             >
               <SystemUpdateAltIcon fontSize="small" />
               <span>Update</span>
@@ -284,8 +273,8 @@ const ReportViwe = () => {
                   </tr>
                 </thead>
                 <tbody id="reportsCheckboxes">
-                  {reportScripts ? (
-                    reportScripts.map((script: any) => (
+                  {report.scripts ? (
+                    report.scripts.map((script: any) => (
                       <>
                         <tr
                           key={script.id}
@@ -324,17 +313,9 @@ const ReportViwe = () => {
                             {formatIsoDate(script.created)}
                           </td>
                           <td className="col-1 text-center mx-auto">
-                            <div
+                            <DeleteIcon
                               onClick={() => removeScript(script.id)}
-                              className="bg-danger p-1 ms-auto"
-                              style={{
-                                width: '27px',
-                                borderRadius: '50%',
-                                color: 'white',
-                              }}
-                            >
-                              -
-                            </div>
+                            />
                           </td>
                         </tr>
                         <tr style={{ height: '10px' }}></tr>
@@ -343,7 +324,7 @@ const ReportViwe = () => {
                   ) : (
                     <tr>
                       <td colSpan={5}>
-                        <Loader />
+                        <p>No scripts found</p>
                       </td>
                     </tr>
                   )}
@@ -355,15 +336,19 @@ const ReportViwe = () => {
           )}
         </div>
       </div>
-      <ScheduleEmailModal show={show} handleClose={handleClose} />
+      {showScheduleModal && (
+        <ScheduleEmailModal
+          show={showScheduleModal}
+          handleClose={handleClose}
+        />
+      )}
       <DeleteModal
-        show={Deleteshow}
+        show={deleteshow}
         handleClose={() => setDeleteShow(false)}
-        data={reportData}
-        token={loginUser?.access}
+        data={report}
       />
     </>
   );
 };
 
-export default ReportViwe;
+export default ReportView;

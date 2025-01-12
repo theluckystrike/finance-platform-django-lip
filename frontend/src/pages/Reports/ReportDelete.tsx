@@ -9,20 +9,14 @@ import { DeleteReportsByIDs } from '../../Redux/Report/Slice';
 interface DeleteModalProps {
   show: boolean;
   handleClose: () => void;
-  token: any;
   data: any;
 }
 
-const DeleteModal: FC<DeleteModalProps> = ({
-  show,
-  handleClose,
-  data,
-  token,
-}) => {
+const DeleteModal: FC<DeleteModalProps> = ({ show, handleClose, data }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleDelete = () => {
-    dispatch(DeleteReportsByIDs({ token, id: data.id }));
+    dispatch(DeleteReportsByIDs({ id: data.id }));
 
     handleClose();
     navigate(-1);

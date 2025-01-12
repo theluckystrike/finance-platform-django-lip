@@ -34,7 +34,7 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
   useEffect(() => {
     const getDAta = async () => {
       try {
-        await dispatch(GetAllreports({ token: loginUser?.access }));
+        await dispatch(GetAllreports({ page: 1 }));
       } catch (error) {
         console.error('Error fetching reports:', error);
       }

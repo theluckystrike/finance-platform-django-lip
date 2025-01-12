@@ -63,7 +63,6 @@ const ScriptView = () => {
   }, [loginUser, id]);
 
   useEffect(() => {
-    console.log('ScriptStatus', ScriptStatus);
     let intervalId: any;
     if (ScriptStatus.status === 'running') {
       intervalId = setInterval(() => {
