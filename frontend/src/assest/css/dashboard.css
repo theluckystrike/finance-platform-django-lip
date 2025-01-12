@@ -224,3 +224,13 @@ body {
   color: 'white';
   cursor: 'pointer';
 }
+
+.col-actions {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.col-actions svg {
+  cursor: pointer;
+}

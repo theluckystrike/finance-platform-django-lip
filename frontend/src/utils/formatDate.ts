@@ -10,5 +10,7 @@ export const formatIsoDate = (isoString: string, timeZone: string = 'UTC') => {
     timeZone,
   });
 
-  return `${formattedDateTime} (${timeZone})`;
+  return timeZone !== 'UTC'
+    ? `${formattedDateTime} (${timeZone})`
+    : formattedDateTime;
 };

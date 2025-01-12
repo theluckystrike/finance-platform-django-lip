@@ -84,7 +84,10 @@ const ScriptView = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    navigate('/allscripts');
+  };
   const handleShow = () => {
     setShow(true);
   };
@@ -291,12 +294,14 @@ const ScriptView = () => {
         </div>
       </div>
 
-      <DeleteModal
-        show={show}
-        token={loginUSer?.access}
-        data={ScriptData}
-        handleClose={handleClose}
-      />
+      {show && (
+        <DeleteModal
+          show={show}
+          token={loginUSer?.access}
+          data={ScriptData}
+          handleClose={handleClose}
+        />
+      )}
     </>
   );
 };

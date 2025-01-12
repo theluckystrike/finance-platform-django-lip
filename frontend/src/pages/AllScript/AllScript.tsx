@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import FilterIcon from '@mui/icons-material/Filter';
 import SaveIcon from '@mui/icons-material/Save';
+import Checkbox from '@mui/material/Checkbox';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import '../../assest/css/AllScript.css';
 import Icon from '../../Comopnent/ui/icon/Icon';
@@ -17,6 +20,8 @@ import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 
 import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
+import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
+import SvgOnlinePrediction from '../../Comopnent/ui/icon/material-icons/OnlinePrediction';
 
 const AllScripts = () => {
   const dispatch = useDispatch();
@@ -29,6 +34,7 @@ const AllScripts = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
 
   const getData = async () => {
     try {
@@ -81,8 +87,16 @@ const AllScripts = () => {
     }
   };
 
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(null);
+    getData();
+  };
+
   const { items, requestSort, getClassNamesFor } = useSortableData(scripts);
-  const isAllSelected = selectedScripts.length === items.length;
+  const isAllSelected = useMemo(
+    () => selectedScripts.length === items.length,
+    [selectedScripts, items.length],
+  );
 
   return (
     <>
@@ -129,16 +143,14 @@ const AllScripts = () => {
                 <thead>
                   <tr className="fw-bold mb-2 p-2">
                     <th scope="col" className="col-1">
-                      <input
-                        type="checkbox"
-                        id="selectAllCheckbox"
+                      <Checkbox
                         checked={isAllSelected}
                         onChange={handleSelectAll}
                       />
                     </th>
                     <th
                       scope="col"
-                      className="col-4"
+                      className="col-2"
                       onClick={() => requestSort('name')}
                     >
                       <h6>
@@ -167,7 +179,7 @@ const AllScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -181,7 +193,7 @@ const AllScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -195,7 +207,7 @@ const AllScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('created')}
                     >
                       <h6>
@@ -209,7 +221,7 @@ const AllScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('last_updated')}
                     >
                       <h6>
@@ -221,54 +233,61 @@ const AllScripts = () => {
                         />
                       </h6>
                     </th>
+                    <th scope="col" className="col-1 text-center mx-auto">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
                   {items?.length > 0 ? (
                     items.map((script: any, index: any) => (
-                      <>
-                        <tr
-                          key={index}
-                          className="table-card rounded-3 bg-light-green mb-2 p-3"
-                          style={{ borderRadius: '10px' }}
-                        >
-                          <td className="col-1">
-                            <input
-                              type="checkbox"
-                              checked={selectedScripts.includes(script.id)}
-                              onChange={() => handleCheckboxChange(script.id)}
-                            />
-                          </td>
-                          <td className="col-4">
-                            <Link
-                              to={`/ScriptDetails/${script.id}`}
-                              className="text-decoration-none text-black"
-                            >
-                              <span className="fw-bold">{script.name}</span>
-                            </Link>
-                          </td>
-                          <td className="col-1 text-center wrap-word mx-auto">
-                            {
-                              script.category?.parent_category?.parent_category
-                                ?.name
-                            }
-                          </td>
+                      <tr
+                        key={index}
+                        className="table-card rounded-3 bg-light-green mb-2 p-3"
+                        style={{ borderRadius: '10px' }}
+                      >
+                        <td>
+                          <Checkbox
+                            checked={selectedScripts.includes(script.id)}
+                            onChange={() => handleCheckboxChange(script.id)}
+                          />
+                        </td>
+                        <td>
+                          <Link
+                            to={`/ScriptDetails/${script.id}`}
+                            className="text-decoration-none text-black"
+                          >
+                            <span className="fw-bold">{script.name}</span>
+                          </Link>
+                        </td>
+                        <td className="text-center wrap-word mx-auto">
+                          {
+                            script.category?.parent_category?.parent_category
+                              ?.name
+                          }
+                        </td>
 
-                          <td className="col-2 text-center wrap-word mx-auto">
-                            {script.category?.parent_category?.name}
-                          </td>
-                          <td className="col-2 text-center wrap-word mx-auto">
-                            {script?.category?.name}
-                          </td>
-                          <td className="col-2 text-center mx-auto">
-                            {formatIsoDate(script.created)}
-                          </td>
-                          <td className="col-2 text-center mx-auto">
-                            {formatIsoDate(script.last_updated)}
-                          </td>
-                        </tr>
-                        <tr style={{ height: '10px' }}></tr>
-                      </>
+                        <td className="text-center wrap-word mx-auto">
+                          {script.category?.parent_category?.name}
+                        </td>
+                        <td className="text-center wrap-word mx-auto">
+                          {script?.category?.name}
+                        </td>
+                        <td className="text-center mx-auto">
+                          {formatIsoDate(script.created)}
+                        </td>
+                        <td className="text-center mx-auto">
+                          {formatIsoDate(script.last_updated)}
+                        </td>
+                        <td className="text-center mx-auto">
+                          <div className="col-actions">
+                            <EditIcon />
+                            <DeleteIcon
+                              onClick={() => setShowDeleteModal(script)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
                     ))
                   ) : (
                     <tr>
@@ -288,18 +307,27 @@ const AllScripts = () => {
         </div>
       </div>
 
-      <FilterModal
-        show={show}
-        handleClose={handleClose}
-        filterQuery={filterQuery}
-        setFilterQuery={setFilterQuery}
-      />
+      {show && (
+        <FilterModal
+          show={show}
+          handleClose={handleClose}
+          filterQuery={filterQuery}
+          setFilterQuery={setFilterQuery}
+        />
+      )}
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
       <CreateReports
         show={showReport}
         handleClose={() => setShowReport(false)}
         selectedScripts={selectedScripts}
       />
+      {showDeleteModal && (
+        <DeleteModal
+          show={!!showDeleteModal}
+          data={showDeleteModal}
+          handleClose={handleCloseDeleteModal}
+        />
+      )}
     </>
   );
 };
