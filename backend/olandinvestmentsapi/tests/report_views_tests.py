@@ -73,7 +73,7 @@ class ReportTests(APITestCase):
         response = self.client.get(url, HTTP_HOST='api.localhost')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], self.report1.name)
-        self.assertEqual(response.data['scripts'][0], self.script1.id)
+        self.assertEqual(response.data['scripts'][0]['id'], self.script1.id)
 
     def test_report_create(self):
         """Test creating a new report"""
