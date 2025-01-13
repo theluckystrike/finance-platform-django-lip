@@ -297,25 +297,27 @@ const ReportView = () => {
                             </Link>
                           </td>
                           <td className="col-2 text-center mx-auto wrap-word">
-                            {script?.category?.name}
+                            {
+                              script.category?.parent_category?.parent_category
+                                ?.name
+                            }
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
                             {script.category?.parent_category?.name}
                           </td>
                           <td className="col-2 text-center wrap-word mx-auto">
-                            {
-                              script.category?.parent_category?.parent_category
-                                ?.name
-                            }
+                            {script?.category?.name}
                           </td>
 
                           <td className="col-2 text-center mx-auto">
                             {formatIsoDate(script.created)}
                           </td>
                           <td className="col-1 text-center mx-auto">
-                            <DeleteIcon
-                              onClick={() => removeScript(script.id)}
-                            />
+                            <div className="col-actions">
+                              <DeleteIcon
+                                onClick={() => removeScript(script.id)}
+                              />
+                            </div>
                           </td>
                         </tr>
                         <tr style={{ height: '10px' }}></tr>
