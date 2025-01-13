@@ -62,7 +62,7 @@ class ScriptUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
-        fields = ['name', 'category', 'file', 'description']
+        fields = ['name', 'category', 'file', 'description', 'for_summary']
 
 
 class ScriptSerializerLite(serializers.ModelSerializer):
@@ -72,7 +72,7 @@ class ScriptSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Script
         fields = ["name", "file", "category", "output_type",
-                  "description", "id", "created", "status", "last_updated"]
+                  "description", "id", "created", "status", "last_updated", "for_summary"]
 
     def get_status(self, obj):
         return obj.get_status_display()
@@ -104,7 +104,7 @@ class ScriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Script
         fields = ["name", "file", "category", "output_type",
-                  "description", "id", "created", "chart_data", "table_data", "status", "last_updated"]
+                  "description", "id", "created", "chart_data", "table_data", "status", "last_updated", "for_summary"]
         depth = 1
 
     def get_status(self, obj):
@@ -139,6 +139,12 @@ class ReportWriteSerializer(serializers.ModelSerializer):
         fields = ["name", "id", "scripts", "created",
                   "last_updated", "status", "latest_pdf"]
         depth = 1
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        scripts = instance.scripts.all().order_by('index_in_category').order_by("category__name")
+        representation['scripts'] = [script.id for script in scripts]
+        return representation
 
 
 class ReportEmailTaskSerializer(serializers.ModelSerializer):

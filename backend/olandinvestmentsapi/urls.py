@@ -53,9 +53,9 @@ urlpatterns = [
     path('reports/<int:report_id>/remove-script/<int:script_id>',
          RemoveScriptFromReport.as_view(), name="report_remove_script"),
     # Summaries
-    path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_update'),
+    path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_status'),
     path('summaries/<int:pk>/update',
-         SummaryUpdateView.as_view(), name='summary_status'),
+         SummaryUpdateView.as_view(), name='summary_update'),
     # Router urls
     path('', include(router.urls)),
 

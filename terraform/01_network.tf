@@ -52,11 +52,19 @@ resource "aws_route_table" "public_route_table" {
   tags = {
     Name = "OI_Prod_Public_Route_Table"
   }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.oi_prod_igw.id
+  }
 }
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.oi_prod_vpc.id
   tags = {
     Name = "OI_Prod_Private_Route_Table"
+  }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gw.id
   }
 }
 

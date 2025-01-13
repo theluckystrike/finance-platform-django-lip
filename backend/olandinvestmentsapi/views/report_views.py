@@ -77,17 +77,14 @@ class ReportStatusView(APIView):
         }
     )
     def get(self, request, pk):
-        try:
-            report = get_object_or_404(Report, pk=pk)
-            resp = {
-                "status": report.status
-            }
-            if report.status == 'success':
-                resp["latest_pdf"] = report.latest_pdf.url if report.latest_pdf else None
+        report = get_object_or_404(Report, pk=pk)
+        resp = {
+            "status": report.status
+        }
+        if report.status == 'success':
+            resp["latest_pdf"] = report.latest_pdf.url if report.latest_pdf else None
 
-            return Response(resp)
-        except Report.DoesNotExist:
-            return Response({'error': 'Report does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(resp)
 
 
 class ReportUpdateView(APIView):
@@ -138,14 +135,12 @@ class ReportUpdateView(APIView):
         }
     )
     def post(self, request, pk):
-        try:
-            report = get_object_or_404(Report, pk=pk)
-            if report.status == "running":
-                return Response({"message": "Report is already running"})
-            report.update(request.data.get("run_scripts", True), f"{request.scheme}://{request.get_host()}")
-            return Response({"message": "Report added to task queue"})
-        except Report.DoesNotExist:
-            return Response({'error': 'Report does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        report = get_object_or_404(Report, pk=pk)
+        if report.status == "running":
+            return Response({"message": "Report is already running"})
+        report.update(request.data.get("run_scripts", True),
+                      f"{request.scheme}://{request.get_host()}")
+        return Response({"message": "Report added to task queue"})
 
 
 class MergeReportsView(APIView):

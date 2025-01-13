@@ -217,13 +217,10 @@ class SummaryStatusView(APIView):
         }
     )
     def get(self, request, pk):
-        try:
-            summary = get_object_or_404(Summary, pk=pk)
-            resp = {
-                "status": summary.get_status_display()
-            }
-            if summary.status == Status.SUCCESS:
-                resp["signal_plot_data"] = summary.signal_plot_data
-            return Response(resp)
-        except Summary.DoesNotExist:
-            return Response({'error': 'Summary does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        summary = get_object_or_404(Summary, pk=pk)
+        resp = {
+            "status": summary.get_status_display()
+        }
+        if summary.status == Status.SUCCESS:
+            resp["signal_plot_data"] = summary.signal_plot_data
+        return Response(resp)

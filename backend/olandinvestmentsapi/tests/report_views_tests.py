@@ -74,7 +74,7 @@ class ReportTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], self.report1.name)
         self.assertEqual(response.data['scripts'][0]['id'], self.script1.id)
-
+  
     def test_report_create(self):
         """Test creating a new report"""
         url = reverse('reports-list', current_app='olandinvestmentsapi',
@@ -112,6 +112,13 @@ class ReportTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'success')
 
+    def test_get_report_status_does_not_exist(self):
+        """Test getting the status of a report"""
+        url = reverse('report_status', kwargs={'pk': 123456789},
+                      current_app='olandinvestmentsapi', urlconf='olandinvestmentsapi.urls')
+        response = self.client.get(url, HTTP_HOST='api.localhost')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_merge_reports(self):
         """Test merging two reports"""
         url = reverse('reports_merge', current_app='olandinvestmentsapi',
@@ -120,10 +127,13 @@ class ReportTests(APITestCase):
             'reports': [self.report1.id, self.report2.id],
             'name': 'Merged Report'
         }
-        response = self.client.post(url, json.dumps(data), HTTP_HOST='api.localhost', content_type='application/json')
+        response = self.client.post(url, json.dumps(
+            data), HTTP_HOST='api.localhost', content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn(self.script1, Report.objects.get(name='Merged Report').scripts.all())
-        self.assertIn(self.script2, Report.objects.get(name='Merged Report').scripts.all())
+        self.assertIn(self.script1, Report.objects.get(
+            name='Merged Report').scripts.all())
+        self.assertIn(self.script2, Report.objects.get(
+            name='Merged Report').scripts.all())
 
     def test_report_run(self):
         """Test running a report"""

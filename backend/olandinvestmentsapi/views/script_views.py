@@ -44,6 +44,13 @@ logger = logging.getLogger('testlogger')
             type=openapi.TYPE_STRING,
             enum=['success', 'failure', 'running']
         ),
+        openapi.Parameter(
+            'for_summary',
+            openapi.IN_QUERY,
+            description="Filter scripts by for_summary flag",
+            type=openapi.TYPE_BOOLEAN,
+            enum=['True', 'False']
+        ),
     ]
 ))
 class ScriptViewSet(ModelViewSet):
@@ -66,13 +73,9 @@ class ScriptViewSet(ModelViewSet):
         subcat = self.request.query_params.get("subcategory1", None)
         subsubcat = self.request.query_params.get("subcategory2", None)
         status = self.request.query_params.get("status", None)
-        if cat:
-            queryset = queryset.filter(
-                category__parent_category__parent_category=cat)
-        if subcat:
-            queryset = queryset.filter(category__parent_category=subcat)
-        if subsubcat:
-            queryset = queryset.filter(category=subsubcat)
+        for_summary = self.request.query_params.get("for_summary", None)
+        if for_summary:
+            queryset = queryset.filter(for_summary=for_summary)
         if status:
             if status in Script.ExecutionStatus.labels:
                 queryset = queryset.filter(
@@ -80,6 +83,13 @@ class ScriptViewSet(ModelViewSet):
             else:
                 logger.warning(
                     f"[ScriptViewSet] Requested invalid script status query param {status}")
+        if cat:
+            queryset = queryset.filter(
+                category__parent_category__parent_category=cat)
+        if subcat:
+            queryset = queryset.filter(category__parent_category=subcat)
+        if subsubcat:
+            queryset = queryset.filter(category=subsubcat)
 
         return queryset
 
@@ -149,24 +159,21 @@ class ScriptStatusView(APIView):
         }
     )
     def get(self, request, pk):
-        try:
-            script = get_object_or_404(Script, pk=pk)
-            resp = {
-                "status": script.get_status_display()
-            }
-            if script.status == 2:
-                resp['error_message'] = script.error_message
-            if script.status == 0:
-                # context required to return full URLs
-                if script.has_chart_data:
-                    resp["chart_data"] = ChartDataSerializer(
-                        script.chart_data, context={'request': request}).data
-                if script.has_table_data:
-                    resp["table_data"] = TableDataSerializer(
-                        script.table_data, context={'request': request}).data
-            return Response(resp)
-        except Script.DoesNotExist:
-            return Response({'error': 'Script does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        script = get_object_or_404(Script, pk=pk)
+        resp = {
+            "status": script.get_status_display()
+        }
+        if script.status == 2:
+            resp['error_message'] = script.error_message
+        if script.status == 0:
+            # context required to return full URLs
+            if script.has_chart_data:
+                resp["chart_data"] = ChartDataSerializer(
+                    script.chart_data, context={'request': request}).data
+            if script.has_table_data:
+                resp["table_data"] = TableDataSerializer(
+                    script.table_data, context={'request': request}).data
+        return Response(resp)
 
 
 class ScriptRunView(APIView):
@@ -204,11 +211,8 @@ class ScriptRunView(APIView):
         }
     )
     def post(self, request, pk):
-        try:
-            script = get_object_or_404(Script, pk=pk)
-            if script.status == 1:
-                return Response({"message": "Script is already running"})
-            script.run()
-            return Response({"message": "Script added to task queue"})
-        except Script.DoesNotExist:
-            return Response({'error': 'Script does not exists'}, status=status.HTTP_404_NOT_FOUND)
+        script = get_object_or_404(Script, pk=pk)
+        if script.status == 1:
+            return Response({"message": "Script is already running"})
+        script.run()
+        return Response({"message": "Script added to task queue"})

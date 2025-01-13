@@ -35,6 +35,7 @@ class Script(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True)
     index_in_category = models.IntegerField(blank=True, default=0)
+    for_summary = models.BooleanField(default=False, blank=False, null=False)
 
     class ExecutionStatus(models.IntegerChoices):
         SUCCESS = 0, _("success")
@@ -151,7 +152,6 @@ class Script(models.Model):
             logging.debug(
                 f"[script model] No plotly config for script: {self.name}")
             return False
-
 
     def update_index(self, new_idx):
         """

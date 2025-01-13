@@ -83,12 +83,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
 
-TEST_RUNNER = 'olandinvestmentsapi.test_runner.CustomNoseTestRunner'
+TEST_RUNNER = 'olandinvestmentsapi.tests.test_runner.CustomNoseTestRunner'
 
 NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=olandinvestmentsapi',
     '--cover-html',
+    '--cover-erase',
     '--verbosity=2',
 ]
 
@@ -166,8 +167,8 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'django_hosts.middleware.HostsRequestMiddleware',
     'financeplatform.middleware.HealthCheckMiddleware',
+    'django_hosts.middleware.HostsRequestMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
