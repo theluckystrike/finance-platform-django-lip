@@ -35,6 +35,7 @@ interface IPaginationButtonsProps {
   perPage: number;
   setPerPage(...args: unknown[]): unknown;
   data: unknown[];
+  count?: number;
   label?: string;
 }
 const PaginationButtons: FC<IPaginationButtonsProps> = ({
@@ -43,9 +44,10 @@ const PaginationButtons: FC<IPaginationButtonsProps> = ({
   perPage,
   setPerPage,
   data,
+  count,
   label,
 }) => {
-  const totalItems = data.length;
+  const totalItems = count ? count : data.length;
   const totalPage = Math.ceil(totalItems / perPage);
 
   const pagination = () => {
@@ -184,10 +186,8 @@ PaginationButtons.propTypes = {
   setPerPage: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   data: PropTypes.array.isRequired,
+  count: PropTypes.number,
   label: PropTypes.string,
-};
-PaginationButtons.defaultProps = {
-  label: 'items',
 };
 
 export default PaginationButtons;

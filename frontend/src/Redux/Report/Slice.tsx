@@ -8,13 +8,33 @@ import {
   GetreportByID,
   mergereport,
   Updatereport,
-  UpdateReports,
+  UpdateReports, RemoveScriptFromReport,
 } from './Api';
-import { ReportState } from '../../types/stateTypes';
+export interface ReportState {
+  reports: any[]; // You can replace `any` with a more specific type if available
+  count: number;
+  report: {
+    id: number,
+    name: string;
+    scripts: [];
+    latest_pdf: string | null;
+  }; // Same here, replace `any` with a specific type if possible
+  Active_Role: string;
+  page: number;
+  reportStatus: string;
+  loading: boolean;
+  error: string | null;
+}
 
 const initialState: ReportState = {
   reports: [],
-  report: [],
+  count: 0,
+  report: {
+    id: 0,
+    name: '',
+    scripts: [],
+    latest_pdf: null,
+  },
   reportStatus: '',
   Active_Role: '',
   page: 1,
@@ -48,6 +68,10 @@ export const Updatereports: any = AsyncFunctionThunk(
   'Updatereports',
   Updatereport,
 );
+export const RemoveScriptFromReports: any = AsyncFunctionThunk(
+    'RemoveScriptFromReports',
+    RemoveScriptFromReport,
+  );
 export const GetAllreports: any = AsyncFunctionThunk(
   'GetAllreports',
   GetAllreport,
@@ -98,6 +122,7 @@ const reportSlice = createSlice({
       })
       .addCase(GetAllreports.fulfilled, (state, action) => {
         state.reports = action.payload.results;
+        state.count = action.payload.count;
         state.loading = false;
       })
       .addCase(GetAllreports.pending, (state) => {
@@ -109,7 +134,7 @@ const reportSlice = createSlice({
         state.reports = [];
       })
       .addCase(GetSatusreportByIDs.fulfilled, (state, action) => {
-        state.reportStatus = action.payload;
+        state.reportStatus = action.payload.status;
         state.loading = false;
       })
       .addCase(GetSatusreportByIDs.pending, (state) => {

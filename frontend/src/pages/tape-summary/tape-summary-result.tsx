@@ -52,7 +52,6 @@ const TapeSummaryResult: React.FC = () => {
   const store: any = useSelector((i) => i);
 
   const { summery } = useSelector((i: any) => i?.summary);
-  console.log(summery, 'summerysummery');
 
   const summery2 = summery?.meta?.scripts
     ? Object.entries(summery.meta.scripts).map(([id, script]: any) => ({
@@ -63,7 +62,6 @@ const TapeSummaryResult: React.FC = () => {
       }))
     : []; // Fallback to an empty array if `summery.meta.scripts` is undefined
 
-  // console.log(summery2);
   const [upLoad, setUpload] = useState(false);
   const getupdate = async () => {
     setUpload(true);
@@ -80,7 +78,6 @@ const TapeSummaryResult: React.FC = () => {
   const [deleteshow, setDeleteShow] = useState(false);
   const [editShow, setEditShow] = useState(false);
   const summeryStatus = store?.summary?.summeryStatus;
-  console.log(summeryStatus);
 
   const getStatus = async () => {
     await dispatch(GetSatussummeryByIDs({ id: id }));

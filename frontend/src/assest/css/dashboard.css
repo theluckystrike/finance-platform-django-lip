@@ -217,3 +217,20 @@ body {
   display: flex;
   justify-content: flex-end;
 }
+
+.remove-report {
+  width: '27px';
+  border-radius: '50%';
+  color: 'white';
+  cursor: 'pointer';
+}
+
+.col-actions {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.col-actions svg {
+  cursor: pointer;
+}

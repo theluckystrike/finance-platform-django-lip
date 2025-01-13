@@ -73,13 +73,10 @@ const ScriptApi = createApi({
 
     // Update script
     updateScript: builder.mutation({
-      query: ({ id, data, token }) => ({
-        url: `update/${id}`,
-        method: 'PUT',
+      query: ({ id, data }) => ({
+        url: `${endpoint.scripts}/${id}`,
+        method: 'PATCH',
         data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
       invalidatesTags: ['Script'],
     }),

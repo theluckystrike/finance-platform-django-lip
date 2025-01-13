@@ -54,7 +54,7 @@ const EditSummary: FC<CreateReportsProps> = ({ show, data, handleClose }) => {
     }
   }, [data]);
 
-  const allscripts = store?.script?.Scripts?.results || [];
+  const allscripts = store.script.scripts;
   useEffect(() => {
     dispatch(GetAllScripts({}));
   }, []);

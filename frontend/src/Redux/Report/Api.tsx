@@ -33,11 +33,24 @@ export const mergereport = async (data: any) => {
 // Update Report
 export const Updatereport = async (data: any) => {
   const { values, id } = data;
-
   try {
     const response = await axiosInstance.put(
       `${endpoint.reports}/${id}`,
       values,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//Remove script from report
+export const RemoveScriptFromReport = async (data: any) => {
+  const { reportId, scriptId } = data;
+
+  try {
+    const response = await axiosInstance.delete(
+      `${endpoint.reports}/${reportId}/remove-script/${scriptId}`,
     );
     return response;
   } catch (error) {
@@ -58,10 +71,10 @@ export const GetreportByID = async (data: any) => {
 };
 
 // Get All Reports
-export const GetAllreport = async () => {
+export const GetAllreport = async ({ page, per_page }: any) => {
   try {
     const response: { count: number; results: [] } = await axiosInstance.get(
-      `${endpoint.reports}?page=1`,
+      `${endpoint.reports}?page=${page}&per_page=${per_page}`,
     );
     return response;
   } catch (error) {

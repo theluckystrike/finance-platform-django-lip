@@ -1,63 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import FilterIcon from '@mui/icons-material/Filter';
 import SaveIcon from '@mui/icons-material/Save';
+import Checkbox from '@mui/material/Checkbox';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import '../../assest/css/AllScript.css';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
-import { ActiveRoute } from '../../Menu';
 import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
-import ArrowDown from '../../assest/image/arrow-down.png';
-import { ScriptData } from '../../DummyData/TableData';
 import useSortableData from '../../customHook/useSortable';
-import {
-  GetAllScripts,
-  GetScriptbyCategorys,
-} from '../../Redux/Script/ScriptSlice';
-import { loginUSer } from '../../customHook/getrole';
+
+import type { RootState } from '../../Store';
+import { GetAllScripts, ScriptState } from '../../Redux/Script/ScriptSlice';
+import { useGetAllCategoryQuery } from '../../Redux/CategoryQuery';
+import { useUpdateScriptMutation } from '../../Redux/Script';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import CreateReports from '../../Comopnent/ui/Modals/CreateReports/ModalReports';
 
-import PaginationButtons, {
-  dataPagination,
-  PER_COUNT,
-} from '../../Comopnent/ui/PaginationButtons';
+import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
+import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
+import UpdateScriptDialog from './dialogs/UpdateScriptDialog';
 
-const CustomReport = () => {
+const AllScripts = () => {
   const dispatch = useDispatch();
-  const store: any = useSelector((i) => i);
-  const { loading } = store?.script;
-  const allscripts = store?.script?.Scripts?.results || [];
+
+  const { data: categoriesData } = useGetAllCategoryQuery({
+    page_no: 1,
+    page_size: 1000,
+  });
+  const categories = useMemo(
+    () => categoriesData?.results || [],
+    [categoriesData],
+  );
+
+  const { loading, scripts, count } = useSelector<RootState, ScriptState>(
+    (state) => state.script,
+  );
+  const [updateScript, { isLoading, isError, isSuccess }] =
+    useUpdateScriptMutation();
+
   const [selectedScripts, setSelectedScripts] = useState<any>([]);
-  const [loginUser, setLoginUser] = useState<any>(null);
+  const [perPage, setPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
-  // Effect to retrieve loginUser from localStorage on component mount
-  useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
-    }
-  }, []);
-  useEffect(() => {
-    if (loginUser) {
-      const getDAta = async () => {
-        try {
-          // alert('running')
-          // console.log(allscripts.length ,filterQuery);
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState<any>(null);
 
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
+  const getData = async () => {
+    try {
+      await dispatch(
+        GetAllScripts({
+          page: currentPage,
+          per_page: perPage,
+        }),
+      );
+    } catch (error) {
+      console.log(error);
     }
-  }, [loginUser]);
+  };
+
+  useEffect(() => {
+    if (perPage && currentPage) {
+      getData();
+    }
+  }, [currentPage, perPage]);
 
   const [show, setShow] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -90,13 +102,28 @@ const CustomReport = () => {
       setSelectedScripts([...selectedScripts, id]);
     }
   };
-  // Check if all scripts are selected
-  const { items, requestSort, getClassNamesFor } = useSortableData(
-    allscripts || [],
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(null);
+    getData();
+  };
+
+  const handleCloseUpdateModal = async (scriptId: number | null, formData: any) => {
+    try {
+      if (formData && showUpdateModal) {
+        await updateScript({ id: scriptId, data: formData });
+        getData();
+      }
+    } catch (error) {}
+
+    setShowUpdateModal(null);
+  };
+
+  const { items, requestSort, getClassNamesFor } = useSortableData(scripts);
+  const isAllSelected = useMemo(
+    () => selectedScripts.length === items.length,
+    [selectedScripts, items.length],
   );
-  const isAllSelected = selectedScripts.length === items.length;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
   return (
     <>
@@ -106,10 +133,6 @@ const CustomReport = () => {
             All scripts <span id="headerInfo">({items.length})</span>
           </h1>
           <div className="btn-toolbar mb-2 mb-md-0">
-            {/* <button type="button" className="btn icon-button my-1 mx-2">
-              <Icon icon="AddBusiness" size="20px" />
-              <span>Home</span>
-            </button> */}
             <button
               onClick={handleShow}
               className="btn icon-button my-1 mx-2 position-relative"
@@ -127,15 +150,6 @@ const CustomReport = () => {
               <SaveIcon fontSize="small" />
               <span>Save</span>
             </button>
-            {/* <button
-              type="submit"
-              form="customReportForm"
-              className="btn icon-button my-1 mx-2 disabled"
-            >
-              <Icon icon="Download" size="20px" />
-
-              <span>Download</span>
-            </button> */}
           </div>
         </div>
         <div>
@@ -143,28 +157,27 @@ const CustomReport = () => {
             <div style={{ overflow: 'auto' }} id="customReportForm">
               <div className="py-2">
                 <PaginationButtons
-                  data={items}
+                  data={scripts}
                   label="Scripts"
-                  setCurrentPage={setCurrentPage}
+                  count={count}
                   currentPage={currentPage}
                   perPage={perPage}
                   setPerPage={setPerPage}
+                  setCurrentPage={setCurrentPage}
                 />
               </div>
               <table className="table" style={{ minWidth: '1000px' }}>
                 <thead>
                   <tr className="fw-bold mb-2 p-2">
                     <th scope="col" className="col-1">
-                      <input
-                        type="checkbox"
-                        id="selectAllCheckbox"
+                      <Checkbox
                         checked={isAllSelected}
                         onChange={handleSelectAll}
                       />
                     </th>
                     <th
                       scope="col"
-                      className="col-4"
+                      className="col-2"
                       onClick={() => requestSort('name')}
                     >
                       <h6>
@@ -193,7 +206,7 @@ const CustomReport = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -207,7 +220,7 @@ const CustomReport = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -221,7 +234,7 @@ const CustomReport = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('created')}
                     >
                       <h6>
@@ -235,7 +248,7 @@ const CustomReport = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('last_updated')}
                     >
                       <h6>
@@ -247,65 +260,68 @@ const CustomReport = () => {
                         />
                       </h6>
                     </th>
+                    <th scope="col" className="col-1 text-center mx-auto">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
-                  {items.length > 0 ? (
-                    dataPagination(items, currentPage, perPage).map(
-                      (script: any, index: any) => (
-                        <>
-                          <tr
-                            key={index}
-                            className="table-card rounded-3 bg-light-green mb-2 p-3"
-                            style={{ borderRadius: '10px' }}
+                  {items?.length > 0 ? (
+                    items.map((script: any, index: any) => (
+                      <tr
+                        key={index}
+                        className="table-card rounded-3 bg-light-green mb-2 p-3"
+                        style={{ borderRadius: '10px' }}
+                      >
+                        <td>
+                          <Checkbox
+                            checked={selectedScripts.includes(script.id)}
+                            onChange={() => handleCheckboxChange(script.id)}
+                          />
+                        </td>
+                        <td>
+                          <Link
+                            to={`/ScriptDetails/${script.id}`}
+                            className="text-decoration-none text-black"
                           >
-                            <td className="col-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedScripts.includes(script.id)}
-                                onChange={() => handleCheckboxChange(script.id)}
-                              />
-                            </td>
-                            <td className="col-4">
-                              <Link
-                                to={`/ScriptDetails/${script.id}`}
-                                className="text-decoration-none text-black"
-                              >
-                                <span className="fw-bold">{script.name}</span>
-                              </Link>
-                            </td>
-                            <td className="col-1 text-center wrap-word mx-auto">
-                              {
-                                script.category?.parent_category
-                                  ?.parent_category?.name
-                              }
-                            </td>
+                            <span className="fw-bold">{script.name}</span>
+                          </Link>
+                        </td>
+                        <td className="text-center wrap-word mx-auto">
+                          {
+                            script.category?.parent_category?.parent_category
+                              ?.name
+                          }
+                        </td>
 
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script.category?.parent_category?.name}
-                            </td>
-                            <td className="col-2 text-center wrap-word mx-auto">
-                              {script?.category?.name}
-                            </td>
-                            <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(script.created)}
-                            </td>
-                            <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(script.last_updated)}
-                            </td>
-                          </tr>
-                          <tr style={{ height: '10px' }}></tr>
-                        </>
-                      ),
-                    )
+                        <td className="text-center wrap-word mx-auto">
+                          {script.category?.parent_category?.name}
+                        </td>
+                        <td className="text-center wrap-word mx-auto">
+                          {script?.category?.name}
+                        </td>
+                        <td className="text-center mx-auto">
+                          {formatIsoDate(script.created)}
+                        </td>
+                        <td className="text-center mx-auto">
+                          {formatIsoDate(script.last_updated)}
+                        </td>
+                        <td className="text-center mx-auto">
+                          <div className="col-actions">
+                            <EditIcon
+                              onClick={() => setShowUpdateModal(script)}
+                            />
+                            <DeleteIcon
+                              onClick={() => setShowDeleteModal(script)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        {store?.script?.Scripts?.count === 0 ? (
-                          <p>No scripts found</p>
-                        ) : (
-                          <Loader />
-                        )}
+                        {count === 0 ? <p>No scripts found</p> : <Loader />}
                       </td>
                     </tr>
                   )}
@@ -320,20 +336,39 @@ const CustomReport = () => {
         </div>
       </div>
 
-      <FilterModal
-        show={show}
-        handleClose={handleClose}
-        filterQuery={filterQuery}
-        setFilterQuery={setFilterQuery}
-      />
+      {show && (
+        <FilterModal
+          show={show}
+          handleClose={handleClose}
+          filterQuery={filterQuery}
+          setFilterQuery={setFilterQuery}
+          categories={categories}
+        />
+      )}
       <SaveModal show={Saveshow} handleClose={handleSaveClose} />
       <CreateReports
         show={showReport}
         handleClose={() => setShowReport(false)}
         selectedScripts={selectedScripts}
       />
+      {showDeleteModal && (
+        <DeleteModal
+          show={!!showDeleteModal}
+          data={showDeleteModal}
+          handleClose={handleCloseDeleteModal}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateScriptDialog
+          isOpen={!!showUpdateModal}
+          data={showUpdateModal}
+          onClose={() => handleCloseUpdateModal(null, null)}
+          onSubmit={handleCloseUpdateModal}
+          categories={categories}
+        />
+      )}
     </>
   );
 };
 
-export default CustomReport;
+export default AllScripts;

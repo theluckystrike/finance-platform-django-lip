@@ -215,7 +215,7 @@ const TapeSummary: React.FC = () => {
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        {store?.script?.Scripts?.count === 0 ? (
+                        {store.script.count === 0 ? (
                           <p>No scripts found</p>
                         ) : (
                           <Loader />

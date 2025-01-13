@@ -5,53 +5,40 @@ import MergeIcon from '@mui/icons-material/Merge';
 import '../../assest/css/AllScript.css';
 import { Link } from 'react-router-dom';
 import MergeReports from '../../Comopnent/ui/Modals/MergeReports/MergeReports';
-import { GetAllreports } from '../../Redux/Report/Slice';
+import { GetAllreports, ReportState } from '../../Redux/Report/Slice';
 import { useDispatch, useSelector } from 'react-redux';
 import useSortableData from '../../customHook/useSortable';
 import Loader from '../../Comopnent/ui/Loader';
 import { formatIsoDate } from '../../utils/formatDate';
-import PaginationButtons, {
-  dataPagination,
-  PER_COUNT,
-} from '../../Comopnent/ui/PaginationButtons';
+import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
 import type { RootState } from '../../Store';
-import type { ReportState } from '../../types/stateTypes';
 
 const Report = () => {
   const dispatch = useDispatch();
-  const [loginUser, setLoginUser] = useState<any>(null);
-  const { reports: allreport } = useSelector<RootState, ReportState>(
-    (state) => state.report,
-  );
-  const { items, requestSort, getClassNamesFor } = useSortableData(
-    allreport || [],
-  );
+  const {
+    reports: allreport,
+    count,
+    loading,
+  } = useSelector<RootState, ReportState>((state) => state.report);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
   const loadData = async () => {
     try {
-      await dispatch(GetAllreports({ token: loginUser?.access }));
+      await dispatch(GetAllreports({ page: currentPage, per_page: perPage }));
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (loginUser?.access) {
+    if (perPage && currentPage) {
       loadData();
     }
-  }, [loginUser]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
+  }, [currentPage, perPage]);
 
   const [mergeshow, setShowmerges] = useState(false);
+  const { items } = useSortableData(allreport);
 
   return (
     <div className="mx-4">
@@ -70,23 +57,24 @@ const Report = () => {
         </div>
       </div>
       <div>
-        {items.length > 0 ? (
+        {!loading ? (
           <div style={{ overflow: 'auto' }} id="customReportForm">
             <div className="py-2">
               <PaginationButtons
                 data={items}
+                count={count}
                 label="Reports"
-                setCurrentPage={setCurrentPage}
                 currentPage={currentPage}
                 perPage={perPage}
                 setPerPage={setPerPage}
+                setCurrentPage={setCurrentPage}
               />
             </div>
             <table className="table" style={{ minWidth: '1000px' }}>
               <thead>
                 <tr className="fw-bold mb-2 p-2">
                   <th scope="col" className="col-1">
-                    <h5>Sr no.</h5>
+                    <h5>No</h5>
                   </th>
                   <th scope="col" className="col-7">
                     <h5>Report Name</h5>
@@ -100,34 +88,39 @@ const Report = () => {
                 </tr>
               </thead>
               <tbody id="scriptsCheckboxes">
-                {items &&
-                  dataPagination(items, currentPage, perPage).map(
-                    (script: any, index: any) => (
-                      <>
-                        <tr
-                          key={script.id}
-                          className="table-card rounded-3 bg-light-green mb-2 p-3"
-                        >
-                          <td className="col-1 fw-bold fs-6">{index + 1}</td>
-                          <td className="col-7 fw-bold fs-6">
-                            <Link
-                              to={`/ReportDetails/${script.id}`}
-                              className="text-decoration-none text-black"
-                            >
-                              {script.name}
-                            </Link>
-                          </td>
-                          <td className="col-2 text-center mx-auto">
-                            {formatIsoDate(script.created)}
-                          </td>
-                          <td className="col-2 text-center mx-auto">
-                            {formatIsoDate(script.last_updated)}
-                          </td>
-                        </tr>
-                        <tr style={{ height: '10px' }}></tr>
-                      </>
-                    ),
-                  )}
+                {allreport.length > 0 ? (
+                  allreport.map((script: any, index: any) => (
+                    <>
+                      <tr
+                        key={script.id}
+                        className="table-card rounded-3 bg-light-green mb-2 p-3"
+                      >
+                        <td className="col-1 fw-bold fs-6">{index + 1}</td>
+                        <td className="col-7 fw-bold fs-6">
+                          <Link
+                            to={`/ReportDetails/${script.id}`}
+                            className="text-decoration-none text-black"
+                          >
+                            {script.name}
+                          </Link>
+                        </td>
+                        <td className="col-2 text-center mx-auto">
+                          {formatIsoDate(script.created)}
+                        </td>
+                        <td className="col-2 text-center mx-auto">
+                          {formatIsoDate(script.last_updated)}
+                        </td>
+                      </tr>
+                      <tr style={{ height: '10px' }}></tr>
+                    </>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      {count === 0 ? <p>No scripts found</p> : <Loader />}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
