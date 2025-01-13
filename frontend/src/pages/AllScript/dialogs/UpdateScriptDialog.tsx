@@ -12,14 +12,14 @@ import { Category } from '../../../Redux/CategoryQuery';
 interface Props {
   isOpen: boolean;
   data: any;
-  onSubmit: (data: {}) => void; // Assuming onSubmit takes an email string
+  onSubmit: (id: number, data: object) => void; // Assuming onSubmit takes an email string
   onClose: () => void;
   categories: Category[];
 }
 
 interface FormData {
   name: string;
-  category: Category | null; // Assuming category can be null
+  category: number | null; // Number - because we need to pass category id, also assuming that category can be null
 }
 
 export default function UpdateScriptDialog({
@@ -29,9 +29,7 @@ export default function UpdateScriptDialog({
   data,
   categories,
 }: Props) {
-  const [formData, setFormData] = useState<FormData>({
-    ...data,
-  });
+  const [formData, setFormData] = useState<FormData>({name: data.name, category: data.category.id});
 
   const level2Categories = useMemo(
     () => categories.filter((cate: Category) => cate.level === 2),
@@ -42,7 +40,9 @@ export default function UpdateScriptDialog({
     ev: React.SyntheticEvent,
     category: Category | null,
   ) => {
-    setFormData({ ...formData, category: category ? category : null });
+    if (category !== null) {
+      setFormData({ ...formData, category: category.id ? category.id : null });
+    }
   };
 
   return (
@@ -55,7 +55,7 @@ export default function UpdateScriptDialog({
         component: 'form',
         onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault();
-          onSubmit(formData);
+          onSubmit(data.id, formData);
         },
       }}
     >
@@ -79,13 +79,13 @@ export default function UpdateScriptDialog({
           options={level2Categories}
           getOptionLabel={(option: Category) => option.name}
           label="Update category"
-          value={formData.category}
+          value={data.category}
           onChange={handleCategoryChange}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button type="submit" disabled={!(formData.name && formData.category)}>
+        <Button type="submit" disabled={!(formData.name || formData.category)}>
           Update
         </Button>
       </DialogActions>

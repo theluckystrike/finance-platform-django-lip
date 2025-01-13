@@ -108,10 +108,10 @@ const AllScripts = () => {
     getData();
   };
 
-  const handleCloseUpdateModal = async (formData: any) => {
+  const handleCloseUpdateModal = async (scriptId: number | null, formData: any) => {
     try {
       if (formData && showUpdateModal) {
-        await updateScript({ id: showUpdateModal.id, data: formData });
+        await updateScript({ id: scriptId, data: formData });
         getData();
       }
     } catch (error) {}
@@ -362,7 +362,7 @@ const AllScripts = () => {
         <UpdateScriptDialog
           isOpen={!!showUpdateModal}
           data={showUpdateModal}
-          onClose={() => handleCloseUpdateModal(null)}
+          onClose={() => handleCloseUpdateModal(null, null)}
           onSubmit={handleCloseUpdateModal}
           categories={categories}
         />
