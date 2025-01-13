@@ -16,7 +16,7 @@ import {
   GetSatusreportByIDs,
   Updatereports,
   UpdateReportss,
-  ReportState,
+  ReportState, RemoveScriptFromReports,
 } from '../../Redux/Report/Slice';
 import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
@@ -99,21 +99,14 @@ const ReportView = () => {
 
   const removeScript = async (val: any) => {
     try {
-      const newReportScripts = report.scripts.filter((i: any) => i.id !== val);
-
       await dispatch(
-        Updatereports({
-          values: {
-            name: report.name,
-            scripts: newReportScripts.map((s: any) => s.id),
-          },
-          id,
-        }),
+        RemoveScriptFromReports({reportId: report.id, scriptId: val}),
       );
       handleToast.SuccessToast(`Remove Script successfully`);
     } catch (error) {
       handleToast.ErrorToast(`Failed remove script`);
     } finally {
+      getreport();
     }
   };
 
@@ -314,6 +307,7 @@ const ReportView = () => {
                           </td>
                           <td className="col-1 text-center mx-auto">
                             <DeleteIcon
+                              style={{ cursor: 'pointer' }}
                               onClick={() => removeScript(script.id)}
                             />
                           </td>

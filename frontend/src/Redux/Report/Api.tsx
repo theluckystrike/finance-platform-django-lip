@@ -44,6 +44,20 @@ export const Updatereport = async (data: any) => {
   }
 };
 
+//Remove script from report
+export const RemoveScriptFromReport = async (data: any) => {
+  const { reportId, scriptId } = data;
+
+  try {
+    const response = await axiosInstance.delete(
+      `${endpoint.reports}/${reportId}/remove-script/${scriptId}`,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Get Report by ID
 export const GetreportByID = async (data: any) => {
   const { id } = data;
