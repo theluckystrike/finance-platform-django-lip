@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from ..serializers import ReportEmailTaskSerializer, ReportReadSerializer, ReportWriteSerializer
-from scriptupload.models import Report, merge_reports, ReportEmailTask
+from scriptupload.models import Report, merge_reports, ReportEmailTask, Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -218,6 +218,19 @@ class MergeReportsView(APIView):
             return Response({"message": "Successfully merged reports"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"error": "Failed to merge reports"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RemoveScriptFromReport(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, report_id, script_id):
+        report = get_object_or_404(Report, id=report_id)
+
+        if request.method == "DELETE":
+            script = Script.objects.get(id=script_id)
+            report.scripts.remove(script)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class ReportEmailTaskViewSet(ModelViewSet):
