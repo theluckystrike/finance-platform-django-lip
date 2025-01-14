@@ -5,8 +5,13 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import AutoComplete from '../../../Comopnent/AutoComplete';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
+import AutoComplete from '../../../Comopnent/AutoComplete';
 import { Category } from '../../../Redux/CategoryQuery';
 
 interface Props {
@@ -20,6 +25,7 @@ interface Props {
 interface FormData {
   name: string;
   category: number | null; // Number - because we need to pass category id, also assuming that category can be null
+  for_summary: boolean;
 }
 
 export default function UpdateScriptDialog({
@@ -29,7 +35,11 @@ export default function UpdateScriptDialog({
   data,
   categories,
 }: Props) {
-  const [formData, setFormData] = useState<FormData>({name: data.name, category: data.category.id});
+  const [formData, setFormData] = useState<FormData>({
+    name: data.name,
+    category: data.category.id,
+    for_summary: data.for_summary,
+  });
 
   const level2Categories = useMemo(
     () => categories.filter((cate: Category) => cate.level === 2),
@@ -81,7 +91,23 @@ export default function UpdateScriptDialog({
           label="Update category"
           value={data.category}
           onChange={handleCategoryChange}
+          sx={{ mb: 8 }} // Adjust the value as needed
         />
+        <FormControl>
+          <FormLabel id="demo-radio-buttons-group-label">For Summary</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-radio-buttons-group-label"
+            value={formData.for_summary} // Bind the value to Formik
+            onChange={(ev, v) =>
+              setFormData({ ...formData, for_summary: v !== 'false' })
+            }
+            name="radio-buttons-group"
+          >
+            <FormControlLabel value={false} control={<Radio />} label="No" />
+            <FormControlLabel value={true} control={<Radio />} label="Yes" />
+          </RadioGroup>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
