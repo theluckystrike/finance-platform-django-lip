@@ -21,7 +21,8 @@ export interface ScriptState {
   loading: boolean;
   error: any; // You can refine this to be more specific if you know the error type
 }
-export const initialState: ScriptState = {
+
+const initialState: ScriptState = {
   scripts: [],
   count: 0,
   Script: {},

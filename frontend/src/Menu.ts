@@ -98,6 +98,10 @@ export const ActiveRoute = {
     path: 'category-manager',
     icon: 'CategoryManager',
   },
+  CreateSummary: {
+    name: 'Create Model Summary',
+    path: 'create-summary',
+  },
   TapeSummaryResult: {
     name: 'Model Summary Result',
     path: 'tape-summary-results/:id',

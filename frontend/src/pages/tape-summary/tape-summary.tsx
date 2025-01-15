@@ -6,7 +6,6 @@ import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
 import { ScriptData, TapeSummaryData } from '../../DummyData/TableData';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
 import PaginationButtons, {
@@ -15,26 +14,23 @@ import PaginationButtons, {
 } from '../../Comopnent/ui/PaginationButtons';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import useSortableData from '../../customHook/useSortable';
-import CreateSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalSummary';
-import { GetAllsummerys } from '../../Redux/TapeSummary/Slice';
+import { GetAllsummerys, SummaryState } from '../../Redux/TapeSummary/Slice';
+import type { RootState } from '../../Store';
 
 const TapeSummary: React.FC = () => {
   const dispatch = useDispatch();
 
   // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
 
-  const store: any = useSelector((i) => i);
+  const { loading, summaries, count } = useSelector<RootState, SummaryState>(
+    (state) => state.summary,
+  );
 
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
-  const { loading } = store?.summary;
-  const allsummerys = store?.summary?.summaries?.results;
-
-  const [loginUser, setLoginUser] = useState<any>(null);
 
   const getData = async () => {
     try {
-      await dispatch(GetAllScripts({ token: loginUser?.access }));
-      await dispatch(GetAllsummerys({ token: loginUser?.access }));
+      await dispatch(GetAllsummerys());
     } catch (error) {
       console.log(error);
     }
@@ -82,7 +78,7 @@ const TapeSummary: React.FC = () => {
     }
   };
   const { items, requestSort, getClassNamesFor } = useSortableData(
-    allsummerys || [],
+    summaries || [],
   );
   const isAllSelected = selectedScripts.length === items.length;
 
@@ -109,7 +105,7 @@ const TapeSummary: React.FC = () => {
             <button
               className="btn bg-green opacity-100 text-light col py-2 px-3 justify-content-center"
               type="button"
-              onClick={() => setSaveShow(true)}
+              onClick={() => navigate(`/${ActiveRoute.CreateSummary.path}`)}
             >
               Create Summary
             </button>
@@ -207,11 +203,7 @@ const TapeSummary: React.FC = () => {
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        {store.script.count === 0 ? (
-                          <p>No scripts found</p>
-                        ) : (
-                          <Loader />
-                        )}
+                        {count === 0 ? <p>No summaries found</p> : <Loader />}
                       </td>
                     </tr>
                   )}
@@ -225,7 +217,6 @@ const TapeSummary: React.FC = () => {
           )}
         </div>
       </div>
-      <CreateSummary show={saveShow} handleClose={() => setSaveShow(false)} />
     </>
   );
 };

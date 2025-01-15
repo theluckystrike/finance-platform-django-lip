@@ -10,6 +10,17 @@ import {
   Updatesummery,
 } from './Api';
 
+export interface SummaryState {
+  summaries: any[]; // Adjust type as necessary
+  summery: any[]; // Adjust type as necessary
+  summeryStatus: string;
+  Active_Role: string;
+  page: number;
+  loading: boolean;
+  error: any; // Adjust type as necessary
+  count: number;
+}
+
 const initialState: any = {
   summaries: [],
   summery: [],
@@ -18,6 +29,7 @@ const initialState: any = {
   page: 1,
   loading: false,
   error: null,
+  count: 0,
 };
 
 const AsyncFunctionThunk = (name: any, apiFunction: any) => {
@@ -91,7 +103,8 @@ const summerySlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetAllsummerys.fulfilled, (state, action) => {
-        state.summaries = action.payload;
+        state.summaries = action.payload.results;
+        state.count = action.payload.count;
         state.loading = false;
       })
       .addCase(GetAllsummerys.pending, (state) => {

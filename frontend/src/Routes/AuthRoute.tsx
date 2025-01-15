@@ -12,6 +12,7 @@ const Home = lazy(() => import('../pages/Home/Home'));
 const ReportView = lazy(() => import('../pages/Reports/Report_view'));
 const Report = lazy(() => import('../pages/Reports/Reports'));
 const TapeSummary = lazy(() => import('../pages/tape-summary/tape-summary'));
+const CreateSummary = lazy(() => import('../pages/tape-summary/CreateSummary'));
 const TapeSummaryResult = lazy(
   () => import('../pages/tape-summary/tape-summary-result'),
 );
@@ -71,6 +72,10 @@ export const SimpleRoute = [
       {
         path: ActiveRoute.CategoryManager.path,
         element: <CategoryManger />,
+      },
+      {
+        path: ActiveRoute.CreateSummary.path,
+        element: <CreateSummary />,
       },
       {
         path: ActiveRoute.TapeSummaryResult.path,
