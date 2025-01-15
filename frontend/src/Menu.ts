@@ -55,7 +55,7 @@ export const SidebarMenu: SidebarMenutype = {
     role: 'all',
   },
   tapesummary: {
-    name: 'Tape Summary',
+    name: 'Model Summary',
     path: 'tape-summary',
     icon: 'Summarize',
     hide: false,
@@ -99,7 +99,7 @@ export const ActiveRoute = {
     icon: 'CategoryManager',
   },
   TapeSummaryResult: {
-    name: 'Tape Summary Result',
+    name: 'Model Summary Result',
     path: 'tape-summary-results/:id',
     icon: 'CategoryManager',
   },

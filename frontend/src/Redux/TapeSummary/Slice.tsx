@@ -11,7 +11,7 @@ import {
 } from './Api';
 
 const initialState: any = {
-  summerys: [],
+  summaries: [],
   summery: [],
   summeryStatus: '',
   Active_Role: '',
@@ -91,7 +91,7 @@ const summerySlice = createSlice({
         state.error = action.payload;
       })
       .addCase(GetAllsummerys.fulfilled, (state, action) => {
-        state.summerys = action.payload;
+        state.summaries = action.payload;
         state.loading = false;
       })
       .addCase(GetAllsummerys.pending, (state) => {

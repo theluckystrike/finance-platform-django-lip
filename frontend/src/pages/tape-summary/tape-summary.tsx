@@ -27,30 +27,22 @@ const TapeSummary: React.FC = () => {
 
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
   const { loading } = store?.summary;
-  const allsummerys = store?.summary?.summerys?.results;
+  const allsummerys = store?.summary?.summaries?.results;
 
   const [loginUser, setLoginUser] = useState<any>(null);
 
-  // Effect to retrieve loginUser from localStorage on component mount
-  useEffect(() => {
-    const storedLoginUser = localStorage.getItem('login');
-    if (storedLoginUser) {
-      setLoginUser(JSON.parse(storedLoginUser));
+  const getData = async () => {
+    try {
+      await dispatch(GetAllScripts({ token: loginUser?.access }));
+      await dispatch(GetAllsummerys({ token: loginUser?.access }));
+    } catch (error) {
+      console.log(error);
     }
+  };
+
+  useEffect(() => {
+    getData();
   }, []);
-  useEffect(() => {
-    if (loginUser) {
-      const getDAta = async () => {
-        try {
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
-          await dispatch(GetAllsummerys({ token: loginUser?.access }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
-    }
-  }, [loginUser]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
@@ -110,7 +102,7 @@ const TapeSummary: React.FC = () => {
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h1 ">
-            Tape Summary <span id="headerInfo">({items.length})</span>
+            Model Summary <span id="headerInfo">({items.length})</span>
           </h1>
 
           <div className="btn-toolbar mb-2 mb-md-0  ">
