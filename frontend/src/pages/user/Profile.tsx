@@ -259,7 +259,7 @@ const Profile: React.FC = () => {
                           aria-valuemax={100}
                         ></div>
                       </div>
-                      <small>Tape Summary</small>
+                      <small>Model Summary</small>
                       <div className="progress mb-3" style={{ height: '5px' }}>
                         <div
                           className="progress-bar bg-green"

@@ -191,7 +191,7 @@ export const Categoryarray = [
     subcategory: [
       {
         name: 'Model Summaries-Tape',
-        innerCategory: ['Tape Summary', 'Tape Summary2'],
+        innerCategory: ['Model Summary', 'Tape Summary2'],
       },
     ],
   },
@@ -229,7 +229,7 @@ export const Categoryarray2 = [
     subcategory: [
       {
         name: 'Model Summaries-Tape',
-        innerCategory: ['Tape Summary', 'Tape Summary2', 'Tape Summary3'],
+        innerCategory: ['Model Summary', 'Tape Summary2', 'Tape Summary3'],
       },
     ],
   },

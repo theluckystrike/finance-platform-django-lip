@@ -3,6 +3,12 @@ import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
 import AutoComplete from '../../Comopnent/AutoComplete';
 
 import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
@@ -59,7 +65,6 @@ const UploadScriptForm = () => {
     },
   );
   const [show, setShow] = useState(false);
-  const [selectValue, setSelectValue] = useState('');
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -72,6 +77,7 @@ const UploadScriptForm = () => {
       file: null,
       description: '',
       parentName: '',
+      for_summary: 0,
     },
     validationSchema,
     onSubmit: async (values: any, { resetForm }) => {
@@ -85,8 +91,7 @@ const UploadScriptForm = () => {
 
       if (!res.error) {
         handleToast.SuccessToast(`New Script added successfully`);
-        resetForm();
-        fileRef.current.value = '';
+        reset();
       } else {
         handleToast.ErrorToast(res.payload.error);
       }
@@ -113,11 +118,13 @@ const UploadScriptForm = () => {
     setSelectedOutputType(value);
   };
 
-  const onReset = () => {
+  const reset = () => {
     formik.resetForm();
     setSelectedCategory(null);
     setSelectedOutputType(null);
+    fileRef.current.value = '';
   };
+
   return (
     <>
       <div className="UploadScript_main_wrap mt-3">
@@ -222,6 +229,23 @@ const UploadScriptForm = () => {
               ) : null}
             </div>
 
+            <div className="mb-3">
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">
+                  For Summary
+                </FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={formik.values.for_summary} // Bind the value to Formik
+                  onChange={(ev, v) => formik.setFieldValue('for_summary', v)}
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel value={0} control={<Radio />} label="No" />
+                  <FormControlLabel value={1} control={<Radio />} label="Yes" />
+                </RadioGroup>
+              </FormControl>
+            </div>
             <div className="mx-auto text-center d-flex justify-content-between row ">
               <button
                 type="submit"
@@ -232,7 +256,7 @@ const UploadScriptForm = () => {
               <button
                 type="reset"
                 className="btn btn-light bordered-button my-1  col-12 col-sm-12 col-md-5"
-                onClick={onReset}
+                onClick={reset}
               >
                 Reset
               </button>
