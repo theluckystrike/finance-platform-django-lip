@@ -1,7 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
+
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import useToast from '../../customHook/toast';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import type { RootState } from '../../Store';
@@ -11,7 +25,7 @@ import {
   ScriptState,
   GetAllScripts,
 } from '../../Redux/Script/ScriptSlice';
-
+import AutoComplete from '../../Comopnent/AutoComplete';
 interface ScriptOption {
   value: string;
   label: string;
@@ -25,33 +39,34 @@ const CreateSummary = () => {
   );
 
   useEffect(() => {
-    dispatch(GetAllScripts({ query: '' }));
+    dispatch(GetAllScripts({ query: 'for_summary=1' }));
   }, []);
-  const filterScript = scripts.filter(
-    (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
-  );
+
   const [name, setName] = useState('');
-  const [selectedScriptId, setSelectedScriptId] = useState<string>('');
+  const [selectedScriptId, setSelectedScriptId] = useState<ScriptOption | null>(
+    null,
+  );
   const [selectScript, setSelectScript] = useState<any[]>([]);
   const [selectedScriptIds, setSelectedScriptIds] = useState<{
     [key: string]: string;
   }>({});
 
-  const availableScriptOptions: ScriptOption[] = filterScript
-    .filter(
-      (script: any) => !Object.keys(selectedScriptIds).includes(script.id),
-    )
-    .map((script: any) => ({
+  const availableScriptOptions: ScriptOption[] = useMemo(() => {
+    // const filterScript = scripts.filter(
+    //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
+    // );
+    return scripts.map((script: any) => ({
       value: script.id,
       label: script.name,
     }));
+  }, [scripts]);
 
   const addScript = async () => {
     if (selectedScriptId) {
       const res = await dispatch(getScriptByIDAction({ id: selectedScriptId }));
       if (res.meta.requestStatus === 'fulfilled')
         setSelectScript((prev) => [...prev, res.payload]);
-      setSelectedScriptId('');
+      setSelectedScriptId(null);
     }
   };
 
@@ -83,112 +98,74 @@ const CreateSummary = () => {
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h1 ">Create Model</h1>
         </div>
-        <div>
+        <div className="col-8">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
             }}
           >
-            <div className="mb-3">
-              <div className="row mx-0 px-3">
-                <div className="col-12 m-0">
-                  <label htmlFor="name" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    className="form-control m-0"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-
-                <div className="col-10 mb-2">
-                  <label htmlFor="scripts" className="form-label">
-                    Select Script
-                  </label>
-                  <Select
-                    id="scripts"
-                    options={availableScriptOptions}
-                    value={
-                      availableScriptOptions.find(
-                        (option) => option.value === selectedScriptId,
-                      ) || null
-                    }
-                    onChange={(selectedOption) =>
-                      setSelectedScriptId(
-                        selectedOption ? selectedOption.value : '',
-                      )
-                    }
-                    placeholder="Select a Script"
-                  />
-                </div>
-
-                <div className="col-2 mb-3 text-center">
-                  <label
-                    htmlFor="column"
-                    className="form-label  d-block invisible"
-                  >
-                    {' dfdd'}
-                  </label>
-                  <button
-                    type="button"
-                    className="btn btn-dark"
-                    onClick={addScript}
-                  >
-                    <Icon size="20px" icon="Add" />
-                  </button>
-                </div>
-
-                <div
-                  className="col-12"
-                  style={{ maxHeight: '300px', overflow: 'auto' }}
+            {/* <TextField
+              id="filled-basic"
+              label="Name"
+              variant="filled"
+              sx={{ width: '300px' }}
+            /> */}
+            <div className="d-flex col-12">
+              <div className="col-8">
+                <List
+                  sx={{
+                    bgcolor: 'background.paper',
+                  }}
+                  aria-labelledby="scripts-list-subheader"
+                  subheader={
+                    <ListSubheader component="div" id="scripts-list-subheader">
+                      Available Scripts
+                    </ListSubheader>
+                  }
                 >
-                  <h6>Scripts to Include:</h6>
-                  <ul>
-                    {selectScript.map((scriptItem: any) => (
-                      <li key={uuidv4()}>
-                        Script ID: {scriptItem?.id}, Column:{' '}
-                        {selectedScriptIds[scriptItem.id]}
-                        <Select
-                          id="columns"
-                          options={scriptItem?.table_data?.table_meta?.columns.map(
-                            (column: any) => ({
-                              value: column.name,
-                              label: column.name,
-                            }),
-                          )}
-                          value={
-                            scriptItem?.table_data?.table_meta?.columns
-                              .map((column: any) => ({
-                                value: column.name,
-                                label: column.name,
-                              }))
-                              .find(
-                                (option: any) =>
-                                  option.value ===
-                                  selectedScriptIds[scriptItem.id],
-                              ) || null
-                          }
-                          onChange={(selectedOption) =>
-                            handleSelectChange(selectedOption, scriptItem.id)
-                          }
-                          placeholder="Select a Column"
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-dark col-5 px-3 fw-bold"
-                >
-                  Create
-                </button>
+                  {availableScriptOptions.map((option, i) => (
+                    <ListItem>
+                      <ListItemButton selected={i === 0}>
+                        <ListItemText primary={option.label} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
               </div>
+              <div className="col-4">
+                <List
+                  aria-labelledby="columns-subheader"
+                  subheader={
+                    <ListSubheader component="div" id="columns-subheader">
+                      Data Columns
+                    </ListSubheader>
+                  }
+                >
+                  <ListItem disablePadding>
+                    <ListItemButton selected>
+                      <ListItemText primary="Model Score 1" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton selected>
+                      <ListItemText primary="Model Score 2" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemText primary="Model Score 3" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </div>
+            </div>
+
+            <div className="d-flex col-12">
+              <Stack direction="row" spacing={1}>
+                <Chip label="Model Score 1" onDelete={() => {}} />
+                <Chip label="Model Score 2" onDelete={() => {}} />
+              </Stack>
             </div>
           </form>
         </div>
