@@ -26,6 +26,7 @@ import {
   GetAllScripts,
 } from '../../Redux/Script/ScriptSlice';
 import AutoComplete from '../../Comopnent/AutoComplete';
+import { Button } from 'react-bootstrap';
 interface ScriptOption {
   value: string;
   label: string;
@@ -111,7 +112,7 @@ const CreateSummary = () => {
               variant="filled"
               sx={{ width: '300px' }}
             /> */}
-            <div className="d-flex col-12">
+            <div className="d-flex col-12 mb-4">
               <div className="col-8">
                 <List
                   sx={{
@@ -161,12 +162,14 @@ const CreateSummary = () => {
               </div>
             </div>
 
-            <div className="d-flex col-12">
+            <div className="d-flex col-12 mb-4">
               <Stack direction="row" spacing={1}>
                 <Chip label="Model Score 1" onDelete={() => {}} />
                 <Chip label="Model Score 2" onDelete={() => {}} />
               </Stack>
             </div>
+
+            <Button type="submit">Create</Button>
           </form>
         </div>
       </div>
