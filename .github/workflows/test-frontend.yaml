@@ -20,6 +20,12 @@ jobs:
     env:
       SECRET_KEY: ${{ github.sha }}
       DEBUG: True
+      REACT_APP_API_URL: http://api.localhost:8000
+      REACT_APP_BASE_URL: http://localhost:4200
+      REACT_APP_ADMIN_URL: https://admin.localhost:8000
+
+      DEV_USERNAME: testuser
+      DEV_PASSWORD: test123456
 
     steps:
     - name: Checkout
