@@ -32,18 +32,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
+    # - name: Set up Node.js 22
+    #   uses: actions/setup-node@v4
+    #   with:
+    #     node-version: 22
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.9.20' 
 
-    - name: Install dependencies
-      run: cd frontend && npm install
+    # - name: Install dependencies
+    #   run: cd frontend && npm install
 
     - name: Update /etc/hosts
       run: |
@@ -68,8 +68,8 @@ jobs:
     - name: Run Backend
       run: python backend/manage.py runserver &
 
-    - name: Run Frontend
-      run: cd frontend && npm start &
+    # - name: Run Frontend
+    #   run: cd frontend && npm start &
 
     - name: Wait for backend to be ready
       run: |
@@ -78,15 +78,25 @@ jobs:
           sleep 5
         done
 
-    - name: Wait for frontend to be ready
-      run: |
-        echo "Waiting for frontend to be ready..."
-        until curl -s http://localhost:4200/; do
-          sleep 5
-        done
+    # - name: Wait for frontend to be ready
+    #   run: |
+    #     echo "Waiting for frontend to be ready..."
+    #     until curl -s http://localhost:4200/; do
+    #       sleep 5
+    #     done
 
-    - name: Run Cypress tests
-      run: cd frontend && npm test
+    # - name: Run Cypress tests
+    #   run: cd frontend && npm test
+
+    - name: Checkout
+        uses: actions/checkout@v4
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        build: npm run build
+        start: npm start
 
 
 # need to have backend and frontend running to be able to run cypress tests.
