@@ -1,0 +1,80 @@
+name: Test Frontend on PR
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ testing-frontend ]
+
+env:
+  AWS_REGION: ca-central-1
+
+permissions:
+  contents: read 
+  
+jobs:
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    environment: Test (Frontend)
+    env:
+      SECRET_KEY: ${{ github.sha }}
+      DEBUG: True
+      REACT_APP_API_URL: http://api.localhost:8000
+      REACT_APP_BASE_URL: http://localhost:4200
+      REACT_APP_ADMIN_URL: https://admin.localhost:8000
+
+      DEV_USERNAME: testuser
+      DEV_PASSWORD: test123456
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9.20'
+        cache: 'pip'
+        cache-dependency-path: 'backend/requirements.txt'
+
+
+    - name: Update /etc/hosts
+      run: |
+        echo "127.0.0.1 api.localhost" | sudo tee -a /etc/hosts
+        echo "127.0.0.1 admin.localhost" | sudo tee -a /etc/hosts
+
+    - name: Install Backend Requirements
+      run: pip install -r backend/requirements.txt
+
+    - name: Migrate Database
+      run: |
+        mv backend/testdb.sqlite3 backend/db.sqlite3
+        python backend/manage.py migrate
+
+    - name: Run Backend
+      run: python backend/manage.py runserver 0.0.0.0:8000 &
+
+    - name: Wait for backend to be ready
+      run: |
+        echo "Waiting for backend to be ready..."
+        until curl -s http://api.localhost:8000/ping/; do
+          sleep 5
+          echo "sleeping for 5 seconds..."
+        done
+
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        start: npm start
+        working-directory: frontend
+        wait-on: 'http://localhost:4200'
+        wait-on-timeout: 120
+        # build: npm run build
+        env: REACT_APP_API_URL=http://api.localhost:8000,REACT_APP_BASE_URL=http://localhost:4200,REACT_APP_ADMIN_URL=https://admin.localhost:8000,DEV_USERNAME=testuser,DEV_PASSWORD=test123456
+
