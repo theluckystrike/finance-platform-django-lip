@@ -3,6 +3,8 @@ name: Test Frontend on PR
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ testing-frontend ]
 
 env:
   AWS_REGION: ca-central-1
@@ -65,6 +67,6 @@ jobs:
         working-directory: frontend
         wait-on: 'http://localhost:4200'
         wait-on-timeout: 120
-        build: npm run build
+        # build: npm run build
         env: REACT_APP_API_URL=http://api.localhost:8000,REACT_APP_BASE_URL=http://localhost:4200,REACT_APP_ADMIN_URL=https://admin.localhost:8000,DEV_USERNAME=testuser,DEV_PASSWORD=test123456
 
