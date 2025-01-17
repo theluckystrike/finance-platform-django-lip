@@ -94,10 +94,10 @@ jobs:
       # and run all Cypress tests
     - name: Cypress run
       uses: cypress-io/github-action@v6
-      working-directory: frontend
       with:
-        build: npm run build
+        # build: npm run build
         start: npm start
+        working-directory: frontend
 
 
 # need to have backend and frontend running to be able to run cypress tests.
