@@ -3,21 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
 
-import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
-import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import List from '@mui/material/List';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-
+import ListItemIcon from '@mui/material/ListItemIcon';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 import useToast from '../../customHook/toast';
-import Icon from '../../Comopnent/ui/icon/Icon';
+
 import type { RootState } from '../../Store';
 import { Createsummerys, GetAllsummerys } from '../../Redux/TapeSummary/Slice';
 import {
@@ -25,8 +24,7 @@ import {
   ScriptState,
   GetAllScripts,
 } from '../../Redux/Script/ScriptSlice';
-import AutoComplete from '../../Comopnent/AutoComplete';
-import { Button } from 'react-bootstrap';
+import Loader from '../../Comopnent/ui/Loader';
 interface ScriptOption {
   value: string;
   label: string;
@@ -35,50 +33,90 @@ interface ScriptOption {
 const CreateSummary = () => {
   const dispatch = useDispatch();
   const handleToast = useToast();
-  const { loading, scripts, count } = useSelector<RootState, ScriptState>(
-    (state) => state.script,
-  );
+  const { loading, scripts, count, loadingById, scriptsMap } = useSelector<
+    RootState,
+    ScriptState
+  >((state) => state.script);
+  const [name, setName] = useState('');
+  const [activeScript, setActiveScript] = useState<string>('');
+  const [activeColumns, setActiveColumns] = useState([]);
+  const [columnsForModelMap, setColumnsForModelMap] = useState<{
+    [key: string]: any;
+  }>({});
+  const forSummaryScripts: ScriptOption[] = useMemo(() => {
+    // const filterScript = scripts.filter(
+    //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
+    // );
+    const filtered = scripts?.length
+      ? scripts
+          .filter(
+            (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
+          )
+          .map((script: any) => ({
+            value: script.id,
+            label: script.name,
+          }))
+      : [];
+
+    setActiveScript(filtered.length ? filtered[0].value : null);
+    return filtered;
+  }, [scripts]);
 
   useEffect(() => {
     dispatch(GetAllScripts({ query: 'for_summary=1' }));
   }, []);
 
-  const [name, setName] = useState('');
-  const [selectedScriptId, setSelectedScriptId] = useState<ScriptOption | null>(
-    null,
-  );
-  const [selectScript, setSelectScript] = useState<any[]>([]);
-  const [selectedScriptIds, setSelectedScriptIds] = useState<{
-    [key: string]: string;
-  }>({});
+  // const addScript = async () => {
+  //   if (selectedScriptId) {
+  //     const res = await dispatch(getScriptByIDAction({ id: selectedScriptId }));
+  //     if (res.meta.requestStatus === 'fulfilled')
+  //       setSelectScript((prev) => [...prev, res.payload]);
+  //     setSelectedScriptId(null);
+  //   }
+  // };
 
-  const availableScriptOptions: ScriptOption[] = useMemo(() => {
-    // const filterScript = scripts.filter(
-    //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
-    // );
-    return scripts.map((script: any) => ({
-      value: script.id,
-      label: script.name,
-    }));
-  }, [scripts]);
-
-  const addScript = async () => {
-    if (selectedScriptId) {
-      const res = await dispatch(getScriptByIDAction({ id: selectedScriptId }));
-      if (res.meta.requestStatus === 'fulfilled')
-        setSelectScript((prev) => [...prev, res.payload]);
-      setSelectedScriptId(null);
-    }
+  const fetchDataColumnsByScript = (id: string) => {
+    dispatch(getScriptByIDAction({ id }));
   };
 
+  useEffect(() => {
+    if (activeScript) {
+      let dataColumns = scriptsMap[activeScript];
+      if (dataColumns) {
+        // setActiveColumns(scriptsMap[activeScript])
+        setActiveColumns(dataColumns['table_data']['table_meta']['columns']);
+      } else {
+        fetchDataColumnsByScript(activeScript);
+      }
+    }
+  }, [activeScript]);
+
+  useEffect(() => {
+    if (scriptsMap[activeScript]) {
+      let dataColumns = scriptsMap[activeScript];
+      setActiveColumns(dataColumns['table_data']['table_meta']['columns']);
+    }
+  }, [scriptsMap]);
+
+  const tagsForActiveColumns = useMemo(() => {
+    return Object.entries(columnsForModelMap).flatMap(([scriptId, columns]) =>
+      columns.map((column: string) => ({ scriptId: scriptId, column })),
+    );
+  }, [columnsForModelMap]);
+
   const handleSubmit = async () => {
-    const values = { name, scripts: selectedScriptIds };
+    const values = {
+      name,
+      scripts: tagsForActiveColumns.reduce((scripts, tag) => {
+        scripts[tag.scriptId] = tag.column;
+        return scripts;
+      }, {}),
+    };
 
     try {
       await dispatch(Createsummerys({ values }));
       handleToast.SuccessToast('Summary created successfully!');
-      setSelectedScriptIds({});
-      setName('');
+
       await dispatch(GetAllsummerys({}));
     } catch (error) {
       handleToast.ErrorToast('Failed to create summary. Please try again.');
@@ -86,94 +124,162 @@ const CreateSummary = () => {
     }
   };
 
-  const handleSelectChange = (selectedOption: any, scriptId: string) => {
-    setSelectedScriptIds((prevSelected) => ({
-      ...prevSelected,
-      [scriptId]: selectedOption ? selectedOption.value : '',
-    }));
+  const handleScriptChange = (id: string) => {
+    setActiveScript(id);
+  };
+
+  const handleColumnChange = (name: string) => {
+    const tempColumnsMap = { ...columnsForModelMap };
+    let activeColumns = tempColumnsMap[activeScript];
+
+    /**** multiple data columns case ****/
+    // if (!activeColumns) {
+    //   activeColumns = [name];
+    // } else if (activeColumns.includes(name)) {
+    //   activeColumns.splice(activeColumns.indexOf(name), 1);
+    // } else {
+    //   activeColumns.push(name);
+    // }
+
+    /**** single data column only ****/
+    if (!activeColumns) {
+      activeColumns = [name];
+    } else if (activeColumns.includes(name)) {
+      activeColumns = [];
+    } else {
+      activeColumns = [name];
+    }
+
+    tempColumnsMap[activeScript] = activeColumns;
+    setColumnsForModelMap(tempColumnsMap);
+  };
+
+  const getScriptNameByID = (id: string) => {
+    return scripts.filter((sc) => sc.id == id)?.[0]?.name;
+  };
+
+  const handleDeleteTag = (tag: { scriptId: string; column: string }) => {
+    const tempColumnsMap = { ...columnsForModelMap };
+    tempColumnsMap[tag.scriptId] = [];
+    setColumnsForModelMap(tempColumnsMap);
   };
 
   return (
-    <>
-      <div className="mx-4">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-          <h1 className="h1 ">Create Model</h1>
+    <div className="mx-4 justify-content-center align-items-center">
+      <div className="pt-3 mb-5 textalign-center">
+        <h1 className="h1 ">Create Model</h1>
+      </div>
+      <div className="col-8 offset-2">
+        <div className="d-flex col-12 mb-4">
+          <div className="col-8">
+            <List
+              className="border-2px summary-list"
+              style={{
+                height: '650px',
+                overflowY: 'auto',
+              }}
+              aria-labelledby="scripts-list-subheader"
+              subheader={
+                <ListSubheader
+                  component="div"
+                  id="scripts-list-subheader"
+                  className="text-center"
+                >
+                  Available Scripts
+                </ListSubheader>
+              }
+            >
+              {loading ? (
+                <Loader />
+              ) : (
+                forSummaryScripts.map((option, i) => (
+                  <ListItem key={option.label}>
+                    <ListItemButton
+                      onClick={() => handleScriptChange(option.value)}
+                      selected={option.value === activeScript}
+                    >
+                      {option.value === activeScript && (
+                        <ListItemIcon>
+                          <KeyboardArrowRightIcon />
+                        </ListItemIcon>
+                      )}
+                      <ListItemText primary={option.label} />
+                    </ListItemButton>
+                  </ListItem>
+                ))
+              )}
+            </List>
+          </div>
+          <div className="col-4">
+            <List
+              className="border-2px summary-list"
+              aria-labelledby="columns-subheader"
+              style={{ height: '650px', overflowY: 'auto' }}
+              subheader={
+                <ListSubheader
+                  component="div"
+                  id="columns-subheader"
+                  className="text-center"
+                >
+                  Data Columns
+                </ListSubheader>
+              }
+            >
+              {loadingById ? (
+                <Loader />
+              ) : (
+                activeColumns.map((col: any) => (
+                  <ListItem key={col.name} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleColumnChange(col.name)}
+                      selected={columnsForModelMap[activeScript]?.includes(
+                        col.name,
+                      )}
+                    >
+                      {columnsForModelMap[activeScript]?.includes(col.name) && (
+                        <ListItemIcon>
+                          <CheckCircleOutlineIcon />
+                        </ListItemIcon>
+                      )}
+                      <ListItemText primary={col.name} />
+                    </ListItemButton>
+                  </ListItem>
+                ))
+              )}
+            </List>
+          </div>
         </div>
-        <div className="col-8">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
+
+        <div className="d-flex col-12 mb-4">
+          <Stack direction="row" spacing={1}>
+            {tagsForActiveColumns.map((tag) => (
+              <Chip
+                key={`${tag.scriptId} => ${tag.column}`}
+                label={`${getScriptNameByID(tag.scriptId)} => ${tag.column}`}
+                onDelete={() => handleDeleteTag(tag)}
+              />
+            ))}
+          </Stack>
+        </div>
+        <div className="space-between col-12">
+          <TextField
+            id="filled-basic"
+            label="Model Name"
+            variant="filled"
+            sx={{ width: '80%', marginRight: '20px' }}
+            value={name}
+            onChange={(ev) => setName(ev.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={!(name && tagsForActiveColumns.length > 0)}
           >
-            {/* <TextField
-              id="filled-basic"
-              label="Name"
-              variant="filled"
-              sx={{ width: '300px' }}
-            /> */}
-            <div className="d-flex col-12 mb-4">
-              <div className="col-8">
-                <List
-                  sx={{
-                    bgcolor: 'background.paper',
-                  }}
-                  aria-labelledby="scripts-list-subheader"
-                  subheader={
-                    <ListSubheader component="div" id="scripts-list-subheader">
-                      Available Scripts
-                    </ListSubheader>
-                  }
-                >
-                  {availableScriptOptions.map((option, i) => (
-                    <ListItem>
-                      <ListItemButton selected={i === 0}>
-                        <ListItemText primary={option.label} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </div>
-              <div className="col-4">
-                <List
-                  aria-labelledby="columns-subheader"
-                  subheader={
-                    <ListSubheader component="div" id="columns-subheader">
-                      Data Columns
-                    </ListSubheader>
-                  }
-                >
-                  <ListItem disablePadding>
-                    <ListItemButton selected>
-                      <ListItemText primary="Model Score 1" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton selected>
-                      <ListItemText primary="Model Score 2" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary="Model Score 3" />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </div>
-            </div>
-
-            <div className="d-flex col-12 mb-4">
-              <Stack direction="row" spacing={1}>
-                <Chip label="Model Score 1" onDelete={() => {}} />
-                <Chip label="Model Score 2" onDelete={() => {}} />
-              </Stack>
-            </div>
-
-            <Button type="submit">Create</Button>
-          </form>
+            Create Model
+          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -169,8 +169,8 @@ const TapeSummary: React.FC = () => {
                 <tbody id="scriptsCheckboxes">
                   {items.length > 0 ? (
                     dataPagination(items, currentPage, perPage).map(
-                      (script: any, index: any) => (
-                        <>
+                      (summary: any, index: any) => (
+                        <React.Fragment key={summary.id}>
                           <tr
                             key={index}
                             className="table-card rounded-3 bg-light-green mb-2 p-3"
@@ -179,25 +179,27 @@ const TapeSummary: React.FC = () => {
                             <td className="col-1">
                               <input
                                 type="checkbox"
-                                checked={selectedScripts.includes(script.id)}
-                                onChange={() => handleCheckboxChange(script.id)}
+                                checked={selectedScripts.includes(summary.id)}
+                                onChange={() =>
+                                  handleCheckboxChange(summary.id)
+                                }
                               />
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`/tape-summary-results/${script.id}`}
+                                to={`/tape-summary-results/${summary.id}`}
                                 className="text-decoration-none text-black"
                               >
-                                <span className="fw-bold">{script.name}</span>
+                                <span className="fw-bold">{summary.name}</span>
                               </Link>
                             </td>
 
                             <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(script.created)}
+                              {formatIsoDate(summary.created)}
                             </td>
                           </tr>
                           <tr style={{ height: '10px' }}></tr>
-                        </>
+                        </React.Fragment>
                       ),
                     )
                   ) : (

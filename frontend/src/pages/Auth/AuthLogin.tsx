@@ -62,7 +62,7 @@ function SignInComponent() {
   return (
     <div className="container">
       <div className="form-container">
-        <div className="logo-container">
+        <div className="textalign-center">
           <Logo className="icon" width={230} />
         </div>
         <form onSubmit={formik.handleSubmit}>
