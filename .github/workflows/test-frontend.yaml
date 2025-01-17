@@ -62,8 +62,8 @@ jobs:
 
     - name: Migrate Database
       run: |
-      mv backend/testdb.sqlite3 backend/db.sqlite3
-      python backend/manage.py migrate
+        mv backend/testdb.sqlite3 backend/db.sqlite3
+        python backend/manage.py migrate
 
     - name: Run Backend
       run: python backend/manage.py runserver &
