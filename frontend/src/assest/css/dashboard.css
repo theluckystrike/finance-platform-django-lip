@@ -234,3 +234,8 @@ body {
 .col-actions svg {
   cursor: pointer;
 }
+
+.space-between {
+  display: flex; /* Ensure the div is a flex container */
+  justify-content: space-between;
+}

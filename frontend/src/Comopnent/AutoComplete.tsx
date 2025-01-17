@@ -21,15 +21,17 @@ const AutoComplete = (props: any) => {
 export default AutoComplete;
 
 const inputStyles = {
+  '&.MuiAutocomplete-paper': {
+    maxHeight: '200px',
+    overflowY: 'auto',
+  },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       border: '2px solid var(--very-dark-green)',
     },
-    '&:hover fieldset': {
-      borderColor: 'blue', // Optional: Change color on hover
-    },
     '&.Mui-focused fieldset': {
-      borderColor: 'green', // Optional: Change color on focus
+      boxShadow: '0 0 0 .25rem rgba(13,110,253,.25)',
+      border: 'none',
     },
   },
 };

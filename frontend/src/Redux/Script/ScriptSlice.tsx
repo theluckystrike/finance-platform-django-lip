@@ -13,22 +13,27 @@ import { act } from 'react';
 
 export interface ScriptState {
   scripts: any[]; // You can specify a more specific type if you know the structure of scripts
+  scriptsMap: { [key: string]: any };
   count: number;
   Script: any; // Same as above, specify the correct type if known
   ScriptStatus: any;
   Active_Role: string;
   page: number;
   loading: boolean;
+  loadingById: boolean;
   error: any; // You can refine this to be more specific if you know the error type
 }
-export const initialState: ScriptState = {
+
+const initialState: ScriptState = {
   scripts: [],
+  scriptsMap: {},
   count: 0,
   Script: {},
   ScriptStatus: {},
   Active_Role: '',
   page: 1,
   loading: false,
+  loadingById: false,
   error: null,
 };
 
@@ -99,13 +104,13 @@ const ScriptSlice = createSlice({
       })
       .addCase(GetSatusScriptByIDs.fulfilled, (state, action) => {
         state.ScriptStatus = action.payload;
-        state.loading = false;
+        state.loadingById = false;
       })
       .addCase(GetSatusScriptByIDs.pending, (state) => {
-        state.loading = true;
+        state.loadingById = true;
       })
       .addCase(GetSatusScriptByIDs.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingById = false;
         state.error = action.payload;
       })
       .addCase(GetAllScripts.fulfilled, (state, action) => {
@@ -133,14 +138,18 @@ const ScriptSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(getScriptByIDAction.fulfilled, (state, action) => {
-        state.Script = action.payload;
-        state.loading = false;
+        const script = action.payload;
+        state.scriptsMap = {
+          ...state.scriptsMap,
+          [script.id]: script,
+        };
+        state.loadingById = false;
       })
       .addCase(getScriptByIDAction.pending, (state) => {
-        state.loading = true;
+        state.loadingById = true;
       })
       .addCase(getScriptByIDAction.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingById = false;
         state.error = action.payload;
       })
       .addCase(RunScripts.fulfilled, (state, action) => {
@@ -156,13 +165,13 @@ const ScriptSlice = createSlice({
       })
       .addCase(DeleteScriptByIDs.fulfilled, (state, action) => {
         state.Script = action.payload;
-        state.loading = false;
+        state.loadingById = false;
       })
       .addCase(DeleteScriptByIDs.pending, (state) => {
-        state.loading = true;
+        state.loadingById = true;
       })
       .addCase(DeleteScriptByIDs.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingById = false;
         state.error = action.payload;
       })
       .addCase(UpdateScripts.fulfilled, (state, action) => {

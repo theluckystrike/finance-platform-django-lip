@@ -50,17 +50,16 @@ export const DeleteScriptByID = async (data: any) => {
 };
 
 // Get All Scripts
-export const GetAllScript = async ({ page, per_page }: any) => {
+export const GetAllScript = async ({ page = 1, per_page, query = '' }: any) => {
   try {
     const response = await axiosInstance.get(
-      `${endpoint.scripts}?page=${page}&per_page=${per_page}`,
+      `${endpoint.scripts}?page=${page}&per_page=${per_page}&${query}`,
     );
     return response;
   } catch (error) {
     throw error;
   }
 };
-
 // Get Scripts by Category
 export const GetScriptbyCategory = async (data: any) => {
   const { value } = data;

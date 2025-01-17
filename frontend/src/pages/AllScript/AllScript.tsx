@@ -108,7 +108,10 @@ const AllScripts = () => {
     getData();
   };
 
-  const handleCloseUpdateModal = async (scriptId: number | null, formData: any) => {
+  const handleCloseUpdateModal = async (
+    scriptId: number | null,
+    formData: any,
+  ) => {
     try {
       if (formData && showUpdateModal) {
         await updateScript({ id: scriptId, data: formData });
