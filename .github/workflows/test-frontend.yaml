@@ -75,6 +75,12 @@ jobs:
         until curl -s http://api.localhost:8000/ping/; do
           sleep 5
         done
+    - name: Wait for frontend to be ready
+      run: |
+        echo "Waiting for frontend to be ready..."
+        until curl -s http://localhost:4200/; do
+          sleep 5
+        done
 
 
 # need to have backend and frontend running to be able to run cypress tests.
