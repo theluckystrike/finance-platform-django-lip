@@ -22,8 +22,8 @@ const DeleteModal: FC<DeleteModalProps> = ({ show, handleClose, data }) => {
   const handleToast = useToast();
   const handleDelete = async () => {
     await dispatch(DeletesummariesByIDs({ id: data?.id }));
-    handleToast.SuccessToast(`Tape summary delete successfully`);
-    navigate('/tape-summary');
+    handleToast.SuccessToast(`Model summary delete successfully`);
+    navigate('/model-summary');
     handleClose();
   };
 

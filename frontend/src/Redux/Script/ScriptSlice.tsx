@@ -104,13 +104,9 @@ const ScriptSlice = createSlice({
       })
       .addCase(GetSatusScriptByIDs.fulfilled, (state, action) => {
         state.ScriptStatus = action.payload;
-        state.loadingById = false;
       })
-      .addCase(GetSatusScriptByIDs.pending, (state) => {
-        state.loadingById = true;
-      })
+      .addCase(GetSatusScriptByIDs.pending, (state) => {})
       .addCase(GetSatusScriptByIDs.rejected, (state, action) => {
-        state.loadingById = false;
         state.error = action.payload;
       })
       .addCase(GetAllScripts.fulfilled, (state, action) => {
