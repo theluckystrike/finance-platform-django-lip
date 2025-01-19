@@ -86,8 +86,7 @@ export const GetSatusScriptByID = async (data: any) => {
   }
 };
 // Run Script
-export const RunScript = async (data: any) => {
-  const { id } = data;
+export const RunScript = async ({ id }: any) => {
   try {
     const response = await axiosInstance.post(`${endpoint.scripts}/${id}/run`);
     return response;

@@ -24,26 +24,6 @@ const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
 };
-// Mock data for the chart
-const chartData = [
-  { date: '2023-01', stockMarket: 0.5, modelScore: 1 },
-  { date: '2023-02', stockMarket: 0.8, modelScore: 1 },
-  { date: '2023-03', stockMarket: 0.3, modelScore: 0 },
-  { date: '2023-04', stockMarket: -0.2, modelScore: -1 },
-  { date: '2023-05', stockMarket: -0.5, modelScore: -1 },
-  { date: '2023-06', stockMarket: 0.1, modelScore: 0 },
-  { date: '2023-07', stockMarket: 0.6, modelScore: 1 },
-];
-
-// Mock data for the scripts
-const scriptData = [
-  { id: 1, name: 'Script 1', score: 0.8 },
-  { id: 2, name: 'Script 2', score: -0.3 },
-  { id: 3, name: 'Script 3', score: 0.5 },
-  { id: 4, name: 'Script 4', score: 1.0 },
-  { id: 5, name: 'Script 5', score: -0.7 },
-  { id: 6, name: 'Script 6', score: 0.2 },
-];
 
 const TapeSummaryResult: React.FC = () => {
   const { id } = useParams();

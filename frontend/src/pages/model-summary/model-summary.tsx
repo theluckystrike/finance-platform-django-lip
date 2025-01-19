@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../../assest/css/AllScript.css';
-import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
 import { ActiveRoute } from '../../Menu';
-import SaveModal from '../../Comopnent/ui/Modals/SaveModal/SaveModal';
-import { ScriptData, TapeSummaryData } from '../../DummyData/TableData';
+
+import Checkbox from '@mui/material/Checkbox';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatIsoDate } from '../../utils/formatDate';
@@ -17,16 +16,14 @@ import useSortableData from '../../customHook/useSortable';
 import { GetAllsummerys, SummaryState } from '../../Redux/TapeSummary/Slice';
 import type { RootState } from '../../Store';
 
-const TapeSummary: React.FC = () => {
+const ModelSummary: React.FC = () => {
   const dispatch = useDispatch();
-
-  // const { data, error, isLoading } = useGetAllProjectQuery({ token:'fds', page_no:1, page_size:1000 });
 
   const { loading, summaries, count } = useSelector<RootState, SummaryState>(
     (state) => state.summary,
   );
 
-  const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
   const getData = async () => {
     try {
@@ -43,53 +40,36 @@ const TapeSummary: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
 
-  const [show, setShow] = useState(false);
-  const [saveShow, setSaveShow] = useState(false);
   const navigate = useNavigate();
 
-  const toggleSelectAll = (event: React.ChangeEvent<any>) => {
-    const checkboxes = document.querySelectorAll(
-      '#scriptsCheckboxes input[type="checkbox"]',
-    );
-    checkboxes.forEach(
-      (checkbox: any) => (checkbox.checked = event.target.checked),
-    );
-    handleCheckboxChange();
-  };
-
-  const handleCheckboxChange = (event?: React.ChangeEvent<any>) => {
+  const handleCheckboxChange = (event: React.ChangeEvent<any>, id: string) => {
     if (event) event.stopPropagation();
-
-    const selected = Array.from(
-      document.querySelectorAll(
-        '#scriptsCheckboxes input[type="checkbox"]:checked',
-      ),
-    ).map((checkbox: any) => checkbox.value);
-
-    setSelectedScripts(selected);
+    console.log(
+      'handleCheckboxChange',
+      selectedModels,
+      id,
+      id in selectedModels,
+    );
+    const newSelectedModels = selectedModels.includes(id)
+      ? selectedModels.filter((m) => m != id)
+      : selectedModels.concat(id);
+    setSelectedModels(newSelectedModels);
   };
 
-  const handleGetResults = () => {
-    if (selectedScripts.length > 0) {
-      const query = new URLSearchParams({
-        scriptIds: selectedScripts.join(','),
-      }).toString();
-      navigate(`/${ActiveRoute.TapeSummaryResult.path}?${query}`);
-    }
-  };
   const { items, requestSort, getClassNamesFor } = useSortableData(
     summaries || [],
   );
-  const isAllSelected = selectedScripts.length === items.length;
+
+  const isAllSelected = selectedModels.length === items.length;
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // Select all scripts
       const allScriptIds: any = items.map((script: any) => script.id);
-      setSelectedScripts(allScriptIds);
+      setSelectedModels(allScriptIds);
     } else {
       // Deselect all scripts
-      setSelectedScripts([]);
+      setSelectedModels([]);
     }
   };
 
@@ -128,8 +108,7 @@ const TapeSummary: React.FC = () => {
                 <thead>
                   <tr className="fw-bold mb-2 p-2">
                     <th scope="col" className="col-1">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         id="selectAllCheckbox"
                         checked={isAllSelected}
                         onChange={handleSelectAll}
@@ -177,17 +156,16 @@ const TapeSummary: React.FC = () => {
                             style={{ borderRadius: '10px' }}
                           >
                             <td className="col-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedScripts.includes(summary.id)}
-                                onChange={() =>
-                                  handleCheckboxChange(summary.id)
+                              <Checkbox
+                                checked={selectedModels.includes(summary.id)}
+                                onChange={(ev) =>
+                                  handleCheckboxChange(ev, summary.id)
                                 }
                               />
                             </td>
                             <td className="col-4">
                               <Link
-                                to={`/tape-summary-results/${summary.id}`}
+                                to={`/model-summary-results/${summary.id}`}
                                 className="text-decoration-none text-black"
                               >
                                 <span className="fw-bold">{summary.name}</span>
@@ -223,4 +201,4 @@ const TapeSummary: React.FC = () => {
   );
 };
 
-export default TapeSummary;
+export default ModelSummary;

@@ -11,10 +11,12 @@ const ScriptView = lazy(() => import('../pages/AllScript/Script_view'));
 const Home = lazy(() => import('../pages/Home/Home'));
 const ReportView = lazy(() => import('../pages/Reports/Report_view'));
 const Report = lazy(() => import('../pages/Reports/Reports'));
-const TapeSummary = lazy(() => import('../pages/tape-summary/tape-summary'));
-const CreateSummary = lazy(() => import('../pages/tape-summary/CreateSummary'));
+const TapeSummary = lazy(() => import('../pages/model-summary/model-summary'));
+const CreateSummary = lazy(
+  () => import('../pages/model-summary/CreateSummary'),
+);
 const TapeSummaryResult = lazy(
-  () => import('../pages/tape-summary/tape-summary-result'),
+  () => import('../pages/model-summary/model-summary-result'),
 );
 const UploadScript = lazy(() => import('../pages/UploadScript/UploadScript'));
 const CategoryManger = lazy(
