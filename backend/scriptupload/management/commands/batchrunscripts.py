@@ -34,4 +34,4 @@ class Command(BaseCommand):
                 f"[batch script runner] Ran script '{script.name}' id={script.id}")
 
         logger.info(
-            "[batch script runner] Finished running a batch of scripts on scheduled job")
+            f"[batch script runner] Finished running a batch of {batch_size} scripts on scheduled job")
