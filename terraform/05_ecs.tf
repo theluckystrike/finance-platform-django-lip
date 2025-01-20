@@ -112,6 +112,22 @@ resource "aws_ecs_task_definition" "update_scripts" {
   container_definitions    = data.template_file.update_scripts.rendered
   depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
+data "template_file" "batch_update_scripts" {
+  template = file("templates/batch_update_scripts_task.json.tpl")
+
+  vars = local.container_vars
+}
+resource "aws_ecs_task_definition" "batch_update_scripts" {
+  family                   = "oi-prod-batch-update-scripts"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  container_definitions    = data.template_file.batch_update_scripts.rendered
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
+}
 data "template_file" "send_email" {
   template = file("templates/send_emails_task.json.tpl")
 
