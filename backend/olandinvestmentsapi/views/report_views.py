@@ -139,7 +139,7 @@ class ReportUpdateView(APIView):
         if report.status == "running":
             return Response({"message": "Report is already running"})
         report.update(request.data.get("run_scripts", True),
-                      f"{request.scheme}://{request.get_host()}")
+                      None)
         return Response({"message": "Report added to task queue"})
 
 

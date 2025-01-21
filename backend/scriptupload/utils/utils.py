@@ -95,8 +95,8 @@ def scripts_to_pdf(scripts, title, base_url=None):
 
                 for script in script_hierarchy[heading]["subcategories"][subheading]["subsubcategories"][subsubheading]:
                     script_caption = f'last updated: {script.last_updated.strftime("%d %B %Y at %H:%M")}'
-                    if base_url:
-                        script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
+                    # if base_url:
+                    #     script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
                     if script.output_type == script.OutputDataType.MPL_PYPLT:
                         if script.has_chart_data:
                             builder.add_image(
@@ -117,8 +117,8 @@ def scripts_to_pdf(scripts, title, base_url=None):
         builder.add_subheading1_new_page("Uncategorised")
         for script in uncatagorised:
             script_caption = f"last updated: {script.last_updated.strftime('%d %B %Y at %H:%M')}"
-            if base_url:
-                script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
+            # if base_url:
+            #     script_caption += f' (<u><link href="{base_url}{script.url}">link</link></u>)'
             if script.output_type == script.OutputDataType.MPL_PYPLT:
                 if script.has_chart_data:
                     builder.add_image(
