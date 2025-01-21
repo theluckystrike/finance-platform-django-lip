@@ -4,13 +4,14 @@ import Select from 'react-select';
 import { v4 as uuidv4 } from 'uuid';
 
 import Button from '@mui/material/Button';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import List from '@mui/material/List';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -30,6 +31,8 @@ interface ScriptOption {
   label: string;
 }
 
+const WHITELIST_IDS = [1225];
+
 const CreateSummary = () => {
   const dispatch = useDispatch();
   const handleToast = useToast();
@@ -47,6 +50,7 @@ const CreateSummary = () => {
     // const filterScript = scripts.filter(
     //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
     // );
+
     const filtered = scripts?.length
       ? scripts
           .filter(
@@ -58,12 +62,14 @@ const CreateSummary = () => {
           }))
       : [];
 
+    filtered.push({ value: 1225, label: 'Tape' });
     setActiveScript(filtered.length ? filtered[0].value : null);
     return filtered;
   }, [scripts]);
 
   useEffect(() => {
     dispatch(GetAllScripts({ query: 'for_summary=1' }));
+    // dispatch(GetAllScripts({}));
   }, []);
 
   // const addScript = async () => {
@@ -84,7 +90,9 @@ const CreateSummary = () => {
       let dataColumns = scriptsMap[activeScript];
       if (dataColumns) {
         // setActiveColumns(scriptsMap[activeScript])
-        setActiveColumns(dataColumns['table_data']['table_meta']['columns']);
+        setActiveColumns(
+          dataColumns['table_data']?.['table_meta']?.['columns'] || [],
+        );
       } else {
         fetchDataColumnsByScript(activeScript);
       }
@@ -104,6 +112,11 @@ const CreateSummary = () => {
     );
   }, [columnsForModelMap]);
 
+  const resetForm = () => {
+    setColumnsForModelMap([]);
+    setName('');
+  };
+
   const handleSubmit = async () => {
     const values = {
       name,
@@ -116,8 +129,7 @@ const CreateSummary = () => {
     try {
       await dispatch(Createsummerys({ values }));
       handleToast.SuccessToast('Summary created successfully!');
-
-      await dispatch(GetAllsummerys({}));
+      resetForm();
     } catch (error) {
       handleToast.ErrorToast('Failed to create summary. Please try again.');
       console.error('Error creating summary:', error);
@@ -155,7 +167,7 @@ const CreateSummary = () => {
   };
 
   const getScriptNameByID = (id: string) => {
-    return scripts.filter((sc) => sc.id == id)?.[0]?.name;
+    return forSummaryScripts.filter((sc) => sc.value == id)?.[0]?.label;
   };
 
   const handleDeleteTag = (tag: { scriptId: string; column: string }) => {
@@ -198,11 +210,13 @@ const CreateSummary = () => {
                       onClick={() => handleScriptChange(option.value)}
                       selected={option.value === activeScript}
                     >
-                      {option.value === activeScript && (
-                        <ListItemIcon>
-                          <KeyboardArrowRightIcon />
-                        </ListItemIcon>
-                      )}
+                      <ListItemIcon sx={{ minWidth: '30px' }}>
+                        {option.value === activeScript ? (
+                          <IndeterminateCheckBoxIcon fontSize="medium" />
+                        ) : (
+                          <CheckBoxOutlineBlankIcon fontSize="medium" />
+                        )}
+                      </ListItemIcon>
                       <ListItemText primary={option.label} />
                     </ListItemButton>
                   </ListItem>
@@ -236,11 +250,15 @@ const CreateSummary = () => {
                         col.name,
                       )}
                     >
-                      {columnsForModelMap[activeScript]?.includes(col.name) && (
-                        <ListItemIcon>
-                          <CheckCircleOutlineIcon />
-                        </ListItemIcon>
-                      )}
+                      <ListItemIcon sx={{ minWidth: '30px' }}>
+                        {columnsForModelMap[activeScript]?.includes(
+                          col.name,
+                        ) ? (
+                          <CheckBoxIcon fontSize="small" />
+                        ) : (
+                          <CheckBoxOutlineBlankIcon fontSize="small" />
+                        )}
+                      </ListItemIcon>
                       <ListItemText primary={col.name} />
                     </ListItemButton>
                   </ListItem>
