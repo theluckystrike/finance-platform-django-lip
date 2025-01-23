@@ -193,7 +193,6 @@ const TapeSummaryResult: React.FC = () => {
                       <Link
                         to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
-                        target="_blank" // Open link in a new tab
                         rel="noopener noreferrer" // Security best practice
                       >
                         <OpenInNewIcon

@@ -3,7 +3,7 @@ import {
   Createsummery,
   GetSatussummeryByID,
   DeletesummariesByID,
-  GetAllsummery,
+  _getAllSummaries,
   Updatesummaries,
   GetsummeryByID,
   mergesummery,
@@ -54,9 +54,9 @@ export const Createsummerys: any = AsyncFunctionThunk(
   'Createsummery',
   Createsummery,
 );
-export const GetAllsummerys: any = AsyncFunctionThunk(
-  'GetAllsummerys',
-  GetAllsummery,
+export const getAllSummaries: any = AsyncFunctionThunk(
+  'getAllSummaries',
+  _getAllSummaries,
 );
 export const GetsummeryByIDs: any = AsyncFunctionThunk(
   'GetsummeryByIDs',
@@ -102,15 +102,15 @@ const summerySlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(GetAllsummerys.fulfilled, (state, action) => {
+      .addCase(getAllSummaries.fulfilled, (state, action) => {
         state.summaries = action.payload.results;
         state.count = action.payload.count;
         state.loading = false;
       })
-      .addCase(GetAllsummerys.pending, (state) => {
+      .addCase(getAllSummaries.pending, (state) => {
         state.loading = true;
       })
-      .addCase(GetAllsummerys.rejected, (state, action) => {
+      .addCase(getAllSummaries.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
