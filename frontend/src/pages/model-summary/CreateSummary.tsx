@@ -47,24 +47,25 @@ const CreateSummary = () => {
     [key: string]: any;
   }>({});
   const forSummaryScripts: ScriptOption[] = useMemo(() => {
-    // const filterScript = scripts.filter(
-    //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
-    // );
-
-    const filtered = scripts?.length
-      ? scripts
-          .filter(
-            (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
-          )
-          .map((script: any) => ({
-            value: script.id,
-            label: script.name,
-          }))
-      : [];
-
-    filtered.push({ value: 1225, label: 'Tape' });
-    setActiveScript(filtered.length ? filtered[0].value : null);
-    return filtered;
+    // // const filterScript = scripts.filter(
+    // //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
+    // // );
+    //
+    // const filtered = scripts?.length
+    //   ? scripts
+    //       .filter(
+    //         (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
+    //       )
+    //       .map((script: any) => ({
+    //         value: script.id,
+    //         label: script.name,
+    //       }))
+    //   : [];
+    //
+    // filtered.push({ value: 1225, label: 'Tape' });
+    // setActiveScript(filtered.length ? filtered[0].value : null);
+    // return filtered;
+    return scripts.map((script: any) => ({value: script.id, label: script.name}));
   }, [scripts]);
 
   useEffect(() => {

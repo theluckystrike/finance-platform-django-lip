@@ -11,6 +11,7 @@ from olandinvestmentsapi.models import Summary
 from django.utils.decorators import method_decorator
 import logging
 from olandinvestmentsapi.models import Status
+from olandinvestmentsapi.utils import Pagination
 
 logger = logging.getLogger('testlogger')
 
@@ -64,6 +65,7 @@ class SummaryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SummarySerializerLite
     queryset = Summary.objects.all().order_by("-created")
+    pagination_class = Pagination
 
     def get_serializer_class(self):
         if self.action == "list":
