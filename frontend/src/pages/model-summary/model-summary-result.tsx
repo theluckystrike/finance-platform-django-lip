@@ -87,12 +87,12 @@ const TapeSummaryResult: React.FC = () => {
   return (
     <>
       <div className="container-fluid px-4 pt-4">
-        <div className="row d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-5">
-          <div>
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-5">
+          <div className="">
             <h1 className="h1">{summery?.name}</h1>
             <h6 className="ps-1">Last update :{summery?.created} </h6>
           </div>
-          <div className="btn-toolbar mb-2 mb-md-0">
+          <div className="btn-toolbar">
             <button
               type="button"
               onClick={() => setEditShow(true)}
