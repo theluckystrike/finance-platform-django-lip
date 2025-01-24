@@ -143,24 +143,21 @@ const TapeSummaryResult: React.FC = () => {
                         x: summery.signal_plot_data.date,
                         y: summery.signal_plot_data['signal sum'],
                         type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'green' },
-                        name: 'Signal Sum', // Name for the legend
+                        mode: 'lines',
+                        line: { color: 'blue' },
+                        name: 'Breadth Signal',
                       },
                     ]}
                     layout={{
-                      title: summery.name.replace(/\b\w/g, (char: any) =>
-                        char.toUpperCase(),
-                      ),
+                      title: 'Breadth Signal Over Time',
                       xaxis: { title: 'Date' },
                       yaxis: {
-                        title: 'Signal Sum',
-                        range: [-1, 1], // Fixed y-axis range from -1 to 1
-                        dtick: 1, // Step of 1 for ticks, so only -1, 0, and 1 appear
+                        title: 'Breadth Signal',
+                        rangemode: 'tozero',
                       },
-                      showlegend: true, // Enable the legend
+                      showlegend: true,
                       legend: {
-                        x: 1, // Position legend on the right
+                        x: 1,
                         y: 1,
                         xanchor: 'right',
                         yanchor: 'top',
@@ -193,7 +190,6 @@ const TapeSummaryResult: React.FC = () => {
                       <Link
                         to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
-                        target="_blank" // Open link in a new tab
                         rel="noopener noreferrer" // Security best practice
                       >
                         <OpenInNewIcon

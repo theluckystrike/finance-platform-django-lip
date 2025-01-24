@@ -81,11 +81,13 @@ export const ActiveRoute = {
   ReportDetails: {
     name: 'ReportDetails',
     path: 'ReportDetails/:id',
+    url: 'ReportDetails',
     icon: 'Report',
   },
   ScriptDetails: {
     name: 'ScriptDetails',
     path: 'ScriptDetails/:id',
+    url: 'ScriptDetails',
     icon: 'Script',
   },
   ScriptEdit: {
@@ -105,6 +107,7 @@ export const ActiveRoute = {
   TapeSummaryResult: {
     name: 'Model Summary Result',
     path: 'model-summary-results/:id',
+    url: 'model-summary-results',
     icon: 'CategoryManager',
   },
   UserProfile: {

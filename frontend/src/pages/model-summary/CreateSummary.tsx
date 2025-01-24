@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import useToast from '../../customHook/toast';
 
 import type { RootState } from '../../Store';
-import { Createsummerys, GetAllsummerys } from '../../Redux/TapeSummary/Slice';
+import { Createsummerys } from '../../Redux/TapeSummary/Slice';
 import {
   getScriptByIDAction,
   ScriptState,
@@ -47,10 +47,6 @@ const CreateSummary = () => {
     [key: string]: any;
   }>({});
   const forSummaryScripts: ScriptOption[] = useMemo(() => {
-    // const filterScript = scripts.filter(
-    //   (i: any) => i.output_type === 'pd plt' || i.output_type === 'pd',
-    // );
-
     const filtered = scripts?.length
       ? scripts
           .filter(
@@ -69,7 +65,6 @@ const CreateSummary = () => {
 
   useEffect(() => {
     dispatch(GetAllScripts({ query: 'for_summary=1' }));
-    // dispatch(GetAllScripts({}));
   }, []);
 
   // const addScript = async () => {
@@ -91,7 +86,7 @@ const CreateSummary = () => {
       if (dataColumns) {
         // setActiveColumns(scriptsMap[activeScript])
         setActiveColumns(
-          dataColumns['table_data']?.['table_meta']?.['columns'] || [],
+          dataColumns?.['table_data']?.['table_meta']?.['columns'] || [],
         );
       } else {
         fetchDataColumnsByScript(activeScript);
@@ -102,7 +97,9 @@ const CreateSummary = () => {
   useEffect(() => {
     if (scriptsMap[activeScript]) {
       let dataColumns = scriptsMap[activeScript];
-      setActiveColumns(dataColumns['table_data']['table_meta']['columns']);
+      setActiveColumns(
+        dataColumns?.['table_data']?.['table_meta']?.['columns'] || [],
+      );
     }
   }, [scriptsMap]);
 

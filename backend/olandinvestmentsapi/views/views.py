@@ -1,7 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..serializers import DeepCategorySerializer, ScriptSearchSerializer, ReportSearchSerializer
+
+from ..models import Summary
+from ..serializers import DeepCategorySerializer, ScriptSearchSerializer, ReportSearchSerializer, \
+    SummarySearchSerializer
 from scriptupload.models import Category, Script, Report
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -210,9 +213,14 @@ class SearchView(APIView):
         categories_data = DeepCategorySerializer(
             categories, many=True, context={'request': request}).data
 
+        summaries = Summary.objects.filter(name__icontains=search_str)
+        summaries_data = SummarySearchSerializer(
+            summaries, many=True, context={'request': request}).data
+
         resp = {
             "scripts": scripts_data,
             "categories": categories_data,
-            "reports": reports_data
+            "reports": reports_data,
+            "summaries": summaries_data,
         }
         return Response(resp)

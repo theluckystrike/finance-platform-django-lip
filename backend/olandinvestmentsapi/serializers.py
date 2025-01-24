@@ -219,3 +219,11 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
             }
         }
         return super().create(validated_data)
+
+
+class SummarySearchSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="summaries-detail")
+
+    class Meta:
+        model = Summary
+        fields = ["name", "id", "url", "created", "status"]
