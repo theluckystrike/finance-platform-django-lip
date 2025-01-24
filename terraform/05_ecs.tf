@@ -160,7 +160,7 @@ resource "aws_ecs_service" "production" {
   }
   capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
-    weight = 100
+    weight            = 100
   }
   load_balancer {
     target_group_arn = aws_alb_target_group.default_target_group.arn
