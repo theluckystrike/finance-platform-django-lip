@@ -5,13 +5,16 @@ import { Card, Button } from 'react-bootstrap';
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DeleteIcon from '@mui/icons-material/Delete';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
   GetSatussummeryByIDs,
   GetsummeryByIDs,
   Updatesummariess,
+  SummaryState,
 } from '../../Redux/TapeSummary/Slice';
+import type { RootState } from '../../Store';
 import ScatterLineChart from '../../Comopnent/Charts/LineScatter';
 import LineChart from '../../Comopnent/Charts/LineChart';
 
@@ -32,7 +35,9 @@ const TapeSummaryResult: React.FC = () => {
   const store: any = useSelector((i) => i);
 
   const { summery } = useSelector((i: any) => i?.summary);
-
+  // const { summery } = useSelector<RootState, SummaryState>(
+  //   (state) => state.summary,
+  // );
   const summery2 = summery?.meta?.scripts
     ? Object.entries(summery.meta.scripts).map(([id, script]: any) => ({
         id: Number(id),
@@ -81,13 +86,13 @@ const TapeSummaryResult: React.FC = () => {
 
   return (
     <>
-      <div className="mx-4 mb-4">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3 pb-2 mb-3">
-          <div>
+      <div className="container-fluid px-4 pt-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-5">
+          <div className="">
             <h1 className="h1">{summery?.name}</h1>
             <h6 className="ps-1">Last update :{summery?.created} </h6>
           </div>
-          <div className="btn-toolbar mb-2 mb-md-0">
+          <div className="btn-toolbar">
             <button
               type="button"
               onClick={() => setEditShow(true)}
@@ -120,8 +125,8 @@ const TapeSummaryResult: React.FC = () => {
         {upLoad ? (
           <Loader />
         ) : (
-          <div className="container row mx-auto p-4">
-            <Card className="col-12 mb-8  ">
+          <div>
+            <Card className="col-12 mb-5">
               <Card.Header className="bg-light-green">
                 <Card.Title>
                   {' '}
@@ -138,24 +143,21 @@ const TapeSummaryResult: React.FC = () => {
                         x: summery.signal_plot_data.date,
                         y: summery.signal_plot_data['signal sum'],
                         type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'green' },
-                        name: 'Signal Sum', // Name for the legend
+                        mode: 'lines',
+                        line: { color: 'blue' },
+                        name: 'Breadth Signal',
                       },
                     ]}
                     layout={{
-                      title: summery.name.replace(/\b\w/g, (char: any) =>
-                        char.toUpperCase(),
-                      ),
+                      title: 'Breadth Signal Over Time',
                       xaxis: { title: 'Date' },
                       yaxis: {
-                        title: 'Signal Sum',
-                        range: [-1, 1], // Fixed y-axis range from -1 to 1
-                        dtick: 1, // Step of 1 for ticks, so only -1, 0, and 1 appear
+                        title: 'Breadth Signal',
+                        rangemode: 'tozero',
                       },
-                      showlegend: true, // Enable the legend
+                      showlegend: true,
                       legend: {
-                        x: 1, // Position legend on the right
+                        x: 1,
                         y: 1,
                         xanchor: 'right',
                         yanchor: 'top',
@@ -179,36 +181,39 @@ const TapeSummaryResult: React.FC = () => {
                   {summery2.map((script: any) => (
                     <div
                       key={script.id}
-                      className={`h-20 rounded-3 bg-light-green m-2 p-3 ${
+                      className={`position-relative text-left rounded-3 bg-light-green p-3 ${
                         selectedScript === script.id ? 'border-primary ' : ''
-                      } col-5 p-4`}
+                      } col-5`}
                       onClick={() => setSelectedScript(script.id)}
                     >
                       {' '}
                       <Link
                         to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
+                        rel="noopener noreferrer" // Security best practice
                       >
-                        <div className="text-left">
-                          <div>{script.name}</div>
-                          <div>{script.tableColName}</div>
-                          <div
-                            className={`text-sm ${
-                              script.score > 0 ? 'text-success' : 'text-danger'
-                            }`}
-                          >
-                            Score: {script.score}
-                          </div>
-                        </div>
+                        <OpenInNewIcon
+                          className="position-top-right"
+                          fontSize="small"
+                        />
                       </Link>
+                      <p>{`Script: ${script.name}`}</p>
+                      <p>{`Column: ${script.tableColName}`}</p>
+                      <p
+                        className={`text-sm ${
+                          script.score > 0 ? 'text-success' : 'text-danger'
+                        }`}
+                      >
+                        Score: {script.score}
+                      </p>
                     </div>
                   ))}
                 </div>
               </Card.Body>
             </Card>
 
-            {selectedScript && (
-              <Card className="mt-8">
+            {/* {selectedScript && (
+              <Card className="mt-3">
                 <Card.Header>
                   <Card.Title>Script Details</Card.Title>
                   <Card.Subtitle>
@@ -221,7 +226,7 @@ const TapeSummaryResult: React.FC = () => {
                   </p>
                 </Card.Body>
               </Card>
-            )}
+            )} */}
           </div>
         )}
       </div>

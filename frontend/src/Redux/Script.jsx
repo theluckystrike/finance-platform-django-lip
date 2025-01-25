@@ -65,9 +65,6 @@ const ScriptApi = createApi({
       query: ({ token, value }) => ({
         url: `${endpoint.search}${value}`,
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       }),
     }),
 

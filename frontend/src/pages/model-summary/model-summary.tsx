@@ -7,13 +7,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatIsoDate } from '../../utils/formatDate';
 import Loader from '../../Comopnent/ui/Loader';
-import PaginationButtons, {
-  dataPagination,
-  PER_COUNT,
-} from '../../Comopnent/ui/PaginationButtons';
+import PaginationButtons from '../../Comopnent/ui/PaginationButtons';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import useSortableData from '../../customHook/useSortable';
-import { GetAllsummerys, SummaryState } from '../../Redux/TapeSummary/Slice';
+import { getAllSummaries, SummaryState } from '../../Redux/TapeSummary/Slice';
 import type { RootState } from '../../Store';
 
 const ModelSummary: React.FC = () => {
@@ -24,21 +21,22 @@ const ModelSummary: React.FC = () => {
   );
 
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
-  const getData = async () => {
+  const fetchData = async () => {
     try {
-      await dispatch(GetAllsummerys());
+      await dispatch(getAllSummaries({ page: currentPage, per_page: perPage }));
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getData();
-  }, []);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
+    if (perPage && currentPage) {
+      fetchData();
+    }
+  }, [currentPage, perPage]);
 
   const navigate = useNavigate();
 
@@ -97,6 +95,7 @@ const ModelSummary: React.FC = () => {
               <div className="py-2">
                 <PaginationButtons
                   data={items}
+                  count={count}
                   label="Scripts"
                   setCurrentPage={setCurrentPage}
                   currentPage={currentPage}
@@ -147,39 +146,37 @@ const ModelSummary: React.FC = () => {
                 </thead>
                 <tbody id="scriptsCheckboxes">
                   {items.length > 0 ? (
-                    dataPagination(items, currentPage, perPage).map(
-                      (summary: any, index: any) => (
-                        <React.Fragment key={summary.id}>
-                          <tr
-                            key={index}
-                            className="table-card rounded-3 bg-light-green mb-2 p-3"
-                            style={{ borderRadius: '10px' }}
-                          >
-                            <td className="col-1">
-                              <Checkbox
-                                checked={selectedModels.includes(summary.id)}
-                                onChange={(ev) =>
-                                  handleCheckboxChange(ev, summary.id)
-                                }
-                              />
-                            </td>
-                            <td className="col-4">
-                              <Link
-                                to={`/model-summary-results/${summary.id}`}
-                                className="text-decoration-none text-black"
-                              >
-                                <span className="fw-bold">{summary.name}</span>
-                              </Link>
-                            </td>
+                    items.map((summary: any, index: any) => (
+                      <React.Fragment key={summary.id}>
+                        <tr
+                          key={index}
+                          className="table-card rounded-3 bg-light-green mb-2 p-3"
+                          style={{ borderRadius: '10px' }}
+                        >
+                          <td className="col-1">
+                            <Checkbox
+                              checked={selectedModels.includes(summary.id)}
+                              onChange={(ev) =>
+                                handleCheckboxChange(ev, summary.id)
+                              }
+                            />
+                          </td>
+                          <td className="col-4">
+                            <Link
+                              to={`/model-summary-results/${summary.id}`}
+                              className="text-decoration-none text-black"
+                            >
+                              <span className="fw-bold">{summary.name}</span>
+                            </Link>
+                          </td>
 
-                            <td className="col-2 text-center mx-auto">
-                              {formatIsoDate(summary.created)}
-                            </td>
-                          </tr>
-                          <tr style={{ height: '10px' }}></tr>
-                        </React.Fragment>
-                      ),
-                    )
+                          <td className="col-2 text-center mx-auto">
+                            {formatIsoDate(summary.created)}
+                          </td>
+                        </tr>
+                        <tr style={{ height: '10px' }}></tr>
+                      </React.Fragment>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={6}>

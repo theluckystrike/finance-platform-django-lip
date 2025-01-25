@@ -239,3 +239,9 @@ body {
   display: flex; /* Ensure the div is a flex container */
   justify-content: space-between;
 }
+
+.position-top-right {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

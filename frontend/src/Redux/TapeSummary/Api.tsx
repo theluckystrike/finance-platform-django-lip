@@ -58,9 +58,11 @@ export const GetsummeryByID = async (data: any) => {
 };
 
 // Get All summaries
-export const GetAllsummery = async () => {
+export const _getAllSummaries = async ({ page, per_page }: any) => {
   try {
-    const response = await axiosInstance.get(`${endpoint.summaries}?page=1`);
+    const response = await axiosInstance.get(
+      `${endpoint.summaries}?page=${page}&per_page=${per_page}`,
+    );
     return response;
   } catch (error) {
     throw error;

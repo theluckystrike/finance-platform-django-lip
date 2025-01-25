@@ -1,39 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { Autocomplete } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+
 import '../../assest/css/Header.css';
 
 import Icon from '../ui/icon/Icon';
 import { useSearchScriptMutation } from '../../Redux/Script';
-import { loginUSer } from '../../customHook/getrole';
 import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../ui/Loader';
 import Sidebar from '../Sidebar/Sidebar';
+import { object } from 'yup';
+import { ActiveRoute } from '../../Menu';
 
 const SimpleHeader = () => {
-  const [searchData, setSearchData] = useState<any>([]);
+  const navigate = useNavigate();
   const [searchScript, { isLoading, data }]: any = useSearchScriptMutation();
-  const [search, setSearch] = useState('');
-  const handleSearch = async (e: any) => {
-    const value = e.target.value.toLowerCase();
+  const [searchText, setSearchText] = useState('');
 
-    setSearch(value);
-    if (value === '') {
-      setSearchData([]);
-    } else {
-      const encodedQuery = encodeURIComponent(value);
-      await searchScript({ value: encodedQuery, token: loginUSer.access });
+  const handleSearch = (event: React.SyntheticEvent, option: any) => {
+    let url;
+    switch (option?.subject) {
+      case 'summaries':
+        url = ActiveRoute.TapeSummaryResult;
+        break;
+      case 'reports':
+        url = ActiveRoute.ReportDetails;
+        break;
+      case 'scripts':
+        url = ActiveRoute.ScriptDetails;
     }
+
+    if (url) {
+      setSearchText(option.name);
+      navigate(`${url.url}/${option.id}`);
+    }
+  };
+
+  const fetchSearchResults = (text: string) => {
+    const encodedQuery = encodeURIComponent(text);
+    searchScript({ value: encodedQuery });
   };
 
   useEffect(() => {
-    if (data && search !== '') {
-      setSearchData(data?.scripts);
+    fetchSearchResults(searchText);
+  }, [searchText]);
+
+  const searchResults = useMemo(() => {
+    if (typeof data === 'object') {
+      const res = Object.keys(data)
+        .filter((subject) => subject != 'categories')
+        .map((subject) =>
+          data[subject].map((item: object) => ({ ...item, subject })),
+        )
+        .flat();
+
+      return res;
     }
   }, [data]);
-  const navigate = useNavigate();
-  const changeRoute = (route: any) => {
-    navigate(route);
-    setSearchData([]);
-  };
+
   return (
     <div className="bg-green main-header-conatiner row mx-0">
       <div
@@ -77,11 +103,39 @@ const SimpleHeader = () => {
           <Sidebar />
         </div>
       </div>
-      <div className="col-sm-10 col-10 col-md-12   search-bar-conatiner">
-        <div className="search_icon">
-          <Icon icon="Search" size="35px" />
-        </div>
-        <input
+      <div className="col-sm-10 col-10 col-md-8 mx-auto search-bar-conatiner">
+        <Autocomplete
+          disablePortal
+          options={searchResults || []}
+          getOptionLabel={(option: any) =>
+            option ? `${option.name || ''}  (${option.subject})` : ''
+          }
+          renderInput={(params) => (
+            <TextField
+              value={searchText}
+              onChange={(ev) => setSearchText(ev.target.value)}
+              {...params}
+              label="Search"
+              // sx={{ paddingLeft: '20px' }}
+              // slotProps={{
+              //   ...params.InputProps,
+              //   input: {
+              //     startAdornment: (
+              //       <InputAdornment position="start">
+              //         <SearchIcon />
+              //       </InputAdornment>
+              //     ),
+              //   },
+              // }}
+            />
+          )}
+          onChange={handleSearch}
+          sx={{ background: 'white' }}
+          fullWidth
+          noOptionsText="type name of a script, report, or model"
+        />
+        {/* <SearchIcon fontSize="medium" /> */}
+        {/* <input
           type="text"
           placeholder="Search"
           className="bg-light"
@@ -116,7 +170,7 @@ const SimpleHeader = () => {
               ))
             )}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
