@@ -8,7 +8,6 @@ import '../../assest/css/Header.css';
 
 import Icon from '../ui/icon/Icon';
 import { useSearchScriptMutation } from '../../Redux/Script';
-import { loginUSer } from '../../customHook/getrole';
 import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../ui/Loader';
 import Sidebar from '../Sidebar/Sidebar';
@@ -41,7 +40,7 @@ const SimpleHeader = () => {
 
   const fetchSearchResults = (text: string) => {
     const encodedQuery = encodeURIComponent(text);
-    searchScript({ value: encodedQuery, token: loginUSer.access });
+    searchScript({ value: encodedQuery });
   };
 
   useEffect(() => {
