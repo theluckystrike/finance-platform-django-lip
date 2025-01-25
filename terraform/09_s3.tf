@@ -80,6 +80,19 @@ resource "aws_s3_bucket_public_access_block" "private_bucket_access_block" {
   # depends_on              = [aws_s3_bucket.private_bucket]
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "private_bucket_lifecycle" {
+  bucket = aws_s3_bucket.private_bucket.id
+
+  rule {
+    id     = "DeleteVersionsOlderThan2Weeks"
+    status = "Enabled"
+
+    noncurrent_version_expiration {
+      noncurrent_days = 14
+    }
+  }
+}
+
 
 resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
   bucket = aws_s3_bucket.private_bucket.id
@@ -119,19 +132,6 @@ resource "aws_s3_bucket_public_access_block" "frontend_bucket_access_block" {
   depends_on              = [aws_s3_bucket.frontend_bucket]
 }
 
-
-resource "aws_s3_bucket_lifecycle_configuration" "private_bucket_lifecycle" {
-  bucket = aws_s3_bucket.private_bucket.id
-
-  rule {
-    id     = "DeleteVersionsOlderThan2Weeks"
-    status = "Enabled"
-
-    noncurrent_version_expiration {
-      noncurrent_days = 14
-    }
-  }
-}
 
 data "aws_iam_policy_document" "cloudfront_oac_access" {
   statement {
