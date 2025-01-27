@@ -110,12 +110,15 @@ class ScriptSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         return obj.get_status_display()
 
+
 class ScriptSerializerForReport(serializers.ModelSerializer):
     category = DeepCategorySerializer()
+
     class Meta:
         model = Script
         fields = ["name", "id", "created", "category"]
         depth = 1
+
 
 class ReportReadSerializer(serializers.ModelSerializer):
     scripts = ScriptSerializerForReport(many=True)
@@ -125,6 +128,7 @@ class ReportReadSerializer(serializers.ModelSerializer):
         fields = ["name", "id", "scripts", "created",
                   "last_updated", "status", "latest_pdf"]
         depth = 1
+
 
 class ReportWriteSerializer(serializers.ModelSerializer):
     # this will include IDs only
@@ -142,7 +146,8 @@ class ReportWriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        scripts = instance.scripts.all().order_by('index_in_category').order_by("category__name")
+        scripts = instance.scripts.all().order_by(
+            'index_in_category').order_by("category__name")
         representation['scripts'] = [script.id for script in scripts]
         return representation
 
@@ -161,7 +166,7 @@ class SummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Summary
         fields = ["id", "name", "scripts",
-                  "meta", "created", "signal_plot_data", "status"]
+                  "meta", "created", "signal_plot_data", "status", "ticker"]
 
     def get_status(self, obj):
         print("getting status")
@@ -175,7 +180,7 @@ class SummarySerializerLite(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["id", "name", "scripts", "created", "status"]
+        fields = ["id", "name", "scripts", "created", "status", "ticker"]
 
     def get_status(self, obj):
         return obj.get_status_display()
@@ -188,7 +193,7 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["scripts", "name", "meta"]
+        fields = ["scripts", "name", "meta", "ticker"]
 
     def validate_scripts(self, value):
         if not isinstance(value, dict):
