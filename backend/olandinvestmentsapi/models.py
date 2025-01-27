@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from scriptupload.models import Script
-from scriptupload.utils.summary import make_summary_table
+from scriptupload.utils.summary import make_summary_table, InvalidTickerError
 import django_rq
 from django.utils.translation import gettext_lazy as _
 import time
@@ -24,7 +24,7 @@ class Summary(models.Model):
     name = models.CharField(max_length=100, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     # last_updated = models.DateTimeField()
-    # timeseries_symbol = models.CharField()
+    ticker = models.CharField(null=True, blank=True, max_length=10)
     # timeseries_start_date = models.DateField()
     # timeseries_end_date = models.DateField(null=True, blank=True)
     '''
@@ -35,9 +35,16 @@ class Summary(models.Model):
                 "column_name": "col x signal",
                 "column_last_value": -1
             },
-            . . . 
-        
-        }
+            ...
+        },
+        model_performance: [
+            {
+                "signal_value": 1.0,
+                "percent_gain_per_annum": 21.42,
+                "percent_frequency": 5.95
+            },
+            ...
+        ]
     }
     '''
     meta = models.JSONField(default=dict, blank=False, null=False)
@@ -56,13 +63,18 @@ class Summary(models.Model):
 
     def _update(self):
         try:
-            summary_json, meta = make_summary_table(self)
+            summary_json, meta, model_performance = make_summary_table(self)
             self.meta['scripts'] = meta
+            self.meta['model_performance'] = model_performance
             self.signal_plot_data = summary_json
             self.save(update_fields=["meta", "signal_plot_data"])
             self.set_status(Status.SUCCESS)
             logger.info(
                 f"[report update] Successfully updated report {self.id}")
+        except InvalidTickerError as a:
+            logger.error(
+                f"[summary update] Failed to update summary {self.id} due to invalid ticker symbol: {a}")
+            self.set_status(Status.FAILURE)
         except Exception as e:
             exc_info = sys.exc_info()
             exc_str = "".join(traceback.format_exception(*exc_info))

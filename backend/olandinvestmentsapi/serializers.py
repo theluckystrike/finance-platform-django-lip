@@ -175,7 +175,7 @@ class SummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Summary
         fields = ["id", "name", "scripts",
-                  "meta", "created", "signal_plot_data", "status"]
+                  "meta", "created", "signal_plot_data", "status", "ticker"]
 
     def get_status(self, obj):
         print("getting status")
@@ -189,7 +189,7 @@ class SummarySerializerLite(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["id", "name", "scripts", "created", "status"]
+        fields = ["id", "name", "scripts", "created", "status", "ticker"]
 
     def get_status(self, obj):
         return obj.get_status_display()
@@ -202,7 +202,7 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["scripts", "name", "meta"]
+        fields = ["scripts", "name", "meta", "ticker"]
 
     def validate_scripts(self, value):
         print("Validating scripts:", value)
