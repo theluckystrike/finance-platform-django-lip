@@ -138,8 +138,7 @@ class ReportUpdateView(APIView):
         report = get_object_or_404(Report, pk=pk)
         if report.status == "running":
             return Response({"message": "Report is already running"})
-        report.update(request.data.get("run_scripts", True),
-                      None)
+        report.update(False, None)
         return Response({"message": "Report added to task queue"})
 
 
