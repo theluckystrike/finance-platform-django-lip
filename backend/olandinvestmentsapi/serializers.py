@@ -62,7 +62,7 @@ class ScriptUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
-        fields = ['name', 'category', 'file', 'description', 'for_summary']
+        fields = ['name', 'category', 'file', 'description', 'for_summary', 'output_type']
 
 
 class ScriptSerializerLite(serializers.ModelSerializer):
