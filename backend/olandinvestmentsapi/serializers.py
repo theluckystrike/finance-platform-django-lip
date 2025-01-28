@@ -191,6 +191,7 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
         fields = ["scripts", "name", "meta"]
 
     def validate_scripts(self, value):
+        print("Validating scripts:", value)
         if not isinstance(value, dict):
             raise serializers.ValidationError(
                 "Scripts must be a dictionary mapping from ID to column name")
@@ -219,6 +220,24 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
             }
         }
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+
+
+        script_map = validated_data.get('scripts', {})
+        instance.scripts.clear()
+        for sid, col_name in script_map.items():
+            script = Script.objects.get(id=int(sid))
+            instance.scripts.add(script)
+            instance.meta['scripts'][sid] = {
+                "name": script.name,
+                "table_col_name": col_name,
+                "table_col_last_value": None
+            }
+
+        instance.save()
+        return instance
 
 
 class SummarySearchSerializer(serializers.HyperlinkedModelSerializer):
