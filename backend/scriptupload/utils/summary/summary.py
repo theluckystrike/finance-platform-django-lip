@@ -32,6 +32,10 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
                              meta[str(first_script.id)]["table_col_name"]]]
 
     # for each script, merge it into the df on matching dates
+
+
+    # IN HERE YOU ARE MERGING EVERYTHING FROM THE DFS BUT THEY MIGHT CONTAIN OTHER STUFF IN THEM
+    # ONLY MERGE THE COLUMN YOU WANT INTO THE SUMMARY_DF ON THE MATCHING DATES
     for sid in script_ids[1:]:
         script = Script.objects.get(id=sid)
         date_col_name = get_date_col(script)
