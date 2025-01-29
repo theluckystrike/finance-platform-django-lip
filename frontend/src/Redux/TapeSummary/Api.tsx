@@ -35,9 +35,14 @@ export const Updatesummery = async (data: any) => {
   const { values, id } = data;
 
   try {
-    const response = await axiosInstance.put(
-      `${endpoint.summaries}/${id}`,
+    const response = await axiosInstance.patch(
+      `${endpoint.summaries}/${id}/edit`,
       values,
+      {
+        headers: {
+          "Content-Type": 'application/json',
+        },
+      }
     );
     return response;
   } catch (error) {

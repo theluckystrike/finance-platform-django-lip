@@ -20,7 +20,7 @@ const AutoComplete = (props: any) => {
 
 export default AutoComplete;
 
-const inputStyles = {
+export const inputStyles = {
   '&.MuiAutocomplete-paper': {
     maxHeight: '200px',
     overflowY: 'auto',

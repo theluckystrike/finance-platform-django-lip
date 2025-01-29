@@ -20,7 +20,7 @@ from olandinvestmentsapi.views import (
     SummaryViewSet,
     SummaryUpdateView,
     SummaryStatusView,
-    SearchView, RemoveScriptFromReport
+    SearchView, RemoveScriptFromReport, SummaryPatchUpdateView
 )
 from rest_framework import routers
 
@@ -56,6 +56,8 @@ urlpatterns = [
     path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_status'),
     path('summaries/<int:pk>/update',
          SummaryUpdateView.as_view(), name='summary_update'),
+    path('summaries/<int:pk>/edit', SummaryPatchUpdateView.as_view(), name='summary-patch-update'),
+
     # Router urls
     path('', include(router.urls)),
 

@@ -13,6 +13,8 @@ import Loader from '../ui/Loader';
 import Sidebar from '../Sidebar/Sidebar';
 import { object } from 'yup';
 import { ActiveRoute } from '../../Menu';
+import {Category} from "../../Redux/CategoryQuery";
+import AutoComplete, {inputStyles} from "../AutoComplete";
 
 const SimpleHeader = () => {
   const navigate = useNavigate();
@@ -116,61 +118,13 @@ const SimpleHeader = () => {
               onChange={(ev) => setSearchText(ev.target.value)}
               {...params}
               label="Search"
-              // sx={{ paddingLeft: '20px' }}
-              // slotProps={{
-              //   ...params.InputProps,
-              //   input: {
-              //     startAdornment: (
-              //       <InputAdornment position="start">
-              //         <SearchIcon />
-              //       </InputAdornment>
-              //     ),
-              //   },
-              // }}
             />
           )}
           onChange={handleSearch}
-          sx={{ background: 'white' }}
+          sx={{ background: 'white', ...inputStyles, borderRadius: 2}}
           fullWidth
           noOptionsText="type name of a script, report, or model"
         />
-        {/* <SearchIcon fontSize="medium" /> */}
-        {/* <input
-          type="text"
-          placeholder="Search"
-          className="bg-light"
-          onChange={handleSearch}
-        />
-
-        {searchData.length > 0 && (
-          <div
-            className="dropdown-content"
-            style={{
-              display: 'block',
-              maxWidth: '70%',
-              maxHeight: '40vh',
-              overflow: 'auto',
-              top: '60px',
-            }}
-          >
-            {isLoading ? (
-              <Loader />
-            ) : (
-              searchData &&
-              searchData.map((item: any, index: any) => (
-                // <Link  key={index} style={{textDecoration:'none'}}
-                // to={`/ScriptDetails/${item.id}`}>
-                <span
-                  className="hover-span"
-                  onClick={() => changeRoute(`/ScriptDetails/${item.id}`)}
-                >
-                  {item?.name}
-                </span>
-                // </Link>
-              ))
-            )}
-          </div>
-        )} */}
       </div>
     </div>
   );

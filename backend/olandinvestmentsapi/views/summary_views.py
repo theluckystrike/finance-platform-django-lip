@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from django.http import QueryDict
 from olandinvestmentsapi.serializers import SummarySerializer, SummaryMetaSerializer, SummarySerializerLite
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
@@ -125,6 +126,7 @@ class SummaryViewSet(ModelViewSet):
                 )
             ), })
     def create(self, request, *args, **kwargs):
+        print("Incoming request data:", request.data)
         is_many = isinstance(request.data, list)
         serializer = SummaryMetaSerializer(data=request.data, many=is_many)
         serializer.is_valid(raise_exception=True)
@@ -226,3 +228,42 @@ class SummaryStatusView(APIView):
         if summary.status == Status.SUCCESS:
             resp["signal_plot_data"] = summary.signal_plot_data
         return Response(resp)
+
+
+class SummaryPatchUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def transform_QueryDict_to_dict(query_dict):
+        result = {}
+
+        name = query_dict.get('name')
+        if name:
+            result['name'] = name
+
+        scripts = {
+            key.split('[')[1].split(']')[0]: value
+            for key, value in query_dict.items() if key.startswith('scripts[')
+        }
+        if scripts:
+            result['scripts'] = scripts
+
+        return result
+
+    def patch(self, request, pk):
+        print("Incoming request data:", request.data)
+
+        if isinstance(request.data, QueryDict):
+            data = self.transform_QueryDict_to_dict(request.data)
+        else:
+            data = request.data
+
+
+        summary = get_object_or_404(Summary, pk=pk)
+        serializer = SummaryMetaSerializer(instance=summary, data=data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

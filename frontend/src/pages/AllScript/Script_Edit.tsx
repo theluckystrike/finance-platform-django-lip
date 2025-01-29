@@ -11,7 +11,7 @@ import useToast from '../../customHook/toast';
 const ScriptEdit = () => {
   const Navigate = useNavigate();
   const store: any = useSelector((i) => i);
-  const ScriptData = store?.script?.Script;
+  const ScriptData = store?.script?.currentScript;
   const handleToast = useToast();
   const [code, setCode] = useState('');
   const [description, setDescription] = useState(ScriptData?.description || '');
