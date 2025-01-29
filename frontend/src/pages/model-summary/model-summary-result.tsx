@@ -23,6 +23,7 @@ import DeleteModal from './DeleteModal';
 import EditSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalEditSummary';
 import Loader from '../../Comopnent/ui/Loader';
 import Plot from 'react-plotly.js';
+import {formatIsoDate} from "../../utils/formatDate";
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
@@ -84,13 +85,19 @@ const TapeSummaryResult: React.FC = () => {
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [summeryStatus]);
 
+
+  const handleEditClose = async () => {
+    await dispatch(GetsummeryByIDs({ id }));
+    setEditShow(false);
+  }
+
   return (
     <>
       <div className="container-fluid px-4 pt-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-5">
           <div className="">
             <h1 className="h1">{summery?.name}</h1>
-            <h6 className="ps-1">Last update :{summery?.created} </h6>
+            <h6 className="ps-1">Last update {formatIsoDate(summery?.created)} </h6>
           </div>
           <div className="btn-toolbar">
             <button
@@ -241,7 +248,7 @@ const TapeSummaryResult: React.FC = () => {
         <EditSummary
           data={summery}
           show={editShow}
-          handleClose={() => setEditShow(false)}
+          handleClose={handleEditClose}
         />
       ) : null}
     </>

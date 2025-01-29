@@ -1,152 +1,281 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import Select from 'react-select';
-import { v4 as uuidv4 } from 'uuid';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 import useToast from '../../../../customHook/toast';
-import Icon from '../../icon/Icon';
 import {
-  Createsummerys,
-  GetsummeryByIDs,
-  Updatesummeryss,
-} from '../../../../Redux/TapeSummary/Slice';
-import { FaEdit } from 'react-icons/fa';
-import { GetAllScripts } from '../../../../Redux/Script/ScriptSlice';
+  getScriptByIDAction,
+  GetAllScripts,
+  ScriptState,
+} from '../../../../Redux/Script/ScriptSlice';
+import { Updatesummeryss } from '../../../../Redux/TapeSummary/Slice';
 import Loader from '../../Loader';
 
-// Define type for the script option
+import type { RootState } from '../../../../Store';
+
 interface ScriptOption {
   value: string;
   label: string;
 }
 
-interface CreateReportsProps {
+interface EditSummaryProps {
   show: boolean;
   handleClose: () => void;
   data: any;
 }
 
-const EditSummary: FC<CreateReportsProps> = ({ show, data, handleClose }) => {
+const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
   const dispatch = useDispatch();
-  const store: any = useSelector((state) => state);
   const handleToast = useToast();
 
-  // Local state for form values
-  const [name, setName] = useState(data?.name || '');
-  const [scripts, setScripts] = useState<{ [key: string]: string }>({});
-  const [selectedScriptId, setSelectedScriptId] = useState<string>('');
-  const [columnName, setColumnName] = useState('');
+  const { loading, scripts, scriptsMap } = useSelector<
+    RootState,
+    ScriptState
+  >((state) => state.script);
 
-  // Populate initial values when `data` changes
+
+  const [name, setName] = useState('');
+  const [activeScript, setActiveScript] = useState<string>('');
+  const [activeColumns, setActiveColumns] = useState([]);
+  const [columnsForModelMap, setColumnsForModelMap] = useState<{
+    [key: string]: any;
+  }>(() => {
+    const initialMap: { [key: string]: any } = {};
+    Object.entries(data?.meta?.scripts || {}).forEach(([scriptId, column]) => {
+      initialMap[scriptId] = [column];
+    });
+    return initialMap;
+  });
+
+
   useEffect(() => {
-    if (data) {
-      setName(data?.name || '');
-      setScripts(
-        data?.meta?.scripts
-          ? Object.fromEntries(
-              Object.entries(data?.meta?.scripts).map(([key, value]: any) => [
-                key,
-                value.table_col_name,
-              ]),
-            )
-          : {},
-      );
-    }
+      setName(data?.name)
+      dispatch(GetAllScripts({ query: 'for_summary=1' }));
   }, [data]);
 
-  const allscripts = store.script.scripts;
+
   useEffect(() => {
-    dispatch(GetAllScripts({}));
-  }, []);
-  // Generate script options excluding already selected scripts
-  const availableScriptOptions: ScriptOption[] = allscripts
-    ? allscripts
-        .filter((script: any) => !scripts[script.id]) // Exclude selected scripts
-        .map((script: any) => ({
+    if (activeScript) {
+      let dataColumns = scriptsMap[activeScript];
+      if (dataColumns) {
+        setActiveColumns(
+          dataColumns?.['table_data']?.['table_meta']?.['columns'] || [],
+        );
+      } else {
+        dispatch(getScriptByIDAction({ id: activeScript }));
+      }
+    }
+  }, [activeScript, scriptsMap]);
+
+
+  const forSummaryScripts: ScriptOption[] = useMemo(() => {
+    return scripts?.length
+      ? scripts.map((script: any) => ({
           value: script.id,
           label: script.name,
         }))
-    : [];
+      : [];
+  }, [scripts]);
 
-  // Function to add a new script/column pair
-  const addScript = () => {
-    if (selectedScriptId && columnName) {
-      setScripts((prevScripts) => ({
-        ...prevScripts,
-        [selectedScriptId]: columnName,
-      }));
-      setSelectedScriptId('');
-      setColumnName('');
+
+  const tagsForActiveColumns = useMemo(() => {
+    return Object.entries(columnsForModelMap).flatMap(([scriptId, columns]) =>
+      columns.map((column: string) => ({ scriptId: scriptId, column })),
+    );
+  }, [columnsForModelMap]);
+
+
+  const handleColumnChange = (name: string) => {
+    const tempColumnsMap = { ...columnsForModelMap };
+    let activeColumns = tempColumnsMap[activeScript];
+
+    if (!activeColumns) {
+      activeColumns = [name];
+    } else if (activeColumns.includes(name)) {
+      activeColumns = [];
+    } else {
+      activeColumns = [name];
     }
-  };
-  const [load, setLoad] = useState(false);
 
-  // Handle form submission
+    tempColumnsMap[activeScript] = activeColumns;
+    setColumnsForModelMap(tempColumnsMap);
+  };
+
+
+  const handleDeleteTag = (tag: { scriptId: string; column: string }) => {
+    const tempColumnsMap = { ...columnsForModelMap };
+    tempColumnsMap[tag.scriptId] = [];
+    setColumnsForModelMap(tempColumnsMap);
+  };
+
+
+  const resetForm = () => {
+    setName(data?.name || '');
+    setColumnsForModelMap(
+      Object.entries(data?.meta?.scripts || {}).reduce((acc, [scriptId, column]) => {
+        acc[scriptId] = [column];
+        return acc;
+      }, {} as { [key: string]: any }),
+    );
+  };
+
+
   const handleSubmit = async () => {
     const values = {
-      name,
-      scripts,
+        name,
+        scripts: tagsForActiveColumns.reduce((scripts, tag) => {
+            scripts[tag.scriptId] = tag.column;
+            return scripts;
+        }, {}),
     };
-    setLoad(true);
-    // Dispatch the create report action
-    await dispatch(Updatesummeryss({ values, id: data?.id }));
-    await dispatch(GetsummeryByIDs({ id: data?.id }));
-    setLoad(false);
 
-    handleClose();
+    if (Object.keys(values.scripts).length === 0) {
+        handleToast.ErrorToast('Scripts cannot be empty.');
+        return;
+    }
+
+    try {
+        await dispatch(Updatesummeryss({ id: data?.id, values }));
+        handleToast.SuccessToast('Summary updated successfully!');
+        handleClose();
+        resetForm();
+    } catch (error) {
+        handleToast.ErrorToast('Failed to update summary. Please try again.');
+        console.error('Error updating summary:', error);
+        resetForm();
+    }
   };
 
   return (
     <Modal
       size="lg"
-      fullscreen="md-down"
       aria-labelledby="contained-modal-title-vcenter"
-      centered
       show={show}
       onHide={handleClose}
     >
       <Modal.Body className="bg-light-green" style={{ borderRadius: '25px' }}>
-        <h5>Edit Tap Summary {data?.id}</h5>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-        >
-          <div className="mb-3">
-            <div className="row mx-0 px-3">
-              <div className="col-12 m-0">
-                <label htmlFor="name" className="form-label">
-                  Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  className="form-control m-0"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-
-              <div className="col-12 row justify-content-evenly m-0">
-                <button
-                  onClick={handleClose}
-                  className="btn btn-dark col-5 px-3 fw-bold"
-                  type="button"
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-dark col-5 px-3 fw-bold"
-                >
-                  {load ? 'Loading....' : ' Update'}
-                </button>
-              </div>
+        <h4 className="text-center mb-4">Edit Summary {data?.id}</h4>
+        <div className="col-12 d-flex flex-column align-center justify-content-center w-100">
+          <div className="bg-white d-flex col-9 mb-4">
+            <div className="col-8">
+              <List
+                className="border-2px summary-list"
+                style={{
+                  height: '350px',
+                  overflowY: 'auto',
+                }}
+                aria-labelledby="scripts-list-subheader"
+                subheader={
+                  <ListSubheader
+                    component="div"
+                    id="scripts-list-subheader"
+                    className="text-center"
+                  >
+                    Available Scripts
+                  </ListSubheader>
+                }
+              >
+                {loading ? (
+                  <Loader />
+                ) : (
+                  forSummaryScripts.map((option) => (
+                    <ListItem key={option.label}>
+                      <ListItemButton
+                        onClick={() => setActiveScript(option.value)}
+                        selected={option.value === activeScript}
+                      >
+                        <ListItemIcon sx={{ minWidth: '30px' }}>
+                          {option.value === activeScript ? (
+                            <CheckBoxIcon fontSize="medium" />
+                          ) : (
+                            <CheckBoxOutlineBlankIcon fontSize="medium" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText primary={option.label} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))
+                )}
+              </List>
+            </div>
+            <div className="col-8">
+              <List
+                className="border-2px summary-list bg-white"
+                aria-labelledby="columns-subheader"
+                style={{ height: '350px', overflowY: 'auto' }}
+                subheader={
+                  <ListSubheader
+                    component="div"
+                    id="columns-subheader"
+                    className="text-center"
+                  >
+                    Data Columns
+                  </ListSubheader>
+                }
+              >
+                {activeColumns.map((col: any) => (
+                  <ListItem key={col.name} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleColumnChange(col.name)}
+                      selected={columnsForModelMap[activeScript]?.includes(
+                        col.name,
+                      )}
+                    >
+                      <ListItemIcon sx={{ minWidth: '30px' }}>
+                        {columnsForModelMap[activeScript]?.includes(col.name) ? (
+                          <CheckBoxIcon fontSize="small" />
+                        ) : (
+                          <CheckBoxOutlineBlankIcon fontSize="small" />
+                        )}
+                      </ListItemIcon>
+                      <ListItemText primary={col.name} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
             </div>
           </div>
-        </form>
+
+          <div className="d-flex col-12 mb-4">
+            <Stack direction="row" spacing={1}>
+              {tagsForActiveColumns.map((tag) => (
+                <Chip
+                  key={`${tag.scriptId} => ${tag.column}`}
+                  label={`${tag.scriptId} => ${tag.column}`}
+                  onDelete={() => handleDeleteTag(tag)}
+                />
+              ))}
+            </Stack>
+          </div>
+
+          <div className="space-between col-12">
+            <TextField
+              id="filled-basic"
+              label="Model Name"
+              variant="filled"
+              sx={{ width: '80%', marginRight: '20px' }}
+              value={name}
+              onChange={(ev) => setName(ev.target.value)}
+            />
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+            >
+              Update Summary
+            </Button>
+          </div>
+        </div>
       </Modal.Body>
     </Modal>
   );
