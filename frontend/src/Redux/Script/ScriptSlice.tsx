@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
   CreateScript,
   DeleteScriptByID,
@@ -22,6 +22,7 @@ export interface ScriptState {
   loading: boolean;
   loadingById: boolean;
   error: any; // You can refine this to be more specific if you know the error type
+  currentScript: any | null;
 }
 
 const initialState: ScriptState = {
@@ -35,6 +36,7 @@ const initialState: ScriptState = {
   loading: false,
   loadingById: false,
   error: null,
+  currentScript: null,
 };
 
 const AsyncFunctionThunk = (name: any, apiFunction: any) => {
@@ -88,7 +90,11 @@ export const GetSatusScriptByIDs: any = AsyncFunctionThunk(
 const ScriptSlice = createSlice({
   name: 'ScriptSlice',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentScript: (state, action: PayloadAction<any>) => {
+      state.currentScript = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(CreateScripts.fulfilled, (state, action) => {
@@ -140,6 +146,7 @@ const ScriptSlice = createSlice({
           [script.id]: script,
         };
         state.loadingById = false;
+        state.currentScript = script;
       })
       .addCase(getScriptByIDAction.pending, (state) => {
         state.loadingById = true;
@@ -184,4 +191,5 @@ const ScriptSlice = createSlice({
   },
 });
 
+export const { setCurrentScript } = ScriptSlice.actions;
 export default ScriptSlice.reducer;
