@@ -132,7 +132,7 @@ class ReportReadSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         scripts = instance.scripts.all().order_by(
-            'index_in_category').order_by("category__name")
+            "category__name", 'index_in_category')
         ss = ScriptSerializerForReport(many=True, data=scripts)
         ss.is_valid()
         representation['scripts'] = ss.data
