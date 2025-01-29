@@ -62,7 +62,8 @@ class ScriptUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Script
-        fields = ['name', 'category', 'file', 'description', 'for_summary', 'output_type']
+        fields = ['name', 'category', 'file',
+                  'description', 'for_summary', 'output_type']
 
 
 class ScriptSerializerLite(serializers.ModelSerializer):
@@ -110,21 +111,33 @@ class ScriptSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         return obj.get_status_display()
 
+
 class ScriptSerializerForReport(serializers.ModelSerializer):
     category = DeepCategorySerializer()
+
     class Meta:
         model = Script
         fields = ["name", "id", "created", "category"]
         depth = 1
 
+
 class ReportReadSerializer(serializers.ModelSerializer):
-    scripts = ScriptSerializerForReport(many=True)
 
     class Meta:
         model = Report
         fields = ["name", "id", "scripts", "created",
                   "last_updated", "status", "latest_pdf"]
         depth = 1
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        scripts = instance.scripts.all().order_by(
+            'index_in_category').order_by("category__name")
+        ss = ScriptSerializerForReport(many=True, data=scripts)
+        ss.is_valid()
+        representation['scripts'] = ss.data
+        return representation
+
 
 class ReportWriteSerializer(serializers.ModelSerializer):
     # this will include IDs only
@@ -142,7 +155,8 @@ class ReportWriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        scripts = instance.scripts.all().order_by('index_in_category').order_by("category__name")
+        scripts = instance.scripts.all().order_by(
+            'index_in_category').order_by("category__name")
         representation['scripts'] = [script.id for script in scripts]
         return representation
 
@@ -223,7 +237,6 @@ class SummaryMetaSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-
 
         script_map = validated_data.get('scripts', {})
         instance.scripts.clear()
