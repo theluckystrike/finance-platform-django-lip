@@ -28,6 +28,26 @@ const validationSchema = Yup.object({
   file: Yup.mixed().required('File is required'),
 });
 
+type OUTPUT_TYPE = {
+  label: string;
+  value: string;
+};
+
+const OUTPUT_TYPES = [
+  {
+    label: 'Chart',
+    value: 'plt',
+  },
+  {
+    label: 'Table',
+    value: 'pd',
+  },
+  {
+    label: 'Chart and Table',
+    value: 'pd plt',
+  },
+];
+
 const UploadScriptForm = () => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
@@ -101,9 +121,8 @@ const UploadScriptForm = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-  const [selectedOutputType, setSelectedOutputType] = useState<string | null>(
-    null,
-  );
+  const [selectedOutputType, setSelectedOutputType] =
+    useState<OUTPUT_TYPE | null>(null);
 
   const onCategoryChange = (
     event: React.SyntheticEvent,
@@ -113,8 +132,8 @@ const UploadScriptForm = () => {
     formik.setFieldValue('category', category ? category.id : null);
   };
 
-  const onOuputChange = (event: React.SyntheticEvent, value: string | null) => {
-    formik.setFieldValue('output_type', value);
+  const onOuputChange = (event: React.SyntheticEvent, value: OUTPUT_TYPE) => {
+    formik.setFieldValue('output_type', value.value);
     setSelectedOutputType(value);
   };
 
@@ -172,8 +191,11 @@ const UploadScriptForm = () => {
               </label>
               <AutoComplete
                 disablePortal
-                options={['Chart', 'Table', 'Chart and Table']}
+                options={OUTPUT_TYPES}
                 label="Select a view data type"
+                getOptionLabel={(option: { label: string; vlue: string }) =>
+                  option.label
+                }
                 value={selectedOutputType}
                 onChange={onOuputChange}
               />
