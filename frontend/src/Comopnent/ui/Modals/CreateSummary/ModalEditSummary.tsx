@@ -39,11 +39,9 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
   const dispatch = useDispatch();
   const handleToast = useToast();
 
-  const { loading, scripts, scriptsMap } = useSelector<
-    RootState,
-    ScriptState
-  >((state) => state.script);
-
+  const { loading, scripts, scriptsMap } = useSelector<RootState, ScriptState>(
+    (state) => state.script,
+  );
 
   const [name, setName] = useState('');
   const [activeScript, setActiveScript] = useState<string>('');
@@ -58,12 +56,10 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
     return initialMap;
   });
 
-
   useEffect(() => {
-      setName(data?.name)
-      dispatch(GetAllScripts({ query: 'for_summary=1' }));
+    setName(data?.name);
+    dispatch(GetAllScripts({ query: 'for_summary=1' }));
   }, [data]);
-
 
   useEffect(() => {
     if (activeScript) {
@@ -78,7 +74,6 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
     }
   }, [activeScript, scriptsMap]);
 
-
   const forSummaryScripts: ScriptOption[] = useMemo(() => {
     return scripts?.length
       ? scripts.map((script: any) => ({
@@ -88,13 +83,11 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
       : [];
   }, [scripts]);
 
-
   const tagsForActiveColumns = useMemo(() => {
     return Object.entries(columnsForModelMap).flatMap(([scriptId, columns]) =>
       columns.map((column: string) => ({ scriptId: scriptId, column })),
     );
   }, [columnsForModelMap]);
-
 
   const handleColumnChange = (name: string) => {
     const tempColumnsMap = { ...columnsForModelMap };
@@ -112,59 +105,61 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
     setColumnsForModelMap(tempColumnsMap);
   };
 
-
   const handleDeleteTag = (tag: { scriptId: string; column: string }) => {
     const tempColumnsMap = { ...columnsForModelMap };
     tempColumnsMap[tag.scriptId] = [];
     setColumnsForModelMap(tempColumnsMap);
   };
 
-
   const resetForm = () => {
     setName(data?.name || '');
     setColumnsForModelMap(
-      Object.entries(data?.meta?.scripts || {}).reduce((acc, [scriptId, column]) => {
-        acc[scriptId] = [column];
-        return acc;
-      }, {} as { [key: string]: any }),
+      Object.entries(data?.meta?.scripts || {}).reduce(
+        (acc, [scriptId, column]) => {
+          acc[scriptId] = [column];
+          return acc;
+        },
+        {} as { [key: string]: any },
+      ),
     );
   };
 
-
   const handleSubmit = async () => {
     const values = {
-        name,
-        scripts: tagsForActiveColumns.reduce((scripts, tag) => {
-            scripts[tag.scriptId] = tag.column;
-            return scripts;
-        }, {}),
+      name,
+      scripts: tagsForActiveColumns.reduce((scripts, tag) => {
+        scripts[tag.scriptId] = tag.column;
+        return scripts;
+      }, {}),
     };
 
     if (Object.keys(values.scripts).length === 0) {
-        handleToast.ErrorToast('Scripts cannot be empty.');
-        return;
+      handleToast.ErrorToast('Scripts cannot be empty.');
+      return;
     }
 
     try {
-        await dispatch(Updatesummeryss({ id: data?.id, values }));
-        handleToast.SuccessToast('Summary updated successfully!');
-        handleClose();
-        resetForm();
+      await dispatch(Updatesummeryss({ id: data?.id, values }));
+      handleToast.SuccessToast('Summary updated successfully!');
+      handleClose();
+      resetForm();
     } catch (error) {
-        handleToast.ErrorToast('Failed to update summary. Please try again.');
-        console.error('Error updating summary:', error);
-        resetForm();
+      handleToast.ErrorToast('Failed to update summary. Please try again.');
+      console.error('Error updating summary:', error);
+      resetForm();
     }
   };
 
   return (
     <Modal
-      size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       show={show}
       onHide={handleClose}
     >
-      <Modal.Body className="bg-light-green" style={{ borderRadius: '25px' }}>
+      <Modal.Body
+        className="bg-light-green"
+        style={{ borderRadius: '25px', width: '600px' }}
+      >
         <h4 className="text-center mb-4">Edit Summary {data?.id}</h4>
         <div className="col-12 d-flex flex-column align-center justify-content-center w-100">
           <div className="bg-white d-flex col-9 mb-4">
@@ -233,7 +228,9 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
                       )}
                     >
                       <ListItemIcon sx={{ minWidth: '30px' }}>
-                        {columnsForModelMap[activeScript]?.includes(col.name) ? (
+                        {columnsForModelMap[activeScript]?.includes(
+                          col.name,
+                        ) ? (
                           <CheckBoxIcon fontSize="small" />
                         ) : (
                           <CheckBoxOutlineBlankIcon fontSize="small" />
@@ -268,11 +265,8 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
               value={name}
               onChange={(ev) => setName(ev.target.value)}
             />
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-            >
-              Update Summary
+            <Button variant="contained" onClick={handleSubmit}>
+              Update
             </Button>
           </div>
         </div>
