@@ -17,7 +17,7 @@ import {
   GetSatusScriptByIDs,
   getScriptByIDAction,
   RunScripts,
-  ScriptState,
+  ScriptState, setCurrentScript,
 } from '../../Redux/Script/ScriptSlice';
 import { loginUSer } from '../../customHook/getrole';
 import { formatIsoDate } from '../../utils/formatDate';
@@ -77,7 +77,10 @@ const ScriptView = () => {
     setShow(true);
   };
 
-  const editScript = () => {
+  const editScript = async () => {
+    if (scriptData) {
+      await dispatch(setCurrentScript(scriptData));
+    }
     navigate(`/${ActiveRoute.ScriptEdit.path}`);
   };
 
