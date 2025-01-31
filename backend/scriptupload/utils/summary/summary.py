@@ -76,6 +76,14 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
         model_performance = get_model_performance(
             summary.ticker, clean_signal)
 
+    # add model performance to summary meta
+    model_performance = None
+    if summary.ticker:
+        clean_signal = summary_df[[date_index, 'signal sum']]
+        clean_signal.set_index(date_index, inplace=True)
+        model_performance = get_model_performance(
+            summary.ticker, clean_signal)
+
     # keep date format
     summary_df[date_index] = summary_df[date_index].map(
         lambda x: x.isoformat())
