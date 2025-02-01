@@ -9,6 +9,9 @@ from django.utils import timezone
 from .pdf import PDFBuilder
 import pandas as pd
 from datetime import datetime
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from io import BytesIO
 # from django.apps import apps
 
 
@@ -75,7 +78,7 @@ def get_script_hierarchy(scripts):
     return categories, uncategorised
 
 
-def scripts_to_pdf(scripts, title, base_url=None):
+def scripts_to_pdf(scripts, title, summaries=None, base_url=None):
     if len(scripts) == 0:
         return None
 
@@ -134,6 +137,22 @@ def scripts_to_pdf(scripts, title, base_url=None):
                     builder.add_table(
                         script.table_data_file, script.name, script_caption)
 
+    if summaries:
+        builder.add_subheading1_new_page("Summaries")
+        for summary in summaries:
+            # summary_caption = f"last updated: {summary.last_updated.strftime('%d %B %Y at %H:%M')}"
+
+            # 1. Add the timeseries by converting the data to a mpl chart
+            builder.add_image(
+              summary.mpl_chart, summary.name
+            )
+
+            # 2. Add the latest results from each script as a table
+            builder.add_table(
+                summary.meta_dataframe, f"{summary.name}: latest signals"
+            )
+            builder.add_pagebreak_if_not_empty()
+
     pdf_file = builder.to_file()
     # builder.cleanup()
     return pdf_file
@@ -186,3 +205,46 @@ def csv_to_meta_dict(filepath: str) -> dict[str]:
             c['type'] = 'unknown'
         meta['columns'].append(c)
     return meta
+
+
+def summary_json_to_mpl_buffer(json_data: dict) -> BytesIO:
+    '''Convert a summary's signal_plot_data JSON to a mpl figure in a ByteIO buffer
+
+    Expects json_data matching signal_plot_data format
+    from the summary model
+    i.e {"date": [...], "signal sum": []}
+    '''
+    df = pd.DataFrame(json_data)
+    fig = plt.figure(figsize=(18, 8), dpi=300)
+    dates = pd.to_datetime(df['date']).tolist()
+    plt.axhline(y=0, color='black', linestyle='-', linewidth=1)
+    plt.plot(dates, df['signal sum'])
+    plt.xlabel('Date')
+    plt.ylabel('Signal Sum')
+
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+    ax.grid(axis='x', linestyle='-', alpha=0.3)
+    ax.grid(axis='y', linestyle='-', alpha=0.3)
+
+    latest_date = max(dates)
+    latest_value = df['signal sum'][dates.index(latest_date)]
+    annotation_text = f"{latest_date.strftime('%Y-%m-%d')}\nValue: {latest_value:.2f}"
+
+    ax.annotate(
+        annotation_text,
+        xy=(latest_date, latest_value),
+        xytext=(-30, 20),
+        textcoords='offset points',
+        arrowprops=dict(arrowstyle='->', color='black'),
+        bbox=dict(boxstyle='round,pad=0.5', fc='white', alpha=0.5),
+        fontsize=11
+    )
+
+    plt.xticks(rotation=45)
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', bbox_inches="tight")
+    buffer.seek(0)
+    plt.close()
+    return buffer
