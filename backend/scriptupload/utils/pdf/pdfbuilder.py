@@ -7,6 +7,8 @@ from django.utils import timezone
 from .styles import styles, subheading_style, subtitle_style, chart_title_style, table_style, caption_style, table_text_style, TABLE_FONTNAME, TABLE_FONTSIZE
 import pandas as pd
 from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.utils import ImageReader
+from PIL import Image as PILImage
 
 
 class PDFBuilder:
@@ -82,19 +84,45 @@ class PDFBuilder:
         image_flow = list()
         image_title = self._chart_title(title)
         image_flow.append(image_title)
-        scale_factor = self.pdf.width/image.width
-        scaled_height = image.height * scale_factor
+
+        # Handle both Django ImageFile and BytesIO buffer
+        if hasattr(image, 'open'):  # Django ImageFile
+            img_file = image.open()
+            pil_image = PILImage.open(img_file)
+            img_width, img_height = pil_image.size
+            img_file.close()
+        else:  # BytesIO buffer
+            pil_image = PILImage.open(image)
+            img_width, img_height = pil_image.size
+            image.seek(0)  # Rewind the buffer for future use
+
+        # Calculate scaling factor
+        scale_factor = self.pdf.width / img_width
+        scaled_height = img_height * scale_factor
         scaled_width = self.pdf.width
+
+        # Adjust scaling if the image is too tall
         if scaled_height > self.pdf.height - 50:
             scaled_height = self.pdf.height - 50
-            scale_factor = scaled_height / image.height
-            scaled_width = scale_factor * image.width
-        img = Image(image.open(), width=scaled_width, height=scaled_height)
-        image.close()
+            scale_factor = scaled_height / img_height
+            scaled_width = scale_factor * img_width
+
+        # Create ReportLab Image object
+        if hasattr(image, 'open'):  # Django ImageFile
+            img = Image(image.open(), width=scaled_width, height=scaled_height)
+            image.close()
+        else:  # BytesIO buffer
+            img = Image(image, width=scaled_width,
+                        height=scaled_height)
+
         image_flow.append(img)
+
+        # Add caption if provided
         if caption:
             caption_text = self._caption(caption)
             image_flow.append(caption_text)
+
+        # Add the image flow to the document
         self.flowables.append(KeepTogether(image_flow))
 
     def _string_width(self, string, fontname, fontsize):
@@ -114,8 +142,11 @@ class PDFBuilder:
         table.setStyle(table_style)
         return table
 
-    def add_table(self, csv_file, title, caption=None):
-        table_dataframe = pd.read_csv(csv_file).astype(str)
+    def add_table(self, csv_file: File | pd.DataFrame, title, caption=None):
+        if type(csv_file) is pd.DataFrame:
+            table_dataframe = csv_file.astype(str)
+        else:
+            table_dataframe = pd.read_csv(csv_file).astype(str)
         table_flow = list()
         image_title = self._chart_title(title)
         table_flow.append(image_title)

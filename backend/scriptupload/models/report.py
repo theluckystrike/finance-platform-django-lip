@@ -1,6 +1,7 @@
 import logging
 from django.db import models
 from financeplatform.storage_backends import PrivateMediaStorage
+from olandinvestmentsapi.models import Summary
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.utils import timezone
@@ -34,6 +35,7 @@ class Report(models.Model):
     status = models.CharField(max_length=15, default="success")
     added_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
+    summaries = models.ManyToManyField(Summary)
 
     # TODO: Execution status like in Script model
 
@@ -50,7 +52,7 @@ class Report(models.Model):
                 time.sleep(5)
                 self.refresh_from_db()
             pfd_file = scripts_to_pdf(
-                self.scripts.all().order_by("index_in_category"), self.name, base_url)
+                self.scripts.all().order_by("index_in_category"), self.name, self.summaries.all().order_by("name"), base_url)
             self.latest_pdf.save(
                 f"{self.name}.pdf", pfd_file)
             self.last_updated = timezone.now()

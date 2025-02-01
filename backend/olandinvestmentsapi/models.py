@@ -1,3 +1,4 @@
+import pandas as pd
 from django.db import models
 from django.contrib.auth.models import User
 from scriptupload.models import Script
@@ -8,6 +9,7 @@ import time
 import logging
 import traceback
 import sys
+from scriptupload.utils.utils import summary_json_to_mpl_buffer
 
 logger = logging.getLogger('testlogger')
 
@@ -35,8 +37,8 @@ class Summary(models.Model):
                 "column_name": "col x signal",
                 "column_last_value": -1
             },
-            . . . 
-        
+            . . .
+
         }
     }
     '''
@@ -53,6 +55,26 @@ class Summary(models.Model):
     def set_status(self, status):
         self.status = status
         self.save(update_fields=["status"])
+
+    @property
+    def meta_dataframe(self):
+        df = pd.DataFrame(self.meta['scripts'].values())
+        df.rename(
+            columns={
+                "name": "Script",
+                "table_col_name": "Signal Name",
+                "table_col_last_value": "Latest Signal Value"
+            },
+            inplace=True
+        )
+        return df
+
+    @property
+    def mpl_chart(self):
+        '''signal_plot_data plotted to an mpl chart'''
+        if self.signal_plot_data:
+            return summary_json_to_mpl_buffer(self.signal_plot_data)
+        return None
 
     def _update(self):
         try:

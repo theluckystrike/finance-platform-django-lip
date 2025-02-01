@@ -8,7 +8,7 @@ TABLE_FONTSIZE = 10
 TABLE_FONTNAME = 'Helvetica'
 
 table_style = TableStyle([
-    ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+    ('BACKGROUND', (0, 0), (-1, 0), colors.ReportLabLightGreen),
     ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
