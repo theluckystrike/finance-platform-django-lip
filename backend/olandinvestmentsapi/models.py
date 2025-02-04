@@ -24,7 +24,7 @@ class Summary(models.Model):
     name = models.CharField(max_length=100, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     # last_updated = models.DateTimeField()
-    ticker = models.CharField(null=True, blank=True, max_length=10)
+    ticker = models.CharField(default='AAPL', null=True, blank=True, max_length=10) #TODO: temprory hard-coded!
     # timeseries_start_date = models.DateField()
     # timeseries_end_date = models.DateField(null=True, blank=True)
     '''
