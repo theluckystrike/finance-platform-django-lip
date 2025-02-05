@@ -55,7 +55,8 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
             [date_col_name, meta[str(script.id)]["table_col_name"]]]
         sdf[date_col_name] = pd.to_datetime(sdf[date_col_name])
         # naming the data for each script in the summary df with its unique ID
-        sdf.rename(columns={meta[str(script.id)]["table_col_name"]: sid}, inplace=True)
+        sdf.rename(columns={meta[str(script.id)]
+                   ["table_col_name"]: sid}, inplace=True)
         summary_df = pd.merge(
             summary_df, sdf, left_on=date_index, right_on=date_col_name, how="inner")
         signal_columns_names.append(meta[str(script.id)]["table_col_name"])
@@ -69,15 +70,8 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
         meta[str(sid)]["table_col_last_value"] = float(summary_df[sid].iloc[0])
 
     # add model performance to summary meta
-    model_performance = None
-    if summary.ticker:
-        clean_signal = summary_df[[date_index, 'signal sum']]
-        clean_signal.set_index(date_index, inplace=True)
-        model_performance = get_model_performance(
-            summary.ticker, clean_signal)
-
-    # add model performance to summary meta
-    model_performance = None
+    model_performance = {"latest_score": float(
+        summary_df['signal sum'].iloc[0])}
     if summary.ticker:
         clean_signal = summary_df[[date_index, 'signal sum']]
         clean_signal.set_index(date_index, inplace=True)
