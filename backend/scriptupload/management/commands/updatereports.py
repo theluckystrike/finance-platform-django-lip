@@ -18,7 +18,7 @@ logger = logging.getLogger('testlogger')
 
 
 class Command(BaseCommand):
-    help = "Update all reports without running their scripts
+    help = "Update all reports without running their scripts"
 
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
