@@ -92,3 +92,25 @@ resource "aws_cloudwatch_event_target" "send_emails_event_target" {
     platform_version = "LATEST"
   }
 }
+resource "aws_cloudwatch_event_rule" "daily_reports_update" {
+  name = "DailyReportsUpdate"
+  #   7am UTC every day
+  schedule_expression = "cron(0 7 * * ? *)"
+}
+
+resource "aws_cloudwatch_event_target" "update_reports_event_target" {
+  rule     = aws_cloudwatch_event_rule.daily_reports_update.name
+  arn      = aws_ecs_cluster.production.arn
+  role_arn = aws_iam_role.ecs_events_role.arn
+
+  ecs_target {
+    launch_type         = "FARGATE"
+    task_definition_arn = aws_ecs_task_definition.update_reports.arn
+    network_configuration {
+      subnets          = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+      security_groups  = [aws_security_group.ecs_security_group.id]
+      assign_public_ip = true
+    }
+    platform_version = "LATEST"
+  }
+}

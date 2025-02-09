@@ -144,6 +144,22 @@ resource "aws_ecs_task_definition" "send_emails" {
   container_definitions    = data.template_file.send_email.rendered
   depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
+data "template_file" "update_reports" {
+  template = file("templates/update_reports_task.json.tpl")
+
+  vars = local.container_vars
+}
+resource "aws_ecs_task_definition" "update_reports" {
+  family                   = "oi-prod-update-reports"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  container_definitions    = data.template_file.update_reports.rendered
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
+}
 
 
 resource "aws_ecs_service" "production" {

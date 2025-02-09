@@ -16,9 +16,12 @@ execute
 """
 logger = logging.getLogger('testlogger')
 
+start_time = datetime.now(timezone.utc)
 
-def send_pdf(task):
-    task.report.update(wait=True)
+
+def send_pdf(task: ReportEmailTask):
+    # if task.report.last_updated < start_time:
+    #     task.report.update(wait=True)
     today_str = timezone.now().strftime("%A")
     mail = EmailMessage(
         f"{task.report.name} Scheduled Report {timezone.now().strftime('%Y/%m/%d')}",
