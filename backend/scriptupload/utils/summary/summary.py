@@ -24,21 +24,18 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
         raise Exception(f"No date column found in script {first_script.id}")
 
     date_index = "date"
-    # naming the data for each script in the summary df with its unique ID
     summary_df.rename(columns={date_col_name: date_index}, inplace=True)
 
     # convert data column to datetime and change name
     summary_df[date_index] = pd.to_datetime(summary_df[date_index])
     summary_df = summary_df[[date_index,
                              meta[str(first_script.id)]["table_col_name"]]]
-    summary_df = summary_df.rename(
-        columns={meta[str(first_script.id)]["table_col_name"]: first_script.id})
+
+    # naming the data for each script in the summary df with its unique ID
+    summary_df.rename(
+        columns={meta[str(first_script.id)]["table_col_name"]: first_script.id}, inplace=True)
 
     # for each script, merge it into the df on matching dates
-
-
-    # IN HERE YOU ARE MERGING EVERYTHING FROM THE DFS BUT THEY MIGHT CONTAIN OTHER STUFF IN THEM
-    # ONLY MERGE THE COLUMN YOU WANT INTO THE SUMMARY_DF ON THE MATCHING DATES
 
     signal_columns_names = []
     for sid in script_ids[1:]:
@@ -51,7 +48,7 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
             [date_col_name, meta[str(script.id)]["table_col_name"]]]
         sdf[date_col_name] = pd.to_datetime(sdf[date_col_name])
         # naming the data for each script in the summary df with its unique ID
-        sdf = sdf.rename(columns={meta[str(script.id)]["table_col_name"]: sid})
+        sdf.rename(columns={meta[str(script.id)]["table_col_name"]: sid}, inplace=True)
         summary_df = pd.merge(
             summary_df, sdf, left_on=date_index, right_on=date_col_name, how="inner")
         signal_columns_names.append(meta[str(script.id)]["table_col_name"])

@@ -9,7 +9,7 @@ logger = logging.getLogger('testlogger')
 
 
 class Command(BaseCommand):
-    help = "Run and update all scripts in the database"
+    help = "Run and update a batch of scripts"
 
     def add_arguments(self, parser):
         # use this if you want to add arguments to the command line
