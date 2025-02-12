@@ -63,9 +63,10 @@ class Summary(models.Model):
 
     def _update(self):
         try:
-            summary_json, meta, model_performance = make_summary_table(self)
+            summary_json, meta, model_performance, latest_score = make_summary_table(self)
             self.meta['scripts'] = meta
             self.meta['model_performance'] = model_performance
+            self.meta['latest_score'] = latest_score
             self.signal_plot_data = summary_json
             self.save(update_fields=["meta", "signal_plot_data"])
             self.set_status(Status.SUCCESS)

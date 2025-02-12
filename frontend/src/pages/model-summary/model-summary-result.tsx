@@ -24,6 +24,7 @@ import EditSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalEditSummar
 import Loader from '../../Comopnent/ui/Loader';
 import Plot from 'react-plotly.js';
 import { formatIsoDate } from '../../utils/formatDate';
+import JsonTable from "../../Comopnent/TableData/JsonTable";
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
@@ -141,7 +142,7 @@ const TapeSummaryResult: React.FC = () => {
                   Summary of stock market performance and model predictions
                 </Card.Title>
               </Card.Header>
-              <Card.Body>
+              <Card.Body style={{margin: "auto"}}>
                 {/* <ChartComponent data={TapeSummaryData[0]?.chartData} /> */}
 
                 {summery && summery.signal_plot_data ? (
@@ -153,21 +154,21 @@ const TapeSummaryResult: React.FC = () => {
                         type: 'scatter',
                         mode: 'lines',
                         line: { color: 'blue' },
-                        name: 'Breadth Signal',
+                        name: `Model Score <br> (Latest: ${summery.meta.latest_score})`,
                       },
                     ]}
                     layout={{
-                      title: 'Breadth Signal Over Time',
+                      title: 'Model Score Over Time',
                       xaxis: { title: 'Date' },
                       yaxis: {
-                        title: 'Breadth Signal',
+                        title: 'Model Score',
                         rangemode: 'tozero',
                       },
                       showlegend: true,
                       legend: {
-                        x: 1,
+                        x: -0.2,
                         y: 1,
-                        xanchor: 'right',
+                        xanchor: 'left',
                         yanchor: 'top',
                       },
                     }}
@@ -179,22 +180,36 @@ const TapeSummaryResult: React.FC = () => {
               </Card.Body>
             </Card>
 
-            <Card className="col-12 ">
+            {summery?.meta?.model_performance && (
+                <Card className="col-12 mb-5">
+                  <Card.Header className="bg-light-green">
+                    <Card.Title>
+                      Model Performance
+                    </Card.Title>
+                  </Card.Header>
+                  <Card.Body>
+                    <JsonTable data={summery?.meta?.model_performance} />
+                  </Card.Body>
+                </Card>
+            )}
+
+            <Card className="col-12">
               <Card.Header className="bg-light-green">
                 <Card.Title>Scripts</Card.Title>
                 <Card.Subtitle>Individual script performance</Card.Subtitle>
               </Card.Header>
               <Card.Body>
-                <div className="row justify-content-evenly">
+                <div className="row gy-3">
                   {summery2.map((script: any) => (
                     <div
                       key={script.id}
-                      className={`position-relative text-left rounded-3 bg-light-green p-3 ${
+                      className={`${
                         selectedScript === script.id ? 'border-primary ' : ''
-                      } col-5`}
+                      } col-6`}
                       onClick={() => setSelectedScript(script.id)}
                     >
-                      {' '}
+                      <div className="position-relative text-left p-3 rounded-3 bg-light-green">
+                        {' '}
                       <Link
                         to={`/ScriptDetails/${script.id}`}
                         className="text-decoration-none text-black"
@@ -214,6 +229,7 @@ const TapeSummaryResult: React.FC = () => {
                       >
                         Score: {script.score}
                       </p>
+                      </div>
                     </div>
                   ))}
                 </div>

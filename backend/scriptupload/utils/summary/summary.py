@@ -70,8 +70,8 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
         meta[str(sid)]["table_col_last_value"] = float(summary_df[sid].iloc[0])
 
     # add model performance to summary meta
-    model_performance = {"latest_score": float(
-        summary_df['signal sum'].iloc[0])}
+    latest_score = float(summary_df['signal sum'].iloc[0])
+
     if summary.ticker:
         clean_signal = summary_df[[date_index, 'signal sum']]
         clean_signal.set_index(date_index, inplace=True)
@@ -85,7 +85,7 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
     # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
     summary_json = df_to_json_no_index(summary_df[[date_index, 'signal sum']])
 
-    return summary_json, meta, model_performance
+    return summary_json, meta, model_performance, latest_score
 
 
 def df_to_json_no_index(df: pd.DataFrame) -> object:
