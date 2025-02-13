@@ -24,7 +24,7 @@ import EditSummary from '../../Comopnent/ui/Modals/CreateSummary/ModalEditSummar
 import Loader from '../../Comopnent/ui/Loader';
 import Plot from 'react-plotly.js';
 import { formatIsoDate } from '../../utils/formatDate';
-import JsonTable from "../../Comopnent/TableData/JsonTable";
+import JsonTable from '../../Comopnent/TableData/JsonTable';
 const Components: any = {
   ScatterLineChart: ScatterLineChart,
   LineChart: LineChart,
@@ -142,7 +142,7 @@ const TapeSummaryResult: React.FC = () => {
                   Summary of stock market performance and model predictions
                 </Card.Title>
               </Card.Header>
-              <Card.Body style={{margin: "auto"}}>
+              <Card.Body style={{ margin: 'auto' }}>
                 {/* <ChartComponent data={TapeSummaryData[0]?.chartData} /> */}
 
                 {summery && summery.signal_plot_data ? (
@@ -177,7 +177,7 @@ const TapeSummaryResult: React.FC = () => {
                           yref: 'paper',
                           x: -0.09,
                           y: 0.8,
-                          text: `${summery.meta.latest_score}`,
+                          text: `${summery.meta.latest_score || 'df'}`,
                           showarrow: false,
                           font: {
                             size: 11,
@@ -195,16 +195,14 @@ const TapeSummaryResult: React.FC = () => {
             </Card>
 
             {summery?.meta?.model_performance && (
-                <Card className="col-12 mb-5">
-                  <Card.Header className="bg-light-green">
-                    <Card.Title>
-                      Model Performance
-                    </Card.Title>
-                  </Card.Header>
-                  <Card.Body>
-                    <JsonTable data={summery?.meta?.model_performance} />
-                  </Card.Body>
-                </Card>
+              <Card className="col-12 mb-5">
+                <Card.Header className="bg-light-green">
+                  <Card.Title>Model Performance</Card.Title>
+                </Card.Header>
+                <Card.Body>
+                  <JsonTable data={summery?.meta?.model_performance} />
+                </Card.Body>
+              </Card>
             )}
 
             <Card className="col-12">
@@ -224,25 +222,25 @@ const TapeSummaryResult: React.FC = () => {
                     >
                       <div className="position-relative text-left p-3 rounded-3 bg-light-green">
                         {' '}
-                      <Link
-                        to={`/ScriptDetails/${script.id}`}
-                        className="text-decoration-none text-black"
-                        rel="noopener noreferrer" // Security best practice
-                      >
-                        <OpenInNewIcon
-                          className="position-top-right"
-                          fontSize="small"
-                        />
-                      </Link>
-                      <p>{`Script: ${script.name}`}</p>
-                      <p>{`Column: ${script.tableColName}`}</p>
-                      <p
-                        className={`text-sm ${
-                          script.score > 0 ? 'text-success' : 'text-danger'
-                        }`}
-                      >
-                        Score: {script.score}
-                      </p>
+                        <Link
+                          to={`/ScriptDetails/${script.id}`}
+                          className="text-decoration-none text-black"
+                          rel="noopener noreferrer" // Security best practice
+                        >
+                          <OpenInNewIcon
+                            className="position-top-right"
+                            fontSize="small"
+                          />
+                        </Link>
+                        <p>{`Script: ${script.name}`}</p>
+                        <p>{`Column: ${script.tableColName}`}</p>
+                        <p
+                          className={`text-sm ${
+                            script.score > 0 ? 'text-success' : 'text-danger'
+                          }`}
+                        >
+                          Score: {script.score}
+                        </p>
                       </div>
                     </div>
                   ))}
