@@ -177,7 +177,7 @@ const TapeSummaryResult: React.FC = () => {
                           yref: 'paper',
                           x: -0.09,
                           y: 0.8,
-                          text: `${summery.meta.latest_score || 'df'}`,
+                          text: `${summery.meta.latest_score || ''}`,
                           showarrow: false,
                           font: {
                             size: 11,
