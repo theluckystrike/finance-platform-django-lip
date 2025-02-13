@@ -154,7 +154,7 @@ const TapeSummaryResult: React.FC = () => {
                         type: 'scatter',
                         mode: 'lines',
                         line: { color: 'blue' },
-                        name: `Model Score <br> (Latest: ${summery.meta.latest_score})`,
+                        name: `Model Score`,
                       },
                     ]}
                     layout={{
@@ -164,13 +164,27 @@ const TapeSummaryResult: React.FC = () => {
                         title: 'Model Score',
                         rangemode: 'tozero',
                       },
-                      showlegend: true,
+                      showlegend: false,
                       legend: {
                         x: -0.2,
                         y: 1,
                         xanchor: 'left',
                         yanchor: 'top',
                       },
+                      annotations: [
+                        {
+                          xref: 'paper',
+                          yref: 'paper',
+                          x: -0.09,
+                          y: 0.8,
+                          text: `${summery.meta.latest_score}`,
+                          showarrow: false,
+                          font: {
+                            size: 11,
+                            color: 'dark-gray',
+                          },
+                        },
+                      ],
                     }}
                     style={{ width: '100%', height: '100%' }}
                   />
