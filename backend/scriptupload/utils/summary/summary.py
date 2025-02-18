@@ -71,7 +71,7 @@ def make_summary_table(summary) -> tuple[pd.DataFrame, dict]:
 
     # add model performance to summary meta
     latest_score = float(summary_df['signal sum'].iloc[0])
-
+    model_performance = None
     if summary.ticker:
         clean_signal = summary_df[[date_index, 'signal sum']]
         clean_signal.set_index(date_index, inplace=True)

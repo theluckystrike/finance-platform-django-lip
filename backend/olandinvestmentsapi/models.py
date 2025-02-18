@@ -8,6 +8,7 @@ import time
 import logging
 import traceback
 import sys
+from django.utils import timezone
 
 logger = logging.getLogger('testlogger')
 
@@ -23,8 +24,8 @@ class Status(models.IntegerChoices):
 class Summary(models.Model):
     name = models.CharField(max_length=100, unique=True)
     created = models.DateTimeField(auto_now_add=True)
-    # last_updated = models.DateTimeField()
-    ticker = models.CharField(default='AAPL', null=True, blank=True, max_length=10) #TODO: temprory hard-coded!
+    last_updated = models.DateTimeField(blank=True, null=True)
+    ticker = models.CharField(default='^SPX', null=True, blank=True, max_length=10) #TODO: temprory hard-coded!
     # timeseries_start_date = models.DateField()
     # timeseries_end_date = models.DateField(null=True, blank=True)
     '''
@@ -61,6 +62,10 @@ class Summary(models.Model):
         self.status = status
         self.save(update_fields=["status"])
 
+    def set_last_updated(self):
+        self.last_updated = timezone.now()
+        self.save(update_fields=["last_updated"])
+
     def _update(self):
         try:
             summary_json, meta, model_performance, latest_score = make_summary_table(self)
@@ -70,8 +75,9 @@ class Summary(models.Model):
             self.signal_plot_data = summary_json
             self.save(update_fields=["meta", "signal_plot_data"])
             self.set_status(Status.SUCCESS)
+            self.set_last_updated()
             logger.info(
-                f"[report update] Successfully updated report {self.id}")
+                f"[report update] Successfully updated summary id={self.id}, name={self.name}")
         except InvalidTickerError as a:
             logger.error(
                 f"[summary update] Failed to update summary {self.id} due to invalid ticker symbol: {a}")

@@ -175,7 +175,7 @@ class SummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Summary
         fields = ["id", "name", "scripts",
-                  "meta", "created", "signal_plot_data", "status", "ticker"]
+                  "meta", "created", "signal_plot_data", "status", "ticker", "last_updated"]
 
     def get_status(self, obj):
         print("getting status")
@@ -189,7 +189,7 @@ class SummarySerializerLite(serializers.ModelSerializer):
 
     class Meta:
         model = Summary
-        fields = ["id", "name", "scripts", "created", "status", "ticker"]
+        fields = ["id", "name", "scripts", "created", "status", "ticker", "last_updated"]
 
     def get_status(self, obj):
         return obj.get_status_display()

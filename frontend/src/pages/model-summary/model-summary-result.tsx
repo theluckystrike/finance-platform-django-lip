@@ -98,7 +98,7 @@ const TapeSummaryResult: React.FC = () => {
           <div className="">
             <h1 className="h1">{summery?.name}</h1>
             <h6 className="ps-1">
-              Last update {formatIsoDate(summery?.created)}{' '}
+              Last update {formatIsoDate(summery?.last_updated)}{' '}
             </h6>
           </div>
           <div className="btn-toolbar">
@@ -142,7 +142,7 @@ const TapeSummaryResult: React.FC = () => {
                   Summary of stock market performance and model predictions
                 </Card.Title>
               </Card.Header>
-              <Card.Body style={{ margin: 'auto' }}>
+              <Card.Body>
                 {/* <ChartComponent data={TapeSummaryData[0]?.chartData} /> */}
 
                 {summery && summery.signal_plot_data ? (
@@ -154,37 +154,25 @@ const TapeSummaryResult: React.FC = () => {
                         type: 'scatter',
                         mode: 'lines',
                         line: { color: 'blue' },
-                        name: `Model Score`,
+                        name: `Model Score (${formatIsoDate(summery?.last_updated)} = ${summery.meta.latest_score})`,
                       },
                     ]}
                     layout={{
+                      autosize: true,
                       title: 'Model Score Over Time',
-                      xaxis: { title: 'Date' },
-                      yaxis: {
-                        title: 'Model Score',
-                        rangemode: 'tozero',
-                      },
-                      showlegend: false,
+                      xaxis: {linewidth: 2, linecolor: 'black', mirror: true},
+                      yaxis: {linewidth: 2, linecolor: 'black', mirror: true},
+                      showlegend: true,
                       legend: {
-                        x: -0.2,
-                        y: 1,
+                        x: 0.01,
+                        y: 0.99,
                         xanchor: 'left',
                         yanchor: 'top',
+                        borderwidth: 2,
+                        bordercolor: 'gray',
+                        bgcolor: 'rgba(255, 255, 255, 0.7)',
+                        font: {color: "black"},
                       },
-                      annotations: [
-                        {
-                          xref: 'paper',
-                          yref: 'paper',
-                          x: -0.09,
-                          y: 0.8,
-                          text: `${summery.meta.latest_score || ''}`,
-                          showarrow: false,
-                          font: {
-                            size: 11,
-                            color: 'dark-gray',
-                          },
-                        },
-                      ],
                     }}
                     style={{ width: '100%', height: '100%' }}
                   />
