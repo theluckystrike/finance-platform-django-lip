@@ -8,7 +8,9 @@ import {
   GetreportByID,
   mergereport,
   Updatereport,
-  UpdateReports, RemoveScriptFromReport,
+  UpdateReports,
+  RemoveScriptFromReport,
+  RemoveSummaryFromReport,
 } from './Api';
 export interface ReportState {
   reports: any[]; // You can replace `any` with a more specific type if available
@@ -18,6 +20,7 @@ export interface ReportState {
     name: string;
     scripts: [];
     latest_pdf: string | null;
+    summaries?: [];
   }; // Same here, replace `any` with a specific type if possible
   Active_Role: string;
   page: number;
@@ -34,6 +37,7 @@ const initialState: ReportState = {
     name: '',
     scripts: [],
     latest_pdf: null,
+    summaries: [],
   },
   reportStatus: '',
   Active_Role: '',
@@ -71,6 +75,10 @@ export const Updatereports: any = AsyncFunctionThunk(
 export const RemoveScriptFromReports: any = AsyncFunctionThunk(
     'RemoveScriptFromReports',
     RemoveScriptFromReport,
+  );
+  export const RemoveSummaryFromReports: any = AsyncFunctionThunk(
+    'RemoveSummaryFromReports',
+    RemoveSummaryFromReport,
   );
 export const GetAllreports: any = AsyncFunctionThunk(
   'GetAllreports',

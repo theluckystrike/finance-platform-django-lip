@@ -7,9 +7,10 @@ import * as Yup from 'yup';
 import Select, { MultiValue } from 'react-select';
 import { Createreports } from '../../../../Redux/Report/Slice';
 import useToast from '../../../../customHook/toast';
+import { getAllSummaries } from '../../../../Redux/TapeSummary/Slice';
 
-// Define type for the script option
-interface ScriptOption {
+// Define type for the script and summary selectbox option
+interface SelectBoxOption {
   value: string;
   label: string;
 }
@@ -18,6 +19,7 @@ interface ScriptOption {
 interface FormValues {
   name: string;
   scripts: string[]; // 'scripts' is an array of strings (ids)
+  summaries: string[]; // 'summaries' is an array of strings (ids)
 }
 
 interface CreateReportsProps {
@@ -35,6 +37,7 @@ const CreateReports: FC<CreateReportsProps> = ({
   const store: any = useSelector((i) => i);
   const handleToast = useToast();
   const allscripts = store.script.scripts || [];
+  const allsummaries = store.summary.summaries || [];
   const [loginUser, setLoginUser] = useState<any>(null);
   const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
@@ -47,6 +50,7 @@ const CreateReports: FC<CreateReportsProps> = ({
     initialValues: {
       name: '',
       scripts: selectedScripts,
+      summaries: [],
     },
     enableReinitialize: true,
     validationSchema,
@@ -69,6 +73,7 @@ const CreateReports: FC<CreateReportsProps> = ({
       const getData = async () => {
         try {
           // await dispatch(GetAllScripts({ token: loginUser?.access }));
+          await dispatch(getAllSummaries({ page: 1 }));
         } catch (error) {
           console.log(error);
         }
@@ -77,9 +82,14 @@ const CreateReports: FC<CreateReportsProps> = ({
     }
   }, [loginUser, dispatch]);
 
-  const scriptOptions: ScriptOption[] = allscripts.map((script: any) => ({
+  const scriptOptions: SelectBoxOption[] = allscripts.map((script: any) => ({
     value: script.id,
     label: script.name,
+  }));
+
+  const summaryOptions: SelectBoxOption[] = allsummaries.map((summary: any) => ({
+    value: summary.id,
+    label: summary.name,
   }));
 
   return (
@@ -143,17 +153,58 @@ const CreateReports: FC<CreateReportsProps> = ({
                   isMulti
                   options={scriptOptions}
                   onChange={(
-                    selectedOptions: MultiValue<ScriptOption> | null,
+                    selectedOptions: MultiValue<SelectBoxOption> | null,
                   ) => {
                     const values = selectedOptions
                       ? selectedOptions.map((option) => option.value)
                       : [];
                     formik.setFieldValue('scripts', values);
                   }}
-                  value={scriptOptions.filter((option: ScriptOption) =>
+                  value={scriptOptions.filter((option: SelectBoxOption) =>
                     formik.values.scripts.includes(option.value),
                   )}
                   placeholder="Select Scripts"
+                />
+              </div>
+
+              <div className="col-12 mb-2">
+                <label htmlFor="summaries" className="form-label">
+                  Summaries
+                </label>
+                <Select
+                  id="summaries"
+                  styles={{
+                    valueContainer: (provided) => ({
+                      ...provided,
+                      maxHeight: '100px', // Set max height for the selected values container
+                      overflowY: 'auto', // Add scroll when content exceeds max height
+                    }),
+                    control: (provided) => ({
+                      ...provided,
+                      maxHeight: '150px', // Set max height for the entire control
+                      overflowY: 'auto', // Add scroll when options exceed height
+                      border: '2px solid #011c05',
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      zIndex: 9999, // Ensure dropdown is visible over other content
+                    }),
+                  }}
+                  name="summaries"
+                  isMulti
+                  options={summaryOptions}
+                  onChange={(
+                    selectedOptions: MultiValue<SelectBoxOption> | null,
+                  ) => {
+                    const values = selectedOptions
+                      ? selectedOptions.map((option) => option.value)
+                      : [];
+                    formik.setFieldValue('summaries', values);
+                  }}
+                  value={summaryOptions.filter((option: SelectBoxOption) =>
+                    formik.values.summaries.includes(option.value),
+                  )}
+                  placeholder="Select Summaries"
                 />
               </div>
 
