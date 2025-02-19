@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { Tab, Tabs } from 'react-bootstrap';
+
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,11 +20,14 @@ import {
   UpdateReportss,
   ReportState,
   RemoveScriptFromReports,
+  RemoveSummaryFromReports,
 } from '../../Redux/Report/Slice';
 import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
+import ReportScriptTabView from './ReportScriptTabView';
+import ReportSummaryTabView from './ReportSummaryTabView';
 // Plugins
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
@@ -42,6 +47,8 @@ const ReportView = () => {
   const { loading, reportStatus, report } = useSelector<RootState, ReportState>(
     (state) => state.report,
   );
+
+  const [selectedTabKey, setSelectedTabKey] = useState<any>('script');
 
   const getStatus = () => {
     dispatch(GetSatusreportByIDs({ id }));
@@ -106,6 +113,19 @@ const ReportView = () => {
       handleToast.SuccessToast(`Remove Script successfully`);
     } catch (error) {
       handleToast.ErrorToast(`Failed remove script`);
+    } finally {
+      getreport();
+    }
+  };
+
+  const removeSummary = async (val: any) => {
+    try {
+      await dispatch(
+        RemoveSummaryFromReports({ reportId: report.id, summaryId: val }),
+      );
+      handleToast.SuccessToast(`Remove Summary successfully`);
+    } catch (error) {
+      handleToast.ErrorToast(`Failed remove summary`);
     } finally {
       getreport();
     }
@@ -238,99 +258,27 @@ const ReportView = () => {
             </div>
           </div>
         </form> */}
-        <div>
-          {!loading ? (
-            <div id="customReportForm" style={{ overflow: 'auto' }}>
-              <table className="table   w-100" style={{ minWidth: '1000px' }}>
-                <thead>
-                  <tr className="fw-bold mb-2 p-2">
-                    <th scope="col" className="col-5">
-                      <h5>
-                        <input type="checkbox" id="selectAllCheckbox" /> Name
-                      </h5>
-                    </th>
-                    <th scope="col" className="col-2 text-center mx-auto">
-                      Category
-                    </th>
-                    <th scope="col" className="col-2 text-center mx-auto">
-                      Sub Category 1
-                    </th>
-                    <th scope="col" className="col-2 text-center mx-auto">
-                      Sub Category 2
-                    </th>
-                    <th scope="col" className="col-2 text-center mx-auto">
-                      Created
-                    </th>
-                    <th scope="col" className="col-1 text-center mx-auto">
-                      Remove
-                    </th>
-                  </tr>
-                </thead>
-                <tbody id="reportsCheckboxes">
-                  {report.scripts ? (
-                    report.scripts.map((script: any) => (
-                      <>
-                        <tr
-                          key={script.id}
-                          className="table-card rounded-3 bg-light-green mb-2 p-3"
-                        >
-                          <td className="col-5">
-                            <Link
-                              to={`/ScriptDetails/${script.id}`}
-                              className="text-decoration-none text-black"
-                            >
-                              <span className="fw-bold fs-6">
-                                <input
-                                  className="chbx"
-                                  type="checkbox"
-                                  name="scripts"
-                                  value={script.id}
-                                />
-                                {script.name}
-                              </span>
-                            </Link>
-                          </td>
-                          <td className="col-2 text-center mx-auto wrap-word">
-                            {
-                              script.category?.parent_category?.parent_category
-                                ?.name
-                            }
-                          </td>
-                          <td className="col-2 text-center wrap-word mx-auto">
-                            {script.category?.parent_category?.name}
-                          </td>
-                          <td className="col-2 text-center wrap-word mx-auto">
-                            {script?.category?.name}
-                          </td>
-
-                          <td className="col-2 text-center mx-auto">
-                            {formatIsoDate(script.created)}
-                          </td>
-                          <td className="col-1 text-center mx-auto">
-                            <div className="col-actions">
-                              <DeleteIcon
-                                onClick={() => removeScript(script.id)}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                        <tr style={{ height: '10px' }}></tr>
-                      </>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={5}>
-                        <p>No scripts found</p>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <Loader />
-          )}
-        </div>
+        <Tabs
+          id="report-tabs"
+          activeKey={selectedTabKey}
+          onSelect={(k) => setSelectedTabKey(k)}
+          className={`mb-3 ${report.summaries && report.summaries?.length > 0 ? '' : 'tabs-hidden'}`}
+        >
+          <Tab eventKey="script" title="Script">
+            <ReportScriptTabView
+              loading={loading}
+              remove={removeScript}
+              report={report}
+            />
+          </Tab>
+          <Tab eventKey="summary" title="Summary">
+            <ReportSummaryTabView
+              loading={loading}
+              remove={removeSummary}
+              report={report}
+            />
+          </Tab>
+        </Tabs>
       </div>
       {showScheduleModal && (
         <ScheduleEmailModal
