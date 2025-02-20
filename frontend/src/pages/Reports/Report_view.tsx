@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -132,6 +133,9 @@ const ReportView = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{report.name || 'Oland investments'}</title>
+      </Helmet>
       <div className="mx-5 py-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5">
           <h1 className="h1">

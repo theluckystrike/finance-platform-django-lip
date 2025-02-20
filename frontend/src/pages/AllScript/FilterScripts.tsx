@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import '../../assest/css/AllScript.css';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import FilterModal from '../../Comopnent/ui/Modals/FilterModal/FilterModal';
@@ -24,12 +26,17 @@ import PaginationButtons, {
   dataPagination,
   PER_COUNT,
 } from '../../Comopnent/ui/PaginationButtons';
+import DeleteModal from '../../Comopnent/ui/Modals/DeleteModal/DeleteModal';
+import UpdateScriptDialog from './dialogs/UpdateScriptDialog';
+import { useUpdateScriptMutation } from '../../Redux/Script';
 
 const FilterScripts = () => {
   const dispatch = useDispatch();
   const { loading, scripts, count } = useSelector<RootState, ScriptState>(
     (state) => state.script,
   );
+  const [updateScript, { isLoading, isError, isSuccess }] =
+      useUpdateScriptMutation();
   const { data: categoriesData } = useGetAllCategoryQuery({
     page_no: 1,
     page_size: 1000,
@@ -40,6 +47,9 @@ const FilterScripts = () => {
   const [loginUser, setLoginUser] = useState<any>(null);
 
   const [filterQuery, setFilterQuery] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState<any>(null);
+
   // Effect to retrieve loginUser from localStorage on component mount
   useEffect(() => {
     const filter = localStorage.getItem('filterquery');
@@ -52,25 +62,27 @@ const FilterScripts = () => {
       setFilterQuery(JSON.parse(filter));
     }
   }, []);
+
+  const getData = async () => {
+    try {
+      if (filterQuery) {
+        await dispatch(
+          GetScriptbyCategorys({
+            token: loginUser?.access,
+            value: filterQuery,
+          }),
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const filter: any = localStorage.getItem('filterquery');
 
     if (loginUser) {
-      const getDAta = async () => {
-        try {
-          if (filterQuery) {
-            await dispatch(
-              GetScriptbyCategorys({
-                token: loginUser?.access,
-                value: filterQuery,
-              }),
-            );
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getDAta();
+      getData();
     }
   }, [loginUser, filterQuery]);
 
@@ -112,6 +124,25 @@ const FilterScripts = () => {
   const isAllSelected = selectedScripts.length === items.length;
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(null);
+    getData();
+  };
+
+  const handleCloseUpdateModal = async (
+    scriptId: number | null,
+    formData: any,
+  ) => {
+    try {
+      if (formData && showUpdateModal) {
+        await updateScript({ id: scriptId, data: formData });
+        getData();
+      }
+    } catch (error) {}
+
+    setShowUpdateModal(null);
+  };
 
   return (
     <>
@@ -180,7 +211,7 @@ const FilterScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-4"
+                      className="col-2"
                       onClick={() => requestSort('name')}
                     >
                       <h6>
@@ -209,7 +240,7 @@ const FilterScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -223,7 +254,7 @@ const FilterScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('sub category 1 ')}
                     >
                       <h6>
@@ -237,7 +268,7 @@ const FilterScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('created')}
                     >
                       <h6>
@@ -251,7 +282,7 @@ const FilterScripts = () => {
                     </th>
                     <th
                       scope="col"
-                      className="col-2 text-center mx-auto"
+                      className="col-1 text-center mx-auto"
                       onClick={() => requestSort('last_updated')}
                     >
                       <h6>
@@ -262,6 +293,9 @@ const FilterScripts = () => {
                           icon="FilterList"
                         />
                       </h6>
+                    </th>
+                    <th scope="col" className="col-1 text-center mx-auto">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -309,6 +343,16 @@ const FilterScripts = () => {
                             <td className="col-2 text-center mx-auto">
                               {formatIsoDate(script.last_updated)}
                             </td>
+                            <td className="text-center mx-auto">
+                              <div className="col-actions">
+                                <EditIcon
+                                  onClick={() => setShowUpdateModal(script)}
+                                />
+                                <DeleteIcon
+                                  onClick={() => setShowDeleteModal(script)}
+                                />
+                              </div>
+                            </td>
                           </tr>
                           <tr style={{ height: '10px' }}></tr>
                         </>
@@ -345,6 +389,22 @@ const FilterScripts = () => {
         handleClose={() => setShowReport(false)}
         selectedScripts={selectedScripts}
       />
+      {showDeleteModal && (
+        <DeleteModal
+          show={!!showDeleteModal}
+          data={showDeleteModal}
+          handleClose={handleCloseDeleteModal}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateScriptDialog
+          isOpen={!!showUpdateModal}
+          data={showUpdateModal}
+          onClose={() => handleCloseUpdateModal(null, null)}
+          onSubmit={handleCloseUpdateModal}
+          categories={categories}
+        />
+      )}
     </>
   );
 };
