@@ -264,14 +264,14 @@ const ReportView = () => {
           onSelect={(k) => setSelectedTabKey(k)}
           className={`mb-3 ${report.summaries && report.summaries?.length > 0 ? '' : 'tabs-hidden'}`}
         >
-          <Tab eventKey="script" title="Script">
+          <Tab eventKey="script" title="Scripts">
             <ReportScriptTabView
               loading={loading}
               remove={removeScript}
               report={report}
             />
           </Tab>
-          <Tab eventKey="summary" title="Summary">
+          <Tab eventKey="summary" title="Summaries">
             <ReportSummaryTabView
               loading={loading}
               remove={removeSummary}
