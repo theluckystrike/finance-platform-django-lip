@@ -10,9 +10,9 @@ from reportlab.pdfbase import pdfmetrics
 
 
 class PDFBuilder:
-    def __init__(self) -> None:
+    def __init__(self, title) -> None:
         self.buffer = BytesIO()
-        self.pdf = SimpleDocTemplate(self.buffer, pagesize=A4,
+        self.pdf = SimpleDocTemplate(self.buffer, title, pagesize=A4,
                                      leftMargin=0.7*inch, rightMargin=0.7*inch)
         self.flowables = list()
 

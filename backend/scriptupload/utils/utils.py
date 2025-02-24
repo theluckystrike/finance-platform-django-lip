@@ -79,7 +79,7 @@ def scripts_to_pdf(scripts, title, base_url=None):
     if len(scripts) == 0:
         return None
 
-    builder = PDFBuilder()
+    builder = PDFBuilder(title)
     builder.add_title(title)
     # return builder.to_file()
 
