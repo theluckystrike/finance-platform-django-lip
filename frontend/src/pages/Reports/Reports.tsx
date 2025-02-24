@@ -100,7 +100,6 @@ const Report = () => {
                           <Link
                             to={`/ReportDetails/${script.id}`}
                             className="text-decoration-none text-black"
-                            target="_blank"
                           >
                             {script.name}
                           </Link>
