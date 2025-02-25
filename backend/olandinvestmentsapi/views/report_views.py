@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from ..serializers import ReportEmailTaskSerializer, ReportReadSerializer, ReportWriteSerializer
+from olandinvestmentsapi.models import Summary
 from scriptupload.models import Report, merge_reports, ReportEmailTask, Script
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -223,6 +224,18 @@ class RemoveScriptFromReport(APIView):
         if request.method == "DELETE":
             script = Script.objects.get(id=script_id)
             report.scripts.remove(script)
+
+        return Response(status=status.HTTP_200_OK)
+    
+class RemoveSummaryFromReport(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, report_id, summary_id):
+        report = get_object_or_404(Report, id=report_id)
+
+        if request.method == "DELETE":
+            summary = Summary.objects.get(id=summary_id)
+            report.summaries.remove(summary)
 
         return Response(status=status.HTTP_200_OK)
 

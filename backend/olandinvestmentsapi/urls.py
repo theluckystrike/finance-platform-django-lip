@@ -20,7 +20,10 @@ from olandinvestmentsapi.views import (
     SummaryViewSet,
     SummaryUpdateView,
     SummaryStatusView,
-    SearchView, RemoveScriptFromReport, SummaryPatchUpdateView
+    SearchView,
+    RemoveScriptFromReport,
+    SummaryPatchUpdateView,
+    RemoveSummaryFromReport,
 )
 from rest_framework import routers
 
@@ -52,6 +55,8 @@ urlpatterns = [
          MergeReportsView.as_view(), name='reports_merge'),
     path('reports/<int:report_id>/remove-script/<int:script_id>',
          RemoveScriptFromReport.as_view(), name="report_remove_script"),
+    path('reports/<int:report_id>/remove-summary/<int:summary_id>',
+         RemoveSummaryFromReport.as_view(), name="report_remove_summary"),
     # Summaries
     path('summaries/<int:pk>/status', SummaryStatusView.as_view(), name='summary_status'),
     path('summaries/<int:pk>/update',

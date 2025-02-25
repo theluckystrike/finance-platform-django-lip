@@ -58,6 +58,20 @@ export const RemoveScriptFromReport = async (data: any) => {
   }
 };
 
+//Remove summary from report
+export const RemoveSummaryFromReport = async (data: any) => {
+  const { reportId, summaryId } = data;
+
+  try {
+    const response = await axiosInstance.delete(
+      `${endpoint.reports}/${reportId}/remove-summary/${summaryId}`,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Get Report by ID
 export const GetreportByID = async (data: any) => {
   const { id } = data;

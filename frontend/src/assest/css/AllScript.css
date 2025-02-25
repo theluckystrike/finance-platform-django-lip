@@ -78,3 +78,17 @@ input[type='checkbox']:hover {
   background-color: #00ad06; /* Color of the border */
   transition: transform 0.3s ease-in-out; /* Smooth sliding effect */
 }
+
+#report-tabs.tabs-hidden {
+  display: none;
+}
+
+#report-tabs button {
+  color: #808080;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#report-tabs button.active {
+  color: black;
+}

@@ -126,23 +126,32 @@ class ReportReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ["name", "id", "scripts", "created",
-                  "last_updated", "status", "latest_pdf"]
+                  "last_updated", "status", "latest_pdf", "summaries"]
         depth = 1
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+
         scripts = instance.scripts.all().order_by(
             "category__name", 'index_in_category')
         ss = ScriptSerializerForReport(many=True, data=scripts)
         ss.is_valid()
         representation['scripts'] = ss.data
+
+        summaries = instance.summaries.all().order_by(
+            "name")
+        sums = SummarySerializerLite(many=True, data=summaries)
+        sums.is_valid()
+        representation['summaries'] = sums.data
         return representation
 
 
 class ReportWriteSerializer(serializers.ModelSerializer):
     # this will include IDs only
     scripts = serializers.PrimaryKeyRelatedField(
-        queryset=Script.objects.all(), allow_null=False, required=True, many=True)
+        queryset=Script.objects.all(), allow_null=True, required=False, many=True)
+    summaries = serializers.PrimaryKeyRelatedField(
+        queryset=Summary.objects.all(), allow_null=True, required=False, many=True)
     # this gives hyperlinks to each script
     # scripts = serializers.HyperlinkedRelatedField(
     #     queryset=Script.objects.all(), allow_null=False, many=True, view_name="scripts-detail")
@@ -150,7 +159,7 @@ class ReportWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ["name", "id", "scripts", "created",
-                  "last_updated", "status", "latest_pdf"]
+                  "last_updated", "status", "latest_pdf", "summaries"]
         depth = 1
 
     def to_representation(self, instance):
