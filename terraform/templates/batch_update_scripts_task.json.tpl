@@ -3,7 +3,7 @@
     "name": "batch-update-scripts",
     "image": "${docker_image_url_django}",
     "essential": true,
-    "command": ["python", "manage.py", "batchrunscripts", "-b", "10"],
+    "command": ["python", "manage.py", "batchrunscripts", "-b", "12"],
     "environment": ${common_env_vars},
     "logConfiguration": {
       "logDriver": "awslogs",
