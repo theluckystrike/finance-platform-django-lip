@@ -38,6 +38,7 @@ class Summary(models.Model):
                 "column_name": "col x signal",
                 "column_last_value": -1
             },
+<<<<<<< HEAD
             ...
         },
         model_performance: [
@@ -48,6 +49,11 @@ class Summary(models.Model):
             },
             ...
         ]
+=======
+            . . .
+
+        }
+>>>>>>> ff4bc049a50cbbe7b2c519b5b9f8eae56da4280a
     }
     '''
     meta = models.JSONField(default=dict, blank=False, null=False)
@@ -64,9 +70,12 @@ class Summary(models.Model):
         self.status = status
         self.save(update_fields=["status"])
 
+<<<<<<< HEAD
     def set_last_updated(self):
         self.last_updated = timezone.now()
         self.save(update_fields=["last_updated"])
+=======
+>>>>>>> ff4bc049a50cbbe7b2c519b5b9f8eae56da4280a
     @property
     def meta_dataframe(self):
         df = pd.DataFrame(self.meta['scripts'].values())
