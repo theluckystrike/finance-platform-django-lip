@@ -9,6 +9,7 @@ import pandas as pd
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.utils import ImageReader
 from PIL import Image as PILImage
+from typing import Union
 
 
 class PDFBuilder:
@@ -142,7 +143,7 @@ class PDFBuilder:
         table.setStyle(table_style)
         return table
 
-    def add_table(self, csv_file: File | pd.DataFrame, title, caption=None):
+    def add_table(self, csv_file: Union[File, pd.DataFrame], title, caption=None):
         if type(csv_file) is pd.DataFrame:
             table_dataframe = csv_file.astype(str)
         else:
