@@ -21,6 +21,7 @@ export interface ReportState {
     scripts: [];
     latest_pdf: string | null;
     summaries?: [];
+    last_updated?: string;
   }; // Same here, replace `any` with a specific type if possible
   Active_Role: string;
   page: number;

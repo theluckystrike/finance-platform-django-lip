@@ -3,8 +3,6 @@ import { Helmet } from 'react-helmet';
 
 import { Tab, Tabs } from 'react-bootstrap';
 
-import { Tab, Tabs } from 'react-bootstrap';
-
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -159,11 +157,18 @@ const ReportView = () => {
         <title>{report.name || 'Oland investments'}</title>
       </Helmet>
       <div className="mx-5 py-3">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5">
-          <h1 className="h1">
-            {report.name}
-          </h1>
-          <div className="btn-toolbar mb-2 mb-md-0">
+        <div className="row justify-content-between flex-wrap flex-md-nowrap  px-3 pt-3 pb-2 mb-3">
+          <div className="col-md-7">
+            {report.name && (
+              <>
+                <h2 className="h2">{report.name}</h2>
+                <h6 className="ps-1">
+                  {report.last_updated ? `Last update ${formatIsoDate(report.last_updated)}` : ''}
+                </h6>
+              </>
+            )}
+          </div>
+          <div className="col-md-5 btn-toolbar mb-2 mb-md-0 div-flex-end">
             <button
               onClick={handleShowScheduleModal}
               type="button"
