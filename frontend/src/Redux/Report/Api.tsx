@@ -37,6 +37,9 @@ export const Updatereport = async (data: any) => {
     const response = await axiosInstance.patch(
       `${endpoint.reports}/${id}`,
       values,
+      { headers: {
+        'Content-Type': 'application/json'
+      } }
     );
     return response;
   } catch (error) {

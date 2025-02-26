@@ -27,7 +27,7 @@ import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
-import AddScriptModal from './ReportUpdateModal';
+import ReportUpdateModal from './ReportUpdateModal';
 import ReportScriptTabView from './ReportScriptTabView';
 import ReportSummaryTabView from './ReportSummaryTabView';
 // Plugins
@@ -134,25 +134,27 @@ const ReportView = () => {
     }
   };
 
-  const handleAddScripts = async (values: any) => {
-    console.log('values: ', values);
-    await dispatch(
-      Updatereports({
-        values: {
-          name: report.name,
-          scripts: values.scripts,
-          summaries: values.summaries,
-        },
-        id,
-      }),
-    );
-
-    setShowAddScript(false);
-
-    handleToast.SuccessToast(`Update Report successfully`);
+  const handleUpdateReport = async (values: any) => {
+    try {
+      await dispatch(
+        Updatereports({
+          values: {
+            scripts: values.scripts,
+            summaries: values.summaries,
+          },
+          id,
+        }),
+      );
+  
+      setShowAddScript(false);
+  
+      handleToast.SuccessToast(`Update Report successfully`);
+    } catch (error) {
+      handleToast.ErrorToast(`Failed update report`);
+    } finally {
+      getreport();
+    }
   };
-
-  console.log('report.scripts: ', report.scripts);
 
   return (
     <>
@@ -302,12 +304,12 @@ const ReportView = () => {
           </Tab>
         </Tabs>
       </div>
-      <AddScriptModal
+      <ReportUpdateModal
         show={showAddScript}
         handleClose={() => setShowAddScript(false)}
         selectedScripts={report.scripts.map((script: any) => script.id)}
         selectedSummaries={report.summaries ? report.summaries.map((summary: any) => summary.id) : []}
-        onSave={handleAddScripts}
+        onSave={handleUpdateReport}
       />
       {showScheduleModal && (
         <ScheduleEmailModal
