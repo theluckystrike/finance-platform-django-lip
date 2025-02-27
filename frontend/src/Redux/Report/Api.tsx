@@ -34,9 +34,12 @@ export const mergereport = async (data: any) => {
 export const Updatereport = async (data: any) => {
   const { values, id } = data;
   try {
-    const response = await axiosInstance.put(
+    const response = await axiosInstance.patch(
       `${endpoint.reports}/${id}`,
       values,
+      { headers: {
+        'Content-Type': 'application/json'
+      } }
     );
     return response;
   } catch (error) {

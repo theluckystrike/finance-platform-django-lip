@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
 import { Tab, Tabs } from 'react-bootstrap';
-
+import AddIcon from '@mui/icons-material/Add';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,6 +27,7 @@ import { formatIsoDate } from '../../utils/formatDate';
 import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
+import ReportUpdateModal from './ReportUpdateModal';
 import ReportScriptTabView from './ReportScriptTabView';
 import ReportSummaryTabView from './ReportSummaryTabView';
 // Plugins
@@ -79,31 +80,13 @@ const ReportView = () => {
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [reportStatus]);
 
-  const [selectScript, setSelectScript] = useState({
-    name: '',
-    id: '',
-  });
-
+  const [showAddScript, setShowAddScript] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [deleteshow, setDeleteShow] = useState(false);
 
   const handleClose = () => setShowScheduleModal(false);
   const handleShowScheduleModal = () => {
     setShowScheduleModal(true);
-  };
-
-  const handleUpdate = async () => {
-    await dispatch(
-      Updatereports({
-        values: {
-          name: report.name,
-          scripts: [...report.scripts, selectScript.id],
-        },
-        id,
-      }),
-    );
-
-    handleToast.SuccessToast(`Update Report successfully`);
   };
 
   const removeScript = async (val: any) => {
@@ -151,6 +134,28 @@ const ReportView = () => {
     }
   };
 
+  const handleUpdateReport = async (values: any) => {
+    try {
+      await dispatch(
+        Updatereports({
+          values: {
+            scripts: values.scripts,
+            summaries: values.summaries,
+          },
+          id,
+        }),
+      );
+  
+      setShowAddScript(false);
+  
+      handleToast.SuccessToast(`Update Report successfully`);
+    } catch (error) {
+      handleToast.ErrorToast(`Failed update report`);
+    } finally {
+      getreport();
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -169,6 +174,14 @@ const ReportView = () => {
             )}
           </div>
           <div className="col-md-5 btn-toolbar mb-2 mb-md-0 div-flex-end">
+            <button
+              onClick={() => setShowAddScript(true)}
+              type="button"
+              className="btn icon-button my-1 mx-2"
+            >
+              <AddIcon fontSize="small" />
+              <span>Add Scripts</span>
+            </button>
             <button
               onClick={handleShowScheduleModal}
               type="button"
@@ -291,6 +304,13 @@ const ReportView = () => {
           </Tab>
         </Tabs>
       </div>
+      <ReportUpdateModal
+        show={showAddScript}
+        handleClose={() => setShowAddScript(false)}
+        selectedScripts={report.scripts.map((script: any) => script.id)}
+        selectedSummaries={report.summaries ? report.summaries.map((summary: any) => summary.id) : []}
+        onSave={handleUpdateReport}
+      />
       {showScheduleModal && (
         <ScheduleEmailModal
           show={showScheduleModal}

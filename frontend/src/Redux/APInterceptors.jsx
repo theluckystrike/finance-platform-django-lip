@@ -26,7 +26,8 @@ axiosInstance.interceptors.request.use(
     if (
       config.url === endpoint.reports ||
       config.url === endpoint.summaries ||
-      config.url === endpoint.search
+      config.url === endpoint.search ||
+      config.headers['Content-Type'] === 'application/json'
     ) {
       config.headers['Content-Type'] = 'application/json'; // For Createreport
     } else {
