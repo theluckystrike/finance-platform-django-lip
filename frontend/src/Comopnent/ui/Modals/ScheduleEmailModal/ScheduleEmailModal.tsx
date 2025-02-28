@@ -9,15 +9,16 @@ import useToast from '../../../../customHook/toast';
 interface ScheduleEmailModalProps {
   show: boolean;
   handleClose: () => void;
+  data: any;
 }
 const initialValues = {
   email: '',
-  report: '',
   day: '1',
 };
 const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
   show,
   handleClose,
+  data,
 }) => {
   const dispatch = useDispatch();
   const [loginUser, setLoginUser] = useState<any>(null);
@@ -49,7 +50,6 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
     email: Yup.string()
       .email('Invalid email format')
       .required('Email is required'),
-    report: Yup.string().required('Please select a report'),
     day: Yup.string().required('Please select a day'),
   });
 
@@ -67,11 +67,15 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
 
   const onSubmit = async (values: any) => {
     await dispatch(
-      Createschedules({ values: values, token: loginUser?.access }),
+      Createschedules({
+        values: { ...values, report: data.id },
+        token: loginUser?.access
+      }),
     );
     handleToast.SuccessToast(`Schedules added successfully`);
     handleClose(); // Close the modal after submitting
   };
+
   return (
     <>
       <Modal
@@ -88,6 +92,8 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
             overflow: 'hidden',
           }}
         >
+          <h5>Schedule Email</h5>
+
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -116,33 +122,6 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
                     </div>
 
                     <div className="col-6 m-0 px-4">
-                      <label htmlFor="report" className="form-label">
-                        Add Reports
-                      </label>
-                      <Field
-                        as="select"
-                        id="report"
-                        name="report"
-                        className="form-select m-0"
-                        required
-                      >
-                        <option value="" disabled>
-                          Select a report
-                        </option>
-                        {allreport &&
-                          allreport.map((item: any, key: any) => (
-                            <option key={key} value={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                      </Field>
-                      <ErrorMessage
-                        name="report"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </div>
-                    <div className="col-6 m-0 px-4">
                       <label htmlFor="day" className="form-label">
                         Day of the Week
                       </label>
@@ -169,7 +148,7 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
                       />
                     </div>
 
-                    <div className="col-6 row m-0 px-4">
+                    <div className="col-12 row m-0 px-4">
                       <label
                         style={{ height: '33px' }}
                         htmlFor="category"
@@ -186,7 +165,7 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
                     </div>
 
                     <div className="col-12 row mt-3 px-4">
-                      <p className="text-center">
+                      <p className="text-center mb-0">
                         All reports are sent at 12:00 PM UTC
                       </p>
                     </div>

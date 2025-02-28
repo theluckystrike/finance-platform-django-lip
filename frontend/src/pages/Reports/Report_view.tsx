@@ -315,6 +315,7 @@ const ReportView = () => {
         <ScheduleEmailModal
           show={showScheduleModal}
           handleClose={handleClose}
+          data={report}
         />
       )}
       <DeleteModal
