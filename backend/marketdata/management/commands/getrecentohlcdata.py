@@ -26,18 +26,17 @@ def get_ohlc_data(start_date, end_date, tickers):
     end_date = end_date.strftime('%Y-%m-%d')
     data = yf.download(tickers, start=start_date,
                        end=end_date, progress=True, threads=False)
-    ohlc_data = pd.concat([data['Adj Close'].stack(),
-                           data['Close'].stack(),
+    ohlc_data = pd.concat([data['Close'].stack(),
                            data['High'].stack(),
                            data['Low'].stack(),
                            data['Open'].stack(),
                            data['Volume'].stack()], axis=1)
 
     ohlc_data.reset_index(drop=False, inplace=True)
-    ohlc_data.columns = ['date', 'symbol', 'adj_close',
+    ohlc_data.columns = ['date', 'symbol',
                          'close', 'high', 'low', 'open', 'volume']
     ohlc_data = ohlc_data[['symbol', 'open', 'high',
-                           'low', 'close', 'adj_close', 'volume', 'date']]
+                           'low', 'close','volume', 'date']]
     ohlc_data['volume'] = ohlc_data['volume'].astype(int)
     return ohlc_data
 
