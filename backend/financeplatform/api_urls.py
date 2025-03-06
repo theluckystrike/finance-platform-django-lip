@@ -16,12 +16,14 @@ schema_view = get_schema_view(
     patterns=[
         path('', include('olandinvestmentsapi.urls')),
         path('', include('databaseinterface.urls')),
+        path('', include('marketdata.urls')),
     ]
 )
 
 urlpatterns = [
     path('', include('olandinvestmentsapi.urls')),
     path('', include('databaseinterface.urls')),
+    path('', include('marketdata.urls')),
     path('documentation/', schema_view.with_ui('swagger',
          cache_timeout=0), name='schema-swagger-ui'),
 ]

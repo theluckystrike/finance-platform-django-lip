@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     'scriptupload',
     'databaseinterface',
     'olandinvestmentsapi',
+    'marketdata',
     'storages',
     'django_tables2',
     'django_filters',
@@ -163,6 +164,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10000,
+    'COERCE_DECIMAL_TO_STRING': False,
 }
 
 
