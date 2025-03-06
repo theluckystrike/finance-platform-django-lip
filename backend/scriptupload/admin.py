@@ -20,6 +20,7 @@ class TableDataInline(admin.StackedInline):
 class ScriptAdmin(admin.ModelAdmin):
     ordering = ("-created",)
     inlines = [ChartDataInline, TableDataInline]
+    search_fields = ["name", "description"]
 
 
 @admin.register(TableData)

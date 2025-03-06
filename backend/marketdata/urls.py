@@ -4,8 +4,8 @@ from marketdata.views import OHLCViewSet, TickerSymbolViewSet
 
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'ohlc/?$', OHLCViewSet, basename="ohlc")
-router.register(r'tickers/?$', TickerSymbolViewSet, basename="tickers")
+router.register(r'marketdata/ohlc/?$', OHLCViewSet, basename="ohlc")
+router.register(r'marketdata/tickers/?$', TickerSymbolViewSet, basename="tickers")
 
 urlpatterns = [
     path('', include(router.urls)),
