@@ -5,7 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 from marketdata.models import OHLCTimeSeries, TickerSymbol
 from rest_framework import status
 from marketdata.serializers import OHLCSerializer, TickerSymbolSerializer
-from marketdata.utils import yf_has_symbol
+from marketdata.utils import yf_has_symbol, yf_get_all_historic_data
 
 
 class OHLCViewSet(mixins.RetrieveModelMixin,
@@ -49,4 +49,9 @@ class TickerSymbolViewSet(mixins.ListModelMixin,
         symbol = request.data.get("symbol", None)
         if not symbol or not yf_has_symbol(symbol):
             return Response({"error": f"Invalid ticker symbol. No data found for {symbol} in past 30 days"}, status=status.HTTP_400_BAD_REQUEST)
-        return super().create(request, *args, **kwargs)
+        response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED:
+            historic_data = yf_get_all_historic_data(
+                get_object_or_404(TickerSymbol, symbol=symbol))
+            OHLCTimeSeries.objects.bulk_create(historic_data, batch_size=1000)
+        return response

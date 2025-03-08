@@ -1,5 +1,5 @@
 import yfinance as yf
-from marketdata.models import OHLCTimeSeries
+from marketdata.models import OHLCTimeSeries, TickerSymbol
 
 
 def yf_has_symbol(asset: str) -> bool:
@@ -12,15 +12,16 @@ def yf_has_symbol(asset: str) -> bool:
     return len(info) > 0
 
 
-def yf_get_all_historic_data(ticker: str) -> List[OHLCTimeSeries]:
+def yf_get_all_historic_data(ticker: TickerSymbol) -> list[OHLCTimeSeries]:
     """
     Fetches all historic data for a given ticker.
     """
-    data = yf.Ticker(ticker).history(period='max', interval='1d')
+    data = yf.Ticker(ticker.symbol).history(period='max', interval='1d')
     ohlc_data = []
-    for index, row in data.iterrows():
+    for idx, row in data.iterrows():
         ohlc_data.append(OHLCTimeSeries(
-            date=row['Date'].strftime('%Y-%m-%d'),
+            symbol=ticker,
+            date=idx,
             open=row['Open'],
             high=row['High'],
             low=row['Low'],
