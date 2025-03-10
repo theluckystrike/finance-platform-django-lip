@@ -24,6 +24,7 @@ from olandinvestmentsapi.views import (
     RemoveScriptFromReport,
     SummaryPatchUpdateView,
     RemoveSummaryFromReport,
+    ReportGetEmailTasksView
 )
 from rest_framework import routers
 
@@ -50,6 +51,7 @@ urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
     # Reports
     path('reports/<int:pk>/status', ReportStatusView.as_view(), name='report_status'),
+    path('reports/<int:pk>/schedules', ReportGetEmailTasksView.as_view(), name='report_schedules'),
     path('reports/<int:pk>/update', ReportUpdateView.as_view(), name='report_update'),
     path('reports/merge',
          MergeReportsView.as_view(), name='reports_merge'),

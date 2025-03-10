@@ -226,7 +226,8 @@ class RemoveScriptFromReport(APIView):
             report.scripts.remove(script)
 
         return Response(status=status.HTTP_200_OK)
-    
+
+
 class RemoveSummaryFromReport(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -252,3 +253,16 @@ class ReportEmailTaskViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = ReportEmailTask.objects.all()
     serializer_class = ReportEmailTaskSerializer
+
+
+class ReportGetEmailTasksView(APIView):
+    '''
+    GET endpoint to get all email tasks for a report
+    '''
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        report = get_object_or_404(Report, pk=pk)
+        tasks = report.email_tasks.all()
+        serializer = ReportEmailTaskSerializer(tasks, many=True)
+        return Response(serializer.data)

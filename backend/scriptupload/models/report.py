@@ -95,7 +95,7 @@ class ReportEmailTask(models.Model):
         ('7', 'Sunday'),
         ('*', 'Every Day'),
     )
-    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name="email_tasks")
     email = models.EmailField(max_length=254)
     day = models.CharField(max_length=1, choices=DAY_CHOICES)
 
