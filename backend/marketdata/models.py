@@ -16,7 +16,7 @@ class TickerSymbol(models.Model):
 
 class OHLCTimeSeries(models.Model):
     """
-    Open, high, low, close data
+    open, high, low, close data
     """
 
     symbol = models.ForeignKey(
