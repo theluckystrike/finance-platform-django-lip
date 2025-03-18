@@ -96,6 +96,22 @@ resource "aws_ecs_task_definition" "scrape" {
   container_definitions    = data.template_file.scrape.rendered
   depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
 }
+data "template_file" "yf_data_collection" {
+  template = file("templates/yf_data_collection_task.json.tpl")
+
+  vars = local.container_vars
+}
+resource "aws_ecs_task_definition" "yf_data_collection" {
+  family                   = "oi-prod-yf-data-collection"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "4096"
+  memory                   = "16384"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  container_definitions    = data.template_file.yf_data_collection.rendered
+  depends_on               = [aws_db_instance.production, aws_cloudwatch_log_group.oi_prod_log_group]
+}
 data "template_file" "update_scripts" {
   template = file("templates/update_scripts_task.json.tpl")
 
