@@ -24,8 +24,8 @@ execute
 def get_ohlc_data(start_date, end_date, tickers):
     start_date = start_date.strftime('%Y-%m-%d')
     end_date = end_date.strftime('%Y-%m-%d')
-    data = yf.download(tickers, multi_level_index=False, start=start_date,
-                       end=end_date, progress=True, threads=False)
+    data = yf.download(tickers, start=start_date,
+                       end=end_date, progress=True, threads=False, multi_level_index=False)
     ohlc_data = pd.concat([data['Close'].stack(),
                            data['High'].stack(),
                            data['Low'].stack(),
