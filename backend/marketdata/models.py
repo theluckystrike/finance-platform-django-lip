@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class TickerSymbol(models.Model):
-    symbol = models.CharField(max_length=7, unique=True)
+    symbol = models.CharField(max_length=10, unique=True)
     tracking_timeseries = models.BooleanField(default=True)
 
     class Meta:
