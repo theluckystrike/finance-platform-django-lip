@@ -16,6 +16,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { RootState } from '../../Store';
 import {
   GetreportByIDs,
+  GetReportSchedulesByIDs,
   GetSatusreportByIDs,
   Updatereports,
   UpdateReportss,
@@ -46,7 +47,7 @@ const ReportView = () => {
   const dispatch = useDispatch();
   const handleToast = useToast();
 
-  const { loading, reportStatus, report } = useSelector<RootState, ReportState>(
+  const { loading, reportStatus, report, schedules } = useSelector<RootState, ReportState>(
     (state) => state.report,
   );
 
@@ -58,6 +59,7 @@ const ReportView = () => {
 
   const getreport = async () => {
     dispatch(GetreportByIDs({ id }));
+    dispatch(GetReportSchedulesByIDs({ id }));
     getStatus();
     // await dispatch(GetAllScripts({ token: loginUser?.access }));
   };
@@ -74,6 +76,7 @@ const ReportView = () => {
       }, 5000);
     } else if (reportStatus === 'success') {
       dispatch(GetreportByIDs({ id }));
+      dispatch(GetReportSchedulesByIDs({ id }));
       clearInterval(intervalId);
     }
 
@@ -315,7 +318,7 @@ const ReportView = () => {
         <ScheduleEmailModal
           show={showScheduleModal}
           handleClose={handleClose}
-          data={report}
+          data={{ ...report, schedules }}
         />
       )}
       <DeleteModal

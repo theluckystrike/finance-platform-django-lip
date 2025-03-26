@@ -94,6 +94,23 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
         >
           <h5>Schedule Email</h5>
 
+          <div className="px-5 mt-4 mb-4">
+            <h5>Existing schedules</h5>
+            <div className="row schedule-item">
+              <div className="col-6 form-label">Email</div>
+              <div className="col-6 form-label">Day of the Week</div>
+            </div>
+            {data.schedules.map((schedule: any) => {
+              const dayOfWeek = dayChoices.find(choice => choice.value === schedule.day);
+              return (
+                <div className="row schedule-item">
+                  <div className="col-6">{schedule.email}</div>
+                  <div className="col-6">{dayOfWeek ? dayOfWeek.label : ''}</div>
+                </div>
+              )
+            })}
+          </div>
+
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}

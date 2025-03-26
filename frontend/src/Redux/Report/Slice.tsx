@@ -11,6 +11,7 @@ import {
   UpdateReports,
   RemoveScriptFromReport,
   RemoveSummaryFromReport,
+  GetReportSchedulesByID,
 } from './Api';
 export interface ReportState {
   reports: any[]; // You can replace `any` with a more specific type if available
@@ -23,6 +24,7 @@ export interface ReportState {
     summaries?: [];
     last_updated?: string;
   }; // Same here, replace `any` with a specific type if possible
+  schedules: any[];
   Active_Role: string;
   page: number;
   reportStatus: string;
@@ -40,6 +42,7 @@ const initialState: ReportState = {
     latest_pdf: null,
     summaries: [],
   },
+  schedules: [],
   reportStatus: '',
   Active_Role: '',
   page: 1,
@@ -88,6 +91,10 @@ export const GetAllreports: any = AsyncFunctionThunk(
 export const GetreportByIDs: any = AsyncFunctionThunk(
   'GetreportByIDs',
   GetreportByID,
+);
+export const GetReportSchedulesByIDs: any = AsyncFunctionThunk(
+  'GetReportSchedulesByIDs',
+  GetReportSchedulesByID,
 );
 export const GetSatusreportByIDs: any = AsyncFunctionThunk(
   'GetSatusreportByIDs',
@@ -161,6 +168,17 @@ const reportSlice = createSlice({
         state.loading = true;
       })
       .addCase(GetreportByIDs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetReportSchedulesByIDs.fulfilled, (state, action) => {
+        state.schedules = action.payload;
+        state.loading = false;
+      })
+      .addCase(GetReportSchedulesByIDs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(GetReportSchedulesByIDs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

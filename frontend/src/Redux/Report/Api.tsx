@@ -121,6 +121,18 @@ export const Createreportschedules = async (data: any) => {
   }
 };
 
+// Get Report by ID
+export const GetReportSchedulesByID = async (data: any) => {
+  const { id } = data;
+
+  try {
+    const response = await axiosInstance.get(`${endpoint.reports}/${id}/schedules`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Delete Report by ID
 export const DeleteReportsByID = async (data: any) => {
   const { id } = data;
