@@ -145,6 +145,18 @@ export const DeleteReportsByID = async (data: any) => {
   }
 };
 
+// Delete Report by ID
+export const DeleteReportEmailByID = async (data: any) => {
+  const { id } = data;
+  
+  try {
+    const response = await axiosInstance.delete(`${endpoint.reports}/remove-schedule/${id}`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Update Reports
 export const UpdateReports = async (data: any) => {
   const { id } = data;

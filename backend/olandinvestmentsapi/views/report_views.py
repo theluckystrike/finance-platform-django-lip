@@ -266,3 +266,14 @@ class ReportGetEmailTasksView(APIView):
         tasks = report.email_tasks.all()
         serializer = ReportEmailTaskSerializer(tasks, many=True)
         return Response(serializer.data)
+
+class RemoveEmailScheduleFromReport(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, schedule_id):
+        schedule = get_object_or_404(ReportEmailTask, id=schedule_id)
+
+        if request.method == "DELETE":
+            schedule.delete()
+
+        return Response(status=status.HTTP_200_OK)

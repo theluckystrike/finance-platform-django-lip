@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Createschedules, GetAllreports } from '../../../../Redux/Report/Slice';
+import { Createschedules, DeleteReportEmailByIDs, GetAllreports, GetReportSchedulesByIDs } from '../../../../Redux/Report/Slice';
 import useToast from '../../../../customHook/toast';
 
 interface ScheduleEmailModalProps {
@@ -76,6 +77,15 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
     handleClose(); // Close the modal after submitting
   };
 
+  const handleDeleteExistingEmailSchedule = async (schedule: any) => {
+    await dispatch(
+      DeleteReportEmailByIDs({
+        id: schedule.id,
+      }),
+    );
+    dispatch(GetReportSchedulesByIDs({ id: schedule.report }));
+  }
+
   return (
     <>
       <Modal
@@ -98,14 +108,20 @@ const ScheduleEmailModal: FC<ScheduleEmailModalProps> = ({
             <h5>Existing schedules</h5>
             <div className="row schedule-item">
               <div className="col-6 form-label">Email</div>
-              <div className="col-6 form-label">Day of the Week</div>
+              <div className="col-5 form-label">Day of the Week</div>
+              <div className="col-1 form-label"></div>
             </div>
             {data.schedules.map((schedule: any) => {
               const dayOfWeek = dayChoices.find(choice => choice.value === schedule.day);
               return (
                 <div className="row schedule-item">
                   <div className="col-6">{schedule.email}</div>
-                  <div className="col-6">{dayOfWeek ? dayOfWeek.label : ''}</div>
+                  <div className="col-5">{dayOfWeek ? dayOfWeek.label : ''}</div>
+                  <div className="col-1">
+                    <DeleteIcon
+                      onClick={() => handleDeleteExistingEmailSchedule(schedule)}
+                    />
+                  </div>
                 </div>
               )
             })}

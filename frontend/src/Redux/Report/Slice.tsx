@@ -12,6 +12,7 @@ import {
   RemoveScriptFromReport,
   RemoveSummaryFromReport,
   GetReportSchedulesByID,
+  DeleteReportEmailByID,
 } from './Api';
 export interface ReportState {
   reports: any[]; // You can replace `any` with a more specific type if available
@@ -95,6 +96,10 @@ export const GetreportByIDs: any = AsyncFunctionThunk(
 export const GetReportSchedulesByIDs: any = AsyncFunctionThunk(
   'GetReportSchedulesByIDs',
   GetReportSchedulesByID,
+);
+export const DeleteReportEmailByIDs: any = AsyncFunctionThunk(
+  'DeleteReportEmailByIDs',
+  DeleteReportEmailByID,
 );
 export const GetSatusreportByIDs: any = AsyncFunctionThunk(
   'GetSatusreportByIDs',
