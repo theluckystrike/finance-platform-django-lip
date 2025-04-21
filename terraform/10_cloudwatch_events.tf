@@ -141,7 +141,7 @@ resource "aws_cloudwatch_event_target" "update_reports_event_target" {
 resource "aws_cloudwatch_event_rule" "daily_summaries_update" {
   name = "DailySummariesUpdate"
   #   7am UTC every day
-  schedule_expression = "cron(0 7 * * ? *)"
+  schedule_expression = "cron(0 6 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "update_summaries_event_target" {
