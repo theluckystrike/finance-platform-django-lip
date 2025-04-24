@@ -90,7 +90,7 @@ const ReportScriptTabView: FC<ReportScriptTabViewProps> = ({ loading, remove, re
                         <td className="col-1 text-center mx-auto">
                           <div className="col-actions">
                             <DeleteIcon
-                              onClick={() => remove(script.id)}
+                              onClick={() => remove(script)}
                             />
                           </div>
                         </td>

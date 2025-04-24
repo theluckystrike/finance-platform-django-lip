@@ -66,7 +66,7 @@ const ReportSummaryTabView: FC<ReportSummaryTabViewProps> = ({ loading, remove, 
                         <td className="col-1 text-center mx-auto">
                           <div className="col-actions">
                             <DeleteIcon
-                              onClick={() => remove(summary.id)}
+                              onClick={() => remove(summary)}
                             />
                           </div>
                         </td>

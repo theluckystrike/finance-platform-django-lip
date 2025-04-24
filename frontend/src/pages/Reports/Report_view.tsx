@@ -85,37 +85,14 @@ const ReportView = () => {
 
   const [showAddScript, setShowAddScript] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
-  const [deleteshow, setDeleteShow] = useState(false);
+  const [deleteshow, setDeleteShow] = useState({
+    target: '',
+    data: { name: '' },
+  });
 
   const handleClose = () => setShowScheduleModal(false);
   const handleShowScheduleModal = () => {
     setShowScheduleModal(true);
-  };
-
-  const removeScript = async (val: any) => {
-    try {
-      await dispatch(
-        RemoveScriptFromReports({ reportId: report.id, scriptId: val }),
-      );
-      handleToast.SuccessToast(`Remove Script successfully`);
-    } catch (error) {
-      handleToast.ErrorToast(`Failed remove script`);
-    } finally {
-      getreport();
-    }
-  };
-
-  const removeSummary = async (val: any) => {
-    try {
-      await dispatch(
-        RemoveSummaryFromReports({ reportId: report.id, summaryId: val }),
-      );
-      handleToast.SuccessToast(`Remove Summary successfully`);
-    } catch (error) {
-      handleToast.ErrorToast(`Failed remove summary`);
-    } finally {
-      getreport();
-    }
   };
 
   const openPdfInNewTab = (url: any) => {
@@ -158,6 +135,11 @@ const ReportView = () => {
       getreport();
     }
   };
+
+  const refreshReportAfterDeleting = () => {
+    getreport();
+    setDeleteShow({ target: '', data: { name: '' }});
+  }
 
   return (
     <>
@@ -214,7 +196,7 @@ const ReportView = () => {
             <button
               type="button"
               className="btn icon-button my-1 mx-2"
-              onClick={() => setDeleteShow(true)}
+              onClick={() => setDeleteShow({ target: 'report', data: { name: '' } })}
             >
               <DeleteIcon fontSize="small" />
               <span>Delete</span>
@@ -294,14 +276,14 @@ const ReportView = () => {
           <Tab eventKey="script" title="Scripts">
             <ReportScriptTabView
               loading={loading}
-              remove={removeScript}
+              remove={val => setDeleteShow({ target: 'script', data: val })}
               report={report}
             />
           </Tab>
           <Tab eventKey="summary" title="Summaries">
             <ReportSummaryTabView
               loading={loading}
-              remove={removeSummary}
+              remove={val => setDeleteShow({ target: 'summary', data: val })}
               report={report}
             />
           </Tab>
@@ -322,9 +304,12 @@ const ReportView = () => {
         />
       )}
       <DeleteModal
-        show={deleteshow}
-        handleClose={() => setDeleteShow(false)}
-        data={report}
+        show={deleteshow.target != ''}
+        handleClose={() => setDeleteShow({ target: '', data: { name: '' } })}
+        report={report}
+        deleteTargetName={deleteshow.target}
+        data={deleteshow.data}
+        requestUpdateReport={refreshReportAfterDeleting}
       />
     </>
   );
