@@ -11,7 +11,8 @@ import ArrowDown from '../../../../assest/image/arrow-down.png';
 
 import { useRefreshTokenMutation } from '../../../../Redux/AuthSlice';
 import useToast from '../../../../customHook/toast';
-import { useSelector } from 'react-redux';
+
+const NONE_CATEGORY = { id: '', name: 'None' }
 
 interface CategoryModalProps {
   show: boolean;
@@ -28,8 +29,9 @@ const CategoryModal: FC<CategoryModalProps> = ({
     useCreateMutation();
   const [refreshtoken, Res] = useRefreshTokenMutation();
 
+  const [selectedParentCat, setSelectedParentCat] = useState(-1);
+
   const navigate = useNavigate();
-  const [selectValue, setSelectValue] = useState('');
   const handleToast = useToast();
 
   // Formik setup
@@ -42,12 +44,19 @@ const CategoryModal: FC<CategoryModalProps> = ({
     validationSchema: Yup.object({
       name: Yup.string().required('Category name is required'),
     }),
-    onSubmit: (values) => {
-      create({
-        token: loginUSer.access,
-        data: { ...values, parent_category: values.category },
-      });
-      handleClose();
+    onSubmit: (values, { setErrors }) => {
+      if (selectedParentCat === -1) {
+        setErrors({ category: 'Please select the Parent Category correctly' });
+      } else {
+        create({
+          token: loginUSer.access,
+          data: {
+            ...values,
+            parent_category: values.category,
+            parentName: values.category ? values.parentName : '' },
+        });
+        handleClose();
+      }
     },
   });
 
@@ -70,7 +79,8 @@ const CategoryModal: FC<CategoryModalProps> = ({
   const FilterData = (value: any) => {
     const trimmedValue = value.trim(); // Trim the input value
     if (trimmedValue !== '') {
-      const res = categoryFilter.filter((i: any) =>
+      const categoryFilterWithNone: any = [...categoryFilter, NONE_CATEGORY];
+      const res = categoryFilterWithNone.filter((i: any) =>
         i.name.toLowerCase().includes(trimmedValue.toLowerCase()),
       );
       setFilterCategory(res);
@@ -81,6 +91,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
 
   useEffect(() => {
     FilterData(formik.values.parentName);
+    setSelectedParentCat(-1);
   }, [formik.values.parentName]);
   return (
     <>
@@ -134,15 +145,17 @@ const CategoryModal: FC<CategoryModalProps> = ({
                       placeholder="Select a category"
                       value={formik.values.parentName}
                       onChange={(e) => {
-                        formik.setFieldValue('parentName', e.target.value);
+                        const inputVal = e.target.value;
+                        formik.setFieldValue('parentName', inputVal);
 
-                        FilterData(e.target.value);
+                        FilterData(inputVal);
                       }}
                       className={`form-control ${
                         formik.touched.category && formik.errors.category
                           ? 'input-error'
                           : ''
                       }`}
+                      required
                     />
                     <div
                       className="dropdown-content"
@@ -163,6 +176,7 @@ const CategoryModal: FC<CategoryModalProps> = ({
                                 item.name,
                               );
                               await formik.setFieldValue('category', item.id);
+                              setSelectedParentCat(Number(`${item.id}`));
                               setFilterCategory([]);
                             }}
                           >
