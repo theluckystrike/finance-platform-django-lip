@@ -48,17 +48,19 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
   const [activeColumns, setActiveColumns] = useState([]);
   const [columnsForModelMap, setColumnsForModelMap] = useState<{
     [key: string]: any;
-  }>(() => {
-    const initialMap: { [key: string]: any } = {};
-    Object.entries(data?.meta?.scripts || {}).forEach(([scriptId, column]) => {
-      initialMap[scriptId] = [column];
-    });
-    return initialMap;
-  });
+  }>({});
 
   useEffect(() => {
+    const initialMap: { [key: string]: any } = {};
+    Object.entries(data?.meta?.scripts || {}).forEach(([scriptId, column]: any) => {
+      initialMap[scriptId] = [column.name];
+    });
+    setColumnsForModelMap(initialMap);
     setName(data?.name);
     dispatch(GetAllScripts({ query: 'for_summary=1' }));
+    if (data?.scripts) {
+      data.scripts.forEach((script: number) => dispatch(getScriptByIDAction({ id: script })));
+    }
   }, [data]);
 
   useEffect(() => {
@@ -88,6 +90,10 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
       columns.map((column: string) => ({ scriptId: scriptId, column })),
     );
   }, [columnsForModelMap]);
+
+  const activeScriptIds = useMemo(() => {
+    return tagsForActiveColumns.map(item => item.scriptId);
+  }, [tagsForActiveColumns]);
 
   const handleColumnChange = (name: string) => {
     const tempColumnsMap = { ...columnsForModelMap };
@@ -184,23 +190,26 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
                 {loading ? (
                   <Loader />
                 ) : (
-                  forSummaryScripts.map((option) => (
-                    <ListItem key={option.label}>
-                      <ListItemButton
-                        onClick={() => setActiveScript(option.value)}
-                        selected={option.value === activeScript}
-                      >
-                        <ListItemIcon sx={{ minWidth: '30px' }}>
-                          {option.value === activeScript ? (
-                            <CheckBoxIcon fontSize="medium" />
-                          ) : (
-                            <CheckBoxOutlineBlankIcon fontSize="medium" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText primary={option.label} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))
+                  forSummaryScripts.map((option) => {
+                    const isChecked = option.value === activeScript || activeScriptIds.includes(`${option.value}`);
+                    return (
+                      <ListItem key={option.label}>
+                        <ListItemButton
+                          onClick={() => setActiveScript(option.value)}
+                          selected={option.value === activeScript}
+                        >
+                          <ListItemIcon sx={{ minWidth: '30px' }}>
+                            {isChecked ? (
+                              <CheckBoxIcon fontSize="medium" />
+                            ) : (
+                              <CheckBoxOutlineBlankIcon fontSize="medium" />
+                            )}
+                          </ListItemIcon>
+                          <ListItemText primary={option.label} />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })
                 )}
               </List>
             </div>
@@ -245,7 +254,7 @@ const EditSummary: FC<EditSummaryProps> = ({ show, handleClose, data }) => {
           </div>
 
           <div className="d-flex col-12 mb-4">
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
               {tagsForActiveColumns.map((tag) => (
                 <Chip
                   key={`${tag.scriptId} => ${tag.column}`}
