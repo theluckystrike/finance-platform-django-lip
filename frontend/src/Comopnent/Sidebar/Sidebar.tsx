@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as Logo } from '../../assest/svg/logo_text_image_white.svg';
 import { ActiveRoute, SidebarMenu } from '../../Menu';
 import Icon from '../ui/icon/Icon';
 import dummyUser from '../../assest/image/logo/user.jpg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useToast from '../../customHook/toast';
 import { MenuItem } from '../../types/MenuTypes';
 import { GetRole, loginUSer } from '../../customHook/getrole';
@@ -12,8 +12,28 @@ const Sidebar = () => {
   const admin = GetRole();
   const navigate = useNavigate();
   const toast = useToast();
+  const location = useLocation();
+
+  const [filterScriptQuery, setFilterScriptQuery] = useState<any>(null);
+
+  useEffect(() => {
+    let filterQuery: any = localStorage.getItem('filterquery');
+    if (filterQuery) {
+      filterQuery = JSON.parse(filterQuery);
+      setFilterScriptQuery(filterQuery);
+    } else {
+      setFilterScriptQuery(false);
+    }
+  }, [location]);
+
   const changeRoute = (value: String) => {
-    navigate(`${value}`);
+    if (value.includes('allscripts') && filterScriptQuery) {
+      navigate(
+        `/filter-scripts?category=${filterScriptQuery.parentName}&subcategory1=${filterScriptQuery.parentName1}&subcategory2=${filterScriptQuery.parentName2}`
+      );
+    } else {
+      navigate(`${value}`);
+    }
   };
 
   const [signout, Res] = useSignOutMutation();
