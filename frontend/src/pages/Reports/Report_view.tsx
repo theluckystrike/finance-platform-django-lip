@@ -29,6 +29,7 @@ import useToast from '../../customHook/toast';
 import Loader from '../../Comopnent/ui/Loader';
 import DeleteModal from './ReportDelete';
 import ReportUpdateModal from './ReportUpdateModal';
+import ReportUpdateConfirmModal from './ReportUpdateConfirmModal';
 import ReportScriptTabView from './ReportScriptTabView';
 import ReportSummaryTabView from './ReportSummaryTabView';
 // Plugins
@@ -52,6 +53,7 @@ const ReportView = () => {
   );
 
   const [selectedTabKey, setSelectedTabKey] = useState<any>('script');
+  const [updatedReportData, setUpdatedReportData] = useState<any>(null);
 
   const getStatus = () => {
     dispatch(GetSatusreportByIDs({ id }));
@@ -84,6 +86,7 @@ const ReportView = () => {
   }, [reportStatus]);
 
   const [showAddScript, setShowAddScript] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [deleteshow, setDeleteShow] = useState({
     target: '',
@@ -102,11 +105,11 @@ const ReportView = () => {
       handleToast.SuccessToast(
         'Please update the script first, then wait for the PDF to generate successfully.',
       );
-      updateRepost();
+      updateReport();
     }
   };
 
-  const updateRepost = async () => {
+  const updateReport = async () => {
     const res = await dispatch(UpdateReportss({ id }));
     getStatus();
     if (res.payload) {
@@ -114,19 +117,20 @@ const ReportView = () => {
     }
   };
 
-  const handleUpdateReport = async (values: any) => {
+  const handleUpdateReport = async () => {
     try {
       await dispatch(
         Updatereports({
           values: {
-            scripts: values.scripts,
-            summaries: values.summaries,
+            scripts: updatedReportData.scripts,
+            summaries: updatedReportData.summaries,
           },
           id,
         }),
       );
   
-      setShowAddScript(false);
+      setShowConfirm(false);
+      setUpdatedReportData(null);
   
       handleToast.SuccessToast(`Update Report successfully`);
     } catch (error) {
@@ -135,6 +139,12 @@ const ReportView = () => {
       getreport();
     }
   };
+
+  const handleRequestUpdateReport = (values: any) => {
+    setUpdatedReportData(values);
+    setShowAddScript(false);
+    setShowConfirm(true);
+  }
 
   const refreshReportAfterDeleting = () => {
     getreport();
@@ -204,7 +214,7 @@ const ReportView = () => {
             <button
               type="button"
               className="btn icon-button my-1 mx-2"
-              onClick={updateRepost}
+              onClick={updateReport}
               disabled={reportStatus === 'running'}
             >
               <SystemUpdateAltIcon fontSize="small" />
@@ -291,10 +301,21 @@ const ReportView = () => {
       </div>
       <ReportUpdateModal
         show={showAddScript}
-        handleClose={() => setShowAddScript(false)}
-        selectedScripts={report.scripts.map((script: any) => script.id)}
-        selectedSummaries={report.summaries ? report.summaries.map((summary: any) => summary.id) : []}
-        onSave={handleUpdateReport}
+        handleClose={() => {
+          setUpdatedReportData(null);
+          setShowAddScript(false);
+        }}
+        selectedScripts={updatedReportData ? updatedReportData.scripts : report.scripts.map((script: any) => script.id)}
+        selectedSummaries={updatedReportData ? updatedReportData.summaries ? updatedReportData.summaries : [] : report.summaries ? report.summaries.map((summary: any) => summary.id) : []}
+        onSave={handleRequestUpdateReport}
+      />
+      <ReportUpdateConfirmModal
+        show={showConfirm}
+        onCancel={() => {
+          setShowConfirm(false);
+          setShowAddScript(true);
+        }}
+        onConfirm={handleUpdateReport}
       />
       {showScheduleModal && (
         <ScheduleEmailModal

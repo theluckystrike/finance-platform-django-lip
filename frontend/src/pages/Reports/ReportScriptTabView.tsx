@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -50,7 +50,7 @@ const ReportScriptTabView: FC<ReportScriptTabViewProps> = ({ loading, remove, re
               <tbody id="reportsCheckboxes">
                 {report.scripts ? (
                   report.scripts.map((script: any) => (
-                    <>
+                    <React.Fragment key={script.id}>
                       <tr
                         key={script.id}
                         className="table-card rounded-3 bg-light-green mb-2 p-3"
@@ -96,7 +96,7 @@ const ReportScriptTabView: FC<ReportScriptTabViewProps> = ({ loading, remove, re
                         </td>
                       </tr>
                       <tr style={{ height: '10px' }}></tr>
-                    </>
+                    </React.Fragment>
                   ))
                 ) : (
                   <tr>
