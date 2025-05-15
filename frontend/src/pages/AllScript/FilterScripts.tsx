@@ -79,7 +79,7 @@ const FilterScripts = () => {
   };
 
   useEffect(() => {
-    const filter: any = localStorage.getItem('filterquery');
+    // const filter: any = localStorage.getItem('filterquery');
 
     if (loginUser) {
       getData();

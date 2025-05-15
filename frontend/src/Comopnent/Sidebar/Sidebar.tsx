@@ -14,27 +14,7 @@ const Sidebar = () => {
   const toast = useToast();
   const location = useLocation();
 
-  const [filterScriptQuery, setFilterScriptQuery] = useState<any>(null);
-
-  useEffect(() => {
-    let filterQuery: any = localStorage.getItem('filterquery');
-    if (filterQuery) {
-      filterQuery = JSON.parse(filterQuery);
-      setFilterScriptQuery(filterQuery);
-    } else {
-      setFilterScriptQuery(false);
-    }
-  }, [location]);
-
-  const changeRoute = (value: String) => {
-    if (value.includes('allscripts') && filterScriptQuery) {
-      navigate(
-        `/filter-scripts?category=${filterScriptQuery.parentName}&subcategory1=${filterScriptQuery.parentName1}&subcategory2=${filterScriptQuery.parentName2}`
-      );
-    } else {
-      navigate(`${value}`);
-    }
-  };
+  const changeRoute = (value: String) => { navigate(`${value}`) };
 
   const [signout, Res] = useSignOutMutation();
   const logout = async () => {
