@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllScripts } from '../../Redux/Script/ScriptSlice';
@@ -84,15 +84,23 @@ const ReportUpdateModal: FC<ReportUpdateModalProps> = ({
     }
   }, [allscripts, loginUser, dispatch]);
 
-  const scriptOptions: SelectBoxOption[] = allscripts.map((script: any) => ({
-    value: script.id,
-    label: script.name,
-  }));
+  const scriptOptions = useMemo(() => {
+    const selectOptions: SelectBoxOption[] = allscripts.map((script: any) => ({
+      value: script.id,
+      label: script.name,
+    }));
 
-  const summaryOptions: SelectBoxOption[] = allsummaries.map((summary: any) => ({
-    value: summary.id,
-    label: summary.name,
-  }));
+    return selectOptions;
+  }, [allscripts]);
+
+  const summaryOptions = useMemo(() => {
+    const selectOptions: SelectBoxOption[] = allsummaries.map((summary: any) => ({
+      value: summary.id,
+      label: summary.name,
+    }));
+
+    return selectOptions;
+  }, [allsummaries]);
 
   return (
     <Modal
@@ -152,6 +160,7 @@ const ReportUpdateModal: FC<ReportUpdateModalProps> = ({
                     formik.values.scripts.includes(option.value),
                   )}
                   placeholder="Select Scripts"
+                  isDisabled={!scriptOptions.length}
                 />
               </div>
 
@@ -193,6 +202,7 @@ const ReportUpdateModal: FC<ReportUpdateModalProps> = ({
                     formik.values.summaries.includes(option.value),
                   )}
                   placeholder="Select Summaries"
+                  isDisabled={!summaryOptions.length}
                 />
               </div>
 
