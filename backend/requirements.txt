@@ -188,7 +188,7 @@ threadpoolctl==3.2.0
 tinycss2==1.2.1
 tomli==2.0.1
 tomli_w==1.0.0
--e git+https://github.com/ndaskalovic/finance-toolbox.git@7d8051803e04ab167f6cd9c52c43974cf30bc634#egg=toolbox --no-input
+-e git+https://github.com/ndaskalovic/finance-toolbox.git@7d8051803e04ab167f6cd9c52c43974cf30bc634#egg=toolbox
 tornado==6.3.2
 tqdm==4.66.1
 traitlets==5.9.0
