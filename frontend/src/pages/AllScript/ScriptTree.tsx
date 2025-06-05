@@ -19,14 +19,18 @@ const ScriptTree = () => {
   const { data: AllCategory, isError } = useGetAllCategoryQuery({
     token: loginUser.access,
   });
+  
   const categoryData = AllCategory?.results || [];
+  const parentCategory = categoryData.filter((item: any) => item.level !== 2);
   const [categoryFilter, setCategoryFilter] = useState<any>([]);
+
   useEffect(() => {
     const categoryMap: any = {};
-    categoryData.forEach((cat: any) => {
+    const category_data = JSON.parse(JSON.stringify(categoryData));
+    category_data.forEach((cat: any) => {
       categoryMap[cat.id] = { ...cat, subcategories: [] };
     });
-    categoryData.forEach((cat: any) => {
+    category_data.forEach((cat: any) => {
       if (cat.parent_category === null) {
       } else {
         const parent: any = Object.values(categoryMap).find(
@@ -41,7 +45,6 @@ const ScriptTree = () => {
     const structuredCategories = Object.values(categoryMap).filter(
       (cat: any) => cat.parent_category === null,
     );
-
     setCategoryFilter(structuredCategories);
   }, [categoryData]);
 
@@ -55,7 +58,7 @@ const ScriptTree = () => {
       </div>
       <ScriptChart
         categoryFilter={categoryFilter}
-        categoryData={categoryData}
+        categoryData={parentCategory}
         token={loginUser}
       />
     </div>

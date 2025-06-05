@@ -4,6 +4,7 @@ import { Categoryarray2 } from '../../DummyData/TableData';
 import NewCategoryModal from '../ui/Modals/NewCategoryModal/NewCategoryModal';
 import DeleteModal from '../../pages/UploadScript/DeleteModal';
 
+
 const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [selected, setSelected] = useState('');
@@ -13,7 +14,7 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [editingCategoryid, setEditingCategoryid] = useState<string | null>(
     null,
   );
-
+  
   const handleClose = () => {
     setShow(false);
     setEditingCategory(null);
@@ -88,12 +89,33 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
                               (subinnerItem: any, subinnerIndex: any) => (
                                 <li key={subinnerIndex}>
                                   <span
-                                    onClick={() =>
-                                      startEditing(subinnerItem, innerItem)
-                                    }
                                     style={{ cursor: 'pointer' }}
                                   >
-                                    {subinnerItem.name}
+                                    <span
+                                      onClick={() => {
+                                        localStorage.setItem("filterquery", JSON.stringify({
+                                          category: item.id,
+                                          category1: innerItem.id,
+                                          category2: subinnerItem.id,
+                                          parentName: item.name,
+                                          parentName1: innerItem.name,
+                                          number: 1,
+                                          parentName2: subinnerItem.name
+                                        }));
+                                        window.location.href = (`/filter-scripts?category=${item.name}&category1=${innerItem.name}&category2=${subinnerItem.name}`);
+                                      }}
+                                    >
+                                      {subinnerItem.name}
+                                    </span>
+                                    <span
+                                      onClick={() =>
+                                        startEditing(subinnerItem, innerItem)
+                                      }
+                                    >
+                                      <FaEdit
+                                        style={{ marginLeft: '8px', cursor: 'pointer' }}
+                                      />
+                                    </span>
                                   </span>
                                 </li>
                               ),

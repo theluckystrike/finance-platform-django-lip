@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
 import {
+  useCreateMutation,
   useRemoveMutation,
   useUpdateMutation,
 } from '../../../../Redux/CategoryQuery';
@@ -26,7 +27,6 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   show,
   selected,
   handleClose,
-  data,
   editingCategory,
   categoryData,
   token,
@@ -37,6 +37,8 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   const [update, update_res] = useUpdateMutation();
 
   const handleToast = useToast();
+  const [create, { isLoading, isSuccess, isError, error, data }] =
+    useCreateMutation();
 
   const [categoryName, setCategoryName] = useState(selected);
   const [parentCategory, setParentCategory] = useState(selectedPERnt);
@@ -45,26 +47,38 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   useEffect(() => {
     if (editingCategory) {
       setCategoryName(editingCategory.name);
-      setParentCategory(selectedPERnt);
       setIsEditing(true);
     } else {
       setCategoryName('');
       setIsEditing(false);
     }
+    setParentCategory(selectedPERnt);
   }, [editingCategory, selected]);
 
   const handleSave = async () => {
-    await update({
-      token: token.access,
-      id: editingCategory.id,
-      data: {
-        name: categoryName,
-        parent_category: parentCategory.id,
-      },
-    });
+    if (editingCategory) {
+      await update({
+        token: token.access,
+        id: editingCategory.id,
+        data: {
+          name: categoryName,
+          parent_category: parentCategory.id,
+        },
+      });
+    } else {
+      await create({
+        token: token.access,
+        data: {
+          name: categoryName,
+          category: parentCategory.id,
+          parent_category: parentCategory.id,
+          parentName: parentCategory.name
+        },
+      });
+      window.location.href = "";
+    }
 
     handleToast.SuccessToast(`Category updated successfully`);
-
     handleClose();
   };
 

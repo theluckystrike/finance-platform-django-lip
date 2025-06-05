@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 import { Categoryarray2 } from '../../DummyData/TableData';
 import NewCategoryModal from '../ui/Modals/NewCategoryModal/NewCategoryModal';
 import DeleteModal from '../../pages/UploadScript/DeleteModal';
+import { useNavigate } from 'react-router-dom';
 
 const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -10,7 +11,6 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [selectedPERnt, setSelectedPREnt] = useState('');
   const [show, setShow] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
-
   const handleClose = () => {
     setShow(false);
     setEditingCategory(null);
@@ -29,10 +29,14 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
     );
   };
 
-  const startEditing = (name: any, value: any) => {
-    setEditingCategory(name);
-    setSelectedPREnt(value);
-
+  const startEditing = (name: any, value: any, type: string = "update") => {
+    if (type === "update") {
+      setEditingCategory(name);
+      setSelectedPREnt(value);
+    } else {
+      setEditingCategory(null);
+      setSelectedPREnt(name);
+    }
     handleShow(name);
   };
   const [del, setDel] = useState(false);
@@ -60,11 +64,22 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
                   }}
                   style={{ marginLeft: '8px', cursor: 'pointer' }}
                 />
+                <FaPlus
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    startEditing(item, { name: '', id: '' }, "add");
+                  }}
+                  style={{ marginLeft: '8px', cursor: 'pointer' }}
+                />
               </span>
               {expandedCategories.includes(item.name) && item.subcategories && (
                 <ul>
                   {item.subcategories.map((innerItem: any, innerIndex: any) => (
-                    <li key={innerIndex}>
+                    <li key={innerIndex}
+                      onClick={() => {
+
+                      }}
+                    >
                       <span
                         onClick={() => toggleExpand(innerItem.name)}
                         style={{ cursor: 'pointer' }}
@@ -77,6 +92,13 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
                           }}
                           style={{ marginLeft: '8px', cursor: 'pointer' }}
                         />
+                        <FaPlus
+                          onClick={(e: any) => {
+                            e.stopPropagation();
+                            startEditing(innerItem, item, "add");
+                          }}
+                          style={{ marginLeft: '8px', cursor: 'pointer' }}
+                        />
                       </span>
                       {expandedCategories.includes(innerItem.name) &&
                         innerItem.subcategories && (
@@ -85,15 +107,33 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
                               (subinnerItem: any, subinnerIndex: any) => (
                                 <li key={subinnerIndex}>
                                   <span
-                                    onClick={() =>
-                                      startEditing(
-                                        { name: subinnerItem.name },
-                                        innerItem,
-                                      )
-                                    }
                                     style={{ cursor: 'pointer' }}
                                   >
-                                    {subinnerItem.name}
+                                    <span
+                                      onClick={() => {
+                                        localStorage.setItem("filterquery", JSON.stringify({
+                                          category: item.id,
+                                          category1: innerItem.id,
+                                          category2: subinnerItem.id,
+                                          parentName: item.name,
+                                          parentName1: innerItem.name,
+                                          number: 1,
+                                          parentName2: subinnerItem.name
+                                        }));
+                                        window.location.href = (`/filter-scripts?category=${item.name}&category1=${innerItem.name}&category2=${subinnerItem.name}`);
+                                      }}
+                                    >
+                                      {subinnerItem.name}
+                                    </span>
+                                    <span
+                                      onClick={() =>
+                                        startEditing(subinnerItem, innerItem)
+                                      }
+                                    >
+                                      <FaEdit
+                                        style={{ marginLeft: '8px', cursor: 'pointer' }}
+                                      />
+                                    </span>
                                   </span>
                                 </li>
                               ),
