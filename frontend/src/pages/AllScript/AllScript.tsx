@@ -33,6 +33,7 @@ const AllScripts = () => {
     page_no: 1,
     page_size: 1000,
   });
+  
   const categories = useMemo(
     () => categoriesData?.results || [],
     [categoriesData],

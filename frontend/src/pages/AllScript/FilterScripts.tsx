@@ -121,6 +121,7 @@ const FilterScripts = () => {
   const { items, requestSort, getClassNamesFor } = useSortableData(
     scripts || [],
   );
+  
   const isAllSelected = selectedScripts.length === items.length;
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(PER_COUNT['10']);
