@@ -3,6 +3,7 @@ import ScriptChart from '../../Comopnent/Charts/ScriptChart';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../../Comopnent/ui/icon/Icon';
 import { useGetAllCategoryQuery } from '../../Redux/CategoryQuery';
+import { FaPlus } from 'react-icons/fa';
 
 const ScriptTree = () => {
   const [loginUser, setLoginUser] = useState<any>(
@@ -54,7 +55,9 @@ const ScriptTree = () => {
         <button className="btn mb-3" onClick={() => Navigate(-1)}>
           <Icon icon="ArrowBack" size="45px" color="dark" />
         </button>{' '}
-        <h3 className="h1 fw-bold">Script Tree By Category</h3>
+        <h3 className="h1 fw-bold d-flex">
+          Script Tree By Category
+        </h3>
       </div>
       <ScriptChart
         categoryFilter={categoryFilter}

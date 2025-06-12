@@ -12,6 +12,7 @@ interface DeleteModalProps {
   handleClose: () => void;
   token: any;
   data: any;
+  text?: string
 }
 
 const DeleteModal: FC<DeleteModalProps> = ({
@@ -19,6 +20,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
   handleClose,
   data,
   token,
+  text
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -49,7 +51,9 @@ const DeleteModal: FC<DeleteModalProps> = ({
             <div className="col-12 m-0"></div>
             <div className="col-12  ">
               <h4>Delete Category</h4>
-              <p>Are you sure you want to delete {data.name} category?</p>
+              <p
+                dangerouslySetInnerHTML={{__html: text ? text : ""}}
+              ></p>
             </div>
             <div className="col-12 row justify-content-evenly m-0">
               <label

@@ -11,6 +11,7 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [selectedPERnt, setSelectedPREnt] = useState('');
   const [show, setShow] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  
   const handleClose = () => {
     setShow(false);
     setEditingCategory(null);
@@ -42,10 +43,15 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
   const [del, setDel] = useState(false);
 
   const [delvalue, setDelete] = useState({});
-  const showDel = (valuee: any) => {
-    setDelete(valuee);
+  const [deleteText, setDeleteText] = useState("");
+
+  const showDel = (value: any, count: any) => {
+    setDelete(value);
+    setDeleteText("You are deleting this branch <b>" + value.name + "</b> and there are <b>" + count + "</b> of scripts linked to this branch");
     setDel(true);
   };
+
+
   return (
     <>
       <ul className="tree-class">
@@ -158,6 +164,7 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
         token={token}
         categoryData={categoryData}
         showDel={showDel}
+        rootParent={false}
       />
 
       <DeleteModal
@@ -165,16 +172,69 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
         handleClose={() => setDel(false)}
         token={token}
         data={delvalue}
+        text={deleteText}
       />
     </>
   );
 };
 
 const CategoryTree = ({ categoryFilter, categoryData, token }: any) => {
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [selected, setSelected] = useState('');
+  const [selectedPERnt, setSelectedPREnt] = useState('');
+  const [show, setShow] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [del, setDel] = useState(false);
+  const [delvalue, setDelete] = useState({});
+  const handleClose = () => {
+    setShow(false);
+    setEditingCategory(null);
+  };
+
+  const handleShow = (value: any) => {
+    setSelected(value);
+    setShow(true);
+  };
+
+  const startEditing = (name: any, value: any, type: string = "update") => {
+    if (type === "update") {
+      setEditingCategory(name);
+      setSelectedPREnt(value);
+    } else {
+      setEditingCategory(null);
+      setSelectedPREnt(name);
+    }
+    handleShow(name);
+  };
+  const showDel = (valuee: any, count: any) => {
+    setDelete(valuee);
+    
+    setDel(true);
+  };
   return (
     <div className="category-tree mx-auto w-25">
-      <h3>Script Tree</h3>
+      <h3 className="d-flex center">
+        Script Tree
+        <FaPlus size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop: '5px' }} cursor="pointer"
+          onClick={(e: any) => {
+            e.stopPropagation();
+            startEditing("", { name: '', id: '' }, "update");
+          }}
+        />
+      </h3>
       {RenderTree(categoryFilter, categoryData, token)}
+      <NewCategoryModal
+        show={show}
+        handleClose={() => {setShow(false)}}
+        selected={selected}
+        selectedPERnt={selectedPERnt}
+        editingCategory={editingCategory}
+        data={categoryData}
+        token={token}
+        categoryData={categoryData}
+        showDel={showDel}
+        rootParent={true}
+      />
     </div>
   );
 };

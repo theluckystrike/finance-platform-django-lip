@@ -21,6 +21,7 @@ interface NewCategoryModalProps {
   selectedPERnt: any;
   categoryData: any;
   showDel: any;
+  rootParent?: boolean
 }
 
 const NewCategoryModal: FC<NewCategoryModalProps> = ({
@@ -32,7 +33,11 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   token,
   selectedPERnt,
   showDel,
+  rootParent = false
 }) => {
+
+  console.log(selectedPERnt);
+  console.log(editingCategory);
   const navigate = useNavigate();
   const [update, update_res] = useUpdateMutation();
 
@@ -66,6 +71,20 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
         },
       });
     } else {
+      let params = {
+        name: categoryName,
+        category: parentCategory.id,
+        parent_category: parentCategory.id,
+        parentName: parentCategory.name
+      }
+      if (rootParent) {
+        params = {
+          name: categoryName,
+          category: null,
+          parent_category: null,
+          parentName: null
+        }
+      }
       await create({
         token: token.access,
         data: {
@@ -83,9 +102,27 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   };
 
   const handleDelete = async () => {
-    handleClose();
 
-    showDel(editingCategory);
+    fetch(process.env.REACT_APP_API_URL + `/scripts?page=1&category=${parentCategory.parent_category}&subcategory1=${parentCategory.id}&subcategory2=${editingCategory.id}`, {
+      headers: {
+        'Content-Type': 'application/json', // or other headers you're using
+        'Authorization': `Bearer ${token.access}`, // add your token here
+      },
+    }) // Replace with your API URL
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json(); // Parse JSON data
+      })
+      .then((data) => {
+        handleClose();
+        const count = data.count;
+        showDel(editingCategory, count);
+      })
+      .catch((error) => {
+      });
+    
   };
 
   const [FilterCategory, setFilterCategory] = useState([]);
@@ -132,7 +169,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                   required
                 />
               </div>
-              <div className="col-12">
+              {!rootParent && <div className="col-12">
                 <label htmlFor="parent_category" className="form-label">
                   Parent category
                 </label>
@@ -220,6 +257,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                   </div>
                 </div> */}
               </div>
+              }
               <div className="col-12 row justify-content-evenly m-0">
                 <label
                   style={{ height: '33px' }}
