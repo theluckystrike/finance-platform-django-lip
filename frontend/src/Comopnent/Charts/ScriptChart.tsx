@@ -47,7 +47,11 @@ const RenderTree = (data: any, categoryData: any, token: any, level = 0) => {
 
   const showDel = (value: any, count: any) => {
     setDelete(value);
-    setDeleteText("You are deleting this branch <b>" + value.name + "</b> and there are <b>" + count + "</b> of scripts linked to this branch");
+    if(count > 0) {
+      setDeleteText("You are deleting this branch <b>" + value.name + "</b> and there are <b>" + count + "</b> of scripts linked to this branch");
+    } else {
+      setDeleteText("You are deleting this branch <b>" + value.name + "</b>");
+    }
     setDel(true);
   };
 

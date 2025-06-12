@@ -102,26 +102,31 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   };
 
   const handleDelete = async () => {
-
-    fetch(process.env.REACT_APP_API_URL + `/scripts?page=1&category=${parentCategory.parent_category}&subcategory1=${parentCategory.id}&subcategory2=${editingCategory.id}`, {
-      headers: {
-        'Content-Type': 'application/json', // or other headers you're using
-        'Authorization': `Bearer ${token.access}`, // add your token here
-      },
-    }) // Replace with your API URL
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json(); // Parse JSON data
-      })
-      .then((data) => {
-        handleClose();
-        const count = data.count;
-        showDel(editingCategory, count);
-      })
-      .catch((error) => {
-      });
+    if (editingCategory.level != 2) {
+      handleClose();
+      showDel(editingCategory, -1);
+    } else {
+      fetch(process.env.REACT_APP_API_URL + `/scripts?page=1&category=${parentCategory.parent_category}&subcategory1=${parentCategory.id}&subcategory2=${editingCategory.id}`, {
+        headers: {
+          'Content-Type': 'application/json', // or other headers you're using
+          'Authorization': `Bearer ${token.access}`, // add your token here
+        },
+      }) // Replace with your API URL
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json(); // Parse JSON data
+        })
+        .then((data) => {
+          handleClose();
+          const count = data.count;
+          showDel(editingCategory, count);
+        })
+        .catch((error) => {
+        });
+    }
+    
     
   };
 
@@ -268,7 +273,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                 </label>
                 {isEditing && (
                   <button
-                    onClick={handleDelete}
+                    onClick={() => {handleDelete()}}
                     className="btn btn-danger col-3 px-3 fw-bold"
                     type="button"
                   >
