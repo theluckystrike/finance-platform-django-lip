@@ -10,6 +10,10 @@ import { log } from 'console';
 import useToast from '../../../../customHook/toast';
 import DeleteModal from '../DeleteModal/DeleteModal';
 import ArrowDown from '../../../../assest/image/arrow-down.png';
+import { GetScriptbyCategory } from '../../../../Redux/Script/ScriptApi';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../../../Store';
+import { GetScriptbyCategorys, ScriptState } from '../../../../Redux/Script/ScriptSlice';
 
 interface NewCategoryModalProps {
   show: boolean;
@@ -44,6 +48,11 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
   const handleToast = useToast();
   const [create, { isLoading, isSuccess, isError, error, data }] =
     useCreateMutation();
+
+  const { count } = useSelector<RootState, ScriptState>(
+    (state) => state.script,
+  );
+  const dispatch = useDispatch();
 
   const [categoryName, setCategoryName] = useState(selected);
   const [parentCategory, setParentCategory] = useState(selectedPERnt);
@@ -106,28 +115,24 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
       handleClose();
       showDel(editingCategory, -1);
     } else {
-      fetch(process.env.REACT_APP_API_URL + `/scripts?page=1&category=${parentCategory.parent_category}&subcategory1=${parentCategory.id}&subcategory2=${editingCategory.id}`, {
-        headers: {
-          'Content-Type': 'application/json', // or other headers you're using
-          'Authorization': `Bearer ${token.access}`, // add your token here
-        },
-      }) // Replace with your API URL
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json(); // Parse JSON data
-        })
-        .then((data) => {
-          handleClose();
-          const count = data.count;
-          showDel(editingCategory, count);
-        })
-        .catch((error) => {
-        });
+      try {
+        await dispatch(
+          GetScriptbyCategorys({
+            token: token?.access,
+            value: {
+              category: parentCategory.parent_category,
+              category1: parentCategory.id,
+              category2: editingCategory.id,
+              status: ""
+            },
+          }),
+        );
+        handleClose();
+        showDel(editingCategory, count);
+      } catch (error) {
+        console.log(error);
+      }
     }
-    
-    
   };
 
   const [FilterCategory, setFilterCategory] = useState([]);
@@ -273,7 +278,7 @@ const NewCategoryModal: FC<NewCategoryModalProps> = ({
                 </label>
                 {isEditing && (
                   <button
-                    onClick={() => {handleDelete()}}
+                    onClick={handleDelete}
                     className="btn btn-danger col-3 px-3 fw-bold"
                     type="button"
                   >

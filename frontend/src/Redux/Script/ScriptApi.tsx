@@ -13,6 +13,7 @@ export const CreateScript = async (data: any) => {
   }
 };
 
+
 // Update Script
 export const UpdateScript = async (data: any) => {
   const { formData, scriptId } = data;
