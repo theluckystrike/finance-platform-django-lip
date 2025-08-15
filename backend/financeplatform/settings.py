@@ -125,11 +125,11 @@ INSTALLED_APPS = [
 RQ_QUEUES = {
     'scripts': {
         'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
-        'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
+        'DEFAULT_TIMEOUT': 40*60,  # 40 minute timeout
     },
     'reports': {
         'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
-        'DEFAULT_TIMEOUT': 20*60,  # 20 minute timeout
+        'DEFAULT_TIMEOUT': 40*60,  # 40 minute timeout
     },
     'summaries': {
         'URL': os.environ.get('REDISCLOUD_URL', 'redis://localhost:6379'),
