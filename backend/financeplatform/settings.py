@@ -75,7 +75,7 @@ DEBUG = False if IS_AWS else True
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-key-change-in-production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -96,7 +96,7 @@ NOSE_ARGS = [
 # Application definition
 
 INSTALLED_APPS = [
-    "scout_apm.django",
+    # "scout_apm.django",  # Temporarily disabled
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,16 +108,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
-    'scriptupload',
-    'databaseinterface',
-    'olandinvestmentsapi',
+    'scriptupload',  # ✅ RE-ENABLED
+    'databaseinterface',  # ✅ RE-ENABLED
+    'olandinvestmentsapi',  # ✅ RE-ENABLED
     'marketdata',
-    'storages',
+    'storages',  # ✅ RE-ENABLED
     'django_tables2',
     'django_filters',
-    'django_rq',
-    'django_hosts',
-    'django_nose',
+    'django_rq',  # ✅ RE-ENABLED
+    # 'django_hosts',  # Keep disabled for now
+    # 'django_nose',  # Keep disabled for now
 ]
 
 # django-rq
@@ -170,7 +170,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'financeplatform.middleware.HealthCheckMiddleware',
-    'django_hosts.middleware.HostsRequestMiddleware',
+    # 'django_hosts.middleware.HostsRequestMiddleware',  # Temporarily disabled
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -179,11 +179,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_hosts.middleware.HostsResponseMiddleware'
+    # 'django_hosts.middleware.HostsResponseMiddleware'  # Temporarily disabled
 ]
 
-ROOT_HOSTCONF = 'financeplatform.hosts'
-DEFAULT_HOST = 'www'
+# ROOT_HOSTCONF = 'financeplatform.hosts'  # Temporarily disabled
+# DEFAULT_HOST = 'www'  # Temporarily disabled
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = int(os.environ.get("AWS_EMAIL_PORT", 587))

@@ -14,7 +14,7 @@ class OHLCViewSet(mixins.RetrieveModelMixin,
 
     serializer_class = OHLCSerializer
     authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Allow public access for development
 
     def get_queryset(self):
         queryset = OHLCTimeSeries.objects.all().order_by("-date")
@@ -39,7 +39,7 @@ class TickerSymbolViewSet(mixins.ListModelMixin,
                           mixins.CreateModelMixin,
                           mixins.RetrieveModelMixin):
     lookup_field = "symbol"
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]  # Allow public access for development
     authentication_classes = [TokenAuthentication]
     queryset = TickerSymbol.objects.all().order_by("symbol")
     serializer_class = TickerSymbolSerializer
