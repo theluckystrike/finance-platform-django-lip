@@ -17,32 +17,49 @@ const ScriptTree = () => {
   }, []);
 
   const Navigate = useNavigate();
-  const { data: AllCategory, isError } = useGetAllCategoryQuery({
+  const { data: AllCategory, isError, refetch } = useGetAllCategoryQuery({
     token: loginUser.access,
   });
+
+  // Add effect to refetch data when component mounts or when returning from other pages
+  useEffect(() => {
+    const handleFocus = () => {
+      refetch();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    // Also refetch when component mounts
+    refetch();
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [refetch]);
   
   const categoryData = AllCategory?.results || [];
-  const parentCategory = categoryData.filter((item: any) => item.level !== 2);
   const [categoryFilter, setCategoryFilter] = useState<any>([]);
 
   useEffect(() => {
     const categoryMap: any = {};
     const category_data = JSON.parse(JSON.stringify(categoryData));
+    
+    // Initialize all categories in the map
     category_data.forEach((cat: any) => {
       categoryMap[cat.id] = { ...cat, subcategories: [] };
     });
+    
+    // Build the hierarchy
     category_data.forEach((cat: any) => {
-      if (cat.parent_category === null) {
-      } else {
-        const parent: any = Object.values(categoryMap).find(
-          (parentCat: any) => parentCat.id === cat.parent_category,
-        );
+      if (cat.parent_category !== null) {
+        const parent: any = categoryMap[cat.parent_category];
         if (parent) {
           parent.subcategories.push(categoryMap[cat.id]);
         }
       }
     });
 
+    // Get root categories (level 0)
     const structuredCategories = Object.values(categoryMap).filter(
       (cat: any) => cat.parent_category === null,
     );
@@ -61,7 +78,7 @@ const ScriptTree = () => {
       </div>
       <ScriptChart
         categoryFilter={categoryFilter}
-        categoryData={parentCategory}
+        categoryData={categoryData}
         token={loginUser}
       />
     </div>

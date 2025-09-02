@@ -42,10 +42,16 @@ export default function UpdateScriptDialog({
     for_summary: data.for_summary,
   });
 
-  const level2Categories = useMemo(
-    () => categories.filter((cate: Category) => cate.level === 2),
-    [categories],
-  );
+  // Show all categories that can contain scripts (level 2 categories)
+  // But also include any categories that currently have scripts assigned
+  const availableCategories = useMemo(() => {
+    const level2Categories = categories.filter((cate: Category) => cate.level === 2);
+    // If current script has a category that's not level 2, include it to maintain consistency
+    if (data.category && !level2Categories.find(cat => cat.id === data.category.id)) {
+      return [...level2Categories, data.category];
+    }
+    return level2Categories;
+  }, [categories, data.category]);
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     data.category || null,
@@ -58,10 +64,10 @@ export default function UpdateScriptDialog({
     setFormData({ ...formData, category: category?.id || null });
     console.log(
       'selectedCateogry',
-      level2Categories.find((cate) => cate.id === category?.id) || null,
+      availableCategories.find((cate) => cate.id === category?.id) || null,
     );
     setSelectedCategory(
-      level2Categories.find((cate) => cate.id === category?.id) || null,
+      availableCategories.find((cate) => cate.id === category?.id) || null,
     );
   };
 
@@ -105,7 +111,7 @@ export default function UpdateScriptDialog({
             </FormLabel>
             <AutoComplete
               disablePortal
-              options={level2Categories}
+              options={availableCategories}
               getOptionLabel={(option: Category) => option.name}
               value={selectedCategory}
               onChange={handleCategoryChange}
