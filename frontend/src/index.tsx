@@ -8,6 +8,7 @@ import {
 import './assest/css/Custom.css';
 import { SimpleRoute } from './Routes/AuthRoute';
 import { AuthRoute } from './Routes/SimpleRoutes';
+import { PublicRoutes } from './Routes/PublicRoute';
 import { Provider } from 'react-redux';
 import store from './Store';
 import { ToastContainer } from 'react-toastify';
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <Navigate to={`${SidebarMenu.upload.path}`} replace />,
   },
+  ...PublicRoutes,
   ...SimpleRoute,
   ...AuthRoute,
 ]);

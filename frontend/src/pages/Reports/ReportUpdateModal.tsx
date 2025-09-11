@@ -71,18 +71,19 @@ const ReportUpdateModal: FC<ReportUpdateModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (loginUser && allscripts.length < 1) {
+    if (loginUser) {
       const getData = async () => {
         try {
-          await dispatch(GetAllScripts({ token: loginUser?.access }));
+          // Always fetch scripts when modal opens to ensure fresh data
+          await dispatch(GetAllScripts({ page: 1, per_page: 1000 }));
           await dispatch(getAllSummaries({ page: 1 }));
         } catch (error) {
-          console.log(error);
+          console.error('Error fetching scripts:', error);
         }
       };
       getData();
     }
-  }, [allscripts, loginUser, dispatch]);
+  }, [loginUser, dispatch, show]); // Add 'show' to dependencies to refetch when modal opens
 
   const scriptOptions = useMemo(() => {
     const selectOptions: SelectBoxOption[] = allscripts.map((script: any) => ({

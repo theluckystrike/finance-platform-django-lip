@@ -19,6 +19,7 @@ export interface SidebarMenutype {
   Filterscripts: MenuItem;
   Report: MenuItem;
   tapesummary: MenuItem;
+  dashboard: MenuItem;
   errorhandling: MenuItem;
   scriptTree: MenuItem;
 }

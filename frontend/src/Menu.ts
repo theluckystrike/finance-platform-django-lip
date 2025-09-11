@@ -61,6 +61,13 @@ export const SidebarMenu: SidebarMenutype = {
     hide: false,
     role: 'all',
   },
+  dashboard: {
+    name: 'Dashboard',
+    path: 'dashboard',
+    icon: 'Dashboard',
+    hide: false,
+    role: 'all',
+  },
   scriptTree: {
     name: 'Script Tree',
     path: 'scriptTree',
