@@ -13,15 +13,33 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Finance Platform API",
+      default_version='v1',
+      description="Finance Platform API Documentation",
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 
 urlpatterns = [
-    path('', include("scriptupload.urls")),
-    path('', include("databaseinterface.urls")),
-    path('', include("olandinvestmentsapi.urls"))
+    path('admin/', admin.site.urls),
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', include("scriptupload.urls")),  # Keep at root for tests
+    path('', include("databaseinterface.urls")),  # Keep at root for tests
+    path('', include("marketdata.urls")),  # Keep at root for tests
+    path('', include("olandinvestmentsapi.urls")),  # Keep at root for tests
 ]
 
 if True:

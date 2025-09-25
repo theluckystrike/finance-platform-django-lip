@@ -37,7 +37,7 @@ const FilterScripts = () => {
   );
   const [updateScript, { isLoading, isError, isSuccess }] =
       useUpdateScriptMutation();
-  const { data: categoriesData } = useGetAllCategoryQuery({
+  const { data: categoriesData, refetch: refetchCategories } = useGetAllCategoryQuery({
     page_no: 1,
     page_size: 1000,
   });
@@ -139,6 +139,8 @@ const FilterScripts = () => {
       if (formData && showUpdateModal) {
         await updateScript({ id: scriptId, data: formData });
         getData();
+        // Also refetch categories to ensure script tree is updated
+        refetchCategories();
       }
     } catch (error) {}
 

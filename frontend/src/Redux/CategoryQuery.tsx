@@ -22,7 +22,7 @@ const api = createApi({
       extraOptions,
     );
   },
-  tagTypes: ['GET', 'Category'],
+  tagTypes: ['GET', 'Category', 'Script'],
   endpoints: (builder) => ({
     create: builder.mutation({
       query: ({ token, data }) => ({
@@ -30,7 +30,7 @@ const api = createApi({
         method: 'POST',
         body: data,
       }),
-      // Optionally, you can add invalidatesTags here if needed
+      invalidatesTags: ['Category'],
     }),
 
     update: builder.mutation({
@@ -39,14 +39,14 @@ const api = createApi({
         method: 'PUT',
         body: data,
       }),
-      // Optionally, you can add invalidatesTags here if needed
+      invalidatesTags: ['Category'],
     }),
     remove: builder.mutation({
       query: ({ token, id }) => ({
         url: `${endpoint.category}/${id}`,
         method: 'DELETE',
       }),
-      // Optionally, you can add invalidatesTags here if needed
+      invalidatesTags: ['Category'],
     }),
     getAllCategory: builder.query({
       query: () => ({

@@ -25,6 +25,8 @@ const CategoryManger = lazy(
 const ErrorHandling = lazy(() => import('../pages/ErrorHandling/ErrorHandle'));
 const Profile = lazy(() => import('../pages/user/Profile'));
 const ScriptTree = lazy(() => import('../pages/AllScript/ScriptTree'));
+const DashboardList = lazy(() => import('../pages/Dashboard/DashboardList'));
+const SPMemberReturns = lazy(() => import('../pages/Dashboard/SPMemberReturns'));
 
 export const SimpleRoute = [
   {
@@ -58,6 +60,18 @@ export const SimpleRoute = [
       {
         path: SidebarMenu.tapesummary.path,
         element: <TapeSummary />,
+      },
+      {
+        path: SidebarMenu.dashboard.path,
+        element: <DashboardList />,
+      },
+      {
+        path: 'dashboard/sp-member-returns',
+        element: <SPMemberReturns />,
+      },
+      {
+        path: 'dashboard/:dashboardId',
+        element: <SPMemberReturns />, // Will route to appropriate dashboard based on ID
       },
       {
         path: ActiveRoute.ReportDetails.path,

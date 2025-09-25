@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django.http import QueryDict
@@ -63,7 +63,7 @@ logger = logging.getLogger('testlogger')
         ), }
 ))
 class SummaryViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Allow public access for development
     serializer_class = SummarySerializerLite
     queryset = Summary.objects.all().order_by("-created")
     pagination_class = Pagination
@@ -141,7 +141,7 @@ class SummaryUpdateView(APIView):
     """
     POST request to run a script
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Allow public access for development
 
     @swagger_auto_schema(
         responses={

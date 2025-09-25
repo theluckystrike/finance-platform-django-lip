@@ -29,7 +29,7 @@ import UpdateScriptDialog from './dialogs/UpdateScriptDialog';
 const AllScripts = () => {
   const dispatch = useDispatch();
 
-  const { data: categoriesData } = useGetAllCategoryQuery({
+  const { data: categoriesData, refetch: refetchCategories } = useGetAllCategoryQuery({
     page_no: 1,
     page_size: 1000,
   });
@@ -117,6 +117,8 @@ const AllScripts = () => {
       if (formData && showUpdateModal) {
         await updateScript({ id: scriptId, data: formData });
         getData();
+        // Also refetch categories to ensure script tree is updated
+        refetchCategories();
       }
     } catch (error) {}
 
