@@ -4,6 +4,7 @@ import PublicLayout from '../Layout/PublicLayout';
 
 const DashboardList = lazy(() => import('../pages/Dashboard/DashboardList'));
 const SPMemberReturns = lazy(() => import('../pages/Dashboard/SPMemberReturns'));
+const SP500Dashboard = lazy(() => import('../pages/Dashboard/SP500Dashboard'));
 
 // Public routes that don't require authentication
 export const PublicRoutes = [
@@ -24,6 +25,14 @@ export const PublicRoutes = [
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <SPMemberReturns />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'dashboard/sp500',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SP500Dashboard />
           </Suspense>
         ),
       },

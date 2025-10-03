@@ -27,6 +27,7 @@ const Profile = lazy(() => import('../pages/user/Profile'));
 const ScriptTree = lazy(() => import('../pages/AllScript/ScriptTree'));
 const DashboardList = lazy(() => import('../pages/Dashboard/DashboardList'));
 const SPMemberReturns = lazy(() => import('../pages/Dashboard/SPMemberReturns'));
+const SP500Dashboard = lazy(() => import('../pages/Dashboard/SP500Dashboard'));
 
 export const SimpleRoute = [
   {
@@ -68,6 +69,10 @@ export const SimpleRoute = [
       {
         path: 'dashboard/sp-member-returns',
         element: <SPMemberReturns />,
+      },
+      {
+        path: 'dashboard/sp500',
+        element: <SP500Dashboard />,
       },
       {
         path: 'dashboard/:dashboardId',

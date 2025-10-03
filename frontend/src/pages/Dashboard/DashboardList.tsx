@@ -22,12 +22,21 @@ const DashboardList: React.FC = () => {
   const [dashboards, setDashboards] = useState<Dashboard[]>([
     {
       id: 'sp-member-returns',
-      name: 'S&P Member Returns',
-      description: 'Track S&P 500 member performance with YTD returns, sortable by multiple metrics',
+      name: 'Dow Jones Industrial Average',
+      description: 'Track Dow Jones Industrial Average member performance with YTD returns, sortable by multiple metrics',
       icon: <TrendingUpIcon style={{ fontSize: 32 }} />,
       isPublic: true,
       lastUpdated: new Date().toISOString(),
-      dataSource: 'S&P Members Rate of Change Script'
+      dataSource: 'Dow Jones Members Rate of Change Script'
+    },
+    {
+      id: 'sp500',
+      name: 'S&P 500',
+      description: 'Track S&P 500 member performance with comprehensive returns analysis and sortable metrics',
+      icon: <ShowChartIcon style={{ fontSize: 32 }} />,
+      isPublic: true,
+      lastUpdated: new Date().toISOString(),
+      dataSource: 'S&P 500 Members Rate of Change Script'
     },
     {
       id: 'market-overview',
