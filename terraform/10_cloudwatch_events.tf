@@ -2,7 +2,7 @@ resource "aws_cloudwatch_event_rule" "daily_script_update" {
   name = "DailyScriptUpdate"
   #   10am UTC every day
   schedule_expression = "cron(0 10 * * ? *)"
-  is_enabled          = false
+  is_enabled          = true
 }
 
 
