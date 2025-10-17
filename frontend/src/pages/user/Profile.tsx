@@ -1,18 +1,28 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import '../../assest/css/Profile.css';
 import dummyUser from '../../assest/image/logo/user.jpg';
 import { useGetUserByTokenQuery } from '../../Redux/AuthSlice';
 import { loginUSer } from '../../customHook/getrole';
+import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-  const { data, error, isLoading } = useGetUserByTokenQuery(
-    { token: loginUSer.access, page_no: 1, page_size: 1000 },
-    {
-      skip: !loginUSer, // Skip query execution if loginUser is null
-    },
-  );
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef: any = useRef(null);
+  
+  // Check if user is logged in and redirect if not
+  useEffect(() => {
+    if (!loginUSer || !loginUSer.access) {
+      navigate('/login');
+    }
+  }, [navigate]);
+  
+  const { data, error, isLoading } = useGetUserByTokenQuery(
+    { token: loginUSer?.access || '', page_no: 1, page_size: 1000 },
+    {
+      skip: !loginUSer || !loginUSer.access, // Skip query execution if loginUser is null
+    },
+  );
 
   const handleImageClick = () => {
     fileInputRef.current.click();
@@ -56,7 +66,7 @@ const Profile: React.FC = () => {
                     />
 
                     <div className="mt-3">
-                      <h4>{loginUSer.name}</h4>
+                      <h4>{loginUSer?.name || 'User'}</h4>
                       <p className="text-secondary mb-1">
                         Full Stack Developer
                       </p>
