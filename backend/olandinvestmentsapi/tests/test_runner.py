@@ -84,9 +84,13 @@ class RQWorkerProcess:
         self.process = None
 
     def start(self):
-        self.process = subprocess.Popen(
-            ['python', 'manage.py', 'rqworker', 'scripts'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(1)
+        import sys
+        try:
+            self.process = subprocess.Popen(
+                [sys.executable, 'manage.py', 'rqworker', 'scripts'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1)
+        except Exception as e:
+            print(f"Failed to start RQ worker: {e}")
 
     def stop(self):
         if self.process:
