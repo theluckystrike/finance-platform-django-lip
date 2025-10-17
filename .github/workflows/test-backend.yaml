@@ -23,6 +23,7 @@ jobs:
     env:
       SECRET_KEY: ${{ github.sha }}
       DEBUG: True
+      REDISCLOUD_URL: redis://localhost:6379
     services:
       redis:
         image: redis
@@ -53,4 +54,4 @@ jobs:
       run: python manage.py migrate
 
     - name: Test Backend
-      run : python manage.py test
+      run : python manage.py test --verbosity=2
