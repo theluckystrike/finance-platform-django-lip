@@ -21,7 +21,7 @@ class AuthTests(APITestCase):
 
     def test_01_login(self):
         """Test user login"""
-        url = '/api/auth/login/'
+        url = '/api/auth/login'
         data = {
             'username': 'testuser',
             'password': 'testpass123'
@@ -34,7 +34,7 @@ class AuthTests(APITestCase):
 
     def test_02_refresh_token(self):
         """Test refreshing token"""
-        url = '/api/auth/refresh/'
+        url = '/api/auth/refresh-token'
         data = {
             'refresh': self.refresh_token
         }
@@ -46,7 +46,7 @@ class AuthTests(APITestCase):
 
     def test_03_user_info(self):
         """Test getting user info"""
-        url = '/api/auth/user/'
+        url = '/api/auth/user-info'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], self.user.username)
@@ -54,14 +54,14 @@ class AuthTests(APITestCase):
 
     def test_04_logout(self):
         """Test user logout"""
-        url = '/api/auth/logout/'
+        url = '/api/auth/logout'
         data = {
             'refresh': self.refresh_token
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
 
-        url = '/api/auth/refresh/'
+        url = '/api/auth/refresh-token'
         data = {
             'refresh': self.refresh_token
         }
