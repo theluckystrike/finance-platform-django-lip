@@ -69,14 +69,33 @@ class ScriptUploadSerializer(serializers.ModelSerializer):
 class ScriptSerializerLite(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
     category = DeepCategorySerializer()
+    is_stale = serializers.SerializerMethodField()
+    hours_since_update = serializers.SerializerMethodField()
 
     class Meta:
         model = Script
         fields = ["name", "file", "category", "output_type",
-                  "description", "id", "created", "status", "last_updated", "for_summary"]
+                  "description", "id", "created", "status", "last_updated", "for_summary", 
+                  "error_message", "is_stale", "hours_since_update"]
 
     def get_status(self, obj):
         return obj.get_status_display()
+    
+    def get_is_stale(self, obj):
+        """Returns True if script hasn't been updated in more than 48 hours"""
+        from django.utils import timezone
+        if obj.last_updated is None:
+            return True
+        stale_threshold = timezone.now() - timezone.timedelta(hours=48)
+        return obj.last_updated < stale_threshold
+    
+    def get_hours_since_update(self, obj):
+        """Returns hours since last update, or None if never updated"""
+        from django.utils import timezone
+        if obj.last_updated is None:
+            return None
+        delta = timezone.now() - obj.last_updated
+        return round(delta.total_seconds() / 3600, 1)
 
 
 class ScriptSearchSerializer(serializers.HyperlinkedModelSerializer):

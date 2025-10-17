@@ -116,7 +116,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_filters',
     'django_rq',  # ✅ RE-ENABLED
-    # 'django_hosts',  # Keep disabled for now
+    'django_hosts',  # ✅ RE-ENABLED - Required for admin.olandinvestments.com
     # 'django_nose',  # Keep disabled for now
 ]
 
@@ -170,7 +170,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'financeplatform.middleware.HealthCheckMiddleware',
-    # 'django_hosts.middleware.HostsRequestMiddleware',  # Temporarily disabled
+    'django_hosts.middleware.HostsRequestMiddleware',  # ✅ RE-ENABLED - Required for admin subdomain
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -179,11 +179,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django_hosts.middleware.HostsResponseMiddleware'  # Temporarily disabled
+    'django_hosts.middleware.HostsResponseMiddleware'  # ✅ RE-ENABLED - Required for admin subdomain
 ]
 
-# ROOT_HOSTCONF = 'financeplatform.hosts'  # Temporarily disabled
-# DEFAULT_HOST = 'www'  # Temporarily disabled
+ROOT_HOSTCONF = 'financeplatform.hosts'  # ✅ RE-ENABLED - Required for subdomain routing
+DEFAULT_HOST = 'www'  # ✅ RE-ENABLED - Default host configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = int(os.environ.get("AWS_EMAIL_PORT", 587))

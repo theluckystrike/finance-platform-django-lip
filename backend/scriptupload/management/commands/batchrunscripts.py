@@ -15,7 +15,7 @@ class Command(BaseCommand):
         # use this if you want to add arguments to the command line
         # parser.add_argument("poll_ids", nargs="+", type=int)
         parser.add_argument("-b", dest="batch_size",
-                            default=10, type=int, action='store')
+                            default=20, type=int, action='store')
 
     def handle(self, *args, **options):
         batch_size = options["batch_size"]

@@ -66,7 +66,9 @@ const ErrorScripts = () => {
                 category: '',
                 category1: '',
                 category2: '',
-                status: 'failure',
+                // Use the new 'problems' filter to get both error and stale scripts
+                problems: 'true',
+                stale_hours: '48', // Scripts not updated in 48 hours are considered stale
               },
             }),
           );
@@ -122,7 +124,7 @@ const ErrorScripts = () => {
       <div className="mx-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <h1 className="h2">
-            Error Handle script by status failure{' '}
+            Scripts with Errors & Not Updating{' '}
             <span id="headerInfo">({items.length})</span>
           </h1>
           {/* <div className="btn-toolbar mb-2 mb-md-0">
@@ -268,6 +270,14 @@ const ErrorScripts = () => {
                         />
                       </h6>
                     </th>
+                    <th
+                      scope="col"
+                      className="col-1 text-center mx-auto"
+                    >
+                      <h6>
+                        <span>Issue</span>
+                      </h6>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="scriptsCheckboxes">
@@ -313,6 +323,27 @@ const ErrorScripts = () => {
                             </td>
                             <td className="col-2 text-center mx-auto">
                               {formatIsoDate(script.last_updated)}
+                            </td>
+                            <td className="col-1 text-center mx-auto">
+                              {script.status === 'failure' ? (
+                                <span
+                                  className="badge bg-danger"
+                                  title={script.error_message || 'Script execution failed'}
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  Error
+                                </span>
+                              ) : script.is_stale ? (
+                                <span
+                                  className="badge bg-warning text-dark"
+                                  title={`Not updated in ${script.hours_since_update || 'unknown'} hours`}
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  Stale
+                                </span>
+                              ) : (
+                                <span className="badge bg-secondary">OK</span>
+                              )}
                             </td>
                           </tr>
                           <tr style={{ height: '10px' }}></tr>

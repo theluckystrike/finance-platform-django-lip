@@ -51,6 +51,19 @@ logger = logging.getLogger('testlogger')
             type=openapi.TYPE_BOOLEAN,
             enum=['True', 'False']
         ),
+        openapi.Parameter(
+            'stale_hours',
+            openapi.IN_QUERY,
+            description="Filter scripts that haven't been updated in X hours (e.g., 48 for 2 days)",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            'problems',
+            openapi.IN_QUERY,
+            description="Filter scripts with problems (either status=failure OR stale). Use with stale_hours parameter.",
+            type=openapi.TYPE_BOOLEAN,
+            enum=['True', 'False']
+        ),
     ]
 ))
 class ScriptViewSet(ModelViewSet):
@@ -68,21 +81,54 @@ class ScriptViewSet(ModelViewSet):
     pagination_class = Pagination
 
     def get_queryset(self):
+        from django.utils import timezone
+        from django.db.models import Q
+        
         queryset = super().get_queryset()
         cat = self.request.query_params.get("category", None)
         subcat = self.request.query_params.get("subcategory1", None)
         subsubcat = self.request.query_params.get("subcategory2", None)
         status = self.request.query_params.get("status", None)
         for_summary = self.request.query_params.get("for_summary", None)
+        stale_hours = self.request.query_params.get("stale_hours", None)
+        problems = self.request.query_params.get("problems", None)
+        
         if for_summary:
             queryset = queryset.filter(for_summary=for_summary)
-        if status:
-            if status in Script.ExecutionStatus.labels:
-                queryset = queryset.filter(
-                    status=next(value for value, label in Script.ExecutionStatus.choices if status == label))
-            else:
-                logger.warning(
-                    f"[ScriptViewSet] Requested invalid script status query param {status}")
+        
+        # Handle "problems" filter - scripts with errors OR stale updates
+        if problems and problems.lower() == 'true':
+            stale_threshold_hours = int(stale_hours) if stale_hours else 48  # Default to 48 hours
+            stale_time = timezone.now() - timezone.timedelta(hours=stale_threshold_hours)
+            
+            # Scripts are problematic if they have failure status OR haven't updated recently
+            queryset = queryset.filter(
+                Q(status=Script.ExecutionStatus.FAILURE) |
+                Q(last_updated__lt=stale_time) |
+                Q(last_updated__isnull=True)
+            )
+        else:
+            # Original status filter
+            if status:
+                if status in Script.ExecutionStatus.labels:
+                    queryset = queryset.filter(
+                        status=next(value for value, label in Script.ExecutionStatus.choices if status == label))
+                else:
+                    logger.warning(
+                        f"[ScriptViewSet] Requested invalid script status query param {status}")
+            
+            # Stale filter (only if not using problems filter)
+            if stale_hours:
+                try:
+                    hours = int(stale_hours)
+                    stale_time = timezone.now() - timezone.timedelta(hours=hours)
+                    queryset = queryset.filter(
+                        Q(last_updated__lt=stale_time) | Q(last_updated__isnull=True)
+                    )
+                except ValueError:
+                    logger.warning(
+                        f"[ScriptViewSet] Invalid stale_hours parameter: {stale_hours}")
+        
         if cat:
             queryset = queryset.filter(
                 category__parent_category__parent_category=cat)
