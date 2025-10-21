@@ -104,6 +104,11 @@ class RQWorkerProcess:
 
     def start(self):
         import sys
+        import os
+        # Skip starting worker in CI environment
+        if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+            print("Skipping RQ worker startup in CI environment")
+            return
         try:
             self.process = subprocess.Popen(
                 [sys.executable, 'manage.py', 'rqworker', 'scripts'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

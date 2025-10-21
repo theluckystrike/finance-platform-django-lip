@@ -69,3 +69,7 @@ This will only run the server, not the Redis worker, but is useful for making su
 ## API Documentation
 
 The backend API has documentation automatically created by [drf-yasg](https://github.com/axnsan12/drf-yasg) in a [swagger-ui](https://github.com/swagger-api/swagger-ui). It is accessible at [/api-documentation/](https://finance-platform-prototype-4ce168540ea9.herokuapp.com/api-documentation/). Make sure to run the server so that you can access it (no need to run the redis worker for this).
+
+## CI/CD Pipeline
+
+The backend deployment pipeline runs automatically on push to main branch. The pipeline includes automated testing with Redis service, database migrations, Docker image building, and infrastructure deployment to AWS ECS through Terraform Cloud.

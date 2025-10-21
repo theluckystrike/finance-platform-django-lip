@@ -83,7 +83,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-key
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
 
-TEST_RUNNER = 'olandinvestmentsapi.tests.test_runner.CustomNoseTestRunner'
+# Use simpler test runner in CI environments to avoid nose issues
+if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+    TEST_RUNNER = 'olandinvestmentsapi.tests.test_runner.ColorTestRunner'
+else:
+    TEST_RUNNER = 'olandinvestmentsapi.tests.test_runner.CustomNoseTestRunner'
 
 NOSE_ARGS = [
     '--with-coverage',
