@@ -25,6 +25,7 @@ jobs:
     env:
       SECRET_KEY: ${{ github.sha }}
       DEBUG: True
+      REDISCLOUD_URL: redis://localhost:6379
     services:
       redis:
         image: redis
