@@ -1,10 +1,10 @@
 terraform {
   cloud {
 
-    organization = "oland-investments"
+    organization = "oland_investments"
 
     workspaces {
-      name = "oland-investments-prod"
+      name = "oland_investments-prod"
     }
   }
   required_providers {

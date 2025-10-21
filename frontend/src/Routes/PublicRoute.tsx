@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import PublicLayout from '../Layout/PublicLayout';
 
+const PublicHome = lazy(() => import('../pages/Home/PublicHome'));
 const DashboardList = lazy(() => import('../pages/Dashboard/DashboardList'));
 const SPMemberReturns = lazy(() => import('../pages/Dashboard/SPMemberReturns'));
 const SP500Dashboard = lazy(() => import('../pages/Dashboard/SP500Dashboard'));
@@ -12,6 +13,14 @@ export const PublicRoutes = [
     path: '/public',
     element: <PublicLayout />,
     children: [
+      {
+        path: '',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <PublicHome />
+          </Suspense>
+        ),
+      },
       {
         path: 'dashboard',
         element: (
@@ -37,7 +46,7 @@ export const PublicRoutes = [
         ),
       },
       {
-        path: 'dashboard/:dashboardId',
+        path: 'dashboard/nasdaq100',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <SPMemberReturns />
@@ -45,8 +54,28 @@ export const PublicRoutes = [
         ),
       },
       {
-        path: '',
-        element: <Navigate to="/public/dashboard" replace />,
+        path: 'dashboard/djia',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SPMemberReturns />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'dashboard/russell2000',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SPMemberReturns />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'dashboard/:dashboardId',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SPMemberReturns />
+          </Suspense>
+        ),
       },
     ],
   },

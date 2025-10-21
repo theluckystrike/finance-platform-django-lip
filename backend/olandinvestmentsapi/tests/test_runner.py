@@ -63,15 +63,32 @@ class RedisProcess:
     def __init__(self):
         self.process = None
 
+    def _is_redis_running(self):
+        """Check if Redis is already running."""
+        try:
+            import redis
+            from django.conf import settings
+            redis_url = settings.RQ_QUEUES['default']['URL']
+            client = redis.from_url(redis_url)
+            client.ping()
+            return True
+        except Exception:
+            return False
+
     def start(self):
-        # catch exception if redis-server is not installed
-        # github actions has redis installed as a seperate service
+        # Check if Redis is already running (e.g., GitHub Actions service)
+        if self._is_redis_running():
+            print("Redis is already running, skipping Redis server startup")
+            return
+        
+        # Try to start Redis server for local development
         try:
             self.process = subprocess.Popen(
                 ['redis-server'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(1)
         except Exception as e:
             print(f"Failed to run Redis server: {e}")
+            print("Note: Tests may fail if Redis is not available")
 
     def stop(self):
         if self.process:
@@ -84,9 +101,13 @@ class RQWorkerProcess:
         self.process = None
 
     def start(self):
-        self.process = subprocess.Popen(
-            ['python', 'manage.py', 'rqworker', 'scripts'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(1)
+        import sys
+        try:
+            self.process = subprocess.Popen(
+                [sys.executable, 'manage.py', 'rqworker', 'scripts'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1)
+        except Exception as e:
+            print(f"Failed to start RQ worker: {e}")
 
     def stop(self):
         if self.process:

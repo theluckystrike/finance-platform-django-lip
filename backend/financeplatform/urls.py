@@ -39,7 +39,7 @@ urlpatterns = [
     path('', include("scriptupload.urls")),  # Keep at root for tests
     path('', include("databaseinterface.urls")),  # Keep at root for tests
     path('', include("marketdata.urls")),  # Keep at root for tests
-    path('', include("olandinvestmentsapi.urls")),  # Keep at root for tests
+    path('api/', include("olandinvestmentsapi.urls")),  # API routes under /api/
 ]
 
 if True:

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Form, Button, Spinner, Alert, Row, Col } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -29,6 +30,7 @@ type SortDirection = 'asc' | 'desc';
 
 const SPMemberReturns: React.FC = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [data, setData] = useState<SPMemberData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +38,23 @@ const SPMemberReturns: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>('ytdReturn');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  // Determine which index we're displaying based on the route
+  const getIndexInfo = () => {
+    const path = location.pathname;
+    if (path.includes('nasdaq100')) {
+      return { name: 'NASDAQ-100', ticker: '^NDX', description: 'Top 100 non-financial companies on NASDAQ' };
+    } else if (path.includes('djia')) {
+      return { name: 'Dow Jones Industrial Average', ticker: '^DJI', description: '30 prominent companies in the US' };
+    } else if (path.includes('russell2000')) {
+      return { name: 'Russell 2000', ticker: '^RUT', description: 'Small-cap stock market index' };
+    } else if (path.includes('sp500') || path.includes('sp-member-returns')) {
+      return { name: 'S&P 500', ticker: '^GSPC', description: '500 largest US companies' };
+    }
+    return { name: 'S&P 500', ticker: '^GSPC', description: '500 largest US companies' };
+  };
+
+  const indexInfo = getIndexInfo();
 
   // Realistic S&P 500 mock data - September 2024 market snapshot
   const generateMockData = (): SPMemberData[] => {
@@ -216,7 +235,8 @@ const SPMemberReturns: React.FC = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `sp500-returns-${new Date().toISOString().split('T')[0]}.csv`;
+    const indexSlug = indexInfo.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    a.download = `${indexSlug}-returns-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -274,7 +294,8 @@ const SPMemberReturns: React.FC = () => {
       <div className="dashboard-header mb-4">
         <Row className="align-items-center">
           <Col>
-            <h2 className="page-title mb-0">S&P 500 Member Returns</h2>
+            <h2 className="page-title mb-0">{indexInfo.name} Member Returns</h2>
+            <p className="text-muted mb-2">{indexInfo.description}</p>
             {lastUpdated && (
               <small className="text-muted">
                 Last updated: {lastUpdated.toLocaleString()}

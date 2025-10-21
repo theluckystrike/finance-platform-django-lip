@@ -21,27 +21,24 @@ class AuthTests(APITestCase):
 
     def test_01_login(self):
         """Test user login"""
-        url = reverse('token_obtain_pair', current_app='olandinvestmentsapi',
-                      urlconf='olandinvestmentsapi.urls')
+        url = '/api/auth/login'
         data = {
             'username': 'testuser',
             'password': 'testpass123'
         }
         response = self.client.post(url, json.dumps(
-            data), content_type='application/json', HTTP_HOST='api.localhost')
+            data), content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('access' in response.data)
         self.assertTrue('refresh' in response.data)
 
     def test_02_refresh_token(self):
         """Test refreshing token"""
-        url = reverse('token_refresh', current_app='olandinvestmentsapi',
-                      urlconf='olandinvestmentsapi.urls')
+        url = '/api/auth/refresh-token'
         data = {
             'refresh': self.refresh_token
         }
-        response = self.client.post(
-            url, data, HTTP_HOST='api.localhost', format='json')
+        response = self.client.post(url, data, format='json')
         print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('access' in response.data)
@@ -49,30 +46,24 @@ class AuthTests(APITestCase):
 
     def test_03_user_info(self):
         """Test getting user info"""
-        url = reverse('user_detail', current_app='olandinvestmentsapi',
-                      urlconf='olandinvestmentsapi.urls')
-        response = self.client.get(url, HTTP_HOST='api.localhost')
+        url = '/api/auth/user-info'
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], self.user.username)
         self.assertEqual(response.data['email'], self.user.email)
 
     def test_04_logout(self):
         """Test user logout"""
-        url = reverse('token_logout', current_app='olandinvestmentsapi',
-                      urlconf='olandinvestmentsapi.urls')
+        url = '/api/auth/logout'
         data = {
             'refresh': self.refresh_token
         }
-        response = self.client.post(
-            url, data, HTTP_HOST='api.localhost', format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
 
-        url = reverse('token_refresh',
-                      current_app='olandinvestmentsapi',
-                      urlconf='olandinvestmentsapi.urls')
+        url = '/api/auth/refresh-token'
         data = {
             'refresh': self.refresh_token
         }
-        response = self.client.post(
-            url, data, HTTP_HOST='api.localhost', format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
