@@ -68,7 +68,9 @@ class RedisProcess:
         try:
             import redis
             from django.conf import settings
-            redis_url = settings.RQ_QUEUES['default']['URL']
+            # Get the first available queue URL
+            first_queue = next(iter(settings.RQ_QUEUES.values()))
+            redis_url = first_queue['URL']
             client = redis.from_url(redis_url)
             client.ping()
             return True

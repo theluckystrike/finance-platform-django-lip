@@ -49,7 +49,7 @@ resource "aws_s3_bucket_cors_configuration" "public_bucket_cors" {
       "https://app.olandinvestments.com",
       "http://localhost:8000",
       "http://localhost:8090",
-      "https://oland_investments.cradle.services",
+      "https://oland-investments.cradle.services",
       "https://${aws_lb.production.dns_name}"
     ]
     expose_headers  = ["ETag"]
@@ -106,7 +106,7 @@ resource "aws_s3_bucket_cors_configuration" "private_bucket_cors" {
       "https://app.olandinvestments.com",
       "http://localhost:8000",
       "http://localhost:8090",
-      "https://oland_investments.cradle.services",
+      "https://oland-investments.cradle.services",
       "https://${aws_lb.production.dns_name}"
     ]
     expose_headers  = ["ETag"]
