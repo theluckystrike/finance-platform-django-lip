@@ -17,9 +17,9 @@ const PublicLayout: React.FC = () => {
       
       <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
         <Container fluid>
-          <Navbar.Brand as={Link} to="/public/dashboard" className="d-flex align-items-center">
+          <Navbar.Brand as={Link} to="/public" className="d-flex align-items-center">
             <BarChartIcon style={{ fontSize: 24 }} className="me-2" />
-            <span className="fw-bold">Market Dashboards</span>
+            <span className="fw-bold">US Stock Market Analytics</span>
           </Navbar.Brand>
           
           <Navbar.Toggle aria-controls="public-navbar" />
@@ -28,18 +28,25 @@ const PublicLayout: React.FC = () => {
             <Nav className="me-auto">
               <Nav.Link 
                 as={Link} 
-                to="/public/dashboard"
-                active={location.pathname === '/public/dashboard'}
+                to="/public"
+                active={location.pathname === '/public' || location.pathname === '/public/'}
               >
                 <HomeIcon style={{ fontSize: 18 }} className="me-1" />
-                All Dashboards
+                Home
               </Nav.Link>
               <Nav.Link 
                 as={Link} 
-                to="/public/dashboard/sp-member-returns"
-                active={location.pathname === '/public/dashboard/sp-member-returns'}
+                to="/public/dashboard/sp500"
+                active={location.pathname === '/public/dashboard/sp500'}
               >
-                S&P 500 Returns
+                S&P 500
+              </Nav.Link>
+              <Nav.Link 
+                as={Link} 
+                to="/public/dashboard"
+                active={location.pathname === '/public/dashboard'}
+              >
+                All Dashboards
               </Nav.Link>
             </Nav>
             
@@ -51,7 +58,7 @@ const PublicLayout: React.FC = () => {
                   className="ms-2"
                 >
                   <LoginIcon style={{ fontSize: 18 }} className="me-1" />
-                  Login for Full Access
+                  Sign In
                 </Button>
               </Link>
             </Nav>
